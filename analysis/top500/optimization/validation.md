@@ -1,7 +1,7 @@
 # 优化候选本地验证记录
 
 日期：2026-10-24。环境：macOS，本地隔离worktree，`feat/strategy-catalog`。
-修改基线：`768b70f`。当前记录对应本轮未提交工作树，最终提交标识在完成审查后追加。
+修改基线：`768b70f`。实现提交：`52255e3de4dbe4d11c1126420d6eb6b01511787a`；本记录后续仅补充验证元数据。
 
 ## 已执行
 
@@ -30,3 +30,12 @@
 旧收益只属于原版本。日期恢复、BB顺序和退出保护变动可能降低收益或增加回撤，需另行用相同数据与执行模型逐笔验证。原目录catalog与ranking JSON指纹保存在summary.json，优化构建未改变评分。
 
 未部署、未合入master、未推送、未接券商或真实下单。按用户门禁，可运行变更在缺少部署验证时保持本地。
+
+## 主要产物SHA256
+
+|文件|SHA256|
+|---|---|
+|manifest.json|`5d6d7fa1ed9020a70aed0b8cd68c3a41a08d57d690f761a3dcad853e0c1ec4ba`|
+|manifest.csv|`281f8b7128f067aac3d370633953a95364779ad78539c9956475b8b12a4d6e8a`|
+|index.html|`109cbd4aeefb0324b143b20f36584f0f587045c2139abeb8fcc003908f275fff`|
+|summary.json|`d811e0e185242f34c5ae6a0b118129b3eed3faf91bdd7f46e0a6335f81fe0b3c`|
