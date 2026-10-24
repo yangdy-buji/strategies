@@ -55,3 +55,13 @@
 |manifest.csv|`281f8b7128f067aac3d370633953a95364779ad78539c9956475b8b12a4d6e8a`|
 |index.html|`109cbd4aeefb0324b143b20f36584f0f587045c2139abeb8fcc003908f275fff`|
 |summary.json|`d811e0e185242f34c5ae6a0b118129b3eed3faf91bdd7f46e0a6335f81fe0b3c`|
+
+## Current implementation binding
+
+- Implementation SHA: `274c9a48eb31e012e48bef14c774880b14d05be4`
+- Local Python tests: 143 passed; 3 Node DOM harnesses passed.
+- Native Pine compilation / backtest / deployment: not performed. Remote push blocked by deployment gate.
+- manifest.json SHA256: `2f6b1ae462424f4235126330d689927f0869ebb4fd3d8592893502e81d4c4c2c`
+- manifest.csv SHA256: `8c0700e48ceb552b771bbf9cf9924de23a523d101fffedd8d809a798cfa5ad25`
+- index.html SHA256: `5181b321e39c566bc0aaa519d7ffdf4d1c6e8415a508209382f6560f631207be`
+- summary.json SHA256: `8550a441a06ee940b2c1a330dd4a684720a3a8667235ea3de33d03440fb16838`
