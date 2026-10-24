@@ -1,0 +1,32 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：Darvas-Box-Breakout-and-Risk-Management-Strategy-Darvas-盒子突破与风险管理策略.md
++// 原文件SHA256：03fcd4aca60ddd498e52e6e4f8940327b03c73689bb338717572ca7a3c1ea1c5
++// SID：235；原研究名单序号：306
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-07-23 00:00:00
+ end: 2024-07-28 00:00:00
+@@ -5,12 +14,13 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("Darvas Box Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+ 
+ // Input settings
+-boxp = input.int(defval=5, title="Length", minval=1, maxval=500)
++// OPT-235-01：boxp允许1或2使boxp-2非正，highest长度无效；最小合法长度应为3。
++// OPT-235-01 保持：保留信号、参数、方向、仓位配置和原Pine版本。
++// OPT-235-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++boxp = input.int(defval=5, title="Length", minval=3, maxval=500)
+ 
+ // Calculate the lowest low and highest highs
+ LL = ta.lowest(low, boxp)

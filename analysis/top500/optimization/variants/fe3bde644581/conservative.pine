@@ -1,0 +1,59 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：黄金分割移动平均线交易策略Golden-Ratio-Moving-Average-Trading-Strategy.md
+// 原文件SHA256：4b222c06bcf66a72f949dc86f274598e713d646033aa0779e89ecfbc7bcd0d3c
+// SID：5796；原研究名单序号：304
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-12-29 00:00:00
+end: 2024-01-04 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © tsujimoto0403
+strategy("聖杯", overlay=true,default_qty_type=strategy.percent_of_equity,
+     default_qty_value=100)
+
+//ユーザーインプットの準備
+malongperiod=input.int(200,"長期移動平均BASE200",group = "パラメータ")
+mashortperiod=input.int(10,"長期移動平均BASE10",group = "パラメータ")
+stop=input.int(20,title = "損切の割合％",group = "パラメータ")
+profit=input.int(5,title = "利食いの割合％",group = "パラメータ")
+startday=input(title="バックテストを始める日", defval=timestamp("01 Jan 2018 13:30 +0000"), group="期間")
+endday=input(title="バックテスを終わる日", defval=timestamp("1 Jan 2099 19:30 +0000"), group="期間")
+
+//使う変数
+var float stopprice=0
+var float takeprofit=0
+
+//とりあえず使うインジケーターをプロット
+malong=ta.sma(close,malongperiod)
+mashort=ta.sma(close,mashortperiod)
+
+
+plot(malong,color=color.aqua,linewidth = 2)
+plot(mashort,color=color.yellow,linewidth = 2)
+bgcolor(ta.rsi(close,3)<30?color.rgb(229, 86, 86, 48):na)
+
+//期間条件
+// OPT-5796-01：恢复仅入口日期。
+// OPT-5796-01 保持：退出和20%止损保持。
+// OPT-5796-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+datefilter = time >= startday and time <= endday
+
+//エントリー条件
+if close>malong and close<mashort and strategy.position_size == 0 and datefilter and ta.rsi(close,3)<30
+    strategy.entry(id="long", direction=strategy.long)
+
+if strategy.position_size>0 
+    strategy.exit(id="long",stop=(1-0.01*stop)*strategy.position_avg_price)
+
+//売り
+if  strategy.position_size > 0 and close>mashort and close<low[1] 
+    strategy.close(id ="long")

@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=6
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：多重均线趋势追踪与风控优化量化交易策略-Multi-Moving-Average-Trend-Following-and-Risk-Management-Quantitative-Trading-Strategy.md
++// 原文件SHA256：72ed5de493675aff81e055a1daa54d72ebbf3ff3942c5c4617a536f5bbf726ae
++// SID：4221；原研究名单序号：430
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-02-22 00:00:00
+ end: 2025-02-19 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1d
+ exchanges: [{"eid":"Binance","currency":"DOGE_USDT"}]
+ */
+-
+-//@version=6
+ strategy("High-Return Trend Strategy (Final)", overlay=true)
+ 
+ // === Inputs ===
+@@ -37,7 +44,10 @@
+ 
+ // === Exit Conditions ===
+ longStopLoss = close - atr * atrMultiplier  // Dynamic stop-loss
+-strategy.exit("Trailing Stop", from_entry="Buy", trail_points=atr * 1.5, trail_offset=atr * 1.5)  // Trailing stop
++// OPT-4221-01：trail_points和trail_offset以tick计，ATR为价格距离须除最小跳动。
++// OPT-4221-01 保持：原信号、参数与仓位
++// OPT-4221-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.exit("Trailing Stop", from_entry="Buy", trail_points=atr * 1.5 / syminfo.mintick, trail_offset=atr * 1.5 / syminfo.mintick)  // Trailing stop
+ 
+ // === Strategy Logic ===
+ if (longCondition)

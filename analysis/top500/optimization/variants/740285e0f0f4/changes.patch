@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双TEMA叉死叉交易策略Dual-TEMA-Crossover-Trading-Strategy.md
++// 原文件SHA256：9fb49b9aea47dee036223f1e5ec9f814685db0d7614dbf7ade673c3079e4668a
++// SID：1915；原研究名单序号：472
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-01-01 00:00:00
+ end: 2023-10-11 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © nickrober
+-
+-//@version=4
+ strategy(title="TEMA Cross Backtest", shorttitle="TEMA_X_BT", overlay=true, commission_type=strategy.commission.percent, commission_value=0, initial_capital = 1000,  default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+ 
+ // Backtest inputs
+@@ -23,7 +30,10 @@
+ // Define backtest timewindow
+ start = timestamp(FromYear, FromMonth, FromDay, 00, 00)  // backtest start window
+ finish = timestamp(ToYear, ToMonth, ToDay, 23, 59)  // backtest finish window
+-window() =>  true
++// OPT-1915-01：恢复入场日期。
++// OPT-1915-01 保持：保持窗外TEMA退出。
++// OPT-1915-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++window() => time >= start and time <= finish
+ 
+ //TEMA Section
+ xLength = input(20, minval=1, title="Fast Length")

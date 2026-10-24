@@ -1,0 +1,67 @@
+//@version=3
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：顿希安通道突破策略Donchian-Channel-Breakout-Strategy.md
+// 原文件SHA256：bc12d7274819f403622bdfeadcf997dd0ed672bb4d81973fae07ef696c75c17e
+// SID：5678；原研究名单序号：278
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-09-11 00:00:00
+end: 2023-09-15 00:00:00
+period: 3m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+//future strategy
+//strategy(title = "stub", default_qty_type = strategy.fixed, default_qty_value = 1,  overlay = true, commission_type=strategy.commission.cash_per_contract,commission_value=2)
+//stock strategy
+strategy(title = "dc", default_qty_type = strategy.percent_of_equity, default_qty_value = 100,  overlay = true, commission_type=strategy.commission.cash_per_contract,commission_value=.005)
+//forex strategy
+//strategy(title = "stub", default_qty_type = strategy.percent_of_equity, default_qty_value = 100,  overlay = true)
+//crypto strategy
+//strategy(title = "stub", default_qty_type = strategy.percent_of_equity, default_qty_value = 100,  overlay = true, commission_type=strategy.commission.percent,commission_value=.25,default_qty_value=10000)
+
+
+testStartYear = input(2000, "Backtest Start Year")
+testStartMonth = input(1, "Backtest Start Month")
+testStartDay = input(1, "Backtest Start Day")
+testPeriodStart = timestamp(testStartYear,testStartMonth,testStartDay,0,0)
+
+testEndYear = input(2018, "Backtest Start Year")
+testEndMonth = input(12, "Backtest Start Month")
+testEndDay = input(1, "Backtest Start Day")
+// OPT-5678-01：结束时间错误引用起始年月日。
+// OPT-5678-01 保持：原参数、仓位及窗外退出
+// OPT-5678-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+testPeriodEnd = timestamp(testEndYear,testEndMonth,testEndDay,0,0)
+
+
+// OPT-5678-02：日期函数恒真。
+// OPT-5678-02 保持：原参数、仓位及窗外退出
+// OPT-5678-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+testPeriod() =>
+    time >= testPeriodStart and time <= testPeriodEnd
+    //time >= testPeriodStart  ? true : false
+
+dcPeriod = 20
+
+dcUpper = highest(close, dcPeriod)[1]
+dcLower = lowest(close, dcPeriod)[1]
+dcAverage = (dcUpper + dcLower) / 2
+
+plot(dcLower, style=line, linewidth=3, color=red, offset=1)
+plot(dcUpper, style=line, linewidth=3, color=aqua, offset=1)
+
+plot(dcAverage, color=yellow, style=line, linewidth=1, title="Mid-Line Average")
+
+// OPT-5678-03：日期函数未接入场。
+// OPT-5678-03 保持：原参数、仓位及窗外退出
+// OPT-5678-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.entry("simpleBuy", strategy.long, when=testPeriod() and close >= dcUpper)
+strategy.close("simpleBuy",when=close < dcAverage)
+    
+//strategy.entry("simpleSell", strategy.short,when=close <= dcLower)
+//strategy.close("simpleSell",when=close > dcAverage)
+    

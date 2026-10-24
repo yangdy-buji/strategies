@@ -1,0 +1,44 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=3
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双移动均线交叉反转策略Dual-Moving-Average-Reversal-Strategy.md
++// 原文件SHA256：03289a00b8ff657955f704cf0417fdbfe1b0ed40c3fd6929f72c77bd6dd217b2
++// SID：2188；原研究名单序号：331
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-11-15 00:00:00
+ end: 2023-11-21 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=3
+ strategy("Up Down", "Up Down", precision = 6, pyramiding = 1, default_qty_type = strategy.percent_of_equity, default_qty_value = 99, commission_type = strategy.commission.percent, commission_value = 0.0, initial_capital = 1000, overlay = true)
+ 
+ buy = close > open and open > close[1]
+@@ -49,9 +56,17 @@
+ testPeriodBackgroundColor = testPeriodBackground and (time >= testPeriodStart) and (time <= testPeriodStop) ? #00FF00 : na
+ bgcolor(testPeriodBackgroundColor, transp=97)
+ 
+-testPeriod() => true
++// OPT-2188-01：恢复限价入场日期范围。
++// OPT-2188-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-2188-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+ // Component Code Stop
+ 
+ if testPeriod()
+     strategy.entry("buy", true, when = xbuy, limit = close)
+-    strategy.close("buy", when = xsell)
++    // OPT-2188-02：窗外撤销未成交限价买单，已有持仓仍可按xsell退出。
++    // OPT-2188-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-2188-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++else
++    strategy.cancel("buy")
++strategy.close("buy", when = xsell)

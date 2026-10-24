@@ -1,0 +1,73 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：RSI多区间交易策略-Multi-Zone-RSI-Trading-Strategy.md
++// 原文件SHA256：5fad3ed2a7773649ff5bca566e2805669dfbc8d7510c55b76f078f490fca7b0a
++// SID：804；原研究名单序号：451
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-09-26 00:00:00
+ end: 2024-09-24 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 2d
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("M5 Trading Rule", overlay=true)
+ 
+ // Copyright © 2024 TRADINGWITHKAY. All rights reserved.
+@@ -45,32 +52,40 @@
+ if (buyHeavyCondition)
+     strategy.entry("Buy Heavy", strategy.long)
+     // Separate Take Profit and Stop Loss
+-    strategy.exit("Take Profit", "Buy Heavy", limit=close + takeProfitPrice)
+-    strategy.exit("Stop Loss", "Buy Heavy", stop=close - stopLossPrice)
++    // OPT-804-01：同一分档的止盈止损合为一组，防止全量止盈预留阻塞止损。
++    // OPT-804-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-804-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.exit("Exit Buy Heavy", "Buy Heavy", limit=close + takeProfitPrice, stop=close - stopLossPrice)
+     alert("RSI is below 20! Buy Heavy Condition Triggered!", alert.freq_once_per_bar)
+ 
+ // Execute Buy Lite
+ if (buyLiteCondition)
+     strategy.entry("Buy Lite", strategy.long)
+     // Separate Take Profit and Stop Loss
+-    strategy.exit("Take Profit", "Buy Lite", limit=close + takeProfitPrice)
+-    strategy.exit("Stop Loss", "Buy Lite", stop=close - stopLossPrice)
++    // OPT-804-02：同一分档的止盈止损合为一组，防止全量止盈预留阻塞止损。
++    // OPT-804-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-804-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.exit("Exit Buy Lite", "Buy Lite", limit=close + takeProfitPrice, stop=close - stopLossPrice)
+     alert("RSI is below 30! Buy Lite Condition Triggered!", alert.freq_once_per_bar)
+ 
+ // Execute Sell Heavy
+ if (sellHeavyCondition)
+     strategy.entry("Sell Heavy", strategy.short)
+     // Separate Take Profit and Stop Loss
+-    strategy.exit("Take Profit", "Sell Heavy", limit=close - takeProfitPrice)
+-    strategy.exit("Stop Loss", "Sell Heavy", stop=close + stopLossPrice)
++    // OPT-804-03：同一分档的止盈止损合为一组，防止全量止盈预留阻塞止损。
++    // OPT-804-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-804-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.exit("Exit Sell Heavy", "Sell Heavy", limit=close - takeProfitPrice, stop=close + stopLossPrice)
+     alert("RSI is above 80! Sell Heavy Condition Triggered!", alert.freq_once_per_bar)
+ 
+ // Execute Sell Lite
+ if (sellLiteCondition)
+     strategy.entry("Sell Lite", strategy.short)
+     // Separate Take Profit and Stop Loss
+-    strategy.exit("Take Profit", "Sell Lite", limit=close - takeProfitPrice)
+-    strategy.exit("Stop Loss", "Sell Lite", stop=close + stopLossPrice)
++    // OPT-804-04：同一分档的止盈止损合为一组，防止全量止盈预留阻塞止损。
++    // OPT-804-04 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-804-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.exit("Exit Sell Lite", "Sell Lite", limit=close - takeProfitPrice, stop=close + stopLossPrice)
+     alert("RSI is above 70! Sell Lite Condition Triggered!", alert.freq_once_per_bar)
+ 
+ // Plot RSI on a separate chart for easier visibility

@@ -1,0 +1,57 @@
+/*backtest
+start: 2023-02-15 00:00:00
+end: 2024-02-21 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © pradhan_abhishek
+
+//@version=5
+strategy('EMA cross-over strategy by AP', overlay=true, shorttitle='EMACS-AP', initial_capital=100000, default_qty_value=100, default_qty_type=strategy.percent_of_equity, commission_value=0.025)
+
+// inputs
+i_shortTerm = input(title='Fast EMA', defval=21)
+i_longTerm = input(title='Slow EMA', defval=55)
+// select backtest range: if this is not given, then tradingview goes back since inception / whereever it finds data
+i_from = input(defval = timestamp("01 Jan 2023 00:00"), title = "From")
+i_to = input(defval = timestamp("31 Dec 2033 23:59"), title = "To")
+i_showBg = input(defval = true, title = "Show In-trade / Out-trade background")
+
+// create date function "within window of time"
+date() => true
+
+// exponential moving average (EMA) variables, derived from input parameters
+shortTermEMA = ta.ema(close, i_shortTerm)
+longTermEMA = ta.ema(close, i_longTerm)
+atr = ta.atr(14)
+
+// ### Trade strategy: begins ###
+inTrade = strategy.position_size > 0
+notInTrade = strategy.position_size <= 0
+
+goLongCondition1 = shortTermEMA > longTermEMA
+goLongCondition2 = close > shortTermEMA
+
+// exitCondition1 = shortTermEMA < midTermEMA
+exitCondition2 = close < shortTermEMA
+
+// enter if not in trade and long conditions are met
+if date() and goLongCondition1 and goLongCondition2 and notInTrade
+    strategy.entry('long', strategy.long)
+    // exit on stop-Loss hit
+    stopLoss = close - atr * 3
+    strategy.exit('exit', 'long', stop=stopLoss)
+
+// exit if already in trade and take profit conditions are met
+if date() and exitCondition2 and inTrade
+    strategy.close(id='long')
+// ###Trade strategy: ends ###
+
+// plot emas & background color for trade status
+plot(shortTermEMA, color=color.new(color.blue, 0))
+plot(longTermEMA, color=color.new(color.green, 0))
+trade_bgcolor = notInTrade ? color.new(color.red, 75) : color.new(color.green, 75)
+bgcolor(i_showBg ? trade_bgcolor : color.new(color.white, 75))

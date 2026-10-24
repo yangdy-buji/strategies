@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：趋势跟踪止损策略Trend-Following-Strategy-with-Trailing-Stop-Loss.md
++// 原文件SHA256：377dbe055aea9f0e12a32bebb73bfde6fcae19a2e7eff8b80b9f4a76c0a2b45a
++// SID：5419；原研究名单序号：29
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-09-29 00:00:00
+ end: 2023-10-29 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © felipefs
+-
+-//@version=4
+ strategy("Meu Script", overlay=true)
+ plot(ohlc4)
+ 
+@@ -52,7 +59,10 @@
+     
+ //Take Profit
+ profit = close * (1 + 0.12)
+-strategy.entry("Long", true)
++// OPT-5419-01：把现有正确日期函数接到唯一入场。
++// OPT-5419-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-5419-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.entry("Long", true, when=testPeriod())
+ strategy.exit("Take Profit 1 Long", from_entry="Long", limit=profit, qty_percent=50.0)
+  
+ //ATR Stop

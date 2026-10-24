@@ -1,0 +1,140 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：形态识别吊颈线交易策略Pattern-Recognition-Pinbar-Trading-Strategy.md
+// 原文件SHA256：9f67d1c7add16774126c0333cc20665e6dae0bec70161237ab21027ba00f5185
+// SID：4573；原研究名单序号：63
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-09-10 00:00:00
+end: 2023-09-17 00:00:00
+period: 5m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+// 
+// Pinbar strategy script by samgozman (https://github.com/samgozman)
+// 
+// Detailed instruction how to use this script: https://github.com/samgozman/pinbar-strategy-tradingview
+//
+// If you liked the script and want to support me: https://paypal.me/sgozman
+// 
+// ++++++++++ Warning: The script is provided for educational purposes only. ++++++++++ //
+
+strategy('Pinbar strategy', default_qty_type=strategy.percent_of_equity, default_qty_value=100, initial_capital=10000)
+
+profitMultiplier = input.float(2.0, "Profit multiplier", minval=0.1, step=0.1, group="Profit options", tooltip="X times signal candle size from high")
+lossMultiplier =  input.float(1.0, "Loss multiplier", minval=0.1, step=0.1, group="Profit options", tooltip="X times signal candle size from low")
+
+isTrailingStop = input.bool(true, "Use trailing stops?", group="Trading options", tooltip="Highly recommended!")
+isCloseOnOppositSignal = input.bool(false, "Close trade if opposit signal occures?", group="Trading options", tooltip="Close long on short signal")
+isLongEligible = input.bool(true, "Enter long trades?", group="Trading options")
+isShortEligible = input.bool(true, "Enter short trades?", group="Trading options")
+
+useDateFilter = input.bool(true, title="Begin Backtest at Start Date", group="Backtest Time Period")
+backtestStartDate = input(timestamp("1 Jan 2021"), title="Start Date", group="Backtest Time Period")
+
+// Predefined time trading zone for back testing
+// OPT-4573-01：恢复开始日期开关。
+// OPT-4573-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-4573-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+inTradeWindow = not useDateFilter or time >= backtestStartDate
+
+// HELPER FUNCTIONS //
+
+// calculate candle size for N bars back. Use 0 for current
+calcCandle(int periods) =>
+    math.abs(high[periods] - low[periods])
+
+// if body is below 50% and close/open below 30%
+isBearishPinbar(float candle) =>
+    lower30 = low + candle * 0.30
+    bottomHalf1 = close < hl2
+    bottomHalf2 = open < hl2
+    lowerRegion1 = close < lower30
+    lowerRegion2 = open < lower30
+    
+    con1 = bottomHalf1 and bottomHalf2
+    con2 = lowerRegion1 and lowerRegion2
+    con3 = high > high[1]
+    
+    con1 and con2 and con3
+
+// if body is above 50% and close/open above 30%  
+isBullishPinbar(float candle) =>
+    upper30 = high - candle * 0.30
+    topHalf1 = close > hl2
+    topHalf2 = open > hl2
+    upperRegion1 = close > upper30
+    upperRegion2 = open > upper30
+    
+    con1 = topHalf1 and topHalf2
+    con2 = upperRegion1 and upperRegion2
+    con3 = low < low[1]
+    
+    con1 and con2 and con3
+    
+barsSinceLastEntry() =>
+    strategy.opentrades > 0 ? bar_index - strategy.opentrades.entry_bar_index(strategy.opentrades - 1) : na
+
+// Calculate trading signals
+currentCandle = calcCandle(0)
+// OPT-4573-02：保留原始多头形态供窗外退出使用。
+// OPT-4573-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-4573-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+longSignal = isBullishPinbar(currentCandle)
+// OPT-4573-03：保留原始空头形态供窗外退出使用。
+// OPT-4573-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-4573-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+shortSignal = isBearishPinbar(currentCandle)
+
+// ENTER THE TRADE //
+// OPT-4573-04：日期仅限制多头入场。
+// OPT-4573-04 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-4573-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if longSignal and isLongEligible and inTradeWindow
+    strategy.entry("buy", strategy.long, when = strategy.position_size == 0)
+
+// OPT-4573-05：日期仅限制空头入场。
+// OPT-4573-05 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-4573-05 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if shortSignal and isShortEligible and inTradeWindow 
+    strategy.entry("sell", strategy.short, when = strategy.position_size == 0)
+
+// CALCULATE STOPS //
+barsSinceEntry = barsSinceLastEntry()
+candleFromEntry = calcCandle(barsSinceEntry)
+// long
+long_take_limit = strategy.position_avg_price + (candleFromEntry*profitMultiplier)
+long_target_percent_profit = long_take_limit / strategy.position_avg_price - 1
+long_target_percent_loss = (long_target_percent_profit / profitMultiplier) * lossMultiplier
+long_stop_limit = low[barsSinceEntry] * (1 - long_target_percent_loss)
+//short
+short_take_limit = strategy.position_avg_price - (candleFromEntry*profitMultiplier)
+short_target_percent_profit = strategy.position_avg_price / short_take_limit - 1
+short_target_percent_loss = (short_target_percent_profit / profitMultiplier) * lossMultiplier
+short_stop_limit = high[barsSinceEntry] * (1 + short_target_percent_loss)
+
+// EXIT THE TRADE //
+if strategy.position_size > 0 or strategy.position_size < 0
+    if isTrailingStop
+        strategy.exit(id="exit", from_entry="buy", trail_price = long_take_limit, stop=long_stop_limit)
+        // OPT-4573-06：独立空头退出ID避免修改多头保护。
+        // OPT-4573-06 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+        // OPT-4573-06 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+        strategy.exit(id="exit_short", from_entry="sell", trail_price = short_take_limit, stop=short_stop_limit)
+    else
+        strategy.exit(id="exit", from_entry="buy", limit = long_take_limit, stop=long_stop_limit)
+        // OPT-4573-07：独立空头退出ID避免修改多头保护。
+        // OPT-4573-07 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+        // OPT-4573-07 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+        strategy.exit(id="exit_short", from_entry="sell", limit = short_take_limit, stop=short_stop_limit)
+    if isCloseOnOppositSignal
+        strategy.close("buy", when = shortSignal)
+        strategy.close("sell", when = longSignal)
+
+// PLOT SIGNALS //
+plotshape(longSignal, style=shape.arrowup, color=color.new(color.green, 0), size=size.large, location=location.belowbar)
+plotshape(shortSignal, style=shape.arrowdown, color=color.new(color.red, 0), size=size.large, location=location.abovebar)

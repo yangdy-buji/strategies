@@ -1,0 +1,48 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：三重均线动量趋势交易策略-Triple-Moving-Average-Momentum-Trend-Trading-Strategy.md
++// 原文件SHA256：51838afe37239972b963c7c1555d24bffd379160dd768dde5f3d0d10aa2122bd
++// SID：1221；原研究名单序号：439
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-02-10 00:00:00
+ end: 2025-02-08 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 2d
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("Oliver Valez Triple MA Strategy", overlay=true, margin_long=100, margin_short=100)
+ 
+ // Inputs
+@@ -46,11 +53,21 @@
+ // Execute Trades
+ if (long_condition)
+     strategy.entry("Long", strategy.long)
+-    strategy.exit("XL", "Long", stop=stop_loss, limit=take_profit)
++    // OPT-1221-01：移除入场当根均价na的无效保护调用。
++    // OPT-1221-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-1221-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++
+ 
+ if (short_condition)
+     strategy.entry("Short", strategy.short)
+-    strategy.exit("XS", "Short", stop=stop_loss, limit=take_profit)
++    // OPT-1221-02：保护单独立于入场信号，在有效持仓均价存在时每根维护。
++    // OPT-1221-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-1221-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++
++if strategy.position_size > 0
++    strategy.exit("XL", "Long", stop=strategy.position_avg_price * (1 - sl_percent/100), limit=strategy.position_avg_price * (1 + tp_percent/100))
++if strategy.position_size < 0
++    strategy.exit("XS", "Short", stop=strategy.position_avg_price * (1 + sl_percent/100), limit=strategy.position_avg_price * (1 - tp_percent/100))
+ 
+ // Close trades on opposite signals
+ if (exit_long)

@@ -1,0 +1,57 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双移动均线与RSI反转交易策略Dual-Moving-Average-and-RSI-Reversal-Trading-Strategy.md
++// 原文件SHA256：3388736a425b4acbd2d169812ec2ebb6981a1e411583ae6f19f9ca9de94e5186
++// SID：2185；原研究名单序号：357
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-09-17 00:00:00
+ end: 2023-10-17 00:00:00
+@@ -5,11 +14,12 @@
+ basePeriod: 15m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ //Based on Larry Connors RSI-2 Strategy - Lower RSI
+ strategy(title="_CM_RSI_2_Strat_Low", shorttitle="_CM_RSI_2_Strategy_Lower", overlay=false)
+-src = close, 
++// OPT-2185-04：移除变量声明尾随逗号，避免等待另一条声明。
++// OPT-2185-04 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-2185-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++src = close
+ 
+ //RSI CODE
+ up = rma(max(change(src), 0), 30)
+@@ -20,7 +30,10 @@
+ ma200= vwma(close,200)
+ 
+ //Rule for RSI Color
+-col = ma50 > ma200 and rsi <=53?lime: ma50 < ma200  and rsi >= 60?red : silver
++// OPT-2185-01：v4使用命名空间颜色。
++// OPT-2185-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-2185-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++col = ma50 > ma200 and rsi <=53?color.lime: ma50 < ma200  and rsi >= 60?color.red : color.silver
+ long = ma50 > ma200 and rsi <= 53
+ short = ma50 < ma200  and rsi >= 60
+ //plot(rsi, title="RSI", style=line, linewidth=1,color=col)
+@@ -32,5 +45,11 @@
+ //fill(band1, band0, color=silver, transp=90)
+ strategy.entry ("buy", strategy.long, when=long)
+ strategy.entry ("sell", strategy.short, when=short)
+-plot(long,"long",color=green,linewidth=1)
+-plot(short,"short",color=red,linewidth=1)
++// OPT-2185-02：v4颜色命名空间和布尔绘图类型修复，将long显式映射为1/0，仅改变展示类型。
++// OPT-2185-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-2185-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++plot(long ? 1 : 0,"long",color=color.green,linewidth=1)
++// OPT-2185-03：v4颜色命名空间和布尔绘图类型修复，将short显式映射为1/0，仅改变展示类型。
++// OPT-2185-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-2185-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++plot(short ? 1 : 0,"short",color=color.red,linewidth=1)

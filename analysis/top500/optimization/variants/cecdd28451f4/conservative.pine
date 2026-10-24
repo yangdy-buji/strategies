@@ -1,0 +1,81 @@
+//@version=6
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双均线交叉与随机指标结合的自适应追踪止损策略-Dual-Moving-Average-Crossover-with-Stochastic-Filter-and-Adaptive-Trailing-Stop-Strategy.md
+// 原文件SHA256：d72478c14f89f54b020e77c75e7b5aa055bd2a827b311a85edecd5aca5fe3bb6
+// SID：1994；原研究名单序号：378
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-02-26 00:00:00
+end: 2025-02-23 08:00:00
+period: 1h
+basePeriod: 1h
+exchanges: [{"eid":"Binance","currency":"SOL_USDT"}]
+*/
+strategy('[DRAGON]SMA 34 & SMA 200 with Stochastic 9-3-3 & Trailing Stop (Price Chart)', overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+
+// Inputs for Moving Averages
+SMA_fast_length = input.int(34, title='Fast SMA (34)', minval=1)
+SMA_slow_length = input.int(200, title='Slow SMA (200)', minval=1)
+
+// Inputs for Stochastic 9-3-3 (ใช้สำหรับเงื่อนไขเทรด แต่ไม่แสดงบนกราฟ)
+stoK_length = input.int(9, title='Stochastic %K Length', minval=1)
+stoD_length = input.int(3, title='Stochastic %D Smoothing', minval=1)
+sto_smoothK = input.int(3, title='Stochastic Smoothing', minval=1)
+
+// Define Stop Loss, Take Profit & Trailing Stop
+stopLossPercent = input.float(2, title='Stop Loss %') / 100
+takeProfitPercent = input.float(4, title='Take Profit %') / 100
+breakevenTrigger = input.float(2, title='Move SL to BE when Profit Reaches (%)') / 100
+
+// Calculate SMAs
+sma34 = ta.sma(close, SMA_fast_length)
+sma200 = ta.sma(close, SMA_slow_length)
+
+// Calculate Stochastic (สำหรับใช้ในเงื่อนไขเทรด)
+stoK = ta.sma(ta.stoch(close, high, low, stoK_length), sto_smoothK)
+stoD = ta.sma(stoK, stoD_length)
+
+// Plot Moving Averages บนกราฟราคา
+plot(sma34, color=color.blue, title='SMA 34')
+plot(sma200, color=color.red, title='SMA 200')
+
+// Define Entry Conditions โดยมีเงื่อนไขจาก Stochastic
+buySignal = ta.crossover(close, sma34) and sma34 > sma200 and stoK > 20
+sellSignal = ta.crossunder(close, sma34) and sma34 < sma200 and stoK < 80
+
+// Calculate Stop Loss & Take Profit Levels
+longSL = strategy.position_avg_price * (1 - stopLossPercent)
+longTP = strategy.position_avg_price * (1 + takeProfitPercent)
+shortSL = strategy.position_avg_price * (1 + stopLossPercent)
+shortTP = strategy.position_avg_price * (1 - takeProfitPercent)
+
+// กำหนด Breakeven เมื่อได้กำไรตามที่ตั้งไว้
+longBreakeven = strategy.position_avg_price * (1 + breakevenTrigger)
+shortBreakeven = strategy.position_avg_price * (1 - breakevenTrigger)
+
+longStop = close >= longBreakeven ? strategy.position_avg_price : longSL
+shortStop = close <= shortBreakeven ? strategy.position_avg_price : shortSL
+
+// Execute Trades
+if buySignal
+    strategy.entry('Long', strategy.long)
+    // OPT-1994-01：只在对应方向已有实际持仓时持续提交均价保护，避免反向待成交订单使用旧方向均价。
+    // OPT-1994-01 保持：原参数、信号与仓位
+    // OPT-1994-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if strategy.position_size > 0
+    strategy.exit('Long Exit', from_entry='Long', stop=longStop, limit=longTP)
+
+if sellSignal
+    strategy.entry('Short', strategy.short)
+    // OPT-1994-02：只在对应方向已有实际持仓时持续提交均价保护，避免反向待成交订单使用旧方向均价。
+    // OPT-1994-02 保持：原参数、信号与仓位
+    // OPT-1994-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if strategy.position_size < 0
+    strategy.exit('Short Exit', from_entry='Short', stop=shortStop, limit=shortTP)
+
+// Plot Buy/Sell Signals บนกราฟราคา
+plotshape(buySignal, location=location.belowbar, color=color.lime, style=shape.labelup, title='Buy Signal')
+plotshape(sellSignal, location=location.abovebar, color=color.red, style=shape.labeldown, title='Sell Signal')

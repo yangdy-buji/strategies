@@ -1,0 +1,4579 @@
+[
+  {
+    "sid": 267,
+    "id": "6735d129a429",
+    "filename": "EMA-34-动态止损交叉策略趋势跟踪与风险管理的智能结合-EMA-34-Dynamic-Stop-Loss-Crossover-Strategy-Intelligent-Combination-of-Trend-Following-and-Risk-Management.md",
+    "source_sha256": "6bb6283befab41be260ae0222b20e75980dba9e6a33defd11355264df97d781b",
+    "code_sha256": "fe927f4e4e8915bd6dd25ba7cc6494aa2b74b544be8189e80dfffd1b2f944f4e",
+    "code_lines": 52,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘上穿EMA34做多，全权益仓位；以前低止损和10R目标，3R后改保本，触及后市价平仓。",
+    "evidence": [
+      {
+        "line": 219,
+        "code": "    if low <= stopLoss  // Stop loss condition",
+        "reason": "inTrade在信号柱即置真，历史高低可在尚未成交时触发平仓并清除状态；风险价差也可能非正，需明确成交与止损语义。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 219,
+        "detail": "inTrade在信号柱即置真，历史高低可在尚未成交时触发平仓并清除状态；风险价差也可能非正，需明确成交与止损语义。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 300,
+    "id": "08a9fa496194",
+    "filename": "EMA与RSI交叉策略-EMA-RSI-Crossover-Strategy.md",
+    "source_sha256": "20c99a8efc67e11784a4f02810d5a9f205b0f26004a6574a970042e029fc2d8f",
+    "code_sha256": "2be0cd8de85e4533e9cf642692a76d3dd2d65abb7604a08074701a0775fb6834",
+    "code_lines": 81,
+    "review_scope": "full_source_static",
+    "synopsis": "价格在EMA50下且前柱RSI7低于20、收盘上涨做多；对称条件做空，ATR加实体设置止盈止损。",
+    "evidence": [
+      {
+        "line": 164,
+        "code": "if (sellFlag and sellRsiFlag   and strategy.opentrades <= 0 and redCandle)",
+        "reason": "strategy.opentrades是非负交易数量，<=0仅允许空仓开空，与多头>=0条件不对称；是否允许反转需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 164,
+        "detail": "strategy.opentrades是非负交易数量，<=0仅允许空仓开空，与多头>=0条件不对称；是否允许反转需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 303,
+    "id": "3977544e53a3",
+    "filename": "EMA与超级趋势相结合的量化交易策略-EMA-and-Supertrend-Combination-Quantitative-Trading-Strategy.md",
+    "source_sha256": "46c3b55dc0dd4199f92fea3f22d4b10af5ce22981ebe40ce5e391285a4bf7226",
+    "code_sha256": "584b0407a95412898456005a6b5d73af6975f0012857195af7b9e608cbc37888",
+    "code_lines": 72,
+    "review_scope": "full_source_static",
+    "synopsis": "价格上穿EMA20且超级趋势向上开多；下穿EMA且超级趋势向下平多，仓位使用平台默认值。",
+    "evidence": [
+      {
+        "line": 164,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 316,
+    "id": "d27c01b97b6a",
+    "filename": "EMA动态趋势追踪交易策略-EMA-Dynamic-Trend-Following-Trading-Strategy.md",
+    "source_sha256": "e178ed0321e8bd3cbdbb850b5d72e1a60656a2257b69a9b5bcd3dd4a170b083e",
+    "code_sha256": "a6e7c4b7d12b1cc48fdb0b800fd1ad3bf312949c3b6f3e39561c52a3016204a5",
+    "code_lines": 59,
+    "review_scope": "full_source_static",
+    "synopsis": "历史高低中轴EMA加减ATR形成通道；下轨穿过低点且低于中轴做多，上轨下穿高点或触及卖线做空并反转。",
+    "evidence": [
+      {
+        "line": 135,
+        "code": "    strategy.entry('SELL', strategy.short)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 373,
+    "id": "979624b1af03",
+    "filename": "Flawless-Victory-DCA-动量与波动率策略Flawless-Victory-DCA-Momentum-and-Volatility-Strategy.md",
+    "source_sha256": "f0e4e066be0e1ba014303fa69cb23444e6649d7c81e0565e47cd0d4a8da0344e",
+    "code_sha256": "68acb9fe4ab73de3e161e4f71b1e730908965c8a62126eb1e0e40e01a93108fb",
+    "code_lines": 68,
+    "review_scope": "full_source_static",
+    "synopsis": "布林下轨以下且RSI高于42做多；DCA按小时选择订单ID，RSI高于70且越上轨才挂均价百分比保护单。",
+    "evidence": [
+      {
+        "line": 185,
+        "code": "strategy.exit(\"Stoploss/TP\", \"Long\", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = \"Sell Signal!\")",
+        "reason": "DCA Long入场没有匹配退出；保护单同时受卖出条件限制，DCA叠加意图与pyramiding=0不一致。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "exit_id_mismatch",
+        "evidence_line": 185,
+        "detail": "DCA Long入场没有匹配退出；保护单同时受卖出条件限制，DCA叠加意图与pyramiding=0不一致。",
+        "resolution": "仅提出patches所列确定范围的补丁；detail中其余保护、方向、加仓或输入问题仍未修，需确认设计及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "strategy.exit(\"Stoploss/TP\", \"Long\", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = \"Sell Signal!\")",
+        "new": "strategy.exit(\"Stoploss/TP\", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = \"Sell Signal!\")",
+        "reason": "保护退出覆盖两个做多入口ID。",
+        "preserved": "保留卖出触发、百分比和DCA下单逻辑。",
+        "validation_cases": [
+          "DCA关闭的Long仍匹配退出。",
+          "DCA开启时DCA Long满足原卖出条件也受退出保护。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 595,
+    "id": "edaf8499511c",
+    "filename": "Matrix-Series.md",
+    "source_sha256": "4fed8f6522f40f60d55e754f0696f12c21d62e6e9857b09d43aa70621e74b918",
+    "code_sha256": "b9a748658bd7b8a0db5e8c9f6e48b30169a5afca50ece6da2d7e51d02b50503b",
+    "code_lines": 70,
+    "review_scope": "full_source_static",
+    "synopsis": "标准化价格经多层EMA形成超买超卖形状，CCI动态区域绘图；形状存在时开多或开空反转。",
+    "evidence": [
+      {
+        "line": 47,
+        "code": "study(\"Matrix Series\",shorttitle=\"MS\",precision=1)",
+        "reason": "study声明与strategy订单并存且无版本声明，ta命名空间与旧版语法混用；需先确定目标Pine兼容版本。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 47,
+        "detail": "study声明与strategy订单并存且无版本声明，ta命名空间与旧版语法混用；需先确定目标Pine兼容版本。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 629,
+    "id": "979c143172eb",
+    "filename": "Noro平移均线止损策略Noro-Shifted-Moving-Average-Stop-Loss-Strategy.md",
+    "source_sha256": "f8fbf4fb00f06288af3e33a6851d60f3f9ac9fa0ac43a71c22ca86de6b571b43",
+    "code_sha256": "6e52c14b5cf81a2bf19ed21b4f30496b1ea795d2515ec1ddfc2ff740023651af",
+    "code_lines": 43,
+    "review_scope": "full_source_static",
+    "synopsis": "三周期OHLC4均线下移5%挂多单；以持仓均价计算5%止盈与2%止损，平仓时取消保护挂单。",
+    "evidence": [
+      {
+        "line": 146,
+        "code": "    strategy.entry(\"Take\", strategy.short, 0, limit = avg + ((avg / 100) * tp))",
+        "reason": "零数量反向entry用作退出依赖平台语义；需确定目标引擎是否支持该用法，不能直接等同标准退出。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 146,
+        "detail": "零数量反向entry用作退出依赖平台语义；需确定目标引擎是否支持该用法，不能直接等同标准退出。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 734,
+    "id": "3b9dcf508b76",
+    "filename": "RSI2策略之日内反转胜率回测-RSI2-Strategy-Intraday-Reversal-Win-Rate-Backtest.md",
+    "source_sha256": "2c904ade596a106619c3a0db48a7f6180b43eba3db27eb84bb347469fa9b4f00",
+    "code_sha256": "f461f4a10065a480d00fe01eba336f06b7d7ec4868426cf28a86f7d6329b28f5",
+    "code_lines": 45,
+    "review_scope": "full_source_static",
+    "synopsis": "价格高于SMA200且RSI2超卖时买1份；用信号柱低价计算6%目标与3%止损，后续柱提交退出。",
+    "evidence": [
+      {
+        "line": 133,
+        "code": "    bp := low //high/2 + low/2",
+        "reason": "持仓期间重复入场信号会重置信号时间和止盈止损，虽然pyramiding默认不加仓；固定或重算价位意图需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 133,
+        "detail": "持仓期间重复入场信号会重置信号时间和止盈止损，虽然pyramiding默认不加仓；固定或重算价位意图需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 799,
+    "id": "4414ec4b27e7",
+    "filename": "RSI均线交叉趋势策略RSI-Moving-Average-Crossover-Trend-Strategy.md",
+    "source_sha256": "5244f67bbbfd825ef266e0e011b9fc88be589ccc5b2897ebacac26a98037e313",
+    "code_sha256": "300b4a9c08c56e9648e92ca0e75a1eb9876013e3b176515679c848b07867aa05",
+    "code_lines": 53,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI16的EMA12高于SMA29且价格高于EMA8做多100%权益，RSI均线反向时平多。",
+    "evidence": [
+      {
+        "line": 134,
+        "code": "testPeriod() => true",
+        "reason": "日期函数恒真导致起止日期输入失效。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 134,
+        "detail": "日期函数恒真导致起止日期输入失效。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "testPeriod() => true",
+        "new": "testPeriod() => time >= timestamp(FromYear, FromMonth, FromDay, 0, 0) and time <= timestamp(ToYear, ToMonth, ToDay, 23, 59)",
+        "reason": "恢复日期窗。",
+        "preserved": "保留日期参数及信号。",
+        "validation_cases": [
+          "开始日前不入场。",
+          "结束日23:59之后不入场。"
+        ]
+      },
+      {
+        "old": "    strategy.close(id=\"long\", when=(emavalue < smavalue))",
+        "new": "strategy.close(id=\"long\", when=(emavalue < smavalue))",
+        "reason": "退出移出日期入场门禁。",
+        "preserved": "保持原RSI退出条件。",
+        "validation_cases": [
+          "窗外持仓遇反向信号仍平仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 818,
+    "id": "1ac6445798d5",
+    "filename": "RSI指标突破交易策略Alpha-RSI-Breakout-Trading-Strategy.md",
+    "source_sha256": "37f06c015ad4a665a4f1a622a817ed06be2cdd8493469461aa1b7bb26d2bcbf3",
+    "code_sha256": "041cc2c14ce3d0811007901fd79ffd00f61bf5b1422e6036b4295484d10edce9",
+    "code_lines": 60,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI上穿34且价格高于SMA200开多；RSI<=30或>=50市价平多，另有跟踪状态。",
+    "evidence": [
+      {
+        "line": 234,
+        "code": "if (trailing_stop_activate and not na(trailingStop) and close < trailingStop)",
+        "reason": "跟踪止损在收盘创新低时同步下调至当前close，使close<trailingStop无法成立；策略声明也被注释，需确认运行框架和跟踪意图。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 234,
+        "detail": "跟踪止损在收盘创新低时同步下调至当前close，使close<trailingStop无法成立；策略声明也被注释，需确认运行框架和跟踪意图。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 834,
+    "id": "8e7fbde9affd",
+    "filename": "RSI趋势动量交易策略结合双均线和成交量确认-RSI-Trend-Momentum-Trading-Strategy-with-Dual-MA-and-Volume-Confirmation.md",
+    "source_sha256": "412c001d91fe431bcec53e0680efe5adb36db118e52b504d3f44a116c9f9995f",
+    "code_sha256": "830d5403205e13c4272f6eecc3a085d70e38cec007e27e3298285aaaaf402acc",
+    "code_lines": 70,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI10<=30、SMA250>SMA500且量超过均量2.5倍时全权益做多；死叉平多并持续提交5%止损。",
+    "evidence": [
+      {
+        "line": 106,
+        "code": "rsi_lenght = input.int(10, title='RSI lenght', minval=0)",
+        "reason": "RSI长度允许0，传入rma会形成非法长度。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "invalid_length",
+        "evidence_line": 106,
+        "detail": "RSI长度允许0，传入rma会形成非法长度。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "rsi_lenght = input.int(10, title='RSI lenght', minval=0)",
+        "new": "rsi_lenght = input.int(10, title='RSI lenght', minval=1)",
+        "reason": "拒绝零长度。",
+        "preserved": "默认10及全部信号不变。",
+        "validation_cases": [
+          "默认长度10结果不变。",
+          "输入0被参数边界拒绝。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 837,
+    "id": "b153f3c59083",
+    "filename": "RSI趋势突破与动量增强交易策略-RSI-Trend-Breakthrough-and-Momentum-Enhancement-Trading-Strategy.md",
+    "source_sha256": "63702aba6144d39d9a13b60b2a2de27e3b328b34cb2fb8cc7ef31dd6c0fe23ea",
+    "code_sha256": "01961ebd135383f48552358f338ef4760cbea86d69832a74ceb953ea4e3761b2",
+    "code_lines": 66,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI高于自身均线且连续上涨、连续三次更高高点时以权益10%做多；收盘下穿SMA55平多，限定2007年以后。",
+    "evidence": [
+      {
+        "line": 169,
+        "code": "    strategy.entry(\"Long\", strategy.long, qty=strategy.equity * 0.1 / close)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 857,
+    "id": "2c7ae33c6c16",
+    "filename": "Random-Entry-Point-Strategy.md",
+    "source_sha256": "5fdec5d97c40c1424d18956bf4e0d2fcabf7fdc2e55237e512bf8d28707c2478",
+    "code_sha256": "91fa1927efc04e3123a1919c7bc45cf88331ab3a4af2dadbbf6bd175f07d69c8",
+    "code_lines": 36,
+    "review_scope": "full_source_static",
+    "synopsis": "成交量对整数取模小于半数时开多，以信号收盘价追踪涨跌幅，超过15%或低于-5%平仓。",
+    "evidence": [
+      {
+        "line": 99,
+        "code": "random = volume % i",
+        "reason": "取模整数可设0导致非法分母，且strategy声明被注释，需确认宿主和有效输入约束。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 99,
+        "detail": "取模整数可设0导致非法分母，且strategy声明被注释，需确认宿主和有效输入约束。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 925,
+    "id": "0cb464caf364",
+    "filename": "Sell-in-May-Buy-in-September-Strategy.md",
+    "source_sha256": "98f2d75469450648c1262e597442e20430bf8db3ecb862b4c1046a9219e873e1",
+    "code_sha256": "2a09b1edfec37d04e8ee19d0ff32a0e8f6c20f8689c592232720af0f667d4603",
+    "code_lines": 22,
+    "review_scope": "full_source_static",
+    "synopsis": "九月逐柱发出多头入场，五月平多；没有显式仓位或止损，采用平台默认订单配置。",
+    "evidence": [
+      {
+        "line": 71,
+        "code": "    strategy.entry(\"long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 974,
+    "id": "f1452b5dd45d",
+    "filename": "Supertrend结合RSI的量化交易策略Supertrend-Combined-with-RSI-Quantitative-Trading-Strategy.md",
+    "source_sha256": "e0fe624ab6acd04b832aff4d96d4fa070562f462d49231859ece526c0c25dc81",
+    "code_sha256": "e81eed841573fc37b30b7b8b5c22d325ec55f85e92b61a376b67ebd57aae7590",
+    "code_lines": 47,
+    "review_scope": "full_source_static",
+    "synopsis": "超级趋势方向反转开对应多空；RSI达到72/28或趋势反转平仓，默认只启用做多。",
+    "evidence": [
+      {
+        "line": 190,
+        "code": "    strategy.entry(\"Long\", strategy.long, when=entryLong)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 988,
+    "id": "e2497ac20270",
+    "filename": "TGT基于价格下跌买入策略-TGT-Falling-Buy-Strategy-Based-on-Price-Decline.md",
+    "source_sha256": "d08c7c1bec686e28d3cf067eaea125667ebcb5a0ff0e861025f90aefe5d506eb",
+    "code_sha256": "b801b6395de07e393e3fb413daafb872b6f07df7b0811e31ef0e4e75921a9292",
+    "code_lines": 54,
+    "review_scope": "full_source_static",
+    "synopsis": "单柱跌幅超过5%按自记balance/close买多，收盘高于持仓均价则平仓并以当前qty估算收益。",
+    "evidence": [
+      {
+        "line": 136,
+        "code": "    pnl = (close - strategy.position_avg_price) * qty",
+        "reason": "重复跌幅信号会覆盖qty但默认不加仓，自记balance忽略实际成交数量与成本；仓位账本语义需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 136,
+        "detail": "重复跌幅信号会覆盖qty但默认不加仓，自记balance忽略实际成交数量与成本；仓位账本语义需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1083,
+    "id": "c0c2e9906d2b",
+    "filename": "ZLSMA-增强型吊灯出场策略与成交量脉冲检测ZLSMA-Enhanced-Chandelier-Exit-Strategy-with-Volume-Spike-Detection.md",
+    "source_sha256": "08820ddb540fbae1db5e512c69b63a3510ce3f619444b656069ccd98435bd55a",
+    "code_sha256": "ac34fa92e4d73481fcc45a1fd09259c94c7f378ac1fe4401d053f77231a1cf11",
+    "code_lines": 62,
+    "review_scope": "full_source_static",
+    "synopsis": "吊灯方向翻转结合ZLSMA与相对量开多空，entry使用摆动低/高为stop；价格跨ZLSMA退出。",
+    "evidence": [
+      {
+        "line": 113,
+        "code": "dir := na(dir[1]) ? (close > shortStop ? 1 : close < longStop ? -1 : na) : close > shortStop[1] ? 1 : close < longStop[1] ? -1 : dir[1]",
+        "reason": "默认ATR周期1且useClose=true时shortStop>=close、longStop<=close，初始dir永远无法脱离na，所有翻转入口不可达；初始趋势选取需设计确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 113,
+        "detail": "默认ATR周期1且useClose=true时shortStop>=close、longStop<=close，初始dir永远无法脱离na，所有翻转入口不可达；初始趋势选取需设计确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1129,
+    "id": "b775e0619823",
+    "filename": "一云多均线交易策略-Ichimoku-Cloud-and-Moving-Average-Strategy.md",
+    "source_sha256": "2f25e8262272ac843a8325c5c8dd34b1ea426e1599b738985d841bbc386e22d6",
+    "code_sha256": "bfadc3dbdbca359b78d66ccef08bff1d396914881d5d9508b17a834e32d88723",
+    "code_lines": 72,
+    "review_scope": "full_source_static",
+    "synopsis": "价格高于未位移均价云与SMA200、跨SMA55开多；对称条件开空反转，默认仓位且无独立退出。",
+    "evidence": [
+      {
+        "line": 137,
+        "code": "strategy.entry(\"Buy\", strategy.long, when = buyCondition)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1197,
+    "id": "b3bc2fef066c",
+    "filename": "三线突破动量趋势跟踪策略结合ADX过滤器-Three-Line-Strike-Momentum-Trend-Following-Strategy-with-ADX-Filter.md",
+    "source_sha256": "e1d36128fd4988bad8fc4fe2cd8b9469394a1ede77f97e166606c472ea92b718",
+    "code_sha256": "38be2feeb51d28d4b2e77770f244ecfc17fdfaea837d16fea6c9147dccd5c70a",
+    "code_lines": 111,
+    "review_scope": "full_source_static",
+    "synopsis": "三根同色后反向实体吞没配合ADX>25开多空，全权益，信号价加减1ATR止损及2ATR止盈。",
+    "evidence": [
+      {
+        "line": 131,
+        "code": "minusDM = ta.change(low) > ta.change(high) and ta.change(low) > 0 ? ta.change(low) : 0",
+        "reason": "负向DM用了低价正变化而非前低减当前低，ADX过滤因此偏离方向运动定义；需确认采用标准ADX或保留自定义指标。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 131,
+        "detail": "负向DM用了低价正变化而非前低减当前低，ADX过滤因此偏离方向运动定义；需确认采用标准ADX或保留自定义指标。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1289,
+    "id": "b01caf55ba81",
+    "filename": "交叉动能趋势跟踪策略SMA-RSI交叉动量系统-Cross-Momentum-Trend-Following-Strategy-SMA-RSI-Cross-Momentum-System.md",
+    "source_sha256": "adc0b92bfa36a0c19de60f481bad696d3fe49b15f940d7e4a59969f09b7c1ede",
+    "code_sha256": "92b485d6eae560c1e97d8d3358ea1c00df7868ef9a466c711f36dee5cfb91715",
+    "code_lines": 84,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘上穿SMA20且RSI8>60开多；下穿且RSI<40平多，另统计信号后2%上涨及7柱跌破低点。",
+    "evidence": [
+      {
+        "line": 212,
+        "code": "    success = high >= entryPrice * 1.02",
+        "reason": "信号柱高价直接计入买后上涨统计，可能发生在收盘信号前；统计窗口计数及成功失败可同时累计，须定义统计事件顺序。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 212,
+        "detail": "信号柱高价直接计入买后上涨统计，可能发生在收盘信号前；统计窗口计数及成功失败可同时累计，须定义统计事件顺序。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1395,
+    "id": "cc5db530f20c",
+    "filename": "分离通道唐奇安突破策略Dual-Channel-Donchian-Breakout-Strategy.md",
+    "source_sha256": "37447f7008060000439315d41daad14175ac2916d596b91ef013a2834b0da290",
+    "code_sha256": "3f944acfd8a349c4ef536c72abf93fd947ecf32e4688a45d03c79a8e71f0ea56",
+    "code_lines": 43,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘突破上一柱20期高通道买1份，跌破上一柱20期低通道平多；通道长度分别可调。",
+    "evidence": [
+      {
+        "line": 157,
+        "code": "    strategy.entry(\"buy\", strategy.long,1)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1404,
+    "id": "301a4fe5c525",
+    "filename": "利用双均线反转策略Dual-Moving-Average-Reversal-Strategy.md",
+    "source_sha256": "bc716064a4950fcd46ad74ab256854e6b81bb307bf7b827a58fa38c93dfe6801",
+    "code_sha256": "6da6bf960759a35ac0c23baeb03ad47b409f486a30c6c687e5d504d78050bc46",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "连续三阴且末柱实体占幅超70%做多、收盘越前高退出；三阳大实体且低于SMA200做空、跌破前低退出。",
+    "evidence": [
+      {
+        "line": 169,
+        "code": "strategy.entry(\"Entry Long\", strategy.long, when=isLongBuy)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1409,
+    "id": "e2f01cf453df",
+    "filename": "加权移动平均线和相对强弱指数交叉策略与风险管理优化系统Weighted-Moving-Average-and-Relative-Strength-Index-Crossover-Strategy-with-Risk-Management-Optimization-System.md",
+    "source_sha256": "f0ddb771b4869ae124882dd19b7643066518a04293240d8ed8ddd7652ac6802a",
+    "code_sha256": "ba7b58ecb0f6de16293ba57eed4af4d4e932a60548b807ad3ac91c0fe63a743b",
+    "code_lines": 48,
+    "review_scope": "full_source_static",
+    "synopsis": "WMA7上穿WMA9且RSI14<40开多，持仓均价上40价格点止盈、下20点止损。",
+    "evidence": [
+      {
+        "line": 276,
+        "code": "    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=long_take_level, stop=long_stop_level)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1441,
+    "id": "351cd9816292",
+    "filename": "动态RSI与PSAR交叉策略结合风险管理系统-Dynamic-RSI-and-PSAR-Crossover-Strategy-with-Risk-Management-System.md",
+    "source_sha256": "aa050d9c9c335070eea478a28d4f65da6039fdcd553a50ebdf98b34908991285",
+    "code_sha256": "180a71128ffbe15e7f894d54537628369150926d1ea4279e07fa4167670b1bd7",
+    "code_lines": 56,
+    "review_scope": "full_source_static",
+    "synopsis": "价格上穿PSAR且RSI超卖时以10%权益做多，信号价5%目标与3%止损；反向PSAR且RSI超买平仓。",
+    "evidence": [
+      {
+        "line": 146,
+        "code": "    strategy.exit(\"Take Profit / Stop Loss\", from_entry=\"Buy\", limit=close * (1 + tp_percent), stop=close * (1 - sl_percent))",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1447,
+    "id": "f49051aa8a2f",
+    "filename": "动态RSI矩形Grid策略RSI-Box-Grid-Strategy.md",
+    "source_sha256": "79323dfd5cbaec2d6a28e5baf45a69990906bc858e103f885c50a9cc581e0bb8",
+    "code_sha256": "59f136a9a6d83da974d8bca6bfd0b4f3cc236e750a271446f2f75d61ee5b414a",
+    "code_lines": 114,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI穿越阈值固定VWMA高低形成五级网格；跨相邻上级线买多，下跨对应线平多并可选开空，反向入场平空。",
+    "evidence": [
+      {
+        "line": 409,
+        "code": "    strategy.entry(\"Long\",strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1496,
+    "id": "0ff09f1096f7",
+    "filename": "动态均线与布林带交叉策略结合固定止损优化模型-Dynamic-Moving-Average-and-Bollinger-Bands-Cross-Strategy-with-Fixed-Stop-Loss-Optimization-Model.md",
+    "source_sha256": "208cdc01d670a137fb1e8b26d4127e6aaf04308b62695170b90174691c76ef91",
+    "code_sha256": "56d33b83adf4d53cc81eb5246634a6d099929f700a3b75bfa2470b9570a14902",
+    "code_lines": 56,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA200趋势与布林中轨过滤，价格回穿下轨开多、下穿上轨开空，触对轨平仓并设置3%止损。",
+    "evidence": [
+      {
+        "line": 184,
+        "code": "    strategy.exit(\"Stop Long\", \"Long\", stop=strategy.position_avg_price * (1 - fixed_stop_loss_percent))",
+        "reason": "止损仅在入场信号柱读取尚未成交的position_avg_price，空仓得到na且后续无信号不补交。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "protective_order_scope",
+        "evidence_line": 184,
+        "detail": "止损仅在入场信号柱读取尚未成交的position_avg_price，空仓得到na且后续无信号不补交。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    strategy.exit(\"Stop Long\", \"Long\", stop=strategy.position_avg_price * (1 - fixed_stop_loss_percent))",
+        "new": "if strategy.position_size > 0\n    strategy.exit(\"Stop Long\", \"Long\", stop=strategy.position_avg_price * (1 - fixed_stop_loss_percent))",
+        "reason": "持多时更新有效均价止损。",
+        "preserved": "保留3%与信号。",
+        "validation_cases": [
+          "空仓信号后成交，下一次计算提交多头止损。"
+        ]
+      },
+      {
+        "old": "    strategy.exit(\"Stop Short\", \"Short\", stop=strategy.position_avg_price * (1 + fixed_stop_loss_percent))",
+        "new": "if strategy.position_size < 0\n    strategy.exit(\"Stop Short\", \"Short\", stop=strategy.position_avg_price * (1 + fixed_stop_loss_percent))",
+        "reason": "持空时更新有效均价止损。",
+        "preserved": "保留3%与信号；不改变成交时机，首个计算前保护空档仍存在。",
+        "validation_cases": [
+          "反转为空后按新均价设置止损。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 1499,
+    "id": "2c0555b47d2d",
+    "filename": "动态均线交叉趋势策略Dynamic-SMA-Cross-Trend-Strategy.md",
+    "source_sha256": "f9a18165c666bb9a68f826bc30c8e2da17043a177e34039ad9a9a21c2a4f6433",
+    "code_sha256": "6d84a30fcfa3e998fb5566263459a5ac94de75aeb54a019e786540c7162dd2a5",
+    "code_lines": 53,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA7与SMA30金叉做多、死叉平仓；按固定资金1%除以2ATR确定数量，SMA50只绘图。",
+    "evidence": [
+      {
+        "line": 193,
+        "code": "tradeSize = riskCapital / lossThreshold",
+        "reason": "ATR为零时数量除零；且风险预算的2ATR并未提交止损，需确认风险仓位及保护设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 193,
+        "detail": "ATR为零时数量除零；且风险预算的2ATR并未提交止损，需确认风险仓位及保护设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1515,
+    "id": "6230247fdfe9",
+    "filename": "动态多指标趋势动量优化交易策略-Dynamic-Multi-Indicator-Trend-Momentum-Enhanced-Trading-Strategy.md",
+    "source_sha256": "9c9eb376455ca33a261661070f45860a944194229e8396a1899c822a1eacfe8c",
+    "code_sha256": "e42702090e24f1344eb84886e02be90e43bff002e7bea6f5f8a261542c53cbf2",
+    "code_lines": 55,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA20/50金叉、RSI>55、MACD及EMA200一致时10%权益做多；信号价1.5ATR止损、2R止盈，卖信号仅绘图。",
+    "evidence": [
+      {
+        "line": 195,
+        "code": "    strategy.exit(\"TP/SL\", from_entry=\"BUY\", stop=stop_loss, limit=take_profit)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1588,
+    "id": "01a62128f847",
+    "filename": "动态移动止损长仓与季节性过滤的价格突破策略Dynamic-Trailing-Stop-Long-Only-Trend-Following-Strategy-with-Seasonality-Filter.md",
+    "source_sha256": "0b874ba152c41c4a11bb634f7e5314db14d5be266bb30bf09996f52bcf00b00a",
+    "code_sha256": "7325825f9891e5e3673b143fae7a152e9519821f72e58e9e41fbf8a069f08211",
+    "code_lines": 120,
+    "review_scope": "full_source_static",
+    "synopsis": "ADX上穿27且+DI>-DI做多，选配季节过滤；5.5ATR止损随收盘单向抬升，空仓才允许入场。",
+    "evidence": [
+      {
+        "line": 188,
+        "code": "isTradingTime() => true",
+        "reason": "时段函数恒真，周几输入未接线；季节六月d>=27且d<=8不可达，时区计算亦需明确，不猜测应有窗口。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 188,
+        "detail": "时段函数恒真，周几输入未接线；季节六月d>=27且d<=8不可达，时区计算亦需明确，不猜测应有窗口。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1628,
+    "id": "05fd2597e8b4",
+    "filename": "动态趋势跟踪型双均线通道策略与风险管理系统-Dynamic-Trend-Following-Dual-Moving-Average-Channel-Strategy-with-Risk-Management-System.md",
+    "source_sha256": "4d566007c266791e5d3bb8461d50cc0f4b671f24c86545cf657a4005a73a7fe9",
+    "code_sha256": "0e21bc0bef30a0464e6294ea3142e72694a009cf67ab410c258976099e4753c1",
+    "code_lines": 58,
+    "review_scope": "full_source_static",
+    "synopsis": "连续五根低价在高价SMA10上方全权益买多；连续五根高价低于低价SMA8或回撤最高价25%市价退出。",
+    "evidence": [
+      {
+        "line": 146,
+        "code": "stopLossCondition = low < highestPrice * (1 - stopLossPercent)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1644,
+    "id": "339219da52fb",
+    "filename": "动态达瓦斯箱体突破与均线趋势确认交易系统-Dynamic-Darvas-Box-Breakout-with-Moving-Average-Trend-Confirmation-Trading-System.md",
+    "source_sha256": "8ffb71f39ea63ac6a2884a896e1ac057a3c2aaa5d147fa994371b342eaf8d032",
+    "code_sha256": "9557049db9cb997cc4ecb46303a5e1784a2741b66447c259b77903d96b112695",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "达瓦斯箱顶突破且高于SMA25开多，跌破箱底退出；箱体用近期高低点确认。",
+    "evidence": [
+      {
+        "line": 138,
+        "code": "k3 = ta.highest(high, boxp - 2)",
+        "reason": "boxp允许1或2导致boxp-2为非正长度。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "invalid_length",
+        "evidence_line": 138,
+        "detail": "boxp允许1或2导致boxp-2为非正长度。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "boxp = input.int(5, \"BOX LENGTH\")",
+        "new": "boxp = input.int(5, \"BOX LENGTH\", minval=3)",
+        "reason": "保证三个highest窗口均为正。",
+        "preserved": "默认5与算法保持。",
+        "validation_cases": [
+          "输入3时最短窗口为1。",
+          "输入1或2被拒绝。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 1653,
+    "id": "96056a60c81a",
+    "filename": "动态阈值价格变化突破策略-Dynamic-Threshold-Price-Change-Breakout-Strategy.md",
+    "source_sha256": "a999081d483ae618481f9f959b6237f1140b1a733175b62a1373c9755d1f679d",
+    "code_sha256": "8e4ee14cbd32232e1f57144e474418582fd9f816ab988c36c021575e58c0507a",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "单柱涨幅达到阈值时做多并保存六柱最低价；单柱跌幅达到反向阈值或跌破保存低点则平多，自记状态避免重复。",
+    "evidence": [
+      {
+        "line": 114,
+        "code": "if (sell_condition or low < stop)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1672,
+    "id": "491653f40480",
+    "filename": "动量价格爬坡型加密货币策略Momentum-Price-Climbing-Crypto-Currency-Strategy.md",
+    "source_sha256": "8f6e6c26bca32746398388feac4e3a43dc1d5c686d3bebd18d374fad4f67b5af",
+    "code_sha256": "139e274833c29298782007dcd9b569427a2fd2b3cba8be18bac91b144686fa1d",
+    "code_lines": 51,
+    "review_scope": "full_source_static",
+    "synopsis": "价格相对60柱高低中点上穿0且突破两柱前高、Vortex金叉做多；反向动量退出，另以当前价格换算tick止盈止损。",
+    "evidence": [
+      {
+        "line": 200,
+        "code": "strategy.exit(\"closelong\", \"long\" , profit = close * tplong / syminfo.mintick, loss = close * sllong / syminfo.mintick, alert_message = \"closelong\")",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1688,
+    "id": "f19bad41da52",
+    "filename": "动量反转短线交易策略-Momentum-Reversal-Trading-Strategy.md",
+    "source_sha256": "a6cb0d25eda07e58f17032d45e8271d7dd02a200cf0696f4d84639151f304751",
+    "code_sha256": "3e8b40d511635e6b348e7d5ae14dc0619133801947d139104a12eee6c3d22f07",
+    "code_lines": 47,
+    "review_scope": "full_source_static",
+    "synopsis": "价格高于SMA200低于SMA10且RSI3<30空仓开多；均价5%止损20%目标，短均线上且低于前低也退出。",
+    "evidence": [
+      {
+        "line": 161,
+        "code": "datefilter = true",
+        "reason": "日期过滤恒真，输入的起止时间不起作用。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 161,
+        "detail": "日期过滤恒真，输入的起止时间不起作用。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "datefilter = true",
+        "new": "datefilter = time >= startday and time <= endday",
+        "reason": "恢复仅入场日期窗。",
+        "preserved": "保持所有退出不受窗口限制。",
+        "validation_cases": [
+          "窗前和窗后禁止入场。",
+          "窗外持仓仍执行止损和信号退出。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 1703,
+    "id": "3f33228a0946",
+    "filename": "动量均线交叉策略A-Momentum-Crossover-Strategy-Based-on-Exponential-Moving-Average.md",
+    "source_sha256": "3e6a6eb2c4e2567d3ff1628492acf83a84f73fbabf72dc86e1b28b1b1878d0ff",
+    "code_sha256": "04a6bdd6a08fc92a1a4c4ef6d390b23aba6637c85c7680ee6e8784fcdbf40578",
+    "code_lines": 106,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA10/20交叉配合趋势持续计数和极值间隔开多空反转；EMA2和EMA50不参与执行，无独立保护退出。",
+    "evidence": [
+      {
+        "line": 215,
+        "code": "    strategy.entry(\"LONG\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1710,
+    "id": "6b416f0ebe7e",
+    "filename": "动量型一目均衡交易策略Momentum-Ichimoku-Cloud-Trading-Strategy.md",
+    "source_sha256": "8389978d124afbba976daed45ca482fc19484e59c3f6fed9c81f5af24a071da5",
+    "code_sha256": "a647055b50c2ac313b6161f05a8967a1f77ccb9b8f94787cb4150db1e86c9462",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA式转换线/基准线金叉且价格在位移26柱云上开多；死叉或跌破云双线平仓，默认数量。",
+    "evidence": [
+      {
+        "line": 195,
+        "code": "enterLong = ta.crossover(tenkanSen, kijunSen) and close > senkouSpanA[displacement] and close > senkouSpanB[displacement]",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1715,
+    "id": "062ed0d6f3cd",
+    "filename": "动量孔隙交易策略Momentum-Gap-Trading-Strategy.md",
+    "source_sha256": "11834d41ca9cdb13959622e673b0bd3c1108e112d0da58b97e1848f1fa6fe100",
+    "code_sha256": "d8e0b66466af7c6b0b2a7a966b0326aa572f6614e96c9274f69e2a8ef9756fde",
+    "code_lines": 55,
+    "review_scope": "full_source_static",
+    "synopsis": "累计向上/下跳空比的均线上升时空仓开多；下降时平仓或可选反转做空。",
+    "evidence": [
+      {
+        "line": 254,
+        "code": "if strategy.opentrades <= 0 and signal > signal[1]",
+        "reason": "启用双向后空头也是opentrades>0，上升分支要求<=0因此无法反转回多；需按持仓方向明确状态机。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 254,
+        "detail": "启用双向后空头也是opentrades>0，上升分支要求<=0因此无法反转回多；需按持仓方向明确状态机。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1719,
+    "id": "2e4c39a90183",
+    "filename": "动量布林带突破策略Momentum-Bollinger-Bands-Breakout-Strategy.md",
+    "source_sha256": "f6eb15949f97481cc834834124371bcad3fb07fe94d35c84d6a73b392a6638ed",
+    "code_sha256": "d6f61087d66d22c8c152b2a68216e5624e2da31b195f7e7f563e181b126a6580",
+    "code_lines": 52,
+    "review_scope": "full_source_static",
+    "synopsis": "布林下轨上穿开多、下轨下穿开空，可选均线位置过滤；按中轨或边轨交叉平全部。",
+    "evidence": [
+      {
+        "line": 205,
+        "code": "if (nflb?(crossunder(source,lower) and noisefilter>upper): crossunder(source, lower))",
+        "reason": "sellEntry定义为上轨下穿但实际空头用下轨，可能是突破做空或复制错误，需确认意图。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 205,
+        "detail": "sellEntry定义为上轨下穿但实际空头用下轨，可能是突破做空或复制错误，需确认意图。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1810,
+    "id": "0bbffd80ce41",
+    "filename": "动量跨市高效盈利策略Momentum-Swing-Effective-Profit-Strategy.md",
+    "source_sha256": "e238a5c86a7e5047eda5ed772fcb475078d6291d309ac77410662b856ce2f895",
+    "code_sha256": "b05ae1798afee765cca8bd730452f1cca99223f831f474ba6709457a98ebb953",
+    "code_lines": 77,
+    "review_scope": "full_source_static",
+    "synopsis": "大幅阳线结合均线、量突破和动量开多，EMA10下方平仓；自记持仓并尝试50%止损及30%止盈。",
+    "evidence": [
+      {
+        "line": 184,
+        "code": "    strategy.exit(\"Long Take Profit\", \"Buy\", limit=takeProfit)",
+        "reason": "两个全量strategy.exit依次预留同一仓位，第二个止盈可能无可用数量；保护成交后inPosition也不复位，需完整状态设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 184,
+        "detail": "两个全量strategy.exit依次预留同一仓位，第二个止盈可能无可用数量；保护成交后inPosition也不复位，需完整状态设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1819,
+    "id": "edf5b173bfa6",
+    "filename": "动量阈值驱动的平衡力量交易策略-Momentum-Threshold-Driven-Balance-of-Power-Trading-Strategy.md",
+    "source_sha256": "3dbc080470fe0fc7d045519f62a6bd4a7effc12beab353444d8b0c55083a10e3",
+    "code_sha256": "638f5c5b51a9fcbfa92ad5b0b8c987d4cbf19d5e6649713ecfffce3570fdf7b4",
+    "code_lines": 55,
+    "review_scope": "full_source_static",
+    "synopsis": "实体占振幅比例上穿0.8按权益5倍做多，下穿-0.8平多；标签以收盘近似成交价。",
+    "evidence": [
+      {
+        "line": 97,
+        "code": "p = (close - open) / (high - low)",
+        "reason": "无振幅柱high=low导致比例除零，如何处理连续平价柱信号需明确；标签收益也非实际成交收益。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 97,
+        "detail": "无振幅柱high=low导致比例除零，如何处理连续平价柱信号需明确；标签收益也非实际成交收益。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 1882,
+    "id": "47cf1b6bcb93",
+    "filename": "双EMA金叉死叉跟踪策略Dual-EMA-Crossover-Strategy.md",
+    "source_sha256": "fa646007d3c44fcc0a2491940976bdc2fb5f2c60771f621f79466d71dee68eef",
+    "code_sha256": "45302a389d0c050a04f05d3d75ac6f2e3b47c2c6ffd4eec6e0897982ef1c63a1",
+    "code_lines": 58,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA10/21金叉全权益买多、死叉平仓；日期窗结束时已有取消与强平逻辑。",
+    "evidence": [
+      {
+        "line": 208,
+        "code": "inTradeWindow = true",
+        "reason": "日期窗恒真导致范围及到期清仓逻辑不可达。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 208,
+        "detail": "日期窗恒真导致范围及到期清仓逻辑不可达。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "inTradeWindow = true",
+        "new": "inTradeWindow = not useDateFilter or (time >= backtestStartDate and time <= backtestEndDate)",
+        "reason": "恢复可关闭的日期过滤。",
+        "preserved": "保留结束窗已有撤单强平。",
+        "validation_cases": [
+          "过滤关闭允许所有日期。",
+          "结束窗后触发已有撤单平仓。"
+        ]
+      },
+      {
+        "old": "if inTradeWindow and ta.crossunder(fastMA, slowMA)",
+        "new": "if ta.crossunder(fastMA, slowMA)",
+        "reason": "退出不依赖入场日期窗。",
+        "preserved": "保留EMA死叉退出。",
+        "validation_cases": [
+          "窗外死叉仍允许退出。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 1913,
+    "id": "30fa62fbf950",
+    "filename": "双Stochastics与成交量加权移动平均线组合指标Dual-Stochastics-and-Volume-Weighted-Moving-Average-Combination-Indicator-Strategy.md",
+    "source_sha256": "12ce3523b43520b2d65a1d50ad0fdaebb387f254d0fb2b78b6e5fc841d438591",
+    "code_sha256": "f0f2b8446735b92901ff100a7e4d8305d02699f4d1d97fddc4249a042f8ea519",
+    "code_lines": 54,
+    "review_scope": "full_source_static",
+    "synopsis": "30和90期随机指标K相加并取VWMA；合成值及均线从混合转同升开多，同降平多，无独立止损。",
+    "evidence": [
+      {
+        "line": 200,
+        "code": "strategy.entry(\"Long\", strategy.long,when=buy==1)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1915,
+    "id": "740285e0f0f4",
+    "filename": "双TEMA叉死叉交易策略Dual-TEMA-Crossover-Trading-Strategy.md",
+    "source_sha256": "9fb49b9aea47dee036223f1e5ec9f814685db0d7614dbf7ade673c3079e4668a",
+    "code_sha256": "02f020eb73ce8547b5d76969d2209ff93ec3e03e2ec236f78015cb6eb8de8b44",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "TEMA20高于TEMA60全权益做多，反向平多，仅长仓。",
+    "evidence": [
+      {
+        "line": 223,
+        "code": "window() =>  true",
+        "reason": "日期window恒真忽略起止设置。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 223,
+        "detail": "日期window恒真忽略起止设置。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window() =>  true",
+        "new": "window() => time >= start and time <= finish",
+        "reason": "恢复入场日期。",
+        "preserved": "保持窗外TEMA退出。",
+        "validation_cases": [
+          "窗外不新增仓位。",
+          "已有多仓窗外反向仍退出。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 1952,
+    "id": "d49e9e35d846",
+    "filename": "双向跨均线反转策略Dual-Cross-Moving-Average-Reversal-Strategy.md",
+    "source_sha256": "4ebd0b325b09053e0e6736e8a59859ff790868b13489bd46716b74c7febbcf2e",
+    "code_sha256": "e6ee0db3af8aa9c23937cfc6262f8bf8a23cffb74ee8bdd92aaf6cea75701681",
+    "code_lines": 79,
+    "review_scope": "full_source_static",
+    "synopsis": "123反转随机指标状态与BearPower阈值同向才开对应多空；不一致平全部，可选整体反向。",
+    "evidence": [
+      {
+        "line": 207,
+        "code": "if (possig == 0) ",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 1959,
+    "id": "963ff671d194",
+    "filename": "双周期ATR波动率突破股票趋势策略Volatility-Bands-and-VWAP-Multi-Timeframe-Stock-Trend-Trading-Strategy.md",
+    "source_sha256": "7c5c2f6959b0af3cb6985002a175b657f151176e905ab1d14ded95ddce36f955",
+    "code_sha256": "927cf69d129f4881a0a82d42dc184f19fb3104cce2fa05fac5de7df26ebcf402",
+    "code_lines": 90,
+    "review_scope": "full_source_static",
+    "synopsis": "平方价格均值开根形成通道源，突破且高于周VWAP挂多头stop，反向跨通道且低于周VWAP平多。",
+    "evidence": [
+      {
+        "line": 180,
+        "code": "time_cond = true",
+        "reason": "日期恒真且取消条件已计算未执行，过期或反向时挂单可滞留。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 180,
+        "detail": "日期恒真且取消条件已计算未执行，过期或反向时挂单可滞留。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "time_cond = true",
+        "new": "time_cond = time >= startDate and time <= finishDate",
+        "reason": "恢复日期。",
+        "preserved": "保留原时间边界。",
+        "validation_cases": [
+          "日期窗外禁止新挂单。"
+        ]
+      },
+      {
+        "old": "if(longOnly and time_cond)\n    if (crossLower and close < vwapW )\n        strategy.close(\"long\")\n    if (crossUpper and close>vwapW)\n        strategy.entry(\"long\", strategy.long, stop=bprice)",
+        "new": "if longOnly\n    if (crossLower and close < vwapW )\n        strategy.close(\"long\")\n    if (time_cond and crossUpper and close>vwapW)\n        strategy.entry(\"long\", strategy.long, stop=bprice)\nif cancelBcond or not time_cond\n    strategy.cancel(\"long\")",
+        "reason": "退出移出门禁，接回已声明撤单条件。",
+        "preserved": "保留突破与VWAP信号。",
+        "validation_cases": [
+          "反向且未成交时撤销long挂单。",
+          "窗外退出仍执行，挂单取消。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 1993,
+    "id": "cf0d8c1452f5",
+    "filename": "双均线交叉与随机RSI超买超卖区间优化交易策略-Dual-Moving-Average-Crossover-with-Stochastic-RSI-Overbought-Oversold-Enhanced-Trading-Strategy.md",
+    "source_sha256": "1ce10d7f0ffef7185cf938235a47adc74d2096cd159a954c77e4cd66c4e2a4e5",
+    "code_sha256": "5f5b08582f26d4499a121b6b29706793601216c4c756cacb870450e20bb90aca",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA21>SMA55时随机RSI在20下金叉买多；在80上死叉平仓，平台默认数量。",
+    "evidence": [
+      {
+        "line": 128,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2075,
+    "id": "02bfc6b39fae",
+    "filename": "双均线止盈止损趋势交易策略-Dual-Moving-Average-Trend-Trading-Strategy-with-Stop-Loss-and-Take-Profit.md",
+    "source_sha256": "8a99e018699760e4ed67caf7650bc646f6e76e60f7be22a13405c5c16514d08b",
+    "code_sha256": "08cb30cc799efe1399226e1ae16d725cc7d20e5a44f4424fdd213f44de924695",
+    "code_lines": 60,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA9/21金叉做多、死叉退出；拟按持仓均价设置1%止盈止损，另绘制保护区。",
+    "evidence": [
+      {
+        "line": 116,
+        "code": "    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=strategy.position_avg_price * (1 - stop_loss_percent), limit=strategy.position_avg_price * (1 + take_profit_percent)  )",
+        "reason": "均价退出仅在入场信号柱提交，空仓均价na导致保护单缺失。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "protective_order_scope",
+        "evidence_line": 116,
+        "detail": "均价退出仅在入场信号柱提交，空仓均价na导致保护单缺失。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=strategy.position_avg_price * (1 - stop_loss_percent), limit=strategy.position_avg_price * (1 + take_profit_percent)  )",
+        "new": "if strategy.position_size > 0\n    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=strategy.position_avg_price * (1 - stop_loss_percent), limit=strategy.position_avg_price * (1 + take_profit_percent)  )",
+        "reason": "持仓期间持续提交均价保护。",
+        "preserved": "保持均线及百分比，首个成交后计算前的保护空档仍待平台验证。",
+        "validation_cases": [
+          "金叉后下一柱无新信号也提交有效保护。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2122,
+    "id": "3614a02c8372",
+    "filename": "双均线黄金交叉算法Dual-Moving-Average-Golden-Cross-Algorithm.md",
+    "source_sha256": "0522d5d6c3cf0b94d9184502f58288fac587e8de0c8f23be8159ab19ff34e0bb",
+    "code_sha256": "f19333abf98e60e7056165ce4133d68c953bd500a55ede9b7d4d4e789d88ae28",
+    "code_lines": 48,
+    "review_scope": "full_source_static",
+    "synopsis": "价格减EMA8差值在零下转强且低于EMA距最低值时买多；正差转弱触发均价上20%限价退出。",
+    "evidence": [
+      {
+        "line": 124,
+        "code": "    strategy.exit(\"Buy\", limit = gain)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2162,
+    "id": "7f438a53c539",
+    "filename": "双时间尺度动量策略-Dual-Timeframe-Momentum-Strategy.md",
+    "source_sha256": "c656866040490d741d6e330cd2e41351897d5a788e456a71fff2bf0e35fbf297",
+    "code_sha256": "a4722407010a723af279529793005dfc4cd6623eae08d732df8425bd85190b28",
+    "code_lines": 56,
+    "review_scope": "full_source_static",
+    "synopsis": "请求高周期价格在本周期计算均线与枢轴；上升趋势低点确认时挂open限价多单，下降趋势高点确认平仓。",
+    "evidence": [
+      {
+        "line": 141,
+        "code": "    strategy.close(id=\"Long\", comment=\"Close Long\", alert_message=exit_long_alert)",
+        "reason": "退出只close不会取消尚未成交Long限价单，空仓反向后仍可迟到成交。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "stale_pending_entry",
+        "evidence_line": 141,
+        "detail": "退出只close不会取消尚未成交Long限价单，空仓反向后仍可迟到成交。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    strategy.close(id=\"Long\", comment=\"Close Long\", alert_message=exit_long_alert)",
+        "new": "    strategy.cancel(\"Long\")\n    strategy.close(id=\"Long\", comment=\"Close Long\", alert_message=exit_long_alert)",
+        "reason": "反向失效时取消未成交同ID入口。",
+        "preserved": "不改入场价格、方向和数量。",
+        "validation_cases": [
+          "未成交限价单遇short信号撤销。",
+          "已持仓仍执行原平仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2168,
+    "id": "a9f40db0eff2",
+    "filename": "双时间轴波动率价差交易策略Dual-Timeframe-Volatility-Spread-Trading-Strategy.md",
+    "source_sha256": "c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97",
+    "code_sha256": "e05c4cb547bb49b32c864ad8f4637514443eda52774c70ca7b0dca95b13f81fc",
+    "code_lines": 61,
+    "review_scope": "full_source_static",
+    "synopsis": "两组EMA差RSI及EMA RSI上穿零分别开多，按启用组数均分权益；下穿零或超过终日分别平仓。",
+    "evidence": [
+      {
+        "line": 174,
+        "code": "window()  => true",
+        "reason": "window恒真使日期外仍进场。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 174,
+        "detail": "window恒真使日期外仍进场。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window()  => true",
+        "new": "window()  => time >= start and time <= finish",
+        "reason": "恢复入场窗口。",
+        "preserved": "保留退出到期处理与数量设置。",
+        "validation_cases": [
+          "到期后不再新入场，已有仓位按原条件退出。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2184,
+    "id": "f7e47e854056",
+    "filename": "双确认唐奇安通道趋势策略Dual-Confirmation-Donchian-Channel-Trend-Strategy.md",
+    "source_sha256": "760f72b470871ad1a627f02277b35eb84f2ff6d3a8128fe59da0c8394d6cbe6e",
+    "code_sha256": "d533963b2572a78fe3c1da68642acc6596a3e95d854a13cbd9a438ea4129549e",
+    "code_lines": 44,
+    "review_scope": "full_source_static",
+    "synopsis": "唐奇安上沿连创新高开Buy，下沿创新低平Buy并可选Short，全权益，双确认可关闭。",
+    "evidence": [
+      {
+        "line": 232,
+        "code": "                    strategy.entry(\"Short\", true)",
+        "reason": "Short订单方向参数仍true(多头)，持仓标记也逐柱false且未更新；改变方向属策略设计决定。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 232,
+        "detail": "Short订单方向参数仍true(多头)，持仓标记也逐柱false且未更新；改变方向属策略设计决定。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 2209,
+    "id": "63539726a65b",
+    "filename": "双移动平均线交叉MACD趋势跟踪策略Dual-Moving-Average-Crossover-MACD-Trend-Following-Strategy.md",
+    "source_sha256": "f4919da828cadb078c7b6613d818a2d09c8f1bb78a9796e999716f391fa84172",
+    "code_sha256": "7606237cdb50236316a547662574f61eceb8e7551f061f2e4c5b2d9e22e32983",
+    "code_lines": 78,
+    "review_scope": "full_source_static",
+    "synopsis": "MACD在零上且高于信号线做多、零下低于信号线做空；可选单向或双向反转。",
+    "evidence": [
+      {
+        "line": 200,
+        "code": "window()  => true // create function \"within window of time\"",
+        "reason": "日期函数恒真且完全未调用。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 200,
+        "detail": "日期函数恒真且完全未调用。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window()  => true // create function \"within window of time\"",
+        "new": "window()  => time >= start and time <= finish",
+        "reason": "恢复日期函数。",
+        "preserved": "边界设置不变。",
+        "validation_cases": [
+          "窗外函数为false。"
+        ]
+      },
+      {
+        "old": "if LSB == \"Long only\" and Green",
+        "new": "if LSB == \"Long only\" and Green and window()",
+        "reason": "接入入口日期门禁。",
+        "preserved": "独立退出条件不变。",
+        "validation_cases": [
+          "该入口窗外不发新订单。"
+        ]
+      },
+      {
+        "old": "if LSB == \"Both\" and Green",
+        "new": "if LSB == \"Both\" and Green and window()",
+        "reason": "接入入口日期门禁。",
+        "preserved": "独立退出条件不变。",
+        "validation_cases": [
+          "该入口窗外不发新订单。"
+        ]
+      },
+      {
+        "old": "if LSB == \"Both\" and Red",
+        "new": "if LSB == \"Both\" and Red and window()",
+        "reason": "接入入口日期门禁。",
+        "preserved": "独立退出条件不变。",
+        "validation_cases": [
+          "该入口窗外不发新订单。"
+        ]
+      },
+      {
+        "old": "if LSB == \"Short only\" and Red",
+        "new": "if LSB == \"Short only\" and Red and window()",
+        "reason": "接入入口日期门禁。",
+        "preserved": "独立退出条件不变。",
+        "validation_cases": [
+          "该入口窗外不发新订单。"
+        ]
+      },
+      {
+        "old": "if LSB == \"Short only\" and Green",
+        "new": "if (LSB == \"Short only\" or (LSB == \"Both\" and not window())) and Green",
+        "reason": "双向窗外保留反向平空。",
+        "preserved": "窗内双向仍由entry反转。",
+        "validation_cases": [
+          "双向窗外绿信号平空不反开。"
+        ]
+      },
+      {
+        "old": "if LSB == \"Long only\" and Red",
+        "new": "if (LSB == \"Long only\" or (LSB == \"Both\" and not window())) and Red",
+        "reason": "双向窗外保留反向平多。",
+        "preserved": "窗内双向仍由entry反转。",
+        "validation_cases": [
+          "双向窗外红信号平多不反开。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2213,
+    "id": "812e7da5a676",
+    "filename": "双移动平均线反转策略Dual-Moving-Average-Reversal-Strategy.md",
+    "source_sha256": "081aa85507ac20e4aa555c71470350d78f93515543812e1af429200aae0560d0",
+    "code_sha256": "381d83331471287e157c48c285551fb5d8020029f4e0112ce5d3f1bf274a2205",
+    "code_lines": 92,
+    "review_scope": "full_source_static",
+    "synopsis": "长均线上短均线下回调或52柱高点回撤14%时空仓10%权益买多；短均线上转弱或自计跌幅/均线条件退出。",
+    "evidence": [
+      {
+        "line": 194,
+        "code": "f_dateFilter = true //make sure date entries are within acceptable range",
+        "reason": "日期过滤恒真。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 194,
+        "detail": "日期过滤恒真。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "f_dateFilter = true //make sure date entries are within acceptable range",
+        "new": "f_dateFilter = time >= i_startTime and time <= i_endTime",
+        "reason": "恢复仅入口日期。",
+        "preserved": "原止损分母与交易设计不擅改。",
+        "validation_cases": [
+          "窗外无新仓，退出仍执行。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2317,
+    "id": "3537555f6782",
+    "filename": "双重指标的Stochastic-RSI和EMA交易策略Dual-Indicator-Stochastic-RSI-and-EMA-Trading-Strategy.md",
+    "source_sha256": "5fc75b5348e601937d9c650b68b2c0c43c05e4be9f8b2a1e579a01e37d174383",
+    "code_sha256": "859bee13531bdae1d55866af6208b86cf533b98f7d4d26cd0a76cf2e22cd9061",
+    "code_lines": 51,
+    "review_scope": "full_source_static",
+    "synopsis": "对收盘序列直接计算随机值并平滑，低于20且EMA55>EMA200买多，高于80退出。",
+    "evidence": [
+      {
+        "line": 135,
+        "code": "stoch_rsi_k = sma(stoch(close, close, close, stoch_length), k_period)",
+        "reason": "命名StochRSI但输入为close而非RSI；需确认真实设计，不能仅按名称更换指标。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 135,
+        "detail": "命名StochRSI但输入为close而非RSI；需确认真实设计，不能仅按名称更换指标。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 2352,
+    "id": "6f3ad93e4fe9",
+    "filename": "双顺势破坏均线止损策略Dual-SSL-Strategy-with-EMA-Stop-Loss.md",
+    "source_sha256": "7bad3c1d0a47611bd69d57fad2c7bd5a30013b063695381faad8ea401b3e4eeb",
+    "code_sha256": "c17a95222b4125500f113f19853a1edd2a68f5615325b2d20b65df8500741c9c",
+    "code_lines": 100,
+    "review_scope": "full_source_static",
+    "synopsis": "SSL翻转且价格在EMA200对应侧时全权益开多空；以信号SSL线挂止损，获利且SSL反转时市价退出。",
+    "evidence": [
+      {
+        "line": 215,
+        "code": "if comprado and not vendido and Stop",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2398,
+    "id": "bbf277a3f87e",
+    "filename": "吊灯出场策略Chandelier-Exit-Strategy.md",
+    "source_sha256": "73a8f546e6c771a5ea643fbaf368cfa94753b1d55d5c34570f9b27f2a8b7e893",
+    "code_sha256": "abe8b818678a4c44b90757acee868e58009fba14b1b1f7a01f2f254ed906e7c5",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "22周期3ATR吊灯趋势从负翻正按25/close买多；趋势从正翻负平多，无独立挂出止损。",
+    "evidence": [
+      {
+        "line": 155,
+        "code": "    strategy.entry(\"Buy\", strategy.long, qty = initial_capital / close)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2418,
+    "id": "b1063e6a67c9",
+    "filename": "唐奇安通道突破策略Donchian-Channel-Breakout-Strategy-with-ATRSL-Trailing-Stop.md",
+    "source_sha256": "91c01c021b879c1aa73b23a39d1996b1777986760345bd6080a9b7109a14fab6",
+    "code_sha256": "54203e71612aad63c7f54f161c9506ee979005971213256d718ff6744144ac19",
+    "code_lines": 52,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘上穿上一柱100期唐奇安上轨开多，下穿10期3ATR递归跟踪线平多；提示与订单同条件。",
+    "evidence": [
+      {
+        "line": 125,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2421,
+    "id": "e64c5838b63b",
+    "filename": "唐奇安通道趋势跟踪策略Donchian-Channel-Trend-Tracking-Strategy.md",
+    "source_sha256": "be004131a55b062cdcf4061e36e44626a28ebb46455c38bb6e3a20392cd02f18",
+    "code_sha256": "737c4bc5485ab2dedf8e3c0a326560d98920a91f6ad7f2ac35d17372c2c13985",
+    "code_lines": 79,
+    "review_scope": "full_source_static",
+    "synopsis": "唐奇安长短通道突破stop挂多空，默认只多；对侧通道或可选ATR收紧保护。",
+    "evidence": [
+      {
+        "line": 194,
+        "code": "window()  => true // create function \"within window of time\"",
+        "reason": "日期恒真且入口和保护同门禁，恢复后须分离保护并撤销窗外挂单。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 194,
+        "detail": "日期恒真且入口和保护同门禁，恢复后须分离保护并撤销窗外挂单。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window()  => true // create function \"within window of time\"",
+        "new": "window()  => time >= start and time <= finish",
+        "reason": "恢复日期窗。",
+        "preserved": "起止参数不变。",
+        "validation_cases": [
+          "窗外入口禁用。"
+        ]
+      },
+      {
+        "old": "    strategy.exit(\"Short Exit\", \"Short\", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)",
+        "new": "    strategy.exit(\"Short Exit\", \"Short\", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)\nif not window()\n    strategy.cancel(\"Long\")\n    strategy.cancel(\"Short\")\n    if strategy.position_size > 0\n        strategy.exit(\"Long Exit\", \"Long\", stop=useAtrAsStopRule ? max(longLowerValue,longStopValue) : longLowerValue)\n    if strategy.position_size < 0\n        strategy.exit(\"Short Exit\", \"Short\", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)",
+        "reason": "保留窗口内入场同时提交保护；窗口外撤入场挂单并持续更新持仓保护。",
+        "preserved": "保留原入场条件、参数、仓位及Pine版本。",
+        "validation_cases": [
+          "窗口内空仓挂stop入场时同时提交原Long Exit/Short Exit，不能等持仓后才首次保护。",
+          "窗外有多/空仓时更新对应退出，取消Long/Short入场单但不取消Long Exit/Short Exit。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2455,
+    "id": "b20156c92e46",
+    "filename": "均值回归型布林带RSI策略结合ATR动态止损优化系统-Mean-Reversion-Strategy-with-Bollinger-Bands-RSI-and-ATR-Based-Dynamic-Stop-Loss-System.md",
+    "source_sha256": "060b22662bcb91d5386e9d12f6ea3a378975d0024ab1a07ee7aec30ff3a4ddac",
+    "code_sha256": "d6565300588789b6c5c5026ef8c8e253b0936cdd9a1c7cb0419b1cfe582c2a15",
+    "code_lines": 60,
+    "review_scope": "full_source_static",
+    "synopsis": "布林下轨且RSI超卖买多，上轨超买开空；回中轨或反向RSI平仓，持续均价2ATR止损3ATR目标。",
+    "evidence": [
+      {
+        "line": 121,
+        "code": "strategy.exit(\"Long SL/TP\", \"Long\", stop=strategy.position_avg_price - 2*atr, limit=strategy.position_avg_price + 3*atr)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2486,
+    "id": "949e2f5fb09a",
+    "filename": "均线交叉长线并量化策略EMA-Crossover-for-Long-Line-Quant-Strategy.md",
+    "source_sha256": "897516abaf09ff804f046c6f914742063fa6766a2667031529e346522eada76c",
+    "code_sha256": "5fa64f9bd60330ee02933ceaad66ef09b8dff15418b0ac9f915ee31a280489fb",
+    "code_lines": 60,
+    "review_scope": "full_source_static",
+    "synopsis": "阴线跌破前低时按EMA20/50/100/200所在区间选四级数量做多；均线多头排列后转弱且盈利1%才平所有入口。退出另需近期RSI高于65。",
+    "evidence": [
+      {
+        "line": 158,
+        "code": "in_date_range = true",
+        "reason": "日期恒真；名为pyramiding的输入仅乘数量，不擅改加仓设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 158,
+        "detail": "日期恒真；名为pyramiding的输入仅乘数量，不擅改加仓设计。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "in_date_range = true",
+        "new": "in_date_range = time >= start_date and time <= end_date",
+        "reason": "恢复入场日期。",
+        "preserved": "保留固定日期。",
+        "validation_cases": [
+          "日期外不再开仓。"
+        ]
+      },
+      {
+        "old": "exit_condition_1 = in_date_range and ((close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_two_days_ago) and profit_condition and close < low[1] and close < low[2]",
+        "new": "exit_condition_1 = ((close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_two_days_ago) and profit_condition and close < low[1] and close < low[2]",
+        "reason": "退出移出日期限制。",
+        "preserved": "盈利及均线条件原样。",
+        "validation_cases": [
+          "窗口结束仍可按原规则平仓。"
+        ]
+      },
+      {
+        "old": "exit_condition_2 = in_date_range and ((close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_yesterday) and profit_condition and close < low[1] and close < low[2]",
+        "new": "exit_condition_2 = ((close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_yesterday) and profit_condition and close < low[1] and close < low[2]",
+        "reason": "退出移出日期限制。",
+        "preserved": "盈利及均线条件原样。",
+        "validation_cases": [
+          "窗口结束仍可按原规则平仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2501,
+    "id": "e5113536e9b4",
+    "filename": "均线回转反转策略Mean-Reversion-Reverse-Strategy-Based-on-Moving-Average.md",
+    "source_sha256": "1e52bf9dd5d1b72e0efe2db63858c66be1d0147a58fcef7a95eb655475c79b09",
+    "code_sha256": "94f13b9da684b3aba6af31a2377850c677900c538ad6bb08e88a9057787addc6",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "阴线跌破前低时按EMA20/50/100/200所在区间选四级数量做多；均线多头排列后转弱且盈利1%才平所有入口。",
+    "evidence": [
+      {
+        "line": 122,
+        "code": "in_date_range = true",
+        "reason": "日期恒真；名为pyramiding的输入仅乘数量，不擅改加仓设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 122,
+        "detail": "日期恒真；名为pyramiding的输入仅乘数量，不擅改加仓设计。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "in_date_range = true",
+        "new": "in_date_range = time >= start_date and time <= end_date",
+        "reason": "恢复入场日期。",
+        "preserved": "保留固定日期。",
+        "validation_cases": [
+          "日期外不再开仓。"
+        ]
+      },
+      {
+        "old": "exit_condition_1 = in_date_range and (close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]",
+        "new": "exit_condition_1 = (close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]",
+        "reason": "退出移出日期限制。",
+        "preserved": "盈利及均线条件原样。",
+        "validation_cases": [
+          "窗口结束仍可按原规则平仓。"
+        ]
+      },
+      {
+        "old": "exit_condition_2 = in_date_range and (close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]",
+        "new": "exit_condition_2 = (close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]",
+        "reason": "退出移出日期限制。",
+        "preserved": "盈利及均线条件原样。",
+        "validation_cases": [
+          "窗口结束仍可按原规则平仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2526,
+    "id": "6b8c9f45435d",
+    "filename": "均线金叉死叉策略-Moving-Average-Crossover-Strategy.md",
+    "source_sha256": "518d5604174a95495ff7c4217b7db4e0abe4cb8d09f39821d40d13ead27587d1",
+    "code_sha256": "e3cd96adc22b3c5cdbdb67b32a9b174859c857df6330257d489298ec2372a040",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA10/30金叉做多死叉做空并平反向，均价百分比保护。",
+    "evidence": [
+      {
+        "line": 143,
+        "code": "strategy.exit(\"Stop Loss/Take Profit\", \"Short\", stop=stopLossLevel, limit=takeProfitLevel)",
+        "reason": "空头复用多头下1%止损、上3%止盈，方向颠倒且退出ID重复。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "short_protection_direction",
+        "evidence_line": 143,
+        "detail": "空头复用多头下1%止损、上3%止盈，方向颠倒且退出ID重复。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "strategy.exit(\"Stop Loss/Take Profit\", \"Short\", stop=stopLossLevel, limit=takeProfitLevel)",
+        "new": "strategy.exit(\"Short Stop Loss/Take Profit\", \"Short\", stop=strategy.position_avg_price * (1 + 0.01), limit=strategy.position_avg_price * (1 - 0.03))",
+        "reason": "修正空头价格方向和ID。",
+        "preserved": "1%风险3%目标及信号不变。",
+        "validation_cases": [
+          "空头均价100时stop101 limit97。",
+          "多头stop99 limit103不变。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2529,
+    "id": "ffd9f19cf1f3",
+    "filename": "均线震荡突破HODL策略Moving-Average-Oscillation-HODL-Strategy.md",
+    "source_sha256": "583711766c4cd6e7a9ed7dc703be188fd53ceacb0d8f1d56d7d3e7fdaa76a592",
+    "code_sha256": "094f1654fa122decb75621c8b03bfc1d6c2ffaf115cfa450db277c2ba775e152",
+    "code_lines": 47,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘高于可选EMA/SMA200全权益做多，低于均线平多，逐tick计算。",
+    "evidence": [
+      {
+        "line": 119,
+        "code": "testPeriod() => true",
+        "reason": "日期函数恒真且退出同受窗限制。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 119,
+        "detail": "日期函数恒真且退出同受窗限制。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "testPeriod() => true",
+        "new": "testPeriod() => time >= testPeriodStart and time <= testPeriodStop",
+        "reason": "恢复日期。",
+        "preserved": "参数不变。",
+        "validation_cases": [
+          "窗前不入场。"
+        ]
+      },
+      {
+        "old": "if (testPeriod() and close < movingAverage)",
+        "new": "if (close < movingAverage)",
+        "reason": "保留窗外退出。",
+        "preserved": "原均线退出不变。",
+        "validation_cases": [
+          "窗后跌破均线平仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 2541,
+    "id": "965e853247cf",
+    "filename": "坚劲趋势延续策略Robust-Trend-Continuation-Strategy.md",
+    "source_sha256": "b7c272a3c3c9ad299e4dd1185fa3f472e8c8fd07655bca27e2325f075628c17d",
+    "code_sha256": "3810a843723d5ea7a8855fb458ca0deba927fa91ea81957daf21d6501d4cdc84",
+    "code_lines": 93,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA80>EMA200且价格在EMA50上，历史价下穿EMA并连续上涨时买多；成交时ATR固定3.5倍止损目标。",
+    "evidence": [
+      {
+        "line": 153,
+        "code": "if price < strategy.position_avg_price",
+        "reason": "止损仅当价格低于成本才首次挂出，盈利柱可能盘中触止损后收回而未受保护；是否全程保护需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 153,
+        "detail": "止损仅当价格低于成本才首次挂出，盈利柱可能盘中触止损后收回而未受保护；是否全程保护需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 2566,
+    "id": "80f9f5066c11",
+    "filename": "基于20日EMA通道的交易策略All-about-EMA-Channel-Trading-Strategy.md",
+    "source_sha256": "75218bbd687fefbf5785cdf41c26692673c5a9d4daceabe6a2bb210770100386",
+    "code_sha256": "b2fcdbc7ddd37ac5ce1f4438510d504e59bfc12141df924e3d7d360120b9bd33",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘上穿高价EMA20买多，下穿低价EMA20平多，默认仓位并同步警报。",
+    "evidence": [
+      {
+        "line": 139,
+        "code": "strategy.entry(\"Buy\", strategy.long, when=buyCondition)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2582,
+    "id": "a995af42230a",
+    "filename": "基于AO指标和均线的趋势跟踪策略AO-Indicator-Based-Trend-Following-Strategy.md",
+    "source_sha256": "abf0cb212ac612712578b66e244b365f81ff04e2fc1e2974dfea57a764b8a27f",
+    "code_sha256": "4098f8b06276366997940e24b5efe0596a1c5fbf728aa313d9ec7f11724a571a",
+    "code_lines": 43,
+    "review_scope": "full_source_static",
+    "synopsis": "阳线跨EMA20且均线/AO/RSI同向开多，阴线对称开空；信号价乘或除1.10目标与1.05保护。",
+    "evidence": [
+      {
+        "line": 144,
+        "code": "strategy.exit(\"exit long\", \"long\", limit=pentry * profit, stop=pentry / stop)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2733,
+    "id": "d3a7da1a7590",
+    "filename": "基于K线盖尔特通道的趋势追踪策略A-Trend-Following-Strategy-Based-on-Keltner-Channels.md",
+    "source_sha256": "85eb1d9138e0b4f36ed44ab094a3fc5d54e9f5e26d7d0ada66fe94a76ef27e9a",
+    "code_sha256": "0ac2a243de28392f9670473d373d97fb967c5d11f0a273c34244fabc54e365f2",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "开盘价回穿SMA20加减2ATR通道边界挂多空stop，可选触中线平仓，否则反向入口反转。",
+    "evidence": [
+      {
+        "line": 185,
+        "code": "    strategy.entry(\"BUY\", strategy.long, stop=bottom,  comment=\"BUY\")",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2781,
+    "id": "2614ed5f7046",
+    "filename": "基于OBV与MA交叉信号的趋势跟踪策略-Trend-Following-Strategy-Based-on-OBV-and-MA-Crossover-Signals.md",
+    "source_sha256": "3bfb7ded8f440b41f9996aacadf937f5403fec05d15657b1ea7684517a16d833",
+    "code_sha256": "ca1e926226c21641a9fad7a69f0d2bf8e02f1f40142e0060ecb4bdb1e7f8d567",
+    "code_lines": 87,
+    "review_scope": "full_source_static",
+    "synopsis": "自算OBV穿入场均线开配置方向，跨单独退出均线平仓；全权益，含手续费滑点与方向限制。",
+    "evidence": [
+      {
+        "line": 161,
+        "code": "    strategy.entry(\"Long Entry\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 2992,
+    "id": "ccd2fcfaef09",
+    "filename": "基于中国农历的比特币交易策略Bitcoin-Trading-Strategy-Based-on-Chinese-Zodiac-Calendar.md",
+    "source_sha256": "b8c00bb41b15c2de77b8de8645d45603f995a83968c05788f4b51818372b0b9e",
+    "code_sha256": "5bc257eebc61d595497414c6dbd24eb37f1eb48085b2e7f0c4900993b73aba6d",
+    "code_lines": 45,
+    "review_scope": "full_source_static",
+    "synopsis": "公历年份模12划分牛熊横盘，牛年做多熊年做空反转，横盘年平全部，仓位默认。",
+    "evidence": [
+      {
+        "line": 127,
+        "code": "yearDigit = year % 12",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3100,
+    "id": "63c012c2fa33",
+    "filename": "基于动量震荡交易的自适应趋势跟踪策略-Adaptive-Trend-Following-Strategy-Based-on-Momentum-Oscillator.md",
+    "source_sha256": "1e4ed9752080d24e43b00f7b801d6375d18126c2e9677362e48bbe02d4fa0a1c",
+    "code_sha256": "253044d10e204f84edc828f54ce1ec056204dcd2c7e0f240b517fab85143a54f",
+    "code_lines": 48,
+    "review_scope": "full_source_static",
+    "synopsis": "CMO9低于-50开多，高于50或距最近一次超卖条件五柱平仓，自记持仓状态。",
+    "evidence": [
+      {
+        "line": 109,
+        "code": "sellCondition2 = ta.barssince(buyCondition) >= 5",
+        "reason": "五柱计时从最近超卖条件而非入场开始，持续超卖时持仓可无限延长；持有期设计需明确。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 109,
+        "detail": "五柱计时从最近超卖条件而非入场开始，持续超卖时持仓可无限延长；持有期设计需明确。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3112,
+    "id": "b208a91eef5f",
+    "filename": "基于历史Delta-SMA高低点的交易趋势捕捉策略-Delta-SMA-Historical-High-Low-Based-Trend-Capture-Strategy.md",
+    "source_sha256": "fcb5743b5dd45cbec25bafd30b662923b85be4243f348c04cedfb736dfeb457a",
+    "code_sha256": "217d110cdf4bf1df843705322958a5b9268ea5bfb07851e35e2359cfa34fedd9",
+    "code_lines": 77,
+    "review_scope": "full_source_static",
+    "synopsis": "阳阴线成交量差SMA14在365柱极低区域标记后上穿零买多；曾超高阈值后回落平仓。",
+    "evidence": [
+      {
+        "line": 137,
+        "code": "if delta_sma < below_60_threshold*0.5 and crossed_above_70",
+        "reason": "卖出标记在计算卖信号前被深跌条件复位，跳跌会绕过退出；应否先退出或重置需要明确。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 137,
+        "detail": "卖出标记在计算卖信号前被深跌条件复位，跳跌会绕过退出；应否先退出或重置需要明确。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3115,
+    "id": "16deb91b6b45",
+    "filename": "基于历史新高突破的买入策略Buying-Strategy-Based-on-Historical-High-Breakout.md",
+    "source_sha256": "01041d963cc1f8c127c544a1ee2c54ea19d84d9fb19776549f63d80e73654b97",
+    "code_sha256": "7d307a32ee75ee4bf50a28c489a2b7e3d811ea4fbc5c8a037ad9e8aef2e1189e",
+    "code_lines": 29,
+    "review_scope": "full_source_static",
+    "synopsis": "突破前200柱最高价买1份，跌破EMA90退出。",
+    "evidence": [
+      {
+        "line": 165,
+        "code": "range_ema = input.int(90,\"ema line\",minval=100,maxval=400,step=1)",
+        "reason": "EMA默认90低于声明minval100，输入定义自相矛盾。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "invalid_input_default",
+        "evidence_line": 165,
+        "detail": "EMA默认90低于声明minval100，输入定义自相矛盾。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "range_ema = input.int(90,\"ema line\",minval=100,maxval=400,step=1)",
+        "new": "range_ema = input.int(90,\"ema line\",minval=90,maxval=400,step=1)",
+        "reason": "让既定默认90合法。",
+        "preserved": "不更改默认周期或最大400。",
+        "validation_cases": [
+          "默认90通过输入约束。",
+          "100以上原允许输入不变。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3128,
+    "id": "a70bc2a78d1a",
+    "filename": "基于双EMA智能追踪策略Dual-EMA-Intelligent-Tracking-Strategy.md",
+    "source_sha256": "e360e4f28728a6091df44f60f7f4f8317e31cd67cae75ea94be7ef9b90e51bf0",
+    "code_sha256": "502ad9addcf2b631707a4ecfcff02680d38c38fc7823abde156e67c946d94978",
+    "code_lines": 49,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA3/30金叉开多，死叉或收盘达到均价翻倍平多，默认仓位。",
+    "evidence": [
+      {
+        "line": 162,
+        "code": "sellCondition = ta.crossunder(fastEMA, slowEMA) or close >= (strategy.position_avg_price * (1 + profitPercentage / 100))",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3136,
+    "id": "50f0fa7e6b6f",
+    "filename": "基于双向突破均线交易策略Dual-Breakthrough-Moving-Average-Trading-Strategy.md",
+    "source_sha256": "5b825d28b722f673a816cfbd2c4341972b9e0ce0ec975daa82be8edbdbc5b6bb",
+    "code_sha256": "42aca69349fb534e72d521963b0a95c70a45ba74fc83688b0c76b51aad42b5ab",
+    "code_lines": 47,
+    "review_scope": "full_source_static",
+    "synopsis": "PSAR、SMA200、MACD零轴与RSI7四项同向开配置方向；反向一致或可选任一不一致退出。",
+    "evidence": [
+      {
+        "line": 234,
+        "code": "strategy.close(\"Buy\", when=quickexit==true ? buy==0 : sell==-1)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3144,
+    "id": "2812255e7998",
+    "filename": "基于双均线交叉的移动平均线策略-Moving-Average-Crossover-Strategy-Based-on-Dual-Moving-Averages.md",
+    "source_sha256": "e181f9f003d85c25e969b805b671948165a0d572e5b742bca663f9b66f4031ba",
+    "code_sha256": "9b671217f3a75943770a2d539232242b64e986a06e81c9ad13eca850a5ea8e21",
+    "code_lines": 49,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA9/21金叉固定1份开多，死叉平多；资本风险参数仅计算展示，未用于数量。",
+    "evidence": [
+      {
+        "line": 119,
+        "code": "    strategy.entry(\"Buy\", strategy.long, qty=1, comment=\"Buy\")",
+        "reason": "风险仓位position_size被计算但入口固定qty1；默认仓位选择不可擅改，需确认展示与执行意图。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 119,
+        "detail": "风险仓位position_size被计算但入口固定qty1；默认仓位选择不可擅改，需确认展示与执行意图。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3159,
+    "id": "4ff24008381a",
+    "filename": "基于双均线波动率跟踪策略Dual-Moving-Average-Volatility-Tracking-Strategy.md",
+    "source_sha256": "e1158f0c116f6829a7a321e3a0cc784d25dc58bdf7a88feaaf2b821f2280c1fb",
+    "code_sha256": "a35861aa3ed0592510b8df72f25e47875b2fcca7a47a98edad4afc4aa134ecbd",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA50/200金叉且收盘高于CMO加权价格EMA开多；死叉或跌破该线退出，布林线仅绘图。",
+    "evidence": [
+      {
+        "line": 179,
+        "code": "    strategy.entry(\"CGC_PTT_Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3167,
+    "id": "2237aabd751b",
+    "filename": "基于双指标交叉确认的动量波动量化交易策略-Dual-Indicator-Cross-Confirmation-Momentum-Volume-Quantitative-Trading-Strategy.md",
+    "source_sha256": "39e2053f0335e87215a7058c0087585662e666798d30fb94fb4239b6fb09ff57",
+    "code_sha256": "11d070891f8cdc72a4781e0bc19433b01e5c395cd0018f6b184b24c8674f2612",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "成交量EMA20减SMA20上穿阈值且OBV高于均线开多，反向条件平仓；ATR只计算不参与下单。",
+    "evidence": [
+      {
+        "line": 226,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3172,
+    "id": "21b4c90411d4",
+    "filename": "基于双移动平均线交叉的回调入场策略EintSimple-Pullback-Strategy.md",
+    "source_sha256": "256e60aced2641ca55fa0a1b2aeda968117d15fed543982af4e68c0afaf9b6b8",
+    "code_sha256": "b4d83ee54703a552fc21457ef7cd6e47b055dc699dcfc9efb1563d0d4be00c53",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA75上EMA9下回调空仓全权益开多；恢复短均线上转弱或自计10%跌幅市价退出。",
+    "evidence": [
+      {
+        "line": 174,
+        "code": "f_dateFilter = true",
+        "reason": "日期过滤恒真。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 174,
+        "detail": "日期过滤恒真。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "f_dateFilter = true",
+        "new": "f_dateFilter = time >= i_startTime and time <= i_endTime",
+        "reason": "恢复入场时间窗。",
+        "preserved": "均线、退出及默认风险参数保留。",
+        "validation_cases": [
+          "窗前窗后不入场，已有仓位退出不受限。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3187,
+    "id": "d622587933ab",
+    "filename": "基于反转趋势追踪策略Reversal-Tracking-Strategy.md",
+    "source_sha256": "5699e43875a9a340e97b5d30d35c880a22d9c91b93472cea5787aafbe8d8861e",
+    "code_sha256": "32b9a52a649bf13ce7b8afff617f82070f369ef996bd0f2cc5bb08595952e750",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘低于前柱五期低价SMA且高于SMA200买1份；超过前柱五期高价SMA平全部，并挂均价95%止损。",
+    "evidence": [
+      {
+        "line": 201,
+        "code": "strategy.exit(\"Exit\", stop=StopLossLine)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3195,
+    "id": "b0e5997ac46b",
+    "filename": "基于唐奇安通道指标开发的量化交易策略Donchian-Channel-Width-Trading-Strategy.md",
+    "source_sha256": "eafd14bd7e0bc5f6ac89f8013a5ee8265f04132fbba0615fcb087817e2534321",
+    "code_sha256": "50bf79cea8a455bd90a9144b782f6acb5f4b6f55f0d4ae72e73c01eefa566c6a",
+    "code_lines": 59,
+    "review_scope": "full_source_static",
+    "synopsis": "50柱唐奇安宽度低于自身50期均值做多、高于则做空；相等时保持状态，可选反向交易。",
+    "evidence": [
+      {
+        "line": 184,
+        "code": "pos = iff(xDonchianWidth > xSmoothed, -1,",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3252,
+    "id": "0354215e8944",
+    "filename": "基于多EMA买入策略Multiple-EMA-Buy-Strategy.md",
+    "source_sha256": "ed399484dcf718b7a51b59eff4a74a649e64232857c0545fc9c37690985d972d",
+    "code_sha256": "daa93d6bc91ff37a5490cf78ce2c98aea4e4fac27a33c14d6e21f1a27429fd18",
+    "code_lines": 36,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA5/10/20/50/100/200严格多头排列且收盘高于EMA5买多；跌破EMA200平多，默认数量。",
+    "evidence": [
+      {
+        "line": 181,
+        "code": "strategy.entry(\"Buy\", strategy.long, when = buy_condition)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3267,
+    "id": "ed8d330cfd5d",
+    "filename": "基于多尺度唐奇逐步通道的交易策略Donchain-Channel-Based-Trading-Strategy.md",
+    "source_sha256": "8ce493720ad6d300cb39678e5d8e088b5acfc088be4506e3bd7b14b314d3f17e",
+    "code_sha256": "425f0500ea43a6ef5f2710eb61f06e110df4e0c4a860669554d4e05e21848ebb",
+    "code_lines": 115,
+    "review_scope": "full_source_static",
+    "synopsis": "多尺度通道当前及前三柱某柱创长窗新高且收盘提升买多；短窗双低收盘降低退出，另按当前日期前两天强平。",
+    "evidence": [
+      {
+        "line": 219,
+        "code": "        break",
+        "reason": "退出循环无条件break仅检查i=1而入场查1至3；是否三柱对称及timenow强平目的需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 219,
+        "detail": "退出循环无条件break仅检查i=1而入场查1至3；是否三柱对称及timenow强平目的需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3295,
+    "id": "67e97551bff6",
+    "filename": "基于多重技术指标的高频交易动态优化策略-Multi-Technical-Indicator-Based-High-Frequency-Dynamic-Optimization-Strategy.md",
+    "source_sha256": "adfdaca878fa8230857a5bcbc58285c607d9da4d69f2fd27c69e92b1245b5373",
+    "code_sha256": "c2923d1dfb85ceafddf8e570b0db21a4d4ffbb1a1abaa4cff417a06cc83a2465",
+    "code_lines": 108,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA9/21交叉且RSI未极端、ADX阈值过滤空仓开多空10%权益；RSI极端退出并尝试均价ATR保护。",
+    "evidence": [
+      {
+        "line": 126,
+        "code": "[adx, diPlus, diMinus] = ta.dmi(adxLength, adxSmoothing)",
+        "reason": "DMI元组顺序错误将+DI当ADX；另保护仅空仓信号分支用na均价，ATR应冻结还是动态需独立设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "dmi_tuple_order",
+        "evidence_line": 126,
+        "detail": "DMI元组顺序错误将+DI当ADX；另保护仅空仓信号分支用na均价，ATR应冻结还是动态需独立设计。",
+        "resolution": "仅提出patches所列确定范围的补丁；detail中其余保护、方向、加仓或输入问题仍未修，需确认设计及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "[adx, diPlus, diMinus] = ta.dmi(adxLength, adxSmoothing)",
+        "new": "[diPlus, diMinus, adx] = ta.dmi(adxLength, adxSmoothing)",
+        "reason": "DMI返回顺序为+DI、-DI、ADX。",
+        "preserved": "周期与阈值不变。",
+        "validation_cases": [
+          "过滤读取第三返回值ADX。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3328,
+    "id": "79de1d1455fc",
+    "filename": "基于布林带和MACD指标的高频交易策略分析系统-High-Frequency-Trading-Strategy-Analysis-System-Based-on-Bollinger-Bands-and-MACD-Indicators.md",
+    "source_sha256": "fe1620d20c3783db7e32d090838f1ebd7b8606d590b853206f758926f466ff77",
+    "code_sha256": "d3cc408a237b6a6f3cb5ab92a07700d7b88e8bef8b02a42e8c81a7e1476fc004",
+    "code_lines": 104,
+    "review_scope": "full_source_static",
+    "synopsis": "布林边轨回穿配合MACD和量门槛开多空5%权益，每日最多五次信号调用；均价2%止损4%目标。",
+    "evidence": [
+      {
+        "line": 174,
+        "code": "    tradesToday += 1",
+        "reason": "tradesToday按信号调用而非实际成交计数，同向重复信号可消耗额度；每日五笔定义需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 174,
+        "detail": "tradesToday按信号调用而非实际成交计数，同向重复信号可消耗额度；每日五笔定义需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3329,
+    "id": "99f27a23365a",
+    "filename": "基于布林带和MACD的量化交易策略Quantitative-Trading-Strategy-Based-on-Bollinger-Bands-and-MACD.md",
+    "source_sha256": "4e9da01eaaff677c83afced3891394105a8f4cf1606a9e1ef2931c4ad0e72e83",
+    "code_sha256": "8e7460b00306a62efa8d4e80ef5a5161925f1804b247f349a6de3274a11a7098",
+    "code_lines": 105,
+    "review_scope": "full_source_static",
+    "synopsis": "四组布林回穿/MACD转正/EMA20条件开同ID多单；跌破EMA20或跌离实际入口价约1.16%平仓。",
+    "evidence": [
+      {
+        "line": 231,
+        "code": "if (price<strategy.opentrades.entry_price(0)/1.01175734321249)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3344,
+    "id": "346f10f5941c",
+    "filename": "基于布林带和相对强弱指数的动态区间突破交易策略-Dynamic-Range-Breakout-Trading-Strategy-Based-on-Bollinger-Bands-and-RSI.md",
+    "source_sha256": "4489fc04c14f89c40670bdb26f0aa0cfb098e029991f9ce865a7c917182c9da5",
+    "code_sha256": "f70df6ccd7e60cd238188895251196dd89f14cff8c8a90801d5940ccb8415931",
+    "code_lines": 50,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘上穿布林下轨且RSI低于1.5倍超卖阈值开多，下穿上轨且RSI超买平多。",
+    "evidence": [
+      {
+        "line": 136,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3346,
+    "id": "02c4aa1731bd",
+    "filename": "基于布林带和赫尔指标的交叉策略Crossing-Strategy-Between-Bollinger-Bands-and-Hull-Indicator.md",
+    "source_sha256": "607a5837d6d640dc1f0039203eb880aae84410c46a875c0c4c59d5f3f13e435e",
+    "code_sha256": "33b2bf6f37563e8646ef843ac5b02ef3852cd65fd4aea0662b7a265b050922be",
+    "code_lines": 65,
+    "review_scope": "full_source_static",
+    "synopsis": "Hull线穿布林下轨开多、下穿上轨开空，全权益，tick止盈止损与跟踪参数同时提交。",
+    "evidence": [
+      {
+        "line": 137,
+        "code": "strategy(title=\"Strategy Hull Bollinger\", shorttitle=\"Hull bollinger\",overlay=true, calc_on_order_fills=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, overlay=false)",
+        "reason": "strategy声明重复overlay=true及false，显示意图冲突；需选定目标声明，不能任意删去其一。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 137,
+        "detail": "strategy声明重复overlay=true及false，显示意图冲突；需选定目标声明，不能任意删去其一。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3347,
+    "id": "f561146fc872",
+    "filename": "基于布林带均值回归策略The-Bollinger-Bands-Mean-Reversion-Strategy.md",
+    "source_sha256": "8ecf44f45596871a50c663319b2f025ef63ca73f58c98133d1a2e5ee27b5bf2d",
+    "code_sha256": "cdda046facb9dafe64d4c341890f2e18147f1422e2b520cfd6669064b4161d2f",
+    "code_lines": 45,
+    "review_scope": "full_source_static",
+    "synopsis": "可选五类均线布林中轨，收盘低于下轨做多、高于上轨平多，默认仓位无额外退出。",
+    "evidence": [
+      {
+        "line": 233,
+        "code": "strategy.entry(\"Buy\", strategy.long, when=buy_condition)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3357,
+    "id": "a64f7ef958c5",
+    "filename": "基于布林带的突破策略Bollinger-Bands-Breakout-Strategy.md",
+    "source_sha256": "c84e39980fb38eafe1f8952db6b1539d98169c5451b2700b19d86585640251dc",
+    "code_sha256": "b47e20eb4f8a3ba3bde31919bead601b06c7ce0269c05c5aeb1168984d9fda14",
+    "code_lines": 36,
+    "review_scope": "full_source_static",
+    "synopsis": "20期2标准差布林下轨外开多、上轨外开空，通过反向entry反转持仓。",
+    "evidence": [
+      {
+        "line": 170,
+        "code": "strategy.entry(\"Sell\", strategy.short, when=sell_condition)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3362,
+    "id": "c48ba11bd9a4",
+    "filename": "基于布林带的跨界动态区间量化交易策略-Cross-boundary-Dynamic-Range-Quantitative-Trading-Strategy-Based-on-Bollinger-Bands.md",
+    "source_sha256": "e7c424ed32c95556c4324ed64a8075ea1d240ea7c69ce19312d7d2f053d95cdb",
+    "code_sha256": "b4bc495aa1e22fa252b0d4499342ac6a26885f484c4e9ea679d8cee71cf64a24",
+    "code_lines": 51,
+    "review_scope": "full_source_static",
+    "synopsis": "布林下轨上穿按86/close买多，上轨下穿平多；用两项变量尝试模拟USDT和代币余额。",
+    "evidence": [
+      {
+        "line": 101,
+        "code": "usdt_balance = 86.0 // Anfangsbetrag in USDT",
+        "reason": "余额变量无var每柱重置，且成交前position_size被用于账本更新；需确认固定86订单还是复利账本设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 101,
+        "detail": "余额变量无var每柱重置，且成交前position_size被用于账本更新；需确认固定86订单还是复利账本设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3387,
+    "id": "cfcc8d8350a1",
+    "filename": "基于平均真实波幅的趋势跟踪策略ATR-Based-Trend-Tracking-Strategy.md",
+    "source_sha256": "95ad81e127f9cfdceebb9d0115ea07769485e7f1be60b9c75b8355cafea8308c",
+    "code_sha256": "2d140944017a3810d71feefa5df191776cb19832b20a9991e6cc317991b63981",
+    "code_lines": 113,
+    "review_scope": "full_source_static",
+    "synopsis": "4ATR递归趋势正向时全权益限价买多，负向平多并可选做空；可选多头百分比/ATR保护。",
+    "evidence": [
+      {
+        "line": 156,
+        "code": "window() => true",
+        "reason": "日期恒真且多头限价未撤销；空头止损变量未接单，保留为后续设计项。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 156,
+        "detail": "日期恒真且多头限价未撤销；空头止损变量未接单，保留为后续设计项。",
+        "resolution": "仅提出patches所列确定范围的补丁；detail中其余保护、方向、加仓或输入问题仍未修，需确认设计及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window() => true",
+        "new": "window() => time >= start and time <= finish",
+        "reason": "恢复日期。",
+        "preserved": "日期参数不变。",
+        "validation_cases": [
+          "窗外入口不执行。"
+        ]
+      },
+      {
+        "old": "strategy.close('Long', when=window() and exitLong , comment='Exit: '+str.tostring(sellavg) )",
+        "new": "strategy.close('Long', when=exitLong , comment='Exit: '+str.tostring(sellavg) )",
+        "reason": "退出脱离日期门禁。",
+        "preserved": "趋势退出原样。",
+        "validation_cases": [
+          "窗外反转仍退出。"
+        ]
+      },
+      {
+        "old": "    strategy.close('Short', when=window() and pos == 1 , comment='Exit: ')",
+        "new": "    strategy.close('Short', when=pos == 1 , comment='Exit: ')",
+        "reason": "退出脱离日期门禁。",
+        "preserved": "趋势退出原样。",
+        "validation_cases": [
+          "窗外反转仍退出。"
+        ]
+      },
+      {
+        "old": "strategy.entry('Long', strategy.long,limit = buyavg, when=window() and pos == 1,comment=\"Entry: \"+str.tostring(buyavg))",
+        "new": "strategy.entry('Long', strategy.long,limit = buyavg, when=window() and pos == 1,comment=\"Entry: \"+str.tostring(buyavg))\nif not window() or exitLong\n    strategy.cancel('Long')",
+        "reason": "入场窗失效或趋势反向撤销未成交限价单。",
+        "preserved": "保留限价计算。",
+        "validation_cases": [
+          "窗结束或负趋势时未成交Long取消。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3430,
+    "id": "3d51e46ebb62",
+    "filename": "基于支撑阻力突破的趋势追踪策略Trend-Following-Strategy-Based-on-Pivot-Point-Breakout.md",
+    "source_sha256": "01d04c117b7375c4b19b95d352e6447290461ee3438716adae1493dd8abc4d6d",
+    "code_sha256": "c8971be93fb287ab7d0127f67bd90d8a9364ad9dfd7a326ef4fe8fcfbdcf0459",
+    "code_lines": 28,
+    "review_scope": "full_source_static",
+    "synopsis": "以左右各10柱确认枢轴，收盘超过上一柱保存的枢轴高点全权益买多，低于枢轴低点平全部。",
+    "evidence": [
+      {
+        "line": 93,
+        "code": "strategy.entry(\"Long\", strategy.long, when = breakout_bull)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3484,
+    "id": "0b1e77022d13",
+    "filename": "基于波动率止损的均线趋势跟踪交易策略-Volatility-Stop-Based-EMA-Trend-Following-Trading-Strategy.md",
+    "source_sha256": "a09207af8fbfa7c70817ab3debc5b024cba1e9d204eec55c6ed3785e66869102",
+    "code_sha256": "ebbdd7636464b20ba28b12cf7cd0ac10ced36f7960fea4a933de1bd9f409499d",
+    "code_lines": 58,
+    "review_scope": "full_source_static",
+    "synopsis": "递归波动止损处上升态且收盘高于EMA30时空仓买多；收盘不高于EMA30退出。",
+    "evidence": [
+      {
+        "line": 148,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3502,
+    "id": "d275ead4d653",
+    "filename": "基于海龟交易法的突破策略Breakout-Strategy-Based-on-Turtle-Trading.md",
+    "source_sha256": "c1c4f2632c6b165714fa0615d80439f17358b265ff080aa3d973e2fbc00212bb",
+    "code_sha256": "c09eb5b1bab403ee775c90094c0a0d8457dfb5334fb5a181a83aa6c2da29e4bf",
+    "code_lines": 66,
+    "review_scope": "full_source_static",
+    "synopsis": "选定多或空方向，20柱通道突破买/卖1份，反向10柱通道或前收盘加减ATR阈值退出。",
+    "evidence": [
+      {
+        "line": 227,
+        "code": "atrupper = close + atr",
+        "reason": "atrmult输入未用于ATR线，名称Stop Loss但只是每柱close±1ATR；倍数与跟踪含义需确认后改。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 227,
+        "detail": "atrmult输入未用于ATR线，名称Stop Loss但只是每柱close±1ATR；倍数与跟踪含义需确认后改。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3505,
+    "id": "88851838289b",
+    "filename": "基于熊力量指标的量化交易策略Bear-Power-Strategy.md",
+    "source_sha256": "7e4be3ed053978f076be3d2c6ee224f89365bb07e7c2cf54006d4c34a10a6c56",
+    "code_sha256": "065e904d66cf3f6b5d49435b2f6edc7bef5b33fc174986b95a0f77b31cad03ce",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "按OHLC与前收盘分支计算BearPower，超过10维持空头状态、<=1维持多头状态，中间保留前态，可选反向。",
+    "evidence": [
+      {
+        "line": 196,
+        "code": "pos = iff(value > SellLevel, -1,",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3518,
+    "id": "33438f4ebfa2",
+    "filename": "基于相对强弱指数和平均真实波幅的多层次动态成本均摊波段交易策略-Multi-Level-Dynamic-Cost-Averaging-Swing-Trading-Strategy-Based-on-RSI-and-ATR.md",
+    "source_sha256": "aca0c3cac096e1c79ca403c38f887938291c56c78cd2c4df3f55c49f1fb87818",
+    "code_sha256": "c646bf7fb52352cba1b666962c143a0f76a7a35a324864e0704592078bb25fdc",
+    "code_lines": 68,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI14<30时最多计四次DCA信号，每次200/(2ATR)份；自记平均信号价加3ATR时平仓。",
+    "evidence": [
+      {
+        "line": 144,
+        "code": "    avgEntryPrice := na(avgEntryPrice) ? close : (avgEntryPrice * entryCount + close) / (entryCount + 1)",
+        "reason": "未启用pyramiding却累计四次均价，且用简单均价不按可变数量加权；没有2ATR实际止损，须设计DCA层级与预算。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 144,
+        "detail": "未启用pyramiding却累计四次均价，且用简单均价不按可变数量加权；没有2ATR实际止损，须设计DCA层级与预算。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3620,
+    "id": "44969fd59fab",
+    "filename": "基于超趋势支撑阻力与ADX指标的高频交易策ADX-Filtered-SuperTrend-Pivot-Trading-Strategy.md",
+    "source_sha256": "fc781f47bdc018e4674b23c833a200b65f41ec3981581a678397053dbb0792fa",
+    "code_sha256": "7880fb56735ebfb8b3c4be13d1d55e53badc31f5a806e62ad0761d2e5b9febab",
+    "code_lines": 95,
+    "review_scope": "full_source_static",
+    "synopsis": "枢轴加权中线超级趋势上方、SMA21上且ADX>25做多；跌破趋势时用反向order减仓。",
+    "evidence": [
+      {
+        "line": 237,
+        "code": "    strategy.order(\"Sell\", false, when = sell)",
+        "reason": "退出order未明确数量，默认订单数可能不等于持仓，是否部分退出或全平需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 237,
+        "detail": "退出order未明确数量，默认订单数可能不等于持仓，是否部分退出或全平需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3634,
+    "id": "8f958fc7b956",
+    "filename": "基于趋势确认的多重指标动态止损策略-Trend-Confirmation-Multi-Indicator-Dynamic-Stop-Loss-Strategy.md",
+    "source_sha256": "958d375d403b8c5634cd8ec041ea092a336838a6c3eae2e833e01f14db7e80ad",
+    "code_sha256": "e78e8c9251e317b0c7138ba0d94904f6db761844e308f326576841928fe55ad1",
+    "code_lines": 62,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA30上且MACD正向、ADX>25开多；跌破SMA后按第二个摆动低点挂止损。",
+    "evidence": [
+      {
+        "line": 128,
+        "code": "if (isSwingLow[1])",
+        "reason": "使用isSwingLow[1]确认上一柱事件却保存当前low[1]，其实际摆动低点在low[2]。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "wrong_history_reference",
+        "evidence_line": 128,
+        "detail": "使用isSwingLow[1]确认上一柱事件却保存当前low[1]，其实际摆动低点在low[2]。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    lastSwingLow := low[1]",
+        "new": "    lastSwingLow := low[2]",
+        "reason": "对齐延迟事件与摆动低点历史索引。",
+        "preserved": "保持原事件延迟、第二低点和SMA退出门槛。",
+        "validation_cases": [
+          "t-1识别t-2摆动低点时，t保存low[2]。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3637,
+    "id": "6dad2f867e73",
+    "filename": "基于趋势跟踪止损的动量交易策略Momentum-Trading-Strategy-Based-on-Trend-Tracking-Stop-Loss.md",
+    "source_sha256": "e2d24fc4673dd3a85e91f96ec130dc92b1b34a8175d90a653c83e41797673fda",
+    "code_sha256": "8ad9a749c0e2c3cf21ae52992927c6ce0e65d5171e858c318c55207e7b634fab",
+    "code_lines": 82,
+    "review_scope": "full_source_static",
+    "synopsis": "价格高于5倍1期超级趋势且RSI14>60以10%权益开多，收盘跌破趋势平多，持仓绘线。",
+    "evidence": [
+      {
+        "line": 234,
+        "code": "strategy.entry(\"Long\", strategy.long, when = entry)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3647,
+    "id": "7ea1d34450c0",
+    "filename": "基于跟踪止损和追踪买入的简单策略Simple-Trailing-Stop-Buy-Strategy-Based-on-Percentage.md",
+    "source_sha256": "e92225f7311f03c8564d5ee712f8af753f9acd920c8c0fe630ae3351231c7a45",
+    "code_sha256": "3d758c086744df2b42e8cbfa5824c42380909a7f77b2fa67767a7fe16e8b699a",
+    "code_lines": 34,
+    "review_scope": "full_source_static",
+    "synopsis": "高价上穿六期RMA收盘上浮1.9%开多，低价下穿RMA下浮1.5%市价退出，均线会双向移动。",
+    "evidence": [
+      {
+        "line": 160,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3660,
+    "id": "21b2424547a8",
+    "filename": "基于量价关系的多指标波动率突破交易系统-Multi-Indicator-Volatility-Breakout-Trading-System-Based-on-Volume-Price-Relationship.md",
+    "source_sha256": "3f428d8b8083f7df005b84015b9dbcad2f32d413028144a8e47dc3a812f77bc8",
+    "code_sha256": "9acf08abf9cd0b8d140e80fb5fe51b05024c6a1332d3bc4df87a5255ea5c081a",
+    "code_lines": 107,
+    "review_scope": "full_source_static",
+    "synopsis": "当前量超过前七柱量总和且RSI在20到80，依据阳阴与影线比例做多空10%权益；信号价2.5ATR止损和等距目标。",
+    "evidence": [
+      {
+        "line": 250,
+        "code": "        strategy.exit(\"Exit Long\", from_entry=\"Long\", stop=lowerATRBand, limit=longTP)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3667,
+    "id": "bd1f31045298",
+    "filename": "基于量化动量和收敛发散的多时间框架统一策略-Multi-Timeframe-Unified-Strategy-Based-on-Quantitative-Momentum-and-Convergence-Divergence.md",
+    "source_sha256": "7927980d9b67329e7f307d4722453ec8ebb1d2ac97c645d1e147d3a33b014fca",
+    "code_sha256": "59a510964440ca1c404cd8b1a523b34c528a33a6c763c1af7bdd3ae0be0548ec",
+    "code_lines": 100,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA5/15或SMA20/50金叉配合挤压状态及正回归动量分别做多；各自死叉且动量负时平对应ID。",
+    "evidence": [
+      {
+        "line": 309,
+        "code": "    strategy.entry(\"Scalp Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3704,
+    "id": "567468cb4961",
+    "filename": "基于风险回报比和技术分析的牛旗突破策略-Risk-Reward-Ratio-and-Technical-Analysis-Based-Bull-Flag-Breakout-Strategy.md",
+    "source_sha256": "17acaa568c9afce5c51a5c5ef22393c64ee4d2f744df8ea2879bcb95ae209c19",
+    "code_sha256": "20f93a75d162ccd499636fded52fb9296c0dbb745cacf5b33bb064d71be82fd5",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "前高低于五柱高点且收盘越前高视为牛旗，10%权益做多；五柱低点减缓冲止损及3R目标。",
+    "evidence": [
+      {
+        "line": 120,
+        "code": "    strategy.exit(\"Stop Loss\", \"Bull Flag Long\", stop=calculatedStopLoss)",
+        "reason": "两个全量exit分开提交导致第一止盈预留全仓，第二止损无足够数量。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "exit_reservation",
+        "evidence_line": 120,
+        "detail": "两个全量exit分开提交导致第一止盈预留全仓，第二止损无足够数量。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    strategy.exit(\"Take Profit\", \"Bull Flag Long\", limit=calculatedTakeProfit)\n    strategy.exit(\"Stop Loss\", \"Bull Flag Long\", stop=calculatedStopLoss)",
+        "new": "    strategy.exit(\"Take Profit\", \"Bull Flag Long\", limit=calculatedTakeProfit, stop=calculatedStopLoss)",
+        "reason": "将同仓位止盈止损合为一组保护。",
+        "preserved": "价格计算、3R及入场保持。",
+        "validation_cases": [
+          "先跌至止损时全仓可止损。",
+          "先触目标时全仓止盈，另一保护自动取消。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3713,
+    "id": "65f8f252b249",
+    "filename": "基于高斯通道和随机RSI的市场趋势捕捉策略-Gaussian-Channel-and-Stochastic-RSI-Based-Market-Trend-Capture-Strategy.md",
+    "source_sha256": "67cd2a5231cf2bb0cdeab8fd78b2d4f1f0cbfb00723fd95ee1f427abd19413c8",
+    "code_sha256": "ac6346a27bb01a4a5690c7dc49538be170a7aa01c8f1e65e807615d72989d113",
+    "code_lines": 60,
+    "review_scope": "full_source_static",
+    "synopsis": "价格下穿EMA标准差通道下轨且随机RSI K>D收盘开多200%权益，上穿上轨平仓。",
+    "evidence": [
+      {
+        "line": 135,
+        "code": "timeInRange = true",
+        "reason": "timeInRange恒真且退出同日期门禁。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 135,
+        "detail": "timeInRange恒真且退出同日期门禁。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "timeInRange = true",
+        "new": "timeInRange = time >= startDate and time <= endDate",
+        "reason": "恢复日期。",
+        "preserved": "仓位和反向回归信号不变。",
+        "validation_cases": [
+          "窗外不新开仓。"
+        ]
+      },
+      {
+        "old": "    strategy.close(\"Long\", when=priceAboveUpper ) ",
+        "new": "strategy.close(\"Long\", when=priceAboveUpper ) ",
+        "reason": "退出脱离窗口。",
+        "preserved": "上轨退出保持。",
+        "validation_cases": [
+          "窗后越上轨仍退出。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3730,
+    "id": "ac83232f7844",
+    "filename": "增强型量价趋势判断动量策略-Enhanced-Price-Volume-Trend-Momentum-Strategy.md",
+    "source_sha256": "4c411a57ac4f6c711604dcdb4ff7ee53b1e50ad547022cd76d3904e14f970623",
+    "code_sha256": "da9666414b18438a4034cd8974eb12f4a30773da7c0daa484cb287c11aa9f3ea",
+    "code_lines": 82,
+    "review_scope": "full_source_static",
+    "synopsis": "MACD负柱由加深转收缩买1份多，正柱由减弱转增强卖1份空；信号高低外3ATR止损和收盘10ATR目标。",
+    "evidence": [
+      {
+        "line": 142,
+        "code": "    strategy.exit(\"平多\", \"Long Entry\", stop=longStopLoss, limit=longTakeProfit)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3740,
+    "id": "5fc844f39d65",
+    "filename": "多个EMA周期动态交易策略Multi-Timeframe-Dynamic-EMA-Trading-Strategy.md",
+    "source_sha256": "6196137c8ea2ff7796a78071c5cfe9d208cc6ab345081c3dda8a85b6d2f3e8de",
+    "code_sha256": "43efbc0e3413b9ba5ceb426169e84cbdb20876b9e0863d21230f2d152e1e3205",
+    "code_lines": 117,
+    "review_scope": "full_source_static",
+    "synopsis": "八组可选EMA相邻金叉分别开多，数量1/(close×启用数减1)，各组死叉或到期退出。",
+    "evidence": [
+      {
+        "line": 204,
+        "code": "window()  => true // create function \"within window of time\"",
+        "reason": "日期恒真；数量分母可为零，加仓配置未明确，先仅恢复日期。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 204,
+        "detail": "日期恒真；数量分母可为零，加仓配置未明确，先仅恢复日期。",
+        "resolution": "仅提出patches所列确定范围的补丁；detail中其余保护、方向、加仓或输入问题仍未修，需确认设计及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window()  => true // create function \"within window of time\"",
+        "new": "window()  => time >= start and time <= finish",
+        "reason": "恢复日期。",
+        "preserved": "退出到期机制及数量公式不变。",
+        "validation_cases": [
+          "结束后不再出现入场和当柱到期退出冲突。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3756,
+    "id": "bcd99caa81c2",
+    "filename": "多周期EMA交叉高胜率趋势跟踪策略进阶版-Multi-Timeframe-EMA-Cross-High-Win-Rate-Trend-Following-Strategy-Advanced.md",
+    "source_sha256": "643e41a2e56f66760526326fe09f373e7aa9bd70e74056db6f33563bf8a7c3b9",
+    "code_sha256": "b06bc8ba808794da08ba841a74f5d7ad45bb1dc9f522e91d7cfa69324e3852db",
+    "code_lines": 59,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA20>EMA50>EMA200且收盘上穿EMA20买多，拟按均价10%目标5%止损持续exit。",
+    "evidence": [
+      {
+        "line": 164,
+        "code": "    longTakeProfit := strategy.position_avg_price * 1.10  // Target is 10% above the buy price",
+        "reason": "均价只在未成交信号柱保存为na，成交后没有刷新保护价。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "protective_order_scope",
+        "evidence_line": 164,
+        "detail": "均价只在未成交信号柱保存为na，成交后没有刷新保护价。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    longTakeProfit := strategy.position_avg_price * 1.10  // Target is 10% above the buy price",
+        "new": "if strategy.position_size > 0\n    longTakeProfit := strategy.position_avg_price * 1.10  // Target is 10% above the buy price",
+        "reason": "把后续连续三行均价赋值放在持仓分支。",
+        "preserved": "10%目标5%止损，原exit和默认成交时机保持。",
+        "validation_cases": [
+          "入场后首次计算有有效均价，三条价线同步更新。"
+        ]
+      },
+      {
+        "old": "strategy.exit(\"Take Profit/Stop Loss\", from_entry=\"Buy\", limit=longTakeProfit, stop=longStopLoss)",
+        "new": "if strategy.position_size > 0\n    strategy.exit(\"Take Profit/Stop Loss\", from_entry=\"Buy\", limit=longTakeProfit, stop=longStopLoss)",
+        "reason": "仅对已成交持仓提交保护，防止空仓新入场沿用上一笔保留的价格。",
+        "preserved": "保留原入场条件、参数、仓位及Pine版本。",
+        "validation_cases": [
+          "第一笔100成交后目标110止损95；平仓后新单200发出但未成交时不提交旧110/95保护。",
+          "新单成交后以新均价计算220/190并提交保护。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 3769,
+    "id": "70c802ee6fdd",
+    "filename": "多周期均线与RSI动量交叉策略-Multi-Period-Moving-Average-and-RSI-Momentum-Cross-Strategy.md",
+    "source_sha256": "9cbb9e8c9bc7162809599c56b1f980317ddbb76bec5628d6b19adef131b83d8c",
+    "code_sha256": "bfc3cfa14053dcdf59fae91b41f7f8966476711a2ee4030237e4cc4266fc5fe9",
+    "code_lines": 50,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA50/200金叉且RSI<70做多，死叉且RSI>30平多，平台默认仓位。",
+    "evidence": [
+      {
+        "line": 116,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3775,
+    "id": "35a421acf82e",
+    "filename": "多周期均线穿越结合RSI动量与ATR波动率的趋势跟踪策略-Multi-Period-EMA-Crossover-with-RSI-Momentum-and-ATR-Volatility-Based-Trend-Following-Strategy.md",
+    "source_sha256": "dabae5e2e450bef9a8bb987c716f80a22672db715946d6774789bec80dcada20",
+    "code_sha256": "52b2a8373b2206eaf97b972c0fcd26f9b4d1978ea05697342753a058fbc01cfa",
+    "code_lines": 63,
+    "review_scope": "full_source_static",
+    "synopsis": "阳线吞没配合EMA100>EMA200及RSI>50开多；持仓均价减当前1.1ATR止损、加2ATR目标。",
+    "evidence": [
+      {
+        "line": 144,
+        "code": "    strategy.exit(\"Exit\", from_entry=\"Buy\", stop=stop_price, limit=limit_price)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3785,
+    "id": "784960f43892",
+    "filename": "多周期布林带突破回归交易策略-Multi-Timeframe-Bollinger-Band-Breakout-Reversion-Strategy.md",
+    "source_sha256": "2b7efc8c09beb52b8731a2cf8af213f4c85911183de0cca989ead11dc71d2925",
+    "code_sha256": "8cd396816d1284ca6cb12b584c84eda8416527aea2e04ec97667f44a2dad2596",
+    "code_lines": 82,
+    "review_scope": "full_source_static",
+    "synopsis": "布林带外整柱后的突破条件开多空，按前柱振幅将风险预算4000换数量；2R后挂保本、3R收盘退出。",
+    "evidence": [
+      {
+        "line": 220,
+        "code": "    stopLoss := high[1] // Stop-loss set to the high of the candle outside the upper BB",
+        "reason": "计算的初始stopLoss没有提交保护，市价实际入口与用于数量/目标的前高低不一致，且共享状态可被未成交信号覆盖；需确认订单与风险设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 220,
+        "detail": "计算的初始stopLoss没有提交保护，市价实际入口与用于数量/目标的前高低不一致，且共享状态可被未成交信号覆盖；需确认订单与风险设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3800,
+    "id": "793131cc73d2",
+    "filename": "多周期相位交叉与指数移动平均趋势跟踪策略-Multi-Period-Phase-Crossover-with-EMA-Trend-Following-Strategy.md",
+    "source_sha256": "a31f3ff1bb3cdb038ee5304a70c4e6eb1de4d0487b80857b643e2abde8f86454",
+    "code_sha256": "12e5dad1fb73e3dbb5f6b60ddb4b0976f970ffa30bb94e1649176fb5ca9a1e49",
+    "code_lines": 67,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA20加0.5上穿EMA20减0.5买多，下穿平多；EMA13/26交叉与其余均线仅显示。",
+    "evidence": [
+      {
+        "line": 118,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3878,
+    "id": "2b5db1b11822",
+    "filename": "多层级多周期指数均线交叉动态盈利优化策略-Multi-Level-Multi-Period-EMA-Crossover-Dynamic-Take-Profit-Optimization-Strategy.md",
+    "source_sha256": "509c59c531cd182d7bbaae8e34fc811264adb3ef22839583d2ccdbb55d8d0e64",
+    "code_sha256": "a6aad81c271a1a1b0ce9dd962c45e8e2058d326422e6293c0273aae46c2c18dd",
+    "code_lines": 86,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA20/50交叉做多空，信号柱振幅形成四档目标；另以当前close±3%尝试保护。",
+    "evidence": [
+      {
+        "line": 169,
+        "code": "strategy.exit(\"Take Profit 1\", \"Buy\", limit=takeProfit1)",
+        "reason": "四档全量exit没有分配数量，首档预留全仓令后档与止损失效，且多空复用ID和目标；分批设计需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 169,
+        "detail": "四档全量exit没有分配数量，首档预留全仓令后档与止损失效，且多空复用ID和目标；分批设计需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 3900,
+    "id": "3584e3b6e286",
+    "filename": "多指标交叉动量趋势跟踪策略基于Supertrend与ADX双重确认的量化交易系统-Multi-Indicator-Momentum-Trend-Following-Strategy-Quantitative-Trading-System-Based-on-Supertrend-and-ADX-Dual-Confirmation.md",
+    "source_sha256": "06f64820539b86119617155b7f39c2e079f9b2ff48f2df1c89522635ef9eb799",
+    "code_sha256": "352d0f2974d6fbd6ca3e54dff070a49b2c21ba05b8b24a0ede04c38b49389c47",
+    "code_lines": 53,
+    "review_scope": "full_source_static",
+    "synopsis": "超级趋势向上且ADX>14、RSI在40下或60上开多；超级趋势转下平多，默认数量。",
+    "evidence": [
+      {
+        "line": 154,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 3984,
+    "id": "9a6f7abdc541",
+    "filename": "多指标趋势动量ATR目标价交易策略-Multi-Indicator-Trend-Momentum-ATR-Target-Trading-Strategy.md",
+    "source_sha256": "c70a03c5e8802f8bd351684d1206ceedb4dffd192c311c9835eef8b0af0c048d",
+    "code_sha256": "10cb028c689b16c06030a1bf2bba8ff58e6df1aacf07326e803c30f50c4cd077",
+    "code_lines": 76,
+    "review_scope": "full_source_static",
+    "synopsis": "拟ADX与DI趋势、RSI高于自身均线并上穿60开多，信号价1.5ATR止损2.5ATR目标以收盘市价判断。",
+    "evidence": [
+      {
+        "line": 109,
+        "code": "[adx, plusDI, minusDI] = ta.dmi(adxLength, adxSmoothing)",
+        "reason": "DMI元组顺序错位，adx实际取+DI。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "dmi_tuple_order",
+        "evidence_line": 109,
+        "detail": "DMI元组顺序错位，adx实际取+DI。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "[adx, plusDI, minusDI] = ta.dmi(adxLength, adxSmoothing)",
+        "new": "[plusDI, minusDI, adx] = ta.dmi(adxLength, adxSmoothing)",
+        "reason": "修正标准返回值对应关系。",
+        "preserved": "默认周期阈值及收盘退出保持。",
+        "validation_cases": [
+          "+DI大于-DI且ADX上升才符合原adxCondition。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4000,
+    "id": "ff799efab7e5",
+    "filename": "多指标趋势跟踪交易策略结合抛物线SAR和SuperTrend云层-Multi-Indicator-Trend-Following-Trading-Strategy-with-Parabolic-SAR-and-SuperTrend-Cloud.md",
+    "source_sha256": "63a47b0b9dea4edb7270d45c41d22e5e2e435a8e31f695c09a0171bd0b35a32f",
+    "code_sha256": "799249ad382732ea0c90f7d16654467a2ba44a3ceed68c205928a0f9c920b40a",
+    "code_lines": 48,
+    "review_scope": "full_source_static",
+    "synopsis": "SAR与所谓SuperTrend上下线及量EMA差同向时10%权益做多，反向条件退出。",
+    "evidence": [
+      {
+        "line": 110,
+        "code": "[st_upper, st_lower] = ta.supertrend(st_length, st_multiplier)",
+        "reason": "supertrend返回第二值是方向非下轨，且factor与ATR周期参数颠倒；双轨云与方向过滤真实设计需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 110,
+        "detail": "supertrend返回第二值是方向非下轨，且factor与ATR周期参数颠倒；双轨云与方向过滤真实设计需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4195,
+    "id": "3d72ee8ea263",
+    "filename": "多重均线交叉信号优化交易策略-Multiple-Moving-Average-Crossover-Signal-Enhanced-Trading-Strategy.md",
+    "source_sha256": "7a42645ebd69061d427e704210e0bde78a195200922abacd85bf3ea30c3ad9fa",
+    "code_sha256": "aa6de30d23a97765f486c2f9f9d6918144c64681f34373a6082248cb99c4a21b",
+    "code_lines": 59,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA20/50金叉且价格高于SMA200做多，死叉且价格低于SMA200平多；50/200交叉只标注。",
+    "evidence": [
+      {
+        "line": 133,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4227,
+    "id": "2b2556d8e805",
+    "filename": "多重形态识别与SR分位交易策略-Multi-Pattern-Recognition-and-SR-Level-Trading-Strategy.md",
+    "source_sha256": "168b031bd7ffee70e0bdd5c40fbbdd50eb3e1a0db8304a4fab059dfc9e7e0fb5",
+    "code_sha256": "4f8d5594a9e3a2e16123563c0b9662c7d1575f6645e4a5b48f87e9b9e2376af8",
+    "code_lines": 110,
+    "review_scope": "full_source_static",
+    "synopsis": "双底识别后以斐波那契扩展值与重复触及支撑阻力比较，突破上级开多、低于下级开空反转。",
+    "evidence": [
+      {
+        "line": 151,
+        "code": "    sharpness = getSpikeSharpness(0)",
+        "reason": "isSwingLow确认lookbackPeriod柱之前低点，却用当前柱low及影线分类；重置双底后扩展值残留，需整体形态生命周期设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 151,
+        "detail": "isSwingLow确认lookbackPeriod柱之前低点，却用当前柱low及影线分类；重置双底后扩展值残留，需整体形态生命周期设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4243,
+    "id": "76cb2335a1c4",
+    "filename": "多重技术指标趋势跟踪策略-结合超级趋势EMA和风险管理-Multi-Indicator-Trend-Following-Strategy-Integrating-SuperTrend-EMA-and-Risk-Management.md",
+    "source_sha256": "ec8e2a6d12d4801e2ae726144fd06e7e587bd5fb2705a6949f5576b8580b969d",
+    "code_sha256": "482caf61ce548e1584f073516e56cc3ec8ec9f951b15fe294e452bee37818cbe",
+    "code_lines": 69,
+    "review_scope": "full_source_static",
+    "synopsis": "自算超级趋势向上且价格在EMA200上时提交多头stop-limit订单，反向且EMA200下平仓。",
+    "evidence": [
+      {
+        "line": 217,
+        "code": "    strategy.entry(\"Long\", strategy.long, stop=long_stop_loss, limit=long_take_profit)",
+        "reason": "名为止损止盈的值被传给entry形成入场stop-limit，未提交实际保护退出；应先明确市价入口及固定/动态保护。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 217,
+        "detail": "名为止损止盈的值被传给entry形成入场stop-limit，未提交实际保护退出；应先明确市价入口及固定/动态保护。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4256,
+    "id": "4db20b760ecd",
+    "filename": "多重指数移动平均线交易策略Multiple-Exponential-Moving-Average-Trading-Strategy.md",
+    "source_sha256": "f8ba2d459f68b845883cf237f94cec582f94a21e4a5106637b4a608552694f8f",
+    "code_sha256": "fef0526a4a7a208e4c9c7e8d54ea14d79c370d9f820c22b073dfd6eb666de94f",
+    "code_lines": 51,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA55低于EMA8/13/21的状态首次成立且非多仓买多，EMA55高于三者首次成立平多。",
+    "evidence": [
+      {
+        "line": 163,
+        "code": "    strategy.entry(\"EL\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4349,
+    "id": "3bd5da8e5038",
+    "filename": "大红蜡烛突破买入策略-Big-Red-Candle-Breakout-Buy-Strategy.md",
+    "source_sha256": "a4433e2214ca4b5775504f2dd8ad4b699dde0d998c19f89c9bf6850a1ffe7897",
+    "code_sha256": "76c1dc8c12e9f302009c8cb8865e3a5b86499d484cb799de0c49eed6ce937ba8",
+    "code_lines": 49,
+    "review_scope": "full_source_static",
+    "synopsis": "保存振幅20点以上阴线低点，后续阳线跌破该低点做多；按未平仓利润门槛加数量，close±20/50动态退出。",
+    "evidence": [
+      {
+        "line": 200,
+        "code": "strategy.exit(\"Exit\", from_entry=\"Buy\", stop=close - stopLossPoints, limit=close + targetPoints)",
+        "reason": "保护随close每柱移动且买入基准不复位，是否固定保护、一次形态一次入场与盈利加仓规则均待确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 200,
+        "detail": "保护随close每柱移动且买入基准不复位，是否固定保护、一次形态一次入场与盈利加仓规则均待确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4359,
+    "id": "a964a5589a81",
+    "filename": "威廉姆斯9日趋势突破策略Williams-9-Days-Breakout-Strategy.md",
+    "source_sha256": "4ce6c2a30e0d40782273e8056b8dd6cd18eb2d60c57aa28c00f1599f3c467b1b",
+    "code_sha256": "6300994d64dab41f23d6b2f5e59f5daed204029d9d28f5635d023a11c1cd2d3e",
+    "code_lines": 36,
+    "review_scope": "full_source_static",
+    "synopsis": "开盘在EMA9下收盘在其上时于本柱高点挂stop买多；反向柱在低点挂退出，条件失效即撤单。",
+    "evidence": [
+      {
+        "line": 137,
+        "code": "window()  => true // create function \"within window of time\"  ",
+        "reason": "日期恒真且start的月份/日期为0，恢复应先明确实际起日；不猜测应为2019年1月1日。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 137,
+        "detail": "日期恒真且start的月份/日期为0，恢复应先明确实际起日；不猜测应为2019年1月1日。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4388,
+    "id": "bbee2f5e47c1",
+    "filename": "定期定额累积均价策略Dollar-Cost-Averaging-Strategy.md",
+    "source_sha256": "c07b7699d16e55bf772914fbe0e734aacd157e71ef8bbaab7f7a5f7360012380",
+    "code_sha256": "a467b9b87a07ec8b45388a0f0ca01236456fa052ea24b0b421ad70ad655b61a7",
+    "code_lines": 54,
+    "review_scope": "full_source_static",
+    "synopsis": "每柱按200/close取整累计买入，倒数第三根柱以持仓数量反向order清仓，自记现金不限制下单。",
+    "evidence": [
+      {
+        "line": 124,
+        "code": "if bar_index == last_bar_index - 2 // bi",
+        "reason": "退出依赖last_bar_index属于样本终点信息，且无资金/频率门禁；真实DCA频率与终止条件需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 124,
+        "detail": "退出依赖last_bar_index属于样本终点信息，且无资金/频率门禁；真实DCA频率与终止条件需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4444,
+    "id": "1d021331bef3",
+    "filename": "布林带RSI交易策略-Bollinger-Bands-RSI-Trading-Strategy.md",
+    "source_sha256": "e7138d7b684097b70df9949da2b47b88d009a40a0989ac0be6f60bb84edb7555",
+    "code_sha256": "11e84b95db16bd75368fffc24e9548b1a8bb15b9280899e0ccc5bc85532a0f3e",
+    "code_lines": 44,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘低于布林下轨且RSI14<30做多，高于上轨且RSI>70平仓，默认仓位。",
+    "evidence": [
+      {
+        "line": 122,
+        "code": "    strategy.entry(\"Buy\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4451,
+    "id": "9b64f7a18fbe",
+    "filename": "布林带与RSI交易策略-Bollinger-Bands-and-RSI-Trading-Strategy.md",
+    "source_sha256": "ee4e35f5e39e9dcd3744b0fc8065d9fc470a2accef4a8d4d5f1d9b633b97d931",
+    "code_sha256": "c0c199cccc4bc7ae7d38f35f503eb369807926655060258fcb5997cc02548e9f",
+    "code_lines": 71,
+    "review_scope": "full_source_static",
+    "synopsis": "布林20期1倍下轨且RSI<30并距上次买信号五柱全权益做多，上轨且RSI>70平多。",
+    "evidence": [
+      {
+        "line": 173,
+        "code": "strategy.entry(\"Long\", strategy.long, when = Buy_1, alert_message = \"Buy Signal!\")",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4474,
+    "id": "3fc964603945",
+    "filename": "布林带和Stoch-RSI交易策略Bollinger-Band-and-Stoch-RSI-Trading-Strategy.md",
+    "source_sha256": "df2ea8f03c30fdf2378ff67bde61f32b9bb86c1c528984610a481d0efb2273fd",
+    "code_sha256": "d99786f47613baef5250090a4008c937639be836328fe87a3db6d1e977f30a0a",
+    "code_lines": 93,
+    "review_scope": "full_source_static",
+    "synopsis": "价格回穿布林下轨且随机RSI金叉时在close挂stop多单，无信号即撤；越上轨或下穿中轨等条件退出。",
+    "evidence": [
+      {
+        "line": 268,
+        "code": "    strategy.entry(\"BUY\", strategy.long, stop=close, oca_name=\"TREND\",  comment=\"BUY\")",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4488,
+    "id": "77bafc111633",
+    "filename": "布林带突破动量跟踪交易策略-Bollinger-Bands-Breakout-Momentum-Trading-Strategy.md",
+    "source_sha256": "b7568684ae12b9574578bdb492987db71cf5d63e33470fa3512c0bd26f506ce8",
+    "code_sha256": "ff0530cb6cbbee7baf875b252cd5c4ab4af3da4f2902956a797edd05ebecad5c",
+    "code_lines": 50,
+    "review_scope": "full_source_static",
+    "synopsis": "布林上轨突破买1份，下破下轨平仓，可选中轨均线类型并计成本滑点。",
+    "evidence": [
+      {
+        "line": 129,
+        "code": "inTradeWindow = true",
+        "reason": "日期窗恒真且退出绑定日期。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 129,
+        "detail": "日期窗恒真且退出绑定日期。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "inTradeWindow = true",
+        "new": "inTradeWindow = time >= startDate and time <= endDate",
+        "reason": "恢复日期。",
+        "preserved": "默认边界不变。",
+        "validation_cases": [
+          "窗外不新开。"
+        ]
+      },
+      {
+        "old": "exitCondition = close < lower and inTradeWindow",
+        "new": "exitCondition = close < lower",
+        "reason": "出口移出日期窗。",
+        "preserved": "下轨退出条件保持。",
+        "validation_cases": [
+          "日期后下破下轨已有仓位平仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4500,
+    "id": "6deabcb408ef",
+    "filename": "布林带结合超级趋势的智能波动区间交易策略-Intelligent-Volatility-Range-Trading-Strategy-Combining-Bollinger-Bands-and-SuperTrend.md",
+    "source_sha256": "0756bd6229bfcafb887e02fe5a98ac36a81cab6e24b2dc04b36672982a96f7bd",
+    "code_sha256": "5c481bf6181a1651b092a15b3ac043f3e0751b244b1efda3a56b58e97a03b600",
+    "code_lines": 66,
+    "review_scope": "full_source_static",
+    "synopsis": "布林下轨回穿且超级趋势direction>0开多，上轨回穿且direction<0开空，全权益，趋势线交叉退出。",
+    "evidence": [
+      {
+        "line": 128,
+        "code": "[bb_upper, bb_basis, bb_lower] = ta.bb(close, length_bb, mult_bb)",
+        "reason": "BB元组中轨/上轨错位；超级趋势方向条件与显示、形状字符串也需另行设计核对。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "bb_tuple_order",
+        "evidence_line": 128,
+        "detail": "BB元组中轨/上轨错位；超级趋势方向条件与显示、形状字符串也需另行设计核对。",
+        "resolution": "仅提出patches所列确定范围的补丁；detail中其余保护、方向、加仓或输入问题仍未修，需确认设计及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "[bb_upper, bb_basis, bb_lower] = ta.bb(close, length_bb, mult_bb)",
+        "new": "[bb_basis, bb_upper, bb_lower] = ta.bb(close, length_bb, mult_bb)",
+        "reason": "按中轨上轨下轨解构。",
+        "preserved": "保留参数、方向过滤和仓位。",
+        "validation_cases": [
+          "中轨等于SMA，卖出比较真正上轨。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4510,
+    "id": "a03c4bb31864",
+    "filename": "布林带风险管理的看涨吞没策略量化交易系统-Bullish-Engulfing-Quantitative-Trading-System-with-Bollinger-Bands-Risk-Management.md",
+    "source_sha256": "9064931f9961e6bdc8ba0cbf8054daea4348559d55b49e13c7bb819e734a03d8",
+    "code_sha256": "9fb7d74c65d590ccc2444ecaab7a458c6911e5b20a92937fd5b30f0d4c2c2214",
+    "code_lines": 77,
+    "review_scope": "full_source_static",
+    "synopsis": "放量看涨吞没时以布林宽度R及权益0.75%算数量挂收盘限价多单；高低触R止损或4R目标时市价退出。",
+    "evidence": [
+      {
+        "line": 203,
+        "code": "if (inPosition)",
+        "reason": "自记inPosition在限价未成交时即真，信号柱高低可触退出但未撤入口；R逐柱变化，固定风险与成交状态设计未明确。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 203,
+        "detail": "自记inPosition在限价未成交时即真，信号柱高低可触退出但未撤入口；R逐柱变化，固定风险与成交状态设计未明确。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4586,
+    "id": "4b5beeaf1a91",
+    "filename": "快速EMA和慢速EMA动量突破策略fast-EMA-and-slow-EMA-Momentum-Breakthrough-Strategy.md",
+    "source_sha256": "e2838da35e0b9570041c93de060409b581963add4ea6fe05a20e511f42caf18c",
+    "code_sha256": "6376d6e42ad7a4e39b83a5fad2b1d236c639ba7c81d97df6fac0632d3ffe00a5",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA37上穿EMA370做多，下穿退出，默认数量且无独立保护单。",
+    "evidence": [
+      {
+        "line": 155,
+        "code": "strategy.entry(\"Buy\", strategy.long, when=buyCondition)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4622,
+    "id": "1c70e3a454e4",
+    "filename": "拓宽均线区间的马丁格尔止损炒股策略Martingale-Strategy-with-Expanded-Moving-Average-Range-for-Stock-Trading.md",
+    "source_sha256": "f14513a007a628910358e583a8c4328c429748cc17f159480bfd4206a53f5e57",
+    "code_sha256": "f09cea09c8e1a3b5a49879faac9510469b54b29e17eacd01238432302a2fee1f",
+    "code_lines": 75,
+    "review_scope": "full_source_static",
+    "synopsis": "价格跌离EMA55/89下方配可选RSI过滤开初仓，跌2%起按持仓倍增限价补仓，均价利润目标随订单数缩小。",
+    "evidence": [
+      {
+        "line": 206,
+        "code": "window()  => true // create function \"within window of time\"",
+        "reason": "日期函数恒真且加仓限价窗外残留；本补丁不改变加仓层数或金额。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 206,
+        "detail": "日期函数恒真且加仓限价窗外残留；本补丁不改变加仓层数或金额。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      },
+      {
+        "severity": "high",
+        "kind": "compile_blocker",
+        "evidence_line": 165,
+        "detail": "唯一strategy声明被注释，现有源码缺少可执行脚本声明；本次日期修复不恢复未启用的10层加仓声明。",
+        "resolution": "保留为明确编译阻断，需确认原声明及加仓配置后单独修复；候选不能视为可运行。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "window()  => true // create function \"within window of time\"",
+        "new": "window()  => time >= start and time <= finish",
+        "reason": "恢复入口日期。",
+        "preserved": "日期参数不变。",
+        "validation_cases": [
+          "过期不新增初仓或补仓。"
+        ]
+      },
+      {
+        "old": "strategy.exit(\"EMA1\", limit = SellPrice, when = window() and strategy.opentrades > 0)\nstrategy.close(\"EMA1\",when = time > finish) // close positions at the end of the specified time period",
+        "new": "if not window()\n    strategy.cancel(\"EMA1\")\nstrategy.exit(\"EMA1 TP\", limit = SellPrice, when = strategy.opentrades > 0)\nstrategy.close(\"EMA1\",when = time > finish) // close positions at the end of the specified time period",
+        "reason": "区分入场EMA1与止盈EMA1 TP；先撤窗外入场单，再提交持仓止盈与原期末平仓，避免撤单误取消止盈。",
+        "preserved": "保留原入场条件、参数、仓位及Pine版本。",
+        "validation_cases": [
+          "窗外仅撤EMA1入场，EMA1 TP保护不被同ID撤单取消。",
+          "期末close EMA1必须在cancel EMA1之后提交，保持原退出意图。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4632,
+    "id": "0fe462a67e55",
+    "filename": "指数移动均线烛台停止交易策略-Exponential-Moving-Average-Candle-Stop-Trading-Strategy.md",
+    "source_sha256": "cd1a0411f8e704d76a8815cbc42a28c23a408f6994607e302b6805cf7f2c482c",
+    "code_sha256": "5936dc48f9d94f40a11fd0b81599c58bdbed5cffe523b9cb8e9995fc2c46e024",
+    "code_lines": 123,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA20/90趋势配影线形态开多空，空头另需RSI超买；自计2.5%风险数量并以利润/亏损比判断目标。",
+    "evidence": [
+      {
+        "line": 253,
+        "code": "    risk_reward_long = loss_percent_long != 0 ? profit_percent_long / loss_percent_long : (profit_percent_long != 0 ? 99999 : 0)",
+        "reason": "profit_percent与loss_percent互为相反数，非零风险回报比恒-1，>=3目标不可达；退出还依当前趋势而非实际持仓方向，需整体状态修订。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 253,
+        "detail": "profit_percent与loss_percent互为相反数，非零风险回报比恒-1，>=3目标不可达；退出还依当前趋势而非实际持仓方向，需整体状态修订。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4671,
+    "id": "fb7f387aa500",
+    "filename": "收缩带Bollinger与RSI组合策略Bollinger-Bands-and-RSI-Combination-Strategy.md",
+    "source_sha256": "287e6b6ddabc9a362f69d2e9b034938a97a45b79de5df9639c38ad8b575244a0",
+    "code_sha256": "37352d1dc85306099e8068e570dd8994478dd456ddeca17e38d34366b7c3e68b",
+    "code_lines": 115,
+    "review_scope": "full_source_static",
+    "synopsis": "布林窄于2ATR且ATR不升、RSI10/14同升时空仓开多；低价触单向抬升的2ATR线或RSI超买退出。",
+    "evidence": [
+      {
+        "line": 122,
+        "code": "within_timeframe = true",
+        "reason": "日期恒真；恢复后必须让持仓管理不受日期影响。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 122,
+        "detail": "日期恒真；恢复后必须让持仓管理不受日期影响。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "within_timeframe = true",
+        "new": "within_timeframe = time >= backtest_timeframe_start and (not USE_ENDTIME or time <= backtest_timeframe_end)",
+        "reason": "恢复可选截止日期。",
+        "preserved": "起止默认保留。",
+        "validation_cases": [
+          "关闭截止仅限制开始。"
+        ]
+      },
+      {
+        "old": "if strategy.position_size == 0 or not within_timeframe",
+        "new": "if strategy.position_size == 0",
+        "reason": "窗外持仓继续单向跟踪。",
+        "preserved": "原低价ATR计算不变。",
+        "validation_cases": [
+          "过期持仓止损不被重置放宽。"
+        ]
+      },
+      {
+        "old": "if within_timeframe\n",
+        "new": "if within_timeframe or strategy.position_size > 0\n",
+        "reason": "允许持仓窗外执行原退出块。",
+        "preserved": "原退出判定保持。",
+        "validation_cases": [
+          "日期外超买或触线仍平仓。"
+        ]
+      },
+      {
+        "old": "if volat_decr and rsi_upslope and is_squeezing and strategy.position_size == 0",
+        "new": "if within_timeframe and volat_decr and rsi_upslope and is_squeezing and strategy.position_size == 0",
+        "reason": "入口仍严格窗内。",
+        "preserved": "原信号不变。",
+        "validation_cases": [
+          "窗外即使挤压信号成立也不买入。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4707,
+    "id": "5a6725d76968",
+    "filename": "日内锤子反转形态多头策略Intraday-Hammer-Reversal-Pattern-Long-Strategy.md",
+    "source_sha256": "843ab41928e3486c3660ce2f7d77f3a6ee15e4de8c60c769f084f426ceea6f0d",
+    "code_sha256": "8d66e45daaa695c0cae48629bd7972c80daec4aa757de7cb91bc63a0f0fa239a",
+    "code_lines": 39,
+    "review_scope": "full_source_static",
+    "synopsis": "前柱阴锤子后阳线且低点抬升做多50000/close，前柱低点止损、收盘1.5倍目标。",
+    "evidence": [
+      {
+        "line": 98,
+        "code": "    lowerWickSize = open[1] - low[1]",
+        "reason": "阴线下影线计算open-low包含实体，应为close-low。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "candle_geometry",
+        "evidence_line": 98,
+        "detail": "阴线下影线计算open-low包含实体，应为close-low。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    lowerWickSize = open[1] - low[1]",
+        "new": "    lowerWickSize = close[1] - low[1]",
+        "reason": "对阴锤子使用实体底部到低点距离。",
+        "preserved": "保留2倍影线比例及其余条件。",
+        "validation_cases": [
+          "阴线open100 close98 low95，下影为3而非5，不误满足2倍实体。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4770,
+    "id": "b3f17205e9a3",
+    "filename": "杠杆化马丁格尔期货交易策略Leveraged-Martingale-Futures-Trading-Strategy.md",
+    "source_sha256": "cd292426acebc12b59f58471de40e9f014b783f310658b390917c69a58577102",
+    "code_sha256": "c2f720f46bb1ae7d1a2820b932b4ff686edd3cb9060e6cd6cbd2b8b10ca26f75",
+    "code_lines": 53,
+    "review_scope": "full_source_static",
+    "synopsis": "初始按10000美元5倍杠杆开多，跌1%按2倍层级补仓，按自记加权均价及手续费退出。",
+    "evidence": [
+      {
+        "line": 152,
+        "code": "    strategy.entry(\"Double Long\" + tostring(num_trades), strategy.long, qty=size)",
+        "reason": "未声明加仓却把被拒绝补仓计入均价；禁用立即入场时last_entry_price初始na使第一单不可达，须确认层级与首单触发设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 152,
+        "detail": "未声明加仓却把被拒绝补仓计入均价；禁用立即入场时last_entry_price初始na使第一单不可达，须确认层级与首单触发设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 4851,
+    "id": "d7ed73a9b021",
+    "filename": "海龟交易三日反转策略Turtle-Trading-3-Day-Reversion-Strategy.md",
+    "source_sha256": "55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691",
+    "code_sha256": "14e5b38f18f9e127522ef8adfc1b1ac74de75d74df7454bddf82ca0944bafcf9",
+    "code_lines": 37,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘在EMA200上EMA5下且连续三柱高低下降全权益收盘买多，上穿退出EMA平仓，窗外原有强平。",
+    "evidence": [
+      {
+        "line": 216,
+        "code": "InDateRange = true",
+        "reason": "日期范围恒真，窗外强平不可达。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 216,
+        "detail": "日期范围恒真，窗外强平不可达。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "InDateRange = true",
+        "new": "InDateRange = time >= StartTime and time <= EndTime",
+        "reason": "恢复日期及原窗外强平。",
+        "preserved": "收盘成交、信号及日期不变。",
+        "validation_cases": [
+          "开始前不买；超过结束时间已有close_all生效。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 4863,
+    "id": "b9cf2bf5b4a2",
+    "filename": "混合双态Z评分量化策略-Hybrid-Binomial-Z-Score-Quantitative-Strategy.md",
+    "source_sha256": "910b74e39e8526ac7a5a3e9de45b557e027afc036162ef51cfab171b2f9283d8",
+    "code_sha256": "36e0e29c4ef4d4142a6418a49c07698db4abeede00b5c605efd3624399afaecf",
+    "code_lines": 55,
+    "review_scope": "full_source_static",
+    "synopsis": "单柱价格变化的252期Z分数<-1.5且收盘低于布林下轨做多，Z>1.5且越上轨平多。",
+    "evidence": [
+      {
+        "line": 121,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 4902,
+    "id": "a7f7e1a6dce6",
+    "filename": "牛市力量交易策略Bull-Power-Trading-Strategy.md",
+    "source_sha256": "7b91da47280c64f8ac1f83210664b524b2d53176612ad361c341304d7eec0a2c",
+    "code_sha256": "ee80436b23f08a50039a68adcd5ea6a76d8196348adc36f12691116c62baa43b",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "OHLC分支计算BullPower，超过40空头状态、低于等于3多头状态，中间保持；可选反向并以entry反转。",
+    "evidence": [
+      {
+        "line": 240,
+        "code": "pos = iff(value > SellLevel, -1,",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5060,
+    "id": "8392a0a6000b",
+    "filename": "移动平均线和偏差指标多周期交易策略A-Multi-Period-Trading-Strategy-Based-on-Moving-Averages.md",
+    "source_sha256": "6ace9f3053cef3cac963e1171a378f0a42ee4423dca257ede94239a9e32a9db3",
+    "code_sha256": "cea946566bfb3f2f2d79506d7ef5788327cbcf14efeac3341e5ddcc53cdd404e",
+    "code_lines": 77,
+    "review_scope": "full_source_static",
+    "synopsis": "MACD金叉且RSI<50、价格低于布林中轨时20%权益做多；RSI>70且越上轨退出，可选10%或ATR止损。",
+    "evidence": [
+      {
+        "line": 246,
+        "code": "    strategy.exit(\"Stop Loss\", \"Long\", stop=longStop)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5084,
+    "id": "e76d4cf22414",
+    "filename": "移动平均聚合动量云策略-Moving-Average-Convergence-Momentum-Cloud-Strategy.md",
+    "source_sha256": "0ee7eb419b44cf843a3b3d42563fef0ccc1d314a7c6bd9e5de982f6a00feb688",
+    "code_sha256": "044da6b37d256fab18e160b4bf5afd0f01cdbfad5341cddf052c2f8751dc6d07",
+    "code_lines": 86,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA5/20金叉做多、死叉退出；布林、RSI、均价云和ROC仅作展示。",
+    "evidence": [
+      {
+        "line": 92,
+        "code": "[bbUpper, bbMiddle, bbLower] = ta.bb(close, bbLength, bbMult)",
+        "reason": "布林元组上轨和中轨错位影响图示。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "bb_tuple_order",
+        "evidence_line": 92,
+        "detail": "布林元组上轨和中轨错位影响图示。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "[bbUpper, bbMiddle, bbLower] = ta.bb(close, bbLength, bbMult)",
+        "new": "[bbMiddle, bbUpper, bbLower] = ta.bb(close, bbLength, bbMult)",
+        "reason": "修复展示返回值。",
+        "preserved": "实际均线下单逻辑不变。",
+        "validation_cases": [
+          "BB Middle显示SMA20，BB Upper显示SMA20+2标准差。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 5085,
+    "id": "09222e22d60e",
+    "filename": "移动平均趋势跟踪策略Moving-Average-Trend-Tracking-Strategy.md",
+    "source_sha256": "beeacca9092ab772b79a15d573ef318d224b95c5712f17c12230b489634612a4",
+    "code_sha256": "9d0d349711860bb4bcae723ce548396bed1d1e375bafc90fb9b2b379d318c418",
+    "code_lines": 65,
+    "review_scope": "full_source_static",
+    "synopsis": "+DI上穿-DI买多，以上一柱高价下3%单向抬升保护退出；ADX范围只绘图未作为入场过滤。",
+    "evidence": [
+      {
+        "line": 218,
+        "code": "    strategy.exit(\"XL TRL STP\", stop=longStopPrice)    ",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5109,
+    "id": "e0431c070fd4",
+    "filename": "突破均线的趋势追踪策略Breakthrough-Moving-Average-Trend-Tracking-Strategy.md",
+    "source_sha256": "db64eda4a203035090e6dec7f6b86294531af0bc4b89ddfb186f191db502212b",
+    "code_sha256": "46564987fe32d29e419367ac9eaa4d5c35513ed5484539d1be3422dd3aa45388",
+    "code_lines": 45,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA20>40且SMA100>200时，在高于柱高的PSAR挂突破买单；PSAR在柱低下挂保护，趋势破坏平仓并撤入口。",
+    "evidence": [
+      {
+        "line": 152,
+        "code": "    strategy.entry(\"Buy\", strategy.long, stop=psar, comment=\"Buy\")",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5115,
+    "id": "04d27b548398",
+    "filename": "突破新低回归均线策略Mean-Reversion-Breakout-Low-Strategy.md",
+    "source_sha256": "2fe5d05e77386d2de9455e2039e4bb47c49304a37c75318ececccc9d3718a161",
+    "code_sha256": "e6d02c65eded17a6f34bada7c7ceb9c4cd96608d43fe8662d42f2b2530918638",
+    "code_lines": 69,
+    "review_scope": "full_source_static",
+    "synopsis": "九柱最低价连续打破一至四个保存低点时10%权益买多，九柱最高价超过保存前高平仓。",
+    "evidence": [
+      {
+        "line": 187,
+        "code": "    if truetime and prevLow > 0 and lowestLow < prevLow",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5123,
+    "id": "f54eee097cf1",
+    "filename": "突破追踪策略Breakout-Tracking-Strategy.md",
+    "source_sha256": "6625c613e87714f09c8c0517a9a25414b1a5e61ad6b8eda5a69ea210833dd1bd",
+    "code_sha256": "2f1b71e6b9b13604ae9fb2b692dfcd2da0d255147575f629c0114de4f966ed8e",
+    "code_lines": 41,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘上穿前柱20期唐奇安上轨全权益买多；可选下破前下轨或中轨平仓。",
+    "evidence": [
+      {
+        "line": 158,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5162,
+    "id": "092cd2deeae2",
+    "filename": "组合动量均线交叉策略结合市场情绪与阻力位优化系统-Combined-Momentum-SMA-Crossover-Strategy-with-Market-Sentiment-and-Resistance-Level-Optimization-System.md",
+    "source_sha256": "7a1239d0bb47ea37cbbe54bf1564a704d4d5c023b0b4566b75ef3fb1a5826f57",
+    "code_sha256": "c6cb7687ca2dc0255db6b1e676247503e22405845da669186f5c2e7be9a39184",
+    "code_lines": 71,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA10/30金叉且MACD正向买多，收盘达到20期阻力且MACD弱并非超卖时退出。",
+    "evidence": [
+      {
+        "line": 123,
+        "code": "closeEarlyCondition = strategy.position_size < 0 and rsi > rsiOverbought  // Close losing trade early if RSI is overbought",
+        "reason": "仅开多却以position_size<0判断早退，分支不可达；是否为多头超买提前退出需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 123,
+        "detail": "仅开多却以position_size<0判断早退，分支不可达；是否为多头超买提前退出需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 5171,
+    "id": "6b274e0d6b7e",
+    "filename": "经典移动平均线交叉策略Moving-Average-Crossover-Strategy.md",
+    "source_sha256": "873c2df6cab88074ed01edd197260e02c0f2a02dff99c4586168d1977973da12",
+    "code_sha256": "ab67689be38e7c54dfe32ee4b7fd1b8b95cebe8a80e71d29c1f168464820cfba",
+    "code_lines": 59,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA5上穿双重SMA10买多，下穿平仓，图示及警报另含多空文本但实际仅多。",
+    "evidence": [
+      {
+        "line": 187,
+        "code": "testPeriod() => true",
+        "reason": "日期窗恒真且退出嵌在窗口内。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 187,
+        "detail": "日期窗恒真且退出嵌在窗口内。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "testPeriod() => true",
+        "new": "testPeriod() => time >= testPeriodStart and time <= testPeriodStop",
+        "reason": "恢复日期入口。",
+        "preserved": "日期参数保持。",
+        "validation_cases": [
+          "开始前不买。"
+        ]
+      },
+      {
+        "old": "    if sell_signal\n        strategy.close(\"Long\")",
+        "new": "if sell_signal\n    strategy.close(\"Long\")",
+        "reason": "退出移出日期。",
+        "preserved": "死叉退出保持。",
+        "validation_cases": [
+          "结束后死叉仍平多。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 5222,
+    "id": "b63844954366",
+    "filename": "自适应动量均值回归交叉策略Adaptive-Momentum-Mean-Reversion-Crossover-Strategy.md",
+    "source_sha256": "839d56622e58e8a719b4f125d3e72de86f980049c98c7543c20088849b194f23",
+    "code_sha256": "3c0f25795d292a899f230010b71453a58db92d2c353522e2c03e8b53681dbb60",
+    "code_lines": 57,
+    "review_scope": "full_source_static",
+    "synopsis": "两柱ROC上穿其18期1.7标准差下轨做多，下穿21期2.1标准差上轨平仓，计固定手续费及滑点。",
+    "evidence": [
+      {
+        "line": 121,
+        "code": "    strategy.entry(\"Long\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5233,
+    "id": "449f17090c91",
+    "filename": "自适应布林带ATR跟踪止损交易策略-Adaptive-Bollinger-Bands-ATR-Trailing-Stop-Trading-Strategy.md",
+    "source_sha256": "e2bab58d2417588246957edfe6643d1a17530624f96b8f6bcac0d01f142c2edd",
+    "code_sha256": "e5f644d474a2c2b48a139c054ee07c31159803f9f6054da2ac18c81702712357",
+    "code_lines": 84,
+    "review_scope": "full_source_static",
+    "synopsis": "布林下轨回穿做多、上轨回穿做空；持仓时3ATR线单向收紧，收盘跨线市价平仓。",
+    "evidence": [
+      {
+        "line": 134,
+        "code": "    strategy.close(\"Long\")",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5240,
+    "id": "ff1efe5dc89f",
+    "filename": "自适应指数均线动态调仓突破交易策略-Adaptive-EMA-Dynamic-Position-Break-out-Trading-Strategy.md",
+    "source_sha256": "5455817804f192caf44f009646677dfc932adc1633b7e147e3b563790af1e651",
+    "code_sha256": "32fadcb0f535aef2b10e7b05b87fe08b53f8cb57966a86bd2d683e1c67b1b628",
+    "code_lines": 56,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA25/100金叉开多，以最近EMA100下阴线低点止损、信号收盘3R目标；尝试盈利2%保本。",
+    "evidence": [
+      {
+        "line": 119,
+        "code": "    if (strategy.position_size > 0)",
+        "reason": "保本逻辑嵌套金叉信号，通常成交后不执行；另独立exit会被原全量保护预留阻断，需决定保本修改同单和目标保存方式。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 119,
+        "detail": "保本逻辑嵌套金叉信号，通常成交后不执行；另独立exit会被原全量保护预留阻断，需决定保本修改同单和目标保存方式。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 5249,
+    "id": "c9b97856c1d7",
+    "filename": "自适应波动突破回撤交易策略-Adaptive-Volatility-Breakout-Retest-Trading-Strategy.md",
+    "source_sha256": "08941c236d856a2bfa8b6897e9e06865f84f16b48ce348a8e59493bf28d4340e",
+    "code_sha256": "cfc7f0cf3d0b4a55fd5ebf1d2e3ad6d54aaa60e94f8222039f67f877a538b0bb",
+    "code_lines": 50,
+    "review_scope": "full_source_static",
+    "synopsis": "收盘跨SMA200且近五柱触及均线视为回测，按方向开多空；信号价加减1ATR对称目标保护。",
+    "evidence": [
+      {
+        "line": 192,
+        "code": "    strategy.exit(\"LongExit\", from_entry=\"Long\", stop=longSL, limit=longTP)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5306,
+    "id": "e2fa04d2af1b",
+    "filename": "计算RSI指标和平滑移动平均线反转策略RSI-Reversal-Strategy.md",
+    "source_sha256": "80dc68537c6ad41a432c1e3ba8fafdb0c0afc91c407e16835096b59cc098e98c",
+    "code_sha256": "ce52fc847c65f1928aee106f52dd8c7e436b8e0cba0a447a1877dccf14b43c67",
+    "code_lines": 55,
+    "review_scope": "full_source_static",
+    "synopsis": "RSI14偏离50后WMA5再双曲变换，上穿-0.8在close挂stop做多，无信号撤单；下穿动态0/1阈值退出。",
+    "evidence": [
+      {
+        "line": 126,
+        "code": "threshold1 = RVS_RSI < 0.8? 1 : 0",
+        "reason": "上阈值由RVS<0.8生成1或0而非常量0.8，可能为编码错误但阈值策略意图需明确。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 126,
+        "detail": "上阈值由RVS<0.8生成1或0而非常量0.8，可能为编码错误但阈值策略意图需明确。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 5412,
+    "id": "f50f7e903fe4",
+    "filename": "趋势跟踪型三重指数移动平均线量化交易策略-Triple-EMA-Trend-Following-Quantitative-Trading-Strategy.md",
+    "source_sha256": "d98d0139e6e8f8b7ba27ece4b47cfdcc0d8ecba3821de88b0a9a912fb07419b0",
+    "code_sha256": "e40e3b4dbce58b7d740ac135f95918e3fec8e057e727ddb4b39362e82f23eac9",
+    "code_lines": 52,
+    "review_scope": "full_source_static",
+    "synopsis": "EMA10上穿EMA30且中慢EMA斜率正，或上穿EMA130且慢线升时开多；下穿EMA30平多。",
+    "evidence": [
+      {
+        "line": 132,
+        "code": "    strategy.entry(\"Comprar\", strategy.long)",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5493,
+    "id": "50bf1e07f343",
+    "filename": "轨迹追踪指数移动均线策略Trend-Following-Exponential-Moving-Average-Strategy.md",
+    "source_sha256": "40fc6d17fc04dcc98c2b5bf89d7b8ba548a4df526ba7303788580ec288cd5afb",
+    "code_sha256": "022e1d903e7484ab6d335238d99a795a8c53b6623f6901657f5dd2c837893f64",
+    "code_lines": 51,
+    "review_scope": "full_source_static",
+    "synopsis": "价格同时上穿EMA12/24/72或价格跨72且EMA8跨12/24分别开两个多头ID；回调入口尝试目标与跟踪，初始入口死叉stop退出。",
+    "evidence": [
+      {
+        "line": 184,
+        "code": "    strategy.exit(\"Trailing Stop\", \"Pullback Entry\", stop=close - (trailingStop * syminfo.mintick), trail_points=trailingStop)",
+        "reason": "回调入口第一全量目标预留仓位使第二止损无余量；trail_points缺少offset且stop随close移动，固定或跟踪保护需确认。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 184,
+        "detail": "回调入口第一全量目标预留仓位使第二止损无余量；trail_points缺少offset且stop随close移动，固定或跟踪保护需确认。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 5605,
+    "id": "e159be4c1b18",
+    "filename": "金叉死叉趋势追踪策略Golden-Dead-Cross-Trend-Tracking-Strategy.md",
+    "source_sha256": "5b0869c40fcacc8c564e7657580cea40f5bc25144322703aa7317b44f64acf35",
+    "code_sha256": "a7dbde119dd8856b8f3d29b99e72c8735e2a74fd03db1f56f444b683f96ce24a",
+    "code_lines": 46,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA3/19金叉且可选SMA100向上时收盘加仓多头，允许100层；死叉且均价盈利超过3%平全部，到期撤单强平。",
+    "evidence": [
+      {
+        "line": 162,
+        "code": "inTradeWindow = true",
+        "reason": "日期恒真使输入及到期处理失效。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 162,
+        "detail": "日期恒真使输入及到期处理失效。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "inTradeWindow = true",
+        "new": "inTradeWindow = not useDateFilter or (time >= backtestStartDate and time <= backtestEndDate)",
+        "reason": "恢复可关闭日期。",
+        "preserved": "保留100层及到期撤平。",
+        "validation_cases": [
+          "过滤关闭不限制日期；开启到期撤单强平。"
+        ]
+      },
+      {
+        "old": "if (shortcondition) and (close > strategy.position_avg_price*longStopPerc) and inTradeWindow",
+        "new": "if (shortcondition) and (close > strategy.position_avg_price*longStopPerc)",
+        "reason": "退出不受入场日期限制。",
+        "preserved": "盈利门槛保持。",
+        "validation_cases": [
+          "窗外死叉盈利退出仍允许。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 5607,
+    "id": "20e73fb43a48",
+    "filename": "金叉死叉长线多因子策略Golden-Cross-Death-Cross-Long-term-Multi-factor-Strategy.md",
+    "source_sha256": "708cd6367de0471f9b867c3292b9d2d2b303ff7782f2a0f2b7bbc4e9fa6b33bc",
+    "code_sha256": "4589e354388bd818efad47d9db96e34646a006371910f483783602afa0b3f4d0",
+    "code_lines": 46,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA10/50金叉且RSI<70买多；信号价1.5ATR止损及3ATR目标分别提交。",
+    "evidence": [
+      {
+        "line": 165,
+        "code": "    strategy.exit(\"TP Long\", \"Long\", limit=tpLong)",
+        "reason": "首个全量止损预留全部仓位，独立止盈无法覆盖同仓。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "exit_reservation",
+        "evidence_line": 165,
+        "detail": "首个全量止损预留全部仓位，独立止盈无法覆盖同仓。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "    strategy.exit(\"SL Long\", \"Long\", stop=slLong)\n    strategy.exit(\"TP Long\", \"Long\", limit=tpLong)",
+        "new": "    strategy.exit(\"SL Long\", \"Long\", stop=slLong, limit=tpLong)",
+        "reason": "合并同仓止盈止损。",
+        "preserved": "原价位和2R比例保持。",
+        "validation_cases": [
+          "先触目标可止盈，先触止损可止损且取消另一腿。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 5653,
+    "id": "f9d0c1751bbf",
+    "filename": "震荡市场多头策略Oscillating-Market-Long-Strategy.md",
+    "source_sha256": "f7c5adb47200927c5927a6bf30f78039323bdf6e3c6554e14533e13bafda3f14",
+    "code_sha256": "6a12712438c8e21880f3e2225153b55e8563b1fe017fadbba4fe202a4aa25de3",
+    "code_lines": 1430,
+    "review_scope": "full_source_static",
+    "synopsis": "多尺度ROC/CMO/RSI随机值、MACD、Vortex、ADX、TRIX、Chaikin和Coppock组合成OC1/2、STB1/2、MTB3/4、LTB1多头及SC1/2/3空头；各以布林下轨stop入场、条件失效撤单，按各自指标转弱平仓，最多四层。",
+    "evidence": [
+      {
+        "line": 1501,
+        "code": "    strategy.close(\"STB1\", when = (TRIXshortslope < 0.0))",
+        "reason": "STB1退出分支外层要求TRIXshortslope>0而内部when要求<0，另一分支同样对TRIX10slope自相矛盾；滤波系数混用BW20/50及AO中长期括号也需核对，不能猜测整套组合设计。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 1501,
+        "detail": "STB1退出分支外层要求TRIXshortslope>0而内部when要求<0，另一分支同样对TRIX10slope自相矛盾；滤波系数混用BW20/50及AO中长期括号也需核对，不能猜测整套组合设计。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 5690,
+    "id": "79ca24be379e",
+    "filename": "马鲁博蜡烛线段均衡策略Marubozu-Candle-Range-Balance-Strategy.md",
+    "source_sha256": "674b3b01e6b67f04dc3859fcf7ea916f3bbfa3c3d4012e31f3e568fd37caec53",
+    "code_sha256": "b025fd74842461764e1ffd8dcf74c9bc68fa01975e495092b4123a374ff8a268",
+    "code_lines": 64,
+    "review_scope": "full_source_static",
+    "synopsis": "实体大且双影小于实体5%的光头阳/阴线产生两个订单ID；两根同色后反转柱平相应ID，全权益。",
+    "evidence": [
+      {
+        "line": 205,
+        "code": "strategy.entry(\"short\",1,when= C_MarubozuBlackBearish)",
+        "reason": "名为short的entry方向1实际多，名为long方向0平台含义需核对；更改方向属于策略设计而非保守语法修复。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "execution_semantics",
+        "evidence_line": 205,
+        "detail": "名为short的entry方向1实际多，名为long方向0平台含义需核对；更改方向属于策略设计而非保守语法修复。",
+        "resolution": "需要确认设计或目标运行平台；不擅自改变交易语义。"
+      }
+    ],
+    "verdict": "needs_design",
+    "patches": []
+  },
+  {
+    "sid": 5698,
+    "id": "0054856bdd43",
+    "filename": "高收益日线交易策略Cloud-Soaring-High-Yield-Daily-Trading-Strategy.md",
+    "source_sha256": "02f52146c43c3f5344398edb65b6ef06c1cff21cc4b6bc4aca3852049364653a",
+    "code_sha256": "95b18e1b44d47624b73e7229525274778ddd1461987ae73d67b1b3c6b6bc2fd4",
+    "code_lines": 49,
+    "review_scope": "full_source_static",
+    "synopsis": "一目转换/基准金叉且价格高于位移云上方开多；死叉或跌破位移云下方即平多，另外严格双条件退出重复但无增仓。",
+    "evidence": [
+      {
+        "line": 138,
+        "code": "strategy.close(\"Buy\", when = crossunder(tenkanSen, kijunSen) or close < min(senkouSpanA, senkouSpanB)[displacement])",
+        "reason": "此源码行支持所述入场、退出或仓位执行路径。"
+      }
+    ],
+    "findings": [],
+    "verdict": "no_confirmed_defect",
+    "patches": []
+  },
+  {
+    "sid": 5791,
+    "id": "9a86cb046a87",
+    "filename": "黄金交叉策略Golden-Cross-Strategy.md",
+    "source_sha256": "aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35",
+    "code_sha256": "42fdb56880f823c394bb503b1da49049f103c0266b2cd866fcdd07bc325f79d0",
+    "code_lines": 54,
+    "review_scope": "full_source_static",
+    "synopsis": "SMA50/200金叉全权益做多，死叉平全部，提供日期背景显示。",
+    "evidence": [
+      {
+        "line": 187,
+        "code": "testPeriod() => true",
+        "reason": "交易日期函数恒真而背景已有真实范围。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 187,
+        "detail": "交易日期函数恒真而背景已有真实范围。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "testPeriod() => true",
+        "new": "testPeriod() => time >= testPeriodStart and time <= testPeriodStop",
+        "reason": "恢复入场日期。",
+        "preserved": "日期参数保持。",
+        "validation_cases": [
+          "背景范围外不再新入场。"
+        ]
+      },
+      {
+        "old": "\tshortCondition = crossunder(smaShort, smaLong)\n\tif (shortCondition)\n\t\tstrategy.close_all(true)",
+        "new": "shortCondition = crossunder(smaShort, smaLong)\nif (shortCondition)\n\tstrategy.close_all(true)",
+        "reason": "死叉退出移出日期。",
+        "preserved": "原平全部行为保持。",
+        "validation_cases": [
+          "窗口结束后死叉仍退出多仓。"
+        ]
+      }
+    ]
+  },
+  {
+    "sid": 5796,
+    "id": "fe3bde644581",
+    "filename": "黄金分割移动平均线交易策略Golden-Ratio-Moving-Average-Trading-Strategy.md",
+    "source_sha256": "4b222c06bcf66a72f949dc86f274598e713d646033aa0779e89ecfbc7bcd0d3c",
+    "code_sha256": "24269f972357a3f2616895291a373f25b9c6f8b2e907912c8ad66a2052277987",
+    "code_lines": 51,
+    "review_scope": "full_source_static",
+    "synopsis": "价格高于SMA200低于SMA10且RSI3<30空仓全权益开多；持仓均价20%止损，短均线上转弱平仓，profit参数未接线。",
+    "evidence": [
+      {
+        "line": 184,
+        "code": "datefilter = true",
+        "reason": "日期filter恒真。"
+      }
+    ],
+    "findings": [
+      {
+        "severity": "medium",
+        "kind": "disabled_date_gate",
+        "evidence_line": 184,
+        "detail": "日期filter恒真。",
+        "resolution": "提出保守补丁，待独立复审及目标平台验证。"
+      }
+    ],
+    "verdict": "fix_proposed",
+    "patches": [
+      {
+        "old": "datefilter = true",
+        "new": "datefilter = time >= startday and time <= endday",
+        "reason": "恢复仅入口日期。",
+        "preserved": "退出和20%止损保持。",
+        "validation_cases": [
+          "窗口外不入场，已有仓位继续止损与信号退出。"
+        ]
+      }
+    ]
+  }
+]

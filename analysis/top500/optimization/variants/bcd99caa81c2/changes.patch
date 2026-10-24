@@ -1,0 +1,45 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：多周期EMA交叉高胜率趋势跟踪策略进阶版-Multi-Timeframe-EMA-Cross-High-Win-Rate-Trend-Following-Strategy-Advanced.md
++// 原文件SHA256：643e41a2e56f66760526326fe09f373e7aa9bd70e74056db6f33563bf8a7c3b9
++// SID：3756；原研究名单序号：275
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-10-28 00:00:00
+ end: 2024-11-27 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("EMA Cross Strategy with Targets and Fill", overlay=true)
+ 
+ // Define EMAs
+@@ -42,6 +49,10 @@
+     strategy.entry("Buy", strategy.long)
+ 
+     // Set new take profit and stop loss levels
++    // OPT-3756-01：把后续连续三行均价赋值放在持仓分支。
++    // OPT-3756-01 保持：10%目标5%止损，原exit和默认成交时机保持。
++    // OPT-3756-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if strategy.position_size > 0
+     longTakeProfit := strategy.position_avg_price * 1.10  // Target is 10% above the buy price
+     longStopLoss := strategy.position_avg_price * 0.95    // Stop loss is 5% below the buy price
+     buyPrice := strategy.position_avg_price
+@@ -56,4 +67,8 @@
+ fill(plotBuyPrice, plotStopLoss, color=color.new(color.red, 90), title="Fill to Stop Loss")    // Light red fill to stop loss
+ 
+ // Exit conditions
+-strategy.exit("Take Profit/Stop Loss", from_entry="Buy", limit=longTakeProfit, stop=longStopLoss)
++// OPT-3756-02：仅对已成交持仓提交保护，防止空仓新入场沿用上一笔保留的价格。
++// OPT-3756-02 保持：保留原入场条件、参数、仓位及Pine版本。
++// OPT-3756-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if strategy.position_size > 0
++    strategy.exit("Take Profit/Stop Loss", from_entry="Buy", limit=longTakeProfit, stop=longStopLoss)

@@ -1,0 +1,26 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=6
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：三倍标准差布林带突破量化交易策略结合百日均线优化-Triple-Standard-Deviation-Bollinger-Bands-Breakout-Strategy-with-100-Day-Moving-Average-Optimization.md
++// 原文件SHA256：f2126328ccab1d1a1299249c6ce8eb00c8ca3e3766764f0179da11b3d8831cf0
++// SID：1168；原研究名单序号：475
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-11-12 00:00:00
+ end: 2024-12-11 08:00:00
+@@ -9,7 +18,9 @@
+ // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © MounirTrades007
+ 
+-// @version=6
++// OPT-1168-01：版本指令含空格无法按标准注解声明v6。
++// OPT-1168-01 保持：所有输入参数及原交易方向
++// OPT-1168-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+ strategy("Bollinger Bands", overlay=true, initial_capital=100000, default_qty_type=strategy.percent_of_equity, default_qty_value=200)
+ 
+ // Get user input

@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：MA-SMA-MA-Slope-Trailing-Stop-Loss-Re-Entry-均线简单移动平均线均线斜率追踪止损重新进场.md
++// 原文件SHA256：7c6984bc326e0fd4bfd8d6985c2a0456ec62b6ca3055d6502ab482032d51920f
++// SID：496；原研究名单序号：337
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-05-01 00:00:00
+ end: 2024-05-31 23:59:59
+@@ -5,8 +14,6 @@
+ basePeriod: 15m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("MA Incline Strategy with Trailing Stop-Loss and Conditional Re-Entry", overlay=true, calc_on_every_tick=true)
+ 
+ // Input parameters
+@@ -54,7 +61,10 @@
+     strategy.close("Long")
+ 
+ // Check if stop loss occurred
+-if (strategy.closedtrades > 0)
++// OPT-496-01：每根K线重复检测上一次历史平仓会覆盖已复位的止损标记；仅在新平仓产生时检测。
++// OPT-496-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
++// OPT-496-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if (ta.change(strategy.closedtrades) > 0)
+     lastExitPrice = strategy.closedtrades.exit_price(strategy.closedtrades - 1)
+     if (not na(trailStopPrice) and lastExitPrice <= trailStopPrice)
+         stopLossOccurred := true

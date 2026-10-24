@@ -1,0 +1,66 @@
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：低价买入-高价止盈策略Low-High-Trend-Strategy.md
+// 原文件SHA256：5ac533a4fdb1f2766bca641273b9e86d39cd9d6bbf1eebd39b4dece6f9e2f9b8
+// SID：1343；原研究名单序号：480
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-11-16 00:00:00
+end: 2023-11-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// @version=5
+// Author = TradeAutomation
+
+
+strategy(title="Low-High-Trend Strategy", shorttitle="Low-High-Trend Strategy", process_orders_on_close=true, overlay=true, commission_type=strategy.commission.cash_per_order, commission_value=1, slippage=3, initial_capital = 25000, margin_long=50, margin_short=50, default_qty_type=strategy.percent_of_equity, default_qty_value=110)
+
+
+// Backtest Date Range Inputs // 
+StartTime = input(defval=timestamp('01 Jan 2000 05:00 +0000'), title='Start Time')
+EndTime = input(defval=timestamp('01 Jan 2099 00:00 +0000'), title='End Time')
+// OPT-1343-01：日期输入失效；恢复时间范围并解除普通退出对日期范围的限制，保留窗外close_all行为。
+// OPT-1343-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-1343-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+InDateRange = time >= StartTime and time <= EndTime
+
+// Strategy Calculations //
+lowcriteria = ta.lowest(close, input(20, "Lowest Price Lookback", tooltip="The strategy will BUY when the price crosses over the lowest it has been in the last X amount of bars"))[1]
+highcriteria = ta.highest(close, input(10, "Highest Price Lookback", tooltip="If Take-Profit is not checked, the strategy will SELL when the price crosses under the highest it has been in the last X amount of bars"))[1]
+plot(highcriteria, color=color.green)
+plot(lowcriteria, color=color.red)
+
+// Take Profit //
+TakeProfitInput = input(true, "Sell with Take-Profit % intead of highest price cross?")
+TakeProfit = ta.crossover(close,strategy.position_avg_price*(1+(.01*input.float(8, title="Take Profit %", step=.25))))
+
+// Operational Functions //
+TrendFilterInput = input(true, "Only buy when price is above EMA trend?")
+ema = ta.ema(close, input(200, "EMA Length"))
+TrendisLong = (close>ema)
+plot(ema)
+
+// Entry & Exit Functions//
+if (InDateRange and TrendFilterInput==true)
+    strategy.entry("Long", strategy.long, when = ta.crossover(close, lowcriteria) and TrendisLong)
+if (InDateRange and TrendFilterInput==false)
+    strategy.entry("Long", strategy.long, when = ta.crossover(close, lowcriteria))
+// OPT-1343-02：普通利润退出不得依赖日期窗口。
+// OPT-1343-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-1343-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (TakeProfitInput==true)
+    strategy.close("Long", when = TakeProfit)
+// OPT-1343-03：高点下穿退出保留窗外执行。
+// OPT-1343-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-1343-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (TakeProfitInput==false)
+    strategy.close("Long", when = ta.crossunder(close, highcriteria))
+if (not InDateRange)
+    strategy.close_all()
+    

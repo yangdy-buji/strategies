@@ -1,0 +1,43 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=6
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：动态趋势线突破反转交易策略-Dynamic-Trendline-Breakout-Reversal-Trading-Strategy.md
++// 原文件SHA256：095c6ab82784f978db47966fe56589e188e72488aede5e3b7ec8b4f95a760292
++// SID：1620；原研究名单序号：391
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2024-12-25 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1d
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=6
+ strategy("BTC Trendline Strategy - 1min - One Direction", overlay=true)
+ 
+ // 输入设置
+@@ -53,10 +60,16 @@
+ // 反手交易逻辑
+ reverse_qty = math.min(math.abs(strategy.position_size) * multiplier, max_qty)  // 限制最大交易量
+ if (strategy.position_size < 0 and close > short_stop_loss)  // 空单止损时，反手做多并翻倍仓位
+-    strategy.entry("Long Reverse", strategy.long, qty=reverse_qty)
++    // OPT-1620-01：反向入场ID为Long Reverse/Short Reverse，原exit只匹配Long/Short，反向仓位失去括号保护；统一入场ID。
++    // OPT-1620-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
++    // OPT-1620-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.entry("Long", strategy.long, qty=reverse_qty)
+ 
+ if (strategy.position_size > 0 and close < long_stop_loss)  // 多单止损时，反手做空并翻倍仓位
+-    strategy.entry("Short Reverse", strategy.short, qty=reverse_qty)
++    // OPT-1620-02：反向空仓沿用Short入场ID以匹配ShortExit。
++    // OPT-1620-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-1620-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.entry("Short", strategy.short, qty=reverse_qty)
+ 
+ // 打印日志帮助调试止损
+ if (strategy.position_size > 0)

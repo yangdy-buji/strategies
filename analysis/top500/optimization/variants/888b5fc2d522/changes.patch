@@ -1,0 +1,52 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=3
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于双EMA交叉的量化交易策略Quantitative-Trading-Strategy-Based-on-Double-EMA-Crossover.md
++// 原文件SHA256：1a96e5fc1f125dda2635f12247af10d1fcec467871c8cab0345932949c44acc9
++// SID：3121；原研究名单序号：465
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-11-14 00:00:00
+ end: 2023-11-20 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=3
+ strategy(title="ema(ema10-21)", overlay=true, pyramiding = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, initial_capital = 15000, commission_type = strategy.commission.percent, commission_value = 0.2)
+ 
+ useTimeLimit    = input(defval = false, title = "Use Start Time Limiter?")
+@@ -16,7 +23,10 @@
+ startHour       = input(defval = 00, title = "Start From Hour",  minval = 0,step = 1)
+ startMinute     = input(defval = 00, title = "Start From Minute",  minval = 0,step = 1)
+ 
+-startTimeOk() => true
++// OPT-3121-01：启用开始时间开关。
++// OPT-3121-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-3121-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++startTimeOk() => not useTimeLimit or time >= timestamp(startYear,startMonth,startDay,startHour,startMinute)
+ 
+ lenght0 = input(10)
+ lenght1 = input(21)
+@@ -32,8 +42,10 @@
+ thresholdUp = input(defval=0.05, title="Threshold Up", type=float, step=0.01)
+ thresholdDown = input(defval=-0.165, title="Threshold Down", type=float, step=0.001)
+ 
+-if( startTimeOk() )
+-    buy_condition = EmaShort > EmaLong and growth > thresholdUp
+-    buy_exit_condition = EmaShort < EmaLong and growth < thresholdDown
+-    strategy.entry("buy", strategy.long, comment="buy", when=buy_condition)
+-    strategy.close(id='buy', when=buy_exit_condition)
++// OPT-3121-02：只将时间门槛保留在entry，退出独立。
++// OPT-3121-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-3121-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++buy_condition = EmaShort > EmaLong and growth > thresholdUp
++buy_exit_condition = EmaShort < EmaLong and growth < thresholdDown
++strategy.entry("buy", strategy.long, comment="buy", when=startTimeOk() and buy_condition)
++strategy.close(id='buy', when=buy_exit_condition)

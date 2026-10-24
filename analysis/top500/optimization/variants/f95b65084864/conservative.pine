@@ -1,0 +1,64 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：趋势突破交易系统移动平均线突破策略-Trend-Breakout-Trading-System-with-Moving-Average-TBMA-Strategy.md
+// 原文件SHA256：12b74884ad6d19079d6c3ac5e400dfd9850dd3d1a1a68a72d63f4a501e84fd50
+// SID：5391；原研究名单序号：298
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2019-12-23 08:00:00
+end: 2024-11-11 00:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Trend Breakout with SL and TP", overlay=true)
+
+// Parametrlar
+length = input(25, title="Length for SL Calculation")
+trendLength = input(20, title="Trend Line Length")
+
+// Trend chizig'ini hisoblash
+trendLine = ta.sma(close, trendLength)
+
+// Yopilish narxi trend chizig'ini yorib o'tganda signal
+longSignal = close > trendLine and close[1] <= trendLine
+
+// Oxirgi 7 shamning minimumini hisoblash
+lowestLow = ta.lowest(low, 7)
+
+// Stop Loss darajasini belgilash
+longSL = lowestLow  // SL oxirgi 7 shamning minimumiga teng
+
+// Take Profit darajasini SL ga nisbatan 2 baravar ko'p qilib belgilash
+// OPT-5391-02：以止损而非入价加2倍风险，实际只有1R。
+// OPT-5391-02 保持：原参数、仓位及信号
+// OPT-5391-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+longTP = close + (close - longSL) * 2  // TP 2:1 nisbatida
+
+// Savdo bajarish
+if longSignal
+    strategy.entry("Long", strategy.long)
+    // OPT-5391-01：全仓目标先预留仓位，后止损没有可用数量。
+    // OPT-5391-01 保持：原参数、仓位及信号
+    // OPT-5391-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.exit("Take Profit", "Long", limit=longTP, stop=longSL)
+
+// Grafikda trend chizig'ini chizish
+plot(trendLine, title="Trend Line", color=color.blue, linewidth=2)
+
+// Signal chizish
+plotshape(longSignal, style=shape.labelup, location=location.belowbar, color=color.green, size=size.small, title="Buy Signal")
+
+// SL va TP darajalarini ko'rsatish
+// if longSignal
+//     // SL chizig'i
+//     line.new(bar_index, longSL, bar_index + 1, longSL, color=color.red, width=2, style=line.style_dashed)
+//     // TP chizig'i
+//     line.new(bar_index, longTP, bar_index + 1, longTP, color=color.green, width=2, style=line.style_dashed)
+    
+//     // SL va TP label'larini ko'rsatish
+//     label.new(bar_index, longSL, "SL: " + str.tostring(longSL), color=color.red, style=label.style_label_down, textcolor=color.white, size=size.small)
+//     label.new(bar_index, longTP, "TP: " + str.tostring(longTP), color=color.green, style=label.style_label_up, textcolor=color.white, size=size.small)

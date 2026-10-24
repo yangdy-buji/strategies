@@ -1,0 +1,32 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：动态达瓦斯箱体突破与均线趋势确认交易系统-Dynamic-Darvas-Box-Breakout-with-Moving-Average-Trend-Confirmation-Trading-System.md
++// 原文件SHA256：8ffb71f39ea63ac6a2884a896e1ac057a3c2aaa5d147fa994371b342eaf8d032
++// SID：1644；原研究名单序号：303
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-10-01 00:00:00
+ end: 2024-10-31 23:59:59
+@@ -5,12 +14,13 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("DARVAS BOX with MA25 Buy Condition", overlay=true, shorttitle="AEG DARVAS")
+ 
+ // Input for box length
+-boxp = input.int(5, "BOX LENGTH")
++// OPT-1644-01：保证三个highest窗口均为正。
++// OPT-1644-01 保持：默认5与算法保持。
++// OPT-1644-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++boxp = input.int(5, "BOX LENGTH", minval=3)
+ 
+ // Calculate 25-period moving average
+ ma25 = ta.sma(close, 25)

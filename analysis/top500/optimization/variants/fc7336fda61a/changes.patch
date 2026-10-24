@@ -1,0 +1,33 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：开盘驱动策略Open-Drive-Strategy.md
++// 原文件SHA256：ab034cdbb6cd80c0ab1123726ed510b2f197c29446bca24a09c14c2f6dcfc495
++// SID：4563；原研究名单序号：135
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-10-15 00:00:00
+ end: 2023-10-22 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © Marcns_
+-
+-//@version=5
+ // a script that highlights open drives around cash market opens throughout the day
+ // this indicator identifies the following cash open, open drives 0700 - 0715 / 0800 - 0815 / 1300 - 1315 / 1430 - 1445 
+ // an open drive is when a cash market opens and price runs either up or down away from the opening price, often this will be the high or the low the remainer of the session or day
+@@ -162,4 +169,7 @@
+ if OD_Down
+     strategy.entry("es", strategy.short, 2)
+ if ta.barssince(OD_Down)> 3
+-    strategy.exit(id = "ex" , from_entry = "es", limit = close)
++    // OPT-4563-01：多空共用exit ID，分开命名避免相互修改；限价定时退出和未使用bs/ss保护仍需设计确认。
++    // OPT-4563-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
++    // OPT-4563-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.exit(id = "ex_short" , from_entry = "es", limit = close)

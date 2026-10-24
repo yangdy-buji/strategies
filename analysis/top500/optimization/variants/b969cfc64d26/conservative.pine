@@ -1,0 +1,112 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：多指标趋势跟踪期权交易EMA交叉策略-Multi-Indicator-Trend-Following-Options-Trading-EMA-Cross-Strategy.md
+// 原文件SHA256：2d11a87cb432f3580acaaa5fe35f19fc7a5aab0934998dd6ddf9b344b50802dd
+// SID：4001；原研究名单序号：258
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2019-12-23 08:00:00
+end: 2024-12-18 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("OptionsMillionaire Strategy with Take Profit Only", overlay=true, default_qty_type=strategy.fixed, default_qty_value=1)
+
+// Define custom magenta color
+magenta = color.rgb(255, 0, 255)  // RGB for magenta
+
+// Input settings for Moving Averages
+ema8 = ta.ema(close, 8)
+ema21 = ta.ema(close, 21)
+sma100 = ta.sma(close, 100)
+sma200 = ta.sma(close, 200)
+vwap = ta.vwap(close)  // Fixed VWAP calculation
+
+// Input settings for MACD and RSI
+[macdLine, signalLine, _] = ta.macd(close, 12, 26, 9)
+rsi = ta.rsi(close, 14)
+
+// Define trend direction
+isBullish = ema8 > ema21 and close > sma100 and close > sma200
+isBearish = ema8 < ema21 and close < sma100 and close < sma200
+
+// Buy (Call) Signal
+callSignal = ta.crossover(ema8, ema21) and isBullish and macdLine > signalLine and rsi > 50
+
+// Sell (Put) Signal
+putSignal = ta.crossunder(ema8, ema21) and isBearish and macdLine < signalLine and rsi < 50
+
+// Define Position Size and Take-Profit Level
+positionSize = 1  // Position size set to 1 (each trade will use one contract)
+takeProfitPercent = 5  // Take profit is 5%
+
+// Variables to track entry price and whether the position is opened
+var float entryPrice = na  // To store the entry price
+var bool positionOpen = false  // To check if a position is open
+
+// Backtesting Execution
+// OPT-4001-02：使用真实空仓判断多头入场，防止伪状态复位后持仓中重写锚价。
+// OPT-4001-02 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
+// OPT-4001-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if callSignal and strategy.position_size == 0
+    // Enter long position (call)
+    strategy.entry("Call", strategy.long, qty=positionSize)
+    entryPrice := close  // Store the entry price
+    positionOpen := true  // Set position as opened
+
+// OPT-4001-03：使用真实空仓判断空头入场，避免状态尾部清零造成持仓误入场。
+// OPT-4001-03 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
+// OPT-4001-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if putSignal and strategy.position_size == 0
+    // Enter short position (put)
+    strategy.entry("Put", strategy.short, qty=positionSize)
+    entryPrice := close  // Store the entry price
+    positionOpen := true  // Set position as opened
+
+// Only check for take profit after position is open
+// OPT-4001-04：真实持仓期间启用止盈检查，不依赖发单当根被清零的布尔状态。
+// OPT-4001-04 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
+// OPT-4001-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if strategy.position_size != 0
+    // Calculate take-profit level (5% above entry price for long, 5% below for short)
+    // OPT-4001-01：空头目标也向上5%，会立即满足退出，修为按持仓方向计算。
+    // OPT-4001-01 保持：原目标止损百分比及信号
+    // OPT-4001-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    takeProfitLevel = entryPrice * (strategy.position_size < 0 ? 1 - takeProfitPercent / 100 : 1 + takeProfitPercent / 100)
+
+    // Exit conditions (only take profit)
+    if strategy.position_size > 0
+        // Long position (call)
+        if close >= takeProfitLevel
+            strategy.exit("Take Profit", "Call", limit=takeProfitLevel)
+    if strategy.position_size < 0
+        // Short position (put)
+        if close <= takeProfitLevel
+            strategy.exit("Take Profit", "Put", limit=takeProfitLevel)
+
+// Reset position when it is closed (this happens when an exit is triggered)
+if strategy.position_size == 0
+    positionOpen := false  // Reset positionOpen flag
+
+// Plot EMAs
+plot(ema8, color=magenta, linewidth=2, title="8 EMA")
+plot(ema21, color=color.green, linewidth=2, title="21 EMA")
+
+// Plot SMAs
+plot(sma100, color=color.orange, linewidth=1, title="100 SMA")
+plot(sma200, color=color.blue, linewidth=1, title="200 SMA")
+
+// Plot VWAP
+plot(vwap, color=color.white, style=plot.style_circles, title="VWAP")
+
+// Highlight buy and sell zones
+bgcolor(callSignal ? color.new(color.green, 90) : na, title="Call Signal Background")
+bgcolor(putSignal ? color.new(color.red, 90) : na, title="Put Signal Background")
+
+// Add buy and sell markers (buy below, sell above)
+plotshape(series=callSignal, style=shape.labelup, location=location.belowbar, color=color.green, text="Buy", title="Call Signal Marker")
+plotshape(series=putSignal, style=shape.labeldown, location=location.abovebar, color=color.red, text="Sell", title="Put Signal Marker")

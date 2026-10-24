@@ -1,0 +1,48 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=6
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：长期趋势SMA均线交叉量化策略-Long-term-Trend-SMA-Crossover-Quantitative-Strategy.md
++// 原文件SHA256：efee190d9ed91891e9b2dd7370bde179efb453e8cf85c8857abf3b707fb60661
++// SID：5613；原研究名单序号：464
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2025-01-04 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1d
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=6
+ strategy("Long-Term Growing Stock Strategy", overlay=true)
+ // Date Range
+ // STEP 1. Create inputs that configure the backtest's date range
+@@ -14,7 +21,10 @@
+ backtestStartDate = input(timestamp("1 Jan 2014"),title="Start Date", group="Backtest Time Period",tooltip="This start date is in the time zone of the exchange " + "where the chart's instrument trades. It doesn't use the time " +"zone of the chart or of your computer.")
+ backtestEndDate = input(timestamp("31 Dec 2024"), title="End Date", group="Backtest Time Period")
+ // STEP 2. See if current bar falls inside the date range
+-inTradeWindow = true
++// OPT-5613-01：日期过滤开关和起止输入被恒真绕过。
++// OPT-5613-01 保持：原参数、仓位及窗外退出
++// OPT-5613-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++inTradeWindow = not useDateFilter or (time >= backtestStartDate and time <= backtestEndDate)
+ 
+ 
+ // Calculate EMAs
+@@ -45,7 +55,10 @@
+ if entryCondition and inTradeWindow
+     strategy.entry("Long Entry", strategy.long)
+ 
+-if exitCondition and inTradeWindow
++// OPT-5613-02：退出不能受日期门禁。
++// OPT-5613-02 保持：原参数、仓位及窗外退出
++// OPT-5613-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if exitCondition
+     strategy.close("Long Entry")
+ // plotchar(true, char="sma5: " + str.tostring(sma5))
+ // plotchar(true, char="sma5: " + sma20)

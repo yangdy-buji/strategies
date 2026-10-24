@@ -1,0 +1,59 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：Trend-Following-with-Breakout-and-Frequency-Filter-Long-Only-基于突破和频率过滤的趋势跟踪策略只做多.md
++// 原文件SHA256：0f8937c4a643e2ee1090be2a4834588337038c003fde593c6c285507c010ea1c
++// SID：1023；原研究名单序号：342
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-05-22 00:00:00
+ end: 2024-05-27 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("Trend Following with Breakout and Frequency Filter (Long Only)", overlay=true)
+ 
+ // 输入参数
+@@ -36,18 +43,30 @@
+ plot(ema, title="EMA", color=color.blue)
+ 
+ // 记录上次开仓时间
+-var float lastEntryTime = na
++// OPT-1023-01：使用bar_index保存最近入场信号K线索引，消除毫秒与根数混算。
++// OPT-1023-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-1023-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++var int lastEntryTime = na
+ 
+ // 策略执行并标注信号
+-if (breakoutCondition and (na(lastEntryTime) or (time - lastEntryTime) > minHoldBars * timeframe.multiplier))
++// OPT-1023-02：入场间隔按K线根数。
++// OPT-1023-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-1023-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if (breakoutCondition and (na(lastEntryTime) or (bar_index - lastEntryTime) > minHoldBars))
+     strategy.entry("做多", strategy.long)
+     label.new(bar_index, high, text="买入", style=label.style_label_up, color=color.green, textcolor=color.white)
+     strategy.exit("止损", from_entry="做多", stop=stopLossLevelLong)
+-    lastEntryTime := time
++    // OPT-1023-03：记录索引而非毫秒时间戳。
++    // OPT-1023-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-1023-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    lastEntryTime := bar_index
+ 
+ // 定义趋势结束信号
+ exitCondition = close < ema
+ 
+-if (exitCondition and (strategy.position_size > 0) and (time - lastEntryTime) > minHoldBars * timeframe.multiplier)
++// OPT-1023-04：趋势退出持有门槛按K线根数。
++// OPT-1023-04 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-1023-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if (exitCondition and (strategy.position_size > 0) and (bar_index - lastEntryTime) > minHoldBars)
+     strategy.close("做多")
+     label.new(bar_index, low, text="卖出", style=label.style_label_down, color=color.red, textcolor=color.white)

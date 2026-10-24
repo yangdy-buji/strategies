@@ -1,0 +1,34 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：日内锤子反转形态多头策略Intraday-Hammer-Reversal-Pattern-Long-Strategy.md
++// 原文件SHA256：843ab41928e3486c3660ce2f7d77f3a6ee15e4de8c60c769f084f426ceea6f0d
++// SID：4707；原研究名单序号：310
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-03-09 00:00:00
+ end: 2024-03-14 00:00:00
+@@ -5,14 +14,15 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("Hammer Pattern and Follow-Up Green Candle Strategy", overlay=true)
+ 
+ // Detecting a Hammer candle
+ isHammer() =>
+     bodySize = math.abs(close[1] - open[1])
+-    lowerWickSize = open[1] - low[1]
++    // OPT-4707-01：对阴锤子使用实体底部到低点距离。
++    // OPT-4707-01 保持：保留2倍影线比例及其余条件。
++    // OPT-4707-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    lowerWickSize = close[1] - low[1]
+     upperWickSize = high[1] - open[1] // For a red candle, the upper wick is from the open to the high
+     bodyIsSmall = bodySize <= (high[1] - low[1]) * 0.3 // Body is less than 30% of the entire candle range
+     lowerWickIsLong = lowerWickSize >= bodySize * 2 // Lower wick is at least twice the body length

@@ -1,0 +1,53 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：均线回转反转策略Mean-Reversion-Reverse-Strategy-Based-on-Moving-Average.md
++// 原文件SHA256：1e52bf9dd5d1b72e0efe2db63858c66be1d0147a58fcef7a95eb655475c79b09
++// SID：2501；原研究名单序号：484
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-12-13 00:00:00
+ end: 2023-12-20 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("EMA_zorba1", shorttitle="zorba_ema", overlay=true)
+ 
+ // Input parameters
+@@ -23,7 +30,10 @@
+ // Date range filter
+ start_date = timestamp(year=2021, month=1, day=1)
+ end_date = timestamp(year=2024, month=10, day=27)
+-in_date_range = true
++// OPT-2501-01：恢复入场日期。
++// OPT-2501-01 保持：保留固定日期。
++// OPT-2501-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++in_date_range = time >= start_date and time <= end_date
+ 
+ // Profit condition
+ profit_percentage = input(1, title="Profit Percentage")  // Adjust this value as needed
+@@ -39,8 +49,14 @@
+ 
+ // Exit conditions
+ profit_condition = strategy.position_avg_price * (1 + profit_percentage / 100) <= close
+-exit_condition_1 = in_date_range and (close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]
+-exit_condition_2 = in_date_range and (close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]
++// OPT-2501-02：退出移出日期限制。
++// OPT-2501-02 保持：盈利及均线条件原样。
++// OPT-2501-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++exit_condition_1 = (close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]
++// OPT-2501-03：退出移出日期限制。
++// OPT-2501-03 保持：盈利及均线条件原样。
++// OPT-2501-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++exit_condition_2 = (close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and profit_condition and close < low[1] and close < low[2]
+ 
+ // Exit condition for when today's close is less than the previous day's low
+ //exit_condition_3 = close < low[1]

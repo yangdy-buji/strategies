@@ -1,0 +1,59 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：金叉死叉趋势追踪策略Golden-Dead-Cross-Trend-Tracking-Strategy.md
+// 原文件SHA256：5b0869c40fcacc8c564e7657580cea40f5bc25144322703aa7317b44f64acf35
+// SID：5605；原研究名单序号：499
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-12-08 00:00:00
+end: 2023-12-14 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Ta3MooChi
+strategy("전략", overlay=true,process_orders_on_close = true, pyramiding = 100)
+
+short_ma = ta.sma(close,input.int(3, "단기 이평", minval = 1))
+long_ma = ta.sma(close, input.int(19,"장기 이평", minval = 1))
+
+trend_ma = ta.sma(close, input.int(100," 추세 이평", minval = 20, group = "추세 이평"))
+up_trend = (trend_ma > trend_ma[1])
+use_trend_ma = input.bool(true, title = "추세용 이평 사용", group = "추세 이평" )
+inTrendMa = not use_trend_ma or up_trend
+
+useDateFilter = input.bool(true, title = "특정 기간 백테스트", group = "기간 백테스트")
+backtestStartDate = input(timestamp("1 Jan 2021"), title = "시작날짜", group = "기간 백테스트")
+backtestEndDate = input(timestamp("1 Jan 2022"), title = "종료날짜", group = "기간 백테스트")
+// OPT-5605-01：恢复可关闭日期。
+// OPT-5605-01 保持：保留100层及到期撤平。
+// OPT-5605-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+inTradeWindow = not useDateFilter or (time >= backtestStartDate and time <= backtestEndDate)
+
+longStopPerc = 1 + input.float(3, "최소수익률%", minval = 1)*0.01
+
+longcondition = ta.crossover(short_ma, long_ma)
+shortcondition = ta.crossunder(short_ma, long_ma)
+
+if (longcondition) and inTradeWindow and inTrendMa
+    strategy.entry("long", strategy.long)
+
+// OPT-5605-02：退出不受入场日期限制。
+// OPT-5605-02 保持：盈利门槛保持。
+// OPT-5605-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (shortcondition) and (close > strategy.position_avg_price*longStopPerc)
+    strategy.close_all()
+
+if not inTradeWindow and inTradeWindow[1]
+    strategy.cancel_all()
+    strategy.close_all(comment = "매매 종료")
+
+plot(short_ma,color = color.yellow)
+plot(long_ma,color = color.blue)
+plot(trend_ma,color = color.gray)
+    

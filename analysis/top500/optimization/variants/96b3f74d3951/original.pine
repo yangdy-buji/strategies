@@ -1,0 +1,52 @@
+/*backtest
+start: 2025-02-19 00:00:00
+end: 2025-02-23 00:00:00
+period: 1m
+basePeriod: 1m
+exchanges: [{"eid":"Binance","currency":"SOL_USDT"}]
+*/
+
+//@version=5
+strategy("Williams %R & MACD Swing Strategy", overlay=true)
+
+// INPUTS
+length_wpr = input(14, title="Williams %R Length")
+overbought = input(-20, title="Overbought Level")
+oversold = input(-80, title="Oversold Level")
+
+// MACD Inputs
+fastLength = input(12, title="MACD Fast Length")
+slowLength = input(26, title="MACD Slow Length")
+signalSmoothing = input(9, title="MACD Signal Smoothing")
+
+// EMA for Trend Confirmation
+ema_length = input(55, title="EMA Length")
+ema55 = ta.ema(close, ema_length)
+
+// INDICATORS
+wpr = ta.wpr(length_wpr)
+[macdLine, signalLine, _] = ta.macd(close, fastLength, slowLength, signalSmoothing)
+
+// LONG ENTRY CONDITIONS
+longCondition = ta.crossover(wpr, oversold) and ta.crossover(macdLine, signalLine) and close > ema55
+if longCondition
+    strategy.entry("Long", strategy.long)
+
+// SHORT ENTRY CONDITIONS
+shortCondition = ta.crossunder(wpr, overbought) and ta.crossunder(macdLine, signalLine) and close < ema55
+if shortCondition
+    strategy.entry("Short", strategy.short)
+
+// RISK MANAGEMENT
+riskRewardRatio = input(1.5, title="Risk-Reward Ratio")
+stopLossPerc = input(2, title="Stop Loss %") / 100
+takeProfitPerc = stopLossPerc * riskRewardRatio
+
+longSL = strategy.position_avg_price * (1 - stopLossPerc)
+longTP = strategy.position_avg_price * (1 + takeProfitPerc)
+
+shortSL = strategy.position_avg_price * (1 + stopLossPerc)
+shortTP = strategy.position_avg_price * (1 - takeProfitPerc)
+
+strategy.exit("Take Profit / Stop Loss", from_entry="Long", loss=longSL, profit=longTP)
+strategy.exit("Take Profit / Stop Loss", from_entry="Short", loss=shortSL, profit=shortTP)

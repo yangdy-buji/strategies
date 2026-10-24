@@ -1,0 +1,94 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：量化策略之MA强弱趋势追踪Quantitative-Strategy-of-MA-Strength-Trend-Tracking.md
+// 原文件SHA256：157d570c52c81a5e66cdb301ac43b8932606956c84ed2ef64da7c60995a55c54
+// SID：5583；原研究名单序号：492
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-12-19 00:00:00
+end: 2024-01-18 00:00:00
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © HeWhoMustNotBeNamed
+strategy("MA Strength Strategy", overlay=false, initial_capital = 20000, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, pyramiding = 1, commission_value = 0.01)
+MAType = input(title="Moving Average Type", defval="ema", options=["ema", "sma", "hma", "rma", "vwma", "wma"])
+LookbackPeriod = input(10, step=10)
+
+IndexMAType = input(title="Moving Average Type", defval="hma", options=["ema", "sma", "hma", "rma", "vwma", "wma"])
+IndexMAPeriod = input(200, step=10)
+
+considerTrendDirection = input(true)
+considerTrendDirectionForExit = input(true)
+offset = input(1, step=1)
+tradeDirection = input(title="Trade Direction", defval=strategy.direction.long, options=[strategy.direction.all, strategy.direction.long, strategy.direction.short])
+i_startTime = input(defval = timestamp("01 Jan 2010 00:00 +0000"), title = "Start Time", type = input.time)
+i_endTime = input(defval = timestamp("01 Jan 2099 00:00 +0000"), title = "End Time", type = input.time)
+// OPT-5583-01：日期输入失效；恢复入场范围，独立平仓继续有效。
+// OPT-5583-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-5583-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+inDateRange = time >= i_startTime and time <= i_endTime
+
+f_getMovingAverage(source, MAType, length)=>
+    ma = sma(source, length)
+    if(MAType == "ema")
+        ma := ema(source,length)
+    if(MAType == "hma")
+        ma := hma(source,length)
+    if(MAType == "rma")
+        ma := rma(source,length)
+    if(MAType == "vwma")
+        ma := vwma(source,length)
+    if(MAType == "wma")
+        ma := wma(source,length)
+    ma
+    
+
+f_getMaAlignment(MAType, includePartiallyAligned)=>
+    ma5 = f_getMovingAverage(close,MAType,5)
+    ma10 = f_getMovingAverage(close,MAType,10)
+    ma20 = f_getMovingAverage(close,MAType,20)
+    ma30 = f_getMovingAverage(close,MAType,30)
+    ma50 = f_getMovingAverage(close,MAType,50)
+    ma100 = f_getMovingAverage(close,MAType,100)
+    ma200 = f_getMovingAverage(close,MAType,200)
+
+    upwardScore = 0.0
+    upwardScore := close > ma5? upwardScore+1.10:upwardScore
+    upwardScore := ma5 > ma10? upwardScore+1.10:upwardScore
+    upwardScore := ma10 > ma20? upwardScore+1.10:upwardScore
+    upwardScore := ma20 > ma30? upwardScore+1.10:upwardScore
+    upwardScore := ma30 > ma50? upwardScore+1.15:upwardScore
+    upwardScore := ma50 > ma100? upwardScore+1.20:upwardScore
+    upwardScore := ma100 > ma200? upwardScore+1.25:upwardScore
+    
+    upwards = close > ma5 and ma5 > ma10 and ma10 > ma20 and ma20 > ma30 and ma30 > ma50 and ma50 > ma100 and ma100 > ma200
+    downwards = close < ma5 and ma5 < ma10 and ma10 < ma20 and ma20 < ma30 and ma30 < ma50 and ma50 < ma100 and ma100 < ma200
+    trendStrength = upwards?1:downwards?-1:includePartiallyAligned ? (upwardScore > 6? 0.5: upwardScore < 2?-0.5:upwardScore>4?0.25:-0.25) : 0
+    [trendStrength, upwardScore]
+    
+includePartiallyAligned = true
+[trendStrength, upwardScore] = f_getMaAlignment(MAType, includePartiallyAligned)
+
+upwardSum = sum(upwardScore, LookbackPeriod)
+
+indexSma = f_getMovingAverage(upwardSum,IndexMAType,IndexMAPeriod)
+
+plot(upwardSum, title="Moving Average Strength", color=color.green, linewidth=2, style=plot.style_linebr)
+plot(indexSma, title="Strength MA", color=color.red, linewidth=1, style=plot.style_linebr)
+buyCondition = crossover(upwardSum,indexSma) and (upwardSum > upwardSum[offset] or not considerTrendDirection) 
+sellCondition = crossunder(upwardSum,indexSma) and (upwardSum < upwardSum[offset]  or not considerTrendDirection)
+
+exitBuyCondition = crossunder(upwardSum,indexSma)
+exitSellCondition = crossover(upwardSum,indexSma) 
+strategy.risk.allow_entry_in(tradeDirection)
+strategy.entry("Buy", strategy.long, when= inDateRange and buyCondition, oca_name="oca_buy")
+strategy.close("Buy", when = considerTrendDirectionForExit? sellCondition : exitBuyCondition)
+strategy.entry("Sell", strategy.short, when= inDateRange and sellCondition, oca_name="oca_sell")
+strategy.close( "Sell", when = considerTrendDirectionForExit? buyCondition : exitSellCondition)

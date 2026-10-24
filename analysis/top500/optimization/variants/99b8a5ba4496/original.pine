@@ -1,0 +1,49 @@
+/*backtest
+start: 2022-12-20 00:00:00
+end: 2023-12-26 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy("EMA交叉策略by GPT",
+     format = format.inherit,
+     overlay = true,
+     default_qty_type= strategy.percent_of_equity,
+     default_qty_value = 100,
+     currency = currency.USD,
+     initial_capital = 1000000)
+
+
+// 定義回測交易開始和結束時間的變數
+start_time = input(title="開始時間", type=input.time, defval=timestamp("01 Jan 2020 00:00 +0000"))
+end_time = input(title="結束時間", type=input.time, defval=timestamp("31 Dec 2050 23:59 +0000"))
+
+
+// 判斷是否在回測交易時間範圍內
+in_range = true
+
+
+// Define input variables
+fast_length = input(title="Fast EMA Length", type=input.integer, defval=5)
+slow_length = input(title="Slow EMA Length", type=input.integer, defval=20)
+
+
+// Define EMAs
+fast_ema = ema(close, fast_length)
+slow_ema = ema(close, slow_length)
+
+
+// Define buy and sell signals
+buy_signal = crossover(fast_ema, slow_ema)
+sell_signal = crossunder(fast_ema, slow_ema)
+
+
+// Buy signal
+if in_range and buy_signal
+    strategy.entry("Buy", strategy.long, when=in_range)
+   
+// Sell signal
+if in_range and sell_signal
+    strategy.close("Buy", when=sell_signal)

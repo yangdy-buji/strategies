@@ -1,0 +1,55 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：金叉死叉长线多因子策略Golden-Cross-Death-Cross-Long-term-Multi-factor-Strategy.md
+// 原文件SHA256：708cd6367de0471f9b867c3292b9d2d2b303ff7782f2a0f2b7bbc4e9fa6b33bc
+// SID：5607；原研究名单序号：338
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-01-16 00:00:00
+end: 2024-01-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Long Only Multi-Indicator Strategy", shorttitle="LOMIS", overlay=true)
+
+// Inputs
+lengthMAFast = input(10, title="Fast MA Length")
+lengthMASlow = input(50, title="Slow MA Length")
+rsiLength = input(14, title="RSI Length")
+rsiOverbought = input(70, title="RSI Overbought Level")
+rsiOversold = input(30, title="RSI Oversold Level")
+atrLength = input(14, title="ATR Length")
+riskMultiplier = input(1.5, title="Risk Multiplier for SL and TP")
+
+// Moving averages
+maFast = sma(close, lengthMAFast)
+maSlow = sma(close, lengthMASlow)
+
+// RSI
+rsi = rsi(close, rsiLength)
+
+// ATR
+atr = atr(atrLength)
+
+// Long condition
+longCondition = crossover(maFast, maSlow) and rsi < rsiOverbought
+
+// Entering long trades
+if (longCondition)
+    strategy.entry("Long", strategy.long)
+    slLong = close - atr * riskMultiplier
+    tpLong = close + atr * riskMultiplier * 2
+    // OPT-5607-01：合并同仓止盈止损。
+    // OPT-5607-01 保持：原价位和2R比例保持。
+    // OPT-5607-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.exit("SL Long", "Long", stop=slLong, limit=tpLong)
+
+// Plotting
+plot(maFast, color=color.red)
+plot(maSlow, color=color.blue)
+hline(rsiOverbought, "Overbought", color=color.red)
+hline(rsiOversold, "Oversold", color=color.blue)

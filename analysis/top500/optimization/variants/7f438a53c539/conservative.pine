@@ -1,0 +1,67 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双时间尺度动量策略-Dual-Timeframe-Momentum-Strategy.md
+// 原文件SHA256：c656866040490d741d6e330cd2e41351897d5a788e456a71fff2bf0e35fbf297
+// SID：2162；原研究名单序号：146
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-04-19 00:00:00
+end: 2024-04-24 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Riester
+strategy("Dual Timeframe Momentum", overlay=true, precision=6, pyramiding=0, initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=25.0, commission_value=0.05)
+
+n = input.int(20, "Moving Average Period", minval=1)
+src = input.source(close, "Source")
+high_tf = input.timeframe("240", "Resolution")
+pivot_l = input.int(5, "Pivot Let Bars")
+pivot_r = input.int(2, "Pivot Right Bars")
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Calculations
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// 1. Define low and high timeframe prices
+low_src = src
+high_src = request.security(syminfo.tickerid, high_tf, src)
+
+// 2. Use simple moving average to determine trend of higher timeframe (up or down)
+high_tf_ma = ta.sma(high_src, n)
+plot(high_tf_ma,  color=color.yellow)
+high_tf_trend = high_tf_ma > high_tf_ma[1] ? 1 : -1
+
+// 3. Use pivots to identify reversals on the low timeframe
+low_tf_pl = ta.pivotlow(high_src, pivot_l, pivot_r)
+plot(low_tf_pl, style=plot.style_line, linewidth=3, color= color.green, offset=-pivot_r)
+
+low_tf_ph = ta.pivothigh(high_src, pivot_l, pivot_r)
+plot(low_tf_ph, style=plot.style_line, linewidth=3, color= color.red, offset=-pivot_r)
+
+bool long = low_tf_pl and high_tf_trend == 1
+bool short = low_tf_ph and high_tf_trend == -1
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Plots
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// this message is an alert that can be sent to a webhook, which allows for simple automation if you have a server that listens to alerts and trades programmatically.
+enter_long_alert = '{"side": "Long", "order": "Enter", "price": ' + str.tostring(open) + ', "timestamp": ' + str.tostring(timenow) + '}'
+exit_long_alert = '{"side": "Long", "order": "Exit", "price": ' + str.tostring(open) + ', "timestamp": ' + str.tostring(timenow) + '}'
+
+if long
+    strategy.entry(id="Long", direction=strategy.long, limit=open, alert_message=enter_long_alert)
+
+if short
+    // OPT-2162-01：反向失效时取消未成交同ID入口。
+    // OPT-2162-01 保持：不改入场价格、方向和数量。
+    // OPT-2162-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.cancel("Long")
+    strategy.close(id="Long", comment="Close Long", alert_message=exit_long_alert)

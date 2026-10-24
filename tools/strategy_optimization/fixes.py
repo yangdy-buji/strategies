@@ -11,23 +11,31 @@ def _register(sid, title, source_sha256, code_sha256, patches, remaining, cases)
                       validation_cases=cases)
 
 
-def apply_fix(sid: int, code: str, source_sha256: str) -> str:
+def apply_fix(sid: int, code: str, source_sha256: str, registry=None) -> str:
     """Fail closed on unknown SID, source/code drift or non-unique anchors."""
-    if sid not in FIXES:
+    registry=FIXES if registry is None else registry
+    if sid not in registry:
         raise ValueError(f'Unknown fix SID: {sid}')
-    fix = FIXES[sid]
+    fix = registry[sid]
     if source_sha256 != fix['source_sha256']:
         raise ValueError(f'SID {sid}: source SHA mismatch')
     if hashlib.sha256(code.encode('utf-8')).hexdigest() != fix['code_sha256']:
         raise ValueError(f'SID {sid}: code SHA mismatch')
     for number, (old, new, reason, preserved) in enumerate(fix['patches'], 1):
+        reason=reason.replace('\r',' ').replace('\n',' ')
+        preserved=preserved.replace('\r',' ').replace('\n',' ')
         if code.count(old) != 1:
             raise ValueError(f'SID {sid}: patch {number} anchor must match exactly once')
-        indent = old[:len(old) - len(old.lstrip(' '))]
+        # Subexpression patches must not insert comments into an executable line.
+        position=code.index(old)
+        line_start=code.rfind('\n',0,position)+1
+        line=code[line_start:].split('\n',1)[0]
+        indent=line[:len(line)-len(line.lstrip(' \t'))]
         note = (f'{indent}// OPT-{sid}-{number:02d}：{reason}\n'
                 f'{indent}// OPT-{sid}-{number:02d} 保持：{preserved}\n'
                 f'{indent}// OPT-{sid}-{number:02d} 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。\n')
-        code = code.replace(old, note + new, 1)
+        code=code[:position]+new+code[position+len(old):]
+        code=code[:line_start]+note+code[line_start:]
     return code
 
 _register(

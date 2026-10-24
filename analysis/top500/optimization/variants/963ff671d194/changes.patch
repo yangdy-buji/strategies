@@ -1,0 +1,52 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双周期ATR波动率突破股票趋势策略Volatility-Bands-and-VWAP-Multi-Timeframe-Stock-Trend-Trading-Strategy.md
++// 原文件SHA256：7c5c2f6959b0af3cb6985002a175b657f151176e905ab1d14ded95ddce36f955
++// SID：1959；原研究名单序号：408
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-12-17 00:00:00
+ end: 2024-01-16 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © exlux99
+-
+-//@version=4
+ strategy(title="VWAP MTF STOCK STRATEGY", overlay=true )
+ 
+ // high^2 / 2 - low^2 -2
+@@ -61,7 +68,10 @@
+ 
+ startDate = timestamp(fromYear, fromMonth, fromDay, 00, 00)
+ finishDate = timestamp(toYear, toMonth, toDay, 00, 00)
+-time_cond = true
++// OPT-1959-01：恢复日期。
++// OPT-1959-01 保持：保留原时间边界。
++// OPT-1959-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++time_cond = time >= startDate and time <= finishDate
+ 
+ srcX = input(ohlc4)
+ t = time("W")
+@@ -83,8 +93,13 @@
+  
+ 
+ 
+-if(longOnly and time_cond)
++// OPT-1959-02：退出移出门禁，接回已声明撤单条件。
++// OPT-1959-02 保持：保留突破与VWAP信号。
++// OPT-1959-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if longOnly
+     if (crossLower and close < vwapW )
+         strategy.close("long")
+-    if (crossUpper and close>vwapW)
++    if (time_cond and crossUpper and close>vwapW)
+         strategy.entry("long", strategy.long, stop=bprice)
++if cancelBcond or not time_cond
++    strategy.cancel("long")

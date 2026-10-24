@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双时间轴波动率价差交易策略Dual-Timeframe-Volatility-Spread-Trading-Strategy.md
++// 原文件SHA256：c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97
++// SID：2168；原研究名单序号：143
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-01-18 00:00:00
+ end: 2024-02-17 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 15m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ //study("MavXtrender")
+ strategy("MavXtrender")
+ 
+@@ -45,7 +52,10 @@
+ // === FUNCTION EXAMPLE ===
+ start     = timestamp(FromYear, FromMonth, FromDay, 00, 00)  // backtest start window
+ finish    = timestamp(ToYear, ToMonth, ToDay, 23, 59)        // backtest finish window
+-window()  => true
++// OPT-2168-01：恢复入场窗口。
++// OPT-2168-01 保持：保留退出到期处理与数量设置。
++// OPT-2168-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++window()  => time >= start and time <= finish
+ 
+ strategy.entry("ShortTerm", strategy.long, qty = Amount, when = window() and crossover(shortTermXtrender,0) and TradeShortTerm)
+ strategy.entry("LongTerm", strategy.long, qty = Amount, when = window() and crossover(longTermXtrender,0) and TradeLongTerm)

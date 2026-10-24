@@ -1,0 +1,68 @@
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双RSI指标突破策略Dual-RSI-Indicator-Breakout-Strategy.md
+// 原文件SHA256：4a2c7ef024188cfd0188ff1b61f02633fd1389378e5971535aaa33fcde6fa08b
+// SID：1907；原研究名单序号：387
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-09-06 00:00:00
+end: 2023-09-13 00:00:00
+period: 15m
+basePeriod: 5m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//  @version=4
+//  © HermanBrummer
+//  This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+
+strategy("DUAL RSI", "RSI", 1, pyramiding=2)
+///     USES TWO RSI'S BOTH OF THEM CAN TRADE IN THE SAME DIRECTION AT THE SAME TIME -- ONE SLOW RSI, AND ONE FAST RSI
+///     BOTH RSI'S HAVE DIFFERENT LENGHTS ONE IS FAST AND HAS A SETTTING OF 16 ONE IS SLOW AND HAS A SETTING OF 31
+///     BOTH RSI'S HAVE DIFERENT EXIT PARAMETERS
+///     PYRAMIDING ALLOWS THE SYSTEM TO BUY ONE DO ONE SLOW RSI AND ONE FAST RSI BUY ON THE SAME DAY
+///     FASTRSI     EXITS AT 70 RSI LEVEL
+///     SLOW RSI    EXITS AT 68 RSI LEVEL
+
+
+FastRSILen      = input( 16 )
+SlowRSILen      = input( 31 )
+
+overSold        = input( 91 )
+
+FastRsi         = rsi(ohlc4, FastRSILen)
+SlowRsi         = rsi(ohlc4, SlowRSILen)
+
+aboveMaFilter   = close > sma(close, 200)
+StopLossLine    = strategy.position_avg_price * .90
+
+plot(StopLossLine, "StopLossLine", #ff0000)
+// plot(FastRsi, "FastRsi", color.yellow, 2)
+// plot(SlowRsi, "SlowRsi", color.purple, 2)
+
+FastBuy         = FastRsi < overSold and aboveMaFilter //and strategy.position_size != 1
+SlowBuy         = SlowRsi < overSold and aboveMaFilter //and strategy.position_size != 1
+
+
+//     FAST_BUY
+strategy.entry("Fast Enter", true, when=FastBuy)
+    
+if  FastRsi > 70    /// SELLS IF RSI == 75
+    strategy.close("Fast Enter", comment="Fast Exit")
+    
+strategy.exit("Stop Loss", "Fast Enter", stop=StopLossLine)       
+
+
+
+// // ///     SLOW_BUY
+strategy.entry("Slow Enter", true, when=SlowBuy)
+    
+// OPT-1907-01：两个独立持仓用同一止损ID，存在后调用修改前调用的身份冲突；慢RSI使用独立ID。
+// OPT-1907-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-1907-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit("Slow Stop Loss", "Slow Enter", stop=StopLossLine)       
+
+if  SlowRsi > 68    /// SELLS IF RSI == 68
+    strategy.close("Slow Enter", comment="Slow Exit")

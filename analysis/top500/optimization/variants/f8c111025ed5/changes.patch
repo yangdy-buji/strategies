@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：量化策略之MA强弱趋势追踪Quantitative-Strategy-of-MA-Strength-Trend-Tracking.md
++// 原文件SHA256：157d570c52c81a5e66cdb301ac43b8932606956c84ed2ef64da7c60995a55c54
++// SID：5583；原研究名单序号：492
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-12-19 00:00:00
+ end: 2024-01-18 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © HeWhoMustNotBeNamed
+-
+-//@version=4
+ strategy("MA Strength Strategy", overlay=false, initial_capital = 20000, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, commission_type = strategy.commission.percent, pyramiding = 1, commission_value = 0.01)
+ MAType = input(title="Moving Average Type", defval="ema", options=["ema", "sma", "hma", "rma", "vwma", "wma"])
+ LookbackPeriod = input(10, step=10)
+@@ -23,7 +30,10 @@
+ tradeDirection = input(title="Trade Direction", defval=strategy.direction.long, options=[strategy.direction.all, strategy.direction.long, strategy.direction.short])
+ i_startTime = input(defval = timestamp("01 Jan 2010 00:00 +0000"), title = "Start Time", type = input.time)
+ i_endTime = input(defval = timestamp("01 Jan 2099 00:00 +0000"), title = "End Time", type = input.time)
+-inDateRange = true
++// OPT-5583-01：日期输入失效；恢复入场范围，独立平仓继续有效。
++// OPT-5583-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
++// OPT-5583-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++inDateRange = time >= i_startTime and time <= i_endTime
+ 
+ f_getMovingAverage(source, MAType, length)=>
+     ma = sma(source, length)

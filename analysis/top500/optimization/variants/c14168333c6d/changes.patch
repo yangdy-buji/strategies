@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：三重均线趋势追踪多指标组合量化交易策略-Triple-EMA-Trend-Following-Multi-Indicator-Quantitative-Trading-Strategy.md
++// 原文件SHA256：a4b721361c2d7616e6cbfb720b8eab61605ac6e1334dc0a323cd374e0d79a38b
++// SID：1223；原研究名单序号：356
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2025-01-15 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1d
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT","balance":49999}]
+ */
+-
+-//@version=5
+ strategy("Daily Strategy with Triple EMA, DMI, DPO, RSI, and ATR", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+ 
+ // Input parameters
+@@ -28,7 +35,10 @@
+ slowEma = ta.ema(close, slowEmaLength)
+ 
+ // Calculate other indicators
+-[adx, diPlus, diMinus] = ta.dmi(dmiLength, adxSmoothing)
++// OPT-1223-01：ta.dmi依次返回+DI、-DI、ADX，现把+DI当ADX门槛。
++// OPT-1223-01 保持：所有输入参数及原交易方向
++// OPT-1223-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++[diPlus, diMinus, adx] = ta.dmi(dmiLength, adxSmoothing)
+ dpo = close - ta.sma(close, dpoLength)
+ rsi = ta.rsi(close, rsiLength)
+ atr = ta.atr(atrLength)

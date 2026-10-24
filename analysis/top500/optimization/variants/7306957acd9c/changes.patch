@@ -1,0 +1,37 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：均线反弹吸筹策略Moving-Average-Rebound-Strategy.md
++// 原文件SHA256：1000e9ffd1d4cb0053ce6d9fe1513d393159cd10be064fc17b2de02831b6f070
++// SID：2497；原研究名单序号：108
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-12-21 00:00:00
+ end: 2023-12-27 00:00:00
+@@ -8,9 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © vhurtadocos
+-
+-
+-//@version=5
+ strategy('Estrategia EMA Resistencia Soporte', shorttitle='Estrategia EMA RESISTENCIA Y SOPORTE', overlay=true, margin_long=100, margin_short=100, pyramiding = 10 )
+ 
+ //INICIO DE CONDICIONES BASICAS
+@@ -94,7 +100,10 @@
+     strategy.close("Long")
+ 
+ // Agregar una condición para el stop loss
+-longStopLossPrice = close * 0.95
++// OPT-2497-01：正价格不可能小于自身95%，止损永不触发。
++// OPT-2497-01 保持：原参数、仓位及方向
++// OPT-2497-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++longStopLossPrice = strategy.position_avg_price * 0.95
+ if strategy.position_size > 0 and close <= longStopLossPrice
+     strategy.close("Long")
+ 

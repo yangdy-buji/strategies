@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：自适应布林通道动态仓位管理策略-Adaptive-Bollinger-Bands-Dynamic-Position-Management-Strategy.md
++// 原文件SHA256：a5b034a74625838d1c9dc87f34e4c1b275c5e38043139248fdc36a841bf8bb6a
++// SID：5236；原研究名单序号：217
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-11-11 00:00:00
+ end: 2024-12-10 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("Bollinger Bands Strategy", overlay=true)
+ 
+ // 設定布林通道
+@@ -26,7 +33,10 @@
+ // 設定買入條件：突破布林通道高點5%或持續1小時在高點上方
+ breakout_level = upper * 1.01
+ 
+-hour_breakout = ta.change(time("60")) == 1 and close > upper
++// OPT-5236-01：time变化为毫秒差，不可能正常等于1，小时分支失效；改为非零变化，只修边界检测不声称持续一小时。
++// OPT-5236-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
++// OPT-5236-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++hour_breakout = ta.change(time("60")) != 0 and close > upper
+ 
+ buy_condition = (close > breakout_level or hour_breakout)
+ if (buy_condition)

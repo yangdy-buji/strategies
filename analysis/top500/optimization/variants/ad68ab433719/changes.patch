@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于月季线均线操作的量化交易策略Quant-Trading-Strategy-Based-on-Monthly-and-Quarterly-Moving-Average-Operation.md
++// 原文件SHA256：90b70e59d2e49a64ed246def2cd6d93452ff7d22648bb12ea33080affe074b91
++// SID：3460；原研究名单序号：205
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-12-08 00:00:00
+ end: 2023-12-14 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ strategy("均線操作-月季", overlay=true, initial_capital = 100000, default_qty_type = strategy.percent_of_equity, default_qty_value = 30)
+ sma20 = sma(close, 20)
+ sma60 = sma(close, 60)
+@@ -31,7 +38,10 @@
+ //plotchar(to_close, char="S", text="賣", color=color.green, location=location.abovebar)
+ //strategy.close("open long",when = tslide, comment="多單滑價7%出場")
+ if true
+-    strategy.entry("golden", strategy.long,  when=to_long,comment="多單入場")
++    // OPT-3460-01：开始日期被if true绕过，直接门控入场且退出保持不变。
++    // OPT-3460-01 保持：原参数、仓位及方向
++    // OPT-3460-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.entry("golden", strategy.long,  when=time >= backtest_start_time and to_long,comment="多單入場")
+     strategy.close("golden",  when=to_exit,comment="多單滑價7%出場")
+     strategy.close("golden",  when=to_close,comment="月線季線死亡交叉")
+     strategy.close("golden",  when=to_stop,comment="虧損10%強迫停損")

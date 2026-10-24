@@ -1,0 +1,86 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=2
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：混沌交易规则止损策略Chaotic-Trading-Rules-Stop-Loss-Strategy.md
++// 原文件SHA256：2f97ce4968d899939a8c0441cbab1b7f2b35b0ae15e50bdfcceb9b307d5fc8e1
++// SID：4868；原研究名单序号：445
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-11-06 00:00:00
+ end: 2023-11-06 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=2
+ strategy("Adding some essential components to a prebuilt RSI strategy", overlay=true)
+ 
+ /////////////// Component Code Start ///////////////
+@@ -26,7 +33,10 @@
+ testPeriodBackgroundColor = testPeriodBackground and (time >= testPeriodStart) and (time <= testPeriodStop) ? #00FF00 : na
+ bgcolor(testPeriodBackgroundColor, transp=97)
+ 
+-testPeriod() => true
++// OPT-4868-01：日期函数恒真。
++// OPT-4868-01 保持：原参数、仓位及窗外退出
++// OPT-4868-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+ /////////////// Component Code Stop ///////////////
+ 
+ ///////////// RSI component /////////////
+@@ -52,11 +62,23 @@
+ long_signal = crossover(last_long, last_short)
+ short_signal = crossover(last_short, last_long)
+ 
+-last_open_long_signal = long_signal ? open : nz(last_open_long_signal[1])
+-last_open_short_signal = short_signal ? open : nz(last_open_short_signal[1])
++// OPT-4868-05：价格和方向时间锚点仅在允许入场的窗口信号更新，避免窗外无新仓却重写存量仓位保护基准。
++// OPT-4868-05 保持：原信号、数量、价格参数与Pine版本保持。
++// OPT-4868-05 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++last_open_long_signal = (testPeriod() and long_signal) ? open : nz(last_open_long_signal[1])
++// OPT-4868-06：价格和方向时间锚点仅在允许入场的窗口信号更新，避免窗外无新仓却重写存量仓位保护基准。
++// OPT-4868-06 保持：原信号、数量、价格参数与Pine版本保持。
++// OPT-4868-06 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++last_open_short_signal = (testPeriod() and short_signal) ? open : nz(last_open_short_signal[1])
+ 
+-last_long_signal = long_signal ? time : nz(last_long_signal[1])
+-last_short_signal = short_signal ? time : nz(last_short_signal[1])
++// OPT-4868-07：价格和方向时间锚点仅在允许入场的窗口信号更新，避免窗外无新仓却重写存量仓位保护基准。
++// OPT-4868-07 保持：原信号、数量、价格参数与Pine版本保持。
++// OPT-4868-07 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++last_long_signal = (testPeriod() and long_signal) ? time : nz(last_long_signal[1])
++// OPT-4868-08：价格和方向时间锚点仅在允许入场的窗口信号更新，避免窗外无新仓却重写存量仓位保护基准。
++// OPT-4868-08 保持：原信号、数量、价格参数与Pine版本保持。
++// OPT-4868-08 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++last_short_signal = (testPeriod() and short_signal) ? time : nz(last_short_signal[1])
+ 
+ in_long_signal = last_long_signal > last_short_signal
+ in_short_signal = last_short_signal > last_long_signal
+@@ -79,9 +101,18 @@
+ long_call_signal = low <= long_call
+ short_call_signal = high >= short_call
+ 
+-if testPeriod()
+-    strategy.entry("Long", strategy.long, when=long_signal)
+-    strategy.entry("Short", strategy.short, when=short_signal)
++// OPT-4868-02：恢复窗口时退出需继续处理已有持仓。
++// OPT-4868-02 保持：原参数、仓位及窗外退出
++// OPT-4868-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if testPeriod() or strategy.position_size != 0
++    // OPT-4868-03：窗口外不得反手入场。
++    // OPT-4868-03 保持：原参数、仓位及窗外退出
++    // OPT-4868-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.entry("Long", strategy.long, when=testPeriod() and long_signal)
++    // OPT-4868-04：窗口外不得反手入场。
++    // OPT-4868-04 保持：原参数、仓位及窗外退出
++    // OPT-4868-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.entry("Short", strategy.short, when=testPeriod() and short_signal)
+ 
+     // plot(long_call, color=red)
+     // plot(short_call, color=green)

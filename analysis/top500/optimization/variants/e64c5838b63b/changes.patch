@@ -1,0 +1,52 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：唐奇安通道趋势跟踪策略Donchian-Channel-Trend-Tracking-Strategy.md
++// 原文件SHA256：be004131a55b062cdcf4061e36e44626a28ebb46455c38bb6e3a20392cd02f18
++// SID：2421；原研究名单序号：411
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-10-30 00:00:00
+ end: 2023-11-05 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © kriswaters
+-
+-//@version=4
+ strategy("Donchian Channels Strategy by KrisWaters", overlay=true ) 
+ 
+ // Date filter
+@@ -22,7 +29,10 @@
+ 
+ start     = timestamp(FromYear, FromMonth, FromDay, 00, 00)  // backtest start window
+ finish    = timestamp(ToYear, ToMonth, ToDay, 23, 59)        // backtest finish window
+-window()  => true // create function "within window of time"
++// OPT-2421-01：恢复日期窗。
++// OPT-2421-01 保持：起止参数不变。
++// OPT-2421-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++window()  => time >= start and time <= finish
+ 
+ // Strategy Settings
+ canEnterLong = input(true, title="Can Enter Long Position")
+@@ -75,5 +85,15 @@
+     
+ if canEnterShort and na(shortUpperValue) != true and na(shortLowerValue) != true and window()
+     strategy.entry("Short", false, stop=shortLowerValue)
++    // OPT-2421-02：保留窗口内入场同时提交保护；窗口外撤入场挂单并持续更新持仓保护。
++    // OPT-2421-02 保持：保留原入场条件、参数、仓位及Pine版本。
++    // OPT-2421-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+     strategy.exit("Short Exit", "Short", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)
++if not window()
++    strategy.cancel("Long")
++    strategy.cancel("Short")
++    if strategy.position_size > 0
++        strategy.exit("Long Exit", "Long", stop=useAtrAsStopRule ? max(longLowerValue,longStopValue) : longLowerValue)
++    if strategy.position_size < 0
++        strategy.exit("Short Exit", "Short", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)
+     

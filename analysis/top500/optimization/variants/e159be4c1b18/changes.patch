@@ -1,0 +1,47 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：金叉死叉趋势追踪策略Golden-Dead-Cross-Trend-Tracking-Strategy.md
++// 原文件SHA256：5b0869c40fcacc8c564e7657580cea40f5bc25144322703aa7317b44f64acf35
++// SID：5605；原研究名单序号：499
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-12-08 00:00:00
+ end: 2023-12-14 00:00:00
+@@ -8,7 +17,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © Ta3MooChi
+-//@version=5
+ strategy("전략", overlay=true,process_orders_on_close = true, pyramiding = 100)
+ 
+ short_ma = ta.sma(close,input.int(3, "단기 이평", minval = 1))
+@@ -22,7 +30,10 @@
+ useDateFilter = input.bool(true, title = "특정 기간 백테스트", group = "기간 백테스트")
+ backtestStartDate = input(timestamp("1 Jan 2021"), title = "시작날짜", group = "기간 백테스트")
+ backtestEndDate = input(timestamp("1 Jan 2022"), title = "종료날짜", group = "기간 백테스트")
+-inTradeWindow = true
++// OPT-5605-01：恢复可关闭日期。
++// OPT-5605-01 保持：保留100层及到期撤平。
++// OPT-5605-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++inTradeWindow = not useDateFilter or (time >= backtestStartDate and time <= backtestEndDate)
+ 
+ longStopPerc = 1 + input.float(3, "최소수익률%", minval = 1)*0.01
+ 
+@@ -32,7 +43,10 @@
+ if (longcondition) and inTradeWindow and inTrendMa
+     strategy.entry("long", strategy.long)
+ 
+-if (shortcondition) and (close > strategy.position_avg_price*longStopPerc) and inTradeWindow
++// OPT-5605-02：退出不受入场日期限制。
++// OPT-5605-02 保持：盈利门槛保持。
++// OPT-5605-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if (shortcondition) and (close > strategy.position_avg_price*longStopPerc)
+     strategy.close_all()
+ 
+ if not inTradeWindow and inTradeWindow[1]

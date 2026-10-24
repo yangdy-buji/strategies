@@ -46,4 +46,24 @@ class OptimizationBuildTests(unittest.TestCase):
         self.assertIn('不表示这些问题在修复版中全部仍然存在',text)
         self.assertIn('原版ID错误，本轮已修',text)
 
+    def test_completed_audit_is_distinct_from_pending_review(self):
+        r=self.record();r.update(status='reviewed',audit=dict(synopsis='以EMA交叉入场，反向交叉退出',evidence=[dict(line=120,code='long = crossover(a, b)',reason='交叉信号')],findings=[],verdict='no_confirmed_defect'))
+        text=build.render_card(r)
+        self.assertIn('已审·未确认缺陷',text)
+        self.assertIn('以EMA交叉入场',text)
+        self.assertIn('120',text)
+        self.assertIn('不代表已证明没有缺陷',text)
+
+    def test_audit_status_uses_approved_patch_not_proposal(self):
+        self.assertEqual(build.audit_status(dict(verdict='fix_proposed'),False),'needs_design')
+        self.assertEqual(build.audit_status(dict(verdict='fix_proposed'),True),'candidate')
+        self.assertEqual(build.audit_status(dict(verdict='no_confirmed_defect'),False),'reviewed')
+
+    def test_deferred_review_reason_remaining_and_cases_are_visible(self):
+        r=self.record();approval=dict(status='deferred',review='需要确认锚价',remaining=['首次保护尚无定义'],validation_cases=['跳空后检查保护'])
+        build.apply_review_metadata(r,approval)
+        text=build.render_card(r)
+        self.assertIn('暂缓修改',text);self.assertIn('需要确认锚价',text)
+        self.assertIn('首次保护尚无定义',text);self.assertIn('跳空后检查保护',text)
+
 if __name__=='__main__':unittest.main()

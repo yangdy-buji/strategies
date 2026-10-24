@@ -1,0 +1,59 @@
+//@version=3
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于移动平均线和相对强弱指标的动量反转策略Momentum-Reversal-Strategy.md
+// 原文件SHA256：7dbec366748c87e46670e3744dae54b4f7e6979c35829def7bd92329409a3aa2
+// SID：3549；原研究名单序号：279
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-01-01 00:00:00
+end: 2024-01-02 00:00:00
+period: 1m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy(title = "14/28 SMA and RSI", shorttitle = "14/28 SMA and RSI", overlay = false, pyramiding = 0, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, currency = currency.USD)
+src = close, len = input(14, minval=1, title="Length")
+take_Profit=input(8, title="Take Profit")
+quantityPercentage=input(50, title="Percent of Quantity to Sell")
+closeOverbought=input(true, title="Close Overbought and Take Profit")
+up = rma(max(change(src), 0), len)
+down = rma(-min(change(src), 0), len)
+rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - (100 / (1 + up / down))
+longCondition = 0
+sellCondition = 0
+takeProfit = 0
+quantityRemainder = 100
+smaSignal = input(14, title="SMA Signal Period")
+smaLong = input(28, title="SMA Longer Period")
+if ((sma(close, smaSignal) >= sma(close, smaLong) and rsi<= 30) or (rsi<=13)) and strategy.position_size==0
+    longCondition:=1
+
+if longCondition==1
+    strategy.entry("Buy", strategy.long)
+    
+profit = ((close-strategy.position_avg_price)/strategy.position_avg_price) * 100
+
+if sma(close, smaSignal) <= sma(close, smaLong) and strategy.position_size>1
+    sellCondition := 1
+
+if strategy.position_size>=1
+    if closeOverbought == true
+        if profit>=take_Profit and takeProfit == 0
+            strategy.exit("Take Profit", profit=take_Profit, qty_percent=quantityPercentage)
+            takeProfit:=1
+            quantityRemainder:=100-quantityPercentage
+    if sellCondition == 1 and quantityRemainder<100
+        strategy.close("Buy")
+
+    if closeOverbought == false and rsi>70
+        // OPT-3549-01：平仓错误引用退出ID而非Buy入场ID；另takeProfit与quantityRemainder每根重置且profit单位tick，需设计分批状态。
+        // OPT-3549-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+        // OPT-3549-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+        strategy.close("Buy")
+        
+plot(longCondition, "Buy Condition", green)
+plot(takeProfit, "Partial Sell Condition", orange)
+plot(sellCondition, "Sell Condition", red)

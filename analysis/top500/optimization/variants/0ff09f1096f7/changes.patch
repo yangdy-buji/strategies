@@ -1,0 +1,44 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：动态均线与布林带交叉策略结合固定止损优化模型-Dynamic-Moving-Average-and-Bollinger-Bands-Cross-Strategy-with-Fixed-Stop-Loss-Optimization-Model.md
++// 原文件SHA256：208cdc01d670a137fb1e8b26d4127e6aaf04308b62695170b90174691c76ef91
++// SID：1496；原研究名单序号：440
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-11-26 00:00:00
+ end: 2024-12-25 08:00:00
+@@ -5,9 +14,6 @@
+ basePeriod: 3h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-
+-//@version=5
+ strategy("MA 200 and Bollinger Bands Strategy", overlay=true) // 2.86% for 35x leverage
+ 
+ // inputs
+@@ -36,10 +42,18 @@
+ 
+ if (long_condition)
+     strategy.entry("Long", strategy.long)
++    // OPT-1496-01：持多时更新有效均价止损。
++    // OPT-1496-01 保持：保留3%与信号。
++    // OPT-1496-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if strategy.position_size > 0
+     strategy.exit("Stop Long", "Long", stop=strategy.position_avg_price * (1 - fixed_stop_loss_percent))
+ 
+ if (short_condition)
+     strategy.entry("Short", strategy.short)
++    // OPT-1496-02：持空时更新有效均价止损。
++    // OPT-1496-02 保持：保留3%与信号；不改变成交时机，首个计算前保护空档仍存在。
++    // OPT-1496-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if strategy.position_size < 0
+     strategy.exit("Stop Short", "Short", stop=strategy.position_avg_price * (1 + fixed_stop_loss_percent))
+ 
+ // take profit conditions

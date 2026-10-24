@@ -1,0 +1,72 @@
+//@version=3
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双移动均线交叉反转策略Dual-Moving-Average-Reversal-Strategy.md
+// 原文件SHA256：03289a00b8ff657955f704cf0417fdbfe1b0ed40c3fd6929f72c77bd6dd217b2
+// SID：2188；原研究名单序号：331
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-11-15 00:00:00
+end: 2023-11-21 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Up Down", "Up Down", precision = 6, pyramiding = 1, default_qty_type = strategy.percent_of_equity, default_qty_value = 99, commission_type = strategy.commission.percent, commission_value = 0.0, initial_capital = 1000, overlay = true)
+
+buy = close > open and open > close[1]
+sell = close < open and open < close[1]
+
+longma = input(77,"Long MA Input")
+shortma = input(7,"Short MA Input")
+long = sma(close,longma)
+short = sma(close, shortma)
+mabuy = crossover(short,long) or buy and short > long
+masell = crossunder(short,long) or sell and short > long
+
+num_bars_buy = barssince(mabuy)
+num_bars_sell = barssince(masell)
+//plot(num_bars_buy, color = teal)
+//plot(num_bars_sell, color = orange)
+
+xbuy = crossover(num_bars_sell, num_bars_buy)
+xsell = crossunder(num_bars_sell, num_bars_buy)
+plotshape(xbuy,"Buy Up Arrow", shape.triangleup, location.belowbar, white, size = size.tiny)
+plotshape(xsell,"Sell Down Arrow", shape.triangledown, location.abovebar, white, size = size.tiny)
+plot(long,"Long MA", fuchsia, 2)
+
+// Component Code Start
+// Example usage:
+// if testPeriod()
+//   strategy.entry("LE", strategy.long)
+testStartYear = input(2017, "Backtest Start Year")
+testStartMonth = input(01, "Backtest Start Month")
+testStartDay = input(2, "Backtest Start Day")
+testPeriodStart = timestamp(testStartYear,testStartMonth,testStartDay,0,0)
+
+testStopYear = input(2019, "Backtest Stop Year")
+testStopMonth = input(7, "Backtest Stop Month")
+testStopDay = input(30, "Backtest Stop Day")
+testPeriodStop = timestamp(testStopYear,testStopMonth,testStopDay,0,0)
+
+// A switch to control background coloring of the test period
+testPeriodBackground = input(title="Color Background?", type=bool, defval=true)
+testPeriodBackgroundColor = testPeriodBackground and (time >= testPeriodStart) and (time <= testPeriodStop) ? #00FF00 : na
+bgcolor(testPeriodBackgroundColor, transp=97)
+
+// OPT-2188-01：恢复限价入场日期范围。
+// OPT-2188-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-2188-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+// Component Code Stop
+
+if testPeriod()
+    strategy.entry("buy", true, when = xbuy, limit = close)
+    // OPT-2188-02：窗外撤销未成交限价买单，已有持仓仍可按xsell退出。
+    // OPT-2188-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+    // OPT-2188-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+else
+    strategy.cancel("buy")
+strategy.close("buy", when = xsell)

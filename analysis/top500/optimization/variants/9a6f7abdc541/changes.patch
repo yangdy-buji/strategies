@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=6
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：多指标趋势动量ATR目标价交易策略-Multi-Indicator-Trend-Momentum-ATR-Target-Trading-Strategy.md
++// 原文件SHA256：c70a03c5e8802f8bd351684d1206ceedb4dffd192c311c9835eef8b0af0c048d
++// SID：3984；原研究名单序号：284
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-02-21 00:00:00
+ end: 2025-02-18 08:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © SPcuttack
+-
+-//@version=6
+ strategy("ADX & RSI Strategy with ATR Targets", overlay=true)
+ 
+ // Input parameters
+@@ -22,7 +29,10 @@
+ atrMultiplierStop = input.float(1.5, title="ATR Multiplier for Stop Loss")
+ 
+ // ADX and DMI calculations
+-[adx, plusDI, minusDI] = ta.dmi(adxLength, adxSmoothing)
++// OPT-3984-01：修正标准返回值对应关系。
++// OPT-3984-01 保持：默认周期阈值及收盘退出保持。
++// OPT-3984-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++[plusDI, minusDI, adx] = ta.dmi(adxLength, adxSmoothing)
+ 
+ // RSI calculations
+ rsi = ta.rsi(close, rsiLength)

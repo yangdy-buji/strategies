@@ -1,0 +1,27 @@
+--- original.pine
++++ conservative.pine
+@@ -1,4 +1,12 @@
+ //@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：均线金叉死叉策略-Moving-Average-Crossover-Strategy.md
++// 原文件SHA256：518d5604174a95495ff7c4217b7db4e0abe4cb8d09f39821d40d13ead27587d1
++// SID：2526；原研究名单序号：254
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ strategy("barreto es marica", overlay=true)
+ 
+ // Parámetros de entrada
+@@ -34,7 +42,10 @@
+ stopLossLevel = strategy.position_avg_price * (1 - 0.01)
+ takeProfitLevel = strategy.position_avg_price * (1 + 0.03)
+ strategy.exit("Stop Loss/Take Profit", "Long", stop=stopLossLevel, limit=takeProfitLevel)
+-strategy.exit("Stop Loss/Take Profit", "Short", stop=stopLossLevel, limit=takeProfitLevel)
++// OPT-2526-01：修正空头价格方向和ID。
++// OPT-2526-01 保持：1%风险3%目标及信号不变。
++// OPT-2526-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.exit("Short Stop Loss/Take Profit", "Short", stop=strategy.position_avg_price * (1 + 0.01), limit=strategy.position_avg_price * (1 - 0.03))
+ 
+ // Plotting
+ plot(fastMA, color=color.blue, title="Media rápida")

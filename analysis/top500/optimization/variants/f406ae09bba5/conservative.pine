@@ -1,0 +1,47 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于线性回归分析和均线指标的短线交易策略Linear-Regression-Channel-Strategy.md
+// 原文件SHA256：e85d9a32b01b3eae8991edea87d4a0bc100767d6f614424b8b1e40e50fec5769
+// SID：3583；原研究名单序号：467
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-01-10 00:00:00
+end: 2024-01-16 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TradingAmmo
+strategy("Linear Channel", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_type=strategy.commission.percent, commission_value=0.075, currency='USD')
+startP = timestamp(input(2017, "Start Year"), input(12, "Month"), input(17, "Day"), 0, 0)
+end   = timestamp(input(9999, "End Year"),  1, 1,  0, 0)
+// OPT-3583-01：日期输入失效；入场恢复起止范围，退出已独立。
+// OPT-3583-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-3583-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+_testPeriod() => time >= startP and time <= end
+
+//linreg
+length = input(55)
+linreg = linreg(close, length, 0)
+plot(linreg, color=color.white) 
+
+//calc band
+Value = input(-2)
+sub = (Value/100)+1
+Band2 = linreg*sub
+plot(Band2, color=color.red)
+
+//HMA as a filter
+HMA = input(400, minval=1)  
+plot(hma(close, HMA), color=color.purple)  
+
+long_condition = close <  Band2  and hma(close, HMA) < close and _testPeriod()
+strategy.entry('BUY', strategy.long, when=long_condition)  
+ 
+short_condition =  close > linreg
+strategy.close('BUY', when=short_condition)

@@ -1,0 +1,67 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：渔夫指标移动止损策略Fisher-Yurik-Trailing-Stop-Strategy.md
+// 原文件SHA256：b93813632f392a21fbd72d0a73275d26bd0f9900801563da28caf7a44fe2526c
+// SID：4877；原研究名单序号：327
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-01-26 00:00:00
+end: 2024-02-01 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Fisher_Yurik Strategy with Trailing Stop", shorttitle="FY Strategy", overlay=true)
+
+// Date Ranges 
+from_month = input(defval = 1, title = "From Month")
+from_day   = input(defval = 1, title = "From Day")
+from_year  = input(defval = 2021, title = "From Year")
+to_month   = input(defval = 1, title = "To Month")
+to_day     = input(defval = 1, title = "To Day")
+to_year    = input(defval = 9999, title = "To Year")
+start  = timestamp(from_year, from_month, from_day, 00, 00)  // backtest start window
+finish = timestamp(to_year, to_month, to_day, 23, 59)        // backtest finish window
+// OPT-4877-01：日期输入恒真失效；恢复入场时间窗，退出独立。
+// OPT-4877-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-4877-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+window = time >= start and time <= finish
+period = input(2, title='Period')
+cost = input.float(1.05, title='profit level ', step=0.01)
+dusus = input.float(1.02, title='after the signal', step=0.01)
+
+var float Value = na
+var float Fish = na
+var float ExtBuffer1 = na
+var float ExtBuffer2 = na
+
+price = (high + low) / 2
+MaxH = ta.highest(high, period)
+MinL = ta.lowest(low, period)
+
+Value := 0.33 * 2 * ((price - MinL) / (MaxH - MinL) - 0.5) + 0.67 * nz(Value[1])
+Value := math.max(math.min(Value, 0.999), -0.999)
+Fish := 0.5 * math.log((1 + Value) / (1 - Value)) + 0.5 * nz(Fish[1])
+
+up = Fish >= 0
+
+ExtBuffer1 := up ? Fish : na
+ExtBuffer2 := up ? na : Fish
+
+var float entryPrice = na
+var float stopPrice = na
+ 
+if (ExtBuffer1 > ExtBuffer1[1])
+    entryPrice := close*dusus
+    stopPrice := close * cost 
+ 
+if (ExtBuffer2 < ExtBuffer2[1])
+    entryPrice := close
+    stopPrice := close * cost
+
+// Sadece seçilen test döneminde işlem yapma koşulu eklenmiştir
+strategy.entry("Buy", strategy.long, when=ExtBuffer1 > ExtBuffer1[1] and window)
+strategy.exit("Take Profit/Trailing Stop", from_entry="Buy", when=(close >= entryPrice * cost) or (close < stopPrice), trail_offset=0.08, trail_price=entryPrice * cost)

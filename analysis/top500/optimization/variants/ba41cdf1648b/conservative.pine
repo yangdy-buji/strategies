@@ -1,0 +1,111 @@
+//@version=3
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：超级趋势反转策略Super-Trend-Reverse-Strategy.md
+// 原文件SHA256：2af06eb599b93e3ba810322f9d0974860b6070cda03ee0a54371fe57e0b34a32
+// SID：5335；原研究名单序号：312
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-12-21 00:00:00
+end: 2023-12-27 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy(title = "Super-Trend-reverse Strategy", overlay = true)
+
+// Super Trend Strategy
+Factor=input(2,type =float, minval=1,maxval = 100)
+Pd=10 //input(10,minval=1,maxval = 100)
+
+// ST1
+
+UP=hlc3-(Factor*atr(Pd))
+
+DOWN=hlc3+(Factor*atr(Pd))
+
+// ST1.2
+
+TrendUp=na
+TrendUp:=close[1]>TrendUp[1]? max(UP,TrendUp[1]) : UP
+
+TrendDown=na
+// OPT-5335-01：TrendDown重置错误使用下方UP而非上方DOWN。
+// OPT-5335-01 保持：原参数、仓位及信号
+// OPT-5335-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+TrendDown:=close[1]<TrendDown[1]? min(DOWN,TrendDown[1]) : DOWN
+
+
+Trend = na
+Tsl = na
+
+
+Trend := close[1] > TrendDown[1] ? 1: close[1] < TrendUp[1]? -1: nz(Trend[1],1)
+Tsl := Trend==1 ? TrendUp: TrendDown
+
+
+/////////////// Functions for Reverse //////////////////////////////
+
+IF(input) => (exp(2*input)-1) / (exp(2*input)+1)
+
+//////////////////////// RSI REVERSE /////////////////////
+
+RSI_main = input(14, title="RSI Main Period")
+RSI_smooth = input(5, title="RSI Smooth Period")
+
+//Functions
+RVS(input) => (exp(2*input)-1) / (exp(2*input)+1)
+
+//RSI Calculation
+raw_RSI=0.1*(rsi(close,RSI_main)-50)
+wma_RSI=wma(raw_RSI,RSI_smooth)
+RVS_RSI = RVS(wma_RSI)
+
+
+threshold1 = RVS_RSI < 0.8? 1 : 0
+threshold2 = -0.8
+
+
+
+
+RSIbuy = (RVS_RSI<threshold2)
+RSIsell = (RVS_RSI > threshold1)
+
+
+
+////////////////////// RSI REVERSE ///////////////////////
+
+// Conditions
+
+
+
+longCond = na
+shortCond = na
+longCond :=  RSIbuy and crossover(close, Tsl)  
+shortCond :=  RSIsell and crossunder(close, Tsl) 
+
+
+yearfrom = input(2018)
+yearuntil =input(2039)
+monthfrom =input(6)
+monthuntil =input(12)
+dayfrom=input(1)
+dayuntil=input(31)
+
+
+
+if (  longCond  and   year >= yearfrom and year <= yearuntil and month>=monthfrom and month <=monthuntil and dayofmonth>=dayfrom and dayofmonth < dayuntil) 
+    strategy.entry("BUY", strategy.long, stop=close, oca_name="TREND",  comment="BUY")
+    
+else
+    strategy.cancel(id="BUY")
+
+
+// OPT-5335-02：平多不应被日期窗阻断。
+// OPT-5335-02 保持：原参数、仓位及信号
+// OPT-5335-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (shortCond)
+
+    strategy.close("BUY")

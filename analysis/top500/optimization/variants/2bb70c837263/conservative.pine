@@ -1,0 +1,52 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于动量交易策略Momentum-and-Volume-Trading-Strategy.md
+// 原文件SHA256：1a2fedc42d3c1a28b4bfe9be073c19d0086b4f3452f8699abdf00c8804f761ce
+// SID：3079；原研究名单序号：272
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-12-12 00:00:00
+end: 2023-12-18 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy('Momentum and Volume Bot', overlay=true)
+
+// Define strategy parameters
+profit_target_percent = input(0.8, title='Profit Target (%)')
+stop_loss_percent = input(0.5, title='Stop Loss (%)')
+volume_threshold = input(2, title='Volume Threshold')
+
+// Calculate momentum
+momentum = close - close[1]
+
+// Calculate average volume
+avg_volume = ta.sma(volume, 20)
+
+// Buy condition
+buy_condition = ta.crossover(momentum, 0) and volume > avg_volume * volume_threshold
+
+// Sell condition
+sell_condition = ta.crossunder(momentum, 0) and volume > avg_volume * volume_threshold
+
+// Strategy logic
+strategy.entry('Buy', strategy.long, when=buy_condition)
+strategy.entry('Sell', strategy.short, when=sell_condition)
+
+// Set profit target and stop loss
+// OPT-3079-01：百分比价差转换为tick并分离方向ID。
+// OPT-3079-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-3079-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit('Buy Take Profit/Stop Loss', from_entry='Buy', profit=close * profit_target_percent / 100 / syminfo.mintick, loss=close * stop_loss_percent / 100 / syminfo.mintick)
+// OPT-3079-02：百分比价差转换为tick并分离方向ID。
+// OPT-3079-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-3079-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit('Sell Take Profit/Stop Loss', from_entry='Sell', profit=close * profit_target_percent / 100 / syminfo.mintick, loss=close * stop_loss_percent / 100 / syminfo.mintick)
+
+// Plotting
+plotshape(series=buy_condition, title='Buy Signal', color=color.new(color.green, 0), style=shape.triangleup, size=size.small)
+plotshape(series=sell_condition, title='Sell Signal', color=color.new(color.red, 0), style=shape.triangledown, size=size.small)

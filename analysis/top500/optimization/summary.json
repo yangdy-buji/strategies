@@ -1,12 +1,24 @@
 {
   "selected": 500,
   "counts": {
-    "candidate": 11,
-    "needs_design": 20,
-    "needs_review": 469
+    "candidate": 163,
+    "reviewed": 210,
+    "needs_design": 127
   },
+  "audited_remaining": 489,
+  "new_candidates": 152,
   "ranking_sha256": "b7a5d3f07f30af8786ff121fa05d6a0da1c878c4af986b7d629cc8f8864839c4",
   "catalog_sha256": "1bdbbebc132c07478528016955b3b29489d7a58ebdef89ad669832f4b0d4e5ed",
   "native_compile": false,
-  "backtest": false
+  "backtest": false,
+  "audit_inputs": {
+    "assignments.json": "ce76e8a2cf50a77c62658f8318a7665de44a24747e191d1d9fb88ec5b05b9f25",
+    "batch_1.json": "0d4128ad2d53732d54cc7097c1eedae4d70bef175268910e8abdda13172517b4",
+    "batch_2.json": "cc77f05ac5ebdf37b7988a63ae5d9c8d434f8e945915651ed5d1654c9f3a0ff3",
+    "batch_3.json": "c9ec75290a7c89ea519d461b07aef9ca2d39f968861b005a82ec4076ee539e80",
+    "patch_approvals.json": "7c4eecd0ead253979ac4e1b24a2eaba5c92aca784691e32b2cf3222a59e86859",
+    "review_1.json": "02f63d3080f3abcb1db54fc913e8ed2f0fafdb5aeff9bd63996bbfb73fddf2dc",
+    "review_2.json": "a083d7d7cd4360ca170f858d2f7229fd574265252014bae23eebbad199acf37e",
+    "review_3.json": "6fd1d27320b9c73461a5d1f193b34dad7174c7860d566ec1a6381e63fa3aba16"
+  }
 }

@@ -1,0 +1,69 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：Bollinger-Bands-Mean-Reversion-Trading-Strategy-with-Dynamic-Support-布林带均值回归交易策略与动态支撑.md
+// 原文件SHA256：c0fc4d3f8b29369e0bf21a67529f4c2ad1481a2fb881387bbf979db35ec402f6
+// SID：146；原研究名单序号：359
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-07-25 00:00:00
+end: 2024-07-30 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Mean Reversion Strategy with Bollinger Bands", overlay=true)
+
+// Bollinger Bands settings
+length = input.int(20, minval=1, title="Bollinger Bands Length")
+src = input(close, title="Source")
+mult = input.float(2.0, minval=0.1, title="Bollinger Bands Multiplier")
+
+// Calculate Bollinger Bands
+basis = ta.sma(src, length)
+dev = mult * ta.stdev(src, length)
+upper = basis + dev
+lower = basis - dev
+
+// Plot Bollinger Bands
+plot(basis, title="Middle Band", color=color.blue)
+p1 = plot(upper, title="Upper Band", color=color.red)
+p2 = plot(lower, title="Lower Band", color=color.red)
+fill(p1, p2, color=color.rgb(255, 0, 0, 90))
+
+// Buy condition: Price crosses above the middle band
+longCondition = ta.crossover(close, basis)
+
+// Close condition: Price touches the middle band
+closeCondition = ta.crossunder(close, basis)
+
+// Emergency stop condition: Price drops below 2% of entry price
+dropCondition = strategy.position_size > 0 and close < strategy.position_avg_price * 0.98
+
+// Plot Buy/Sell Signals only on initial cross
+plotshape(series=longCondition, location=location.belowbar, color=color.green, style=shape.triangleup, textcolor=color.black, text="BUY", size=size.small)
+plotshape(series=closeCondition and not dropCondition, location=location.abovebar, color=color.red, style=shape.triangledown, textcolor=color.black, text="SELL", size=size.small)
+plotshape(series=dropCondition, location=location.abovebar, color=color.red, style=shape.triangledown, textcolor=color.black, text="STOP", size=size.small)
+
+// Track entry date to ensure no same-day buy/sell
+var float entryPrice = na
+var int entryYear = na
+var int entryMonth = na
+var int entryDay = na
+
+// Strategy Logic
+// OPT-146-01：持仓期间重复信号虽不能新增持仓，仍覆盖entryDay并错误重启当天退出限制。
+// OPT-146-01 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
+// OPT-146-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (strategy.position_size == 0 and longCondition and (na(entryDay) or (year != entryYear or month != entryMonth or dayofmonth != entryDay))) 
+    strategy.entry("Long", strategy.long)
+    entryPrice := close
+    entryYear := year
+    entryMonth := month
+    entryDay := dayofmonth
+
+if ((closeCondition or dropCondition) and strategy.position_size > 0 and (na(entryDay) or (year != entryYear or month != entryMonth or dayofmonth != entryDay or dropCondition)))
+    strategy.close("Long")
+    entryDay := na

@@ -1,0 +1,48 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：三指数均线止盈止损策略Triple-Exponential-Moving-Average-Profit-Taking-and-Stop-Loss-Strategy.md
++// 原文件SHA256：0dc68fad2dd2736a32f863cf55e9521fd66c48448c758a1f77748cf5707a674d
++// SID：1187；原研究名单序号：353
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-01-04 00:00:00
+ end: 2024-02-03 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 15m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ //© Densz
+ strategy("3EMA with TP & SL (ATR)", overlay=true )
+ 
+@@ -38,7 +45,10 @@
+ 
+ sma200              =       sma(close, trendMALength)
+ 
+-inDateRange         =       true
++// OPT-1187-01：使日期输入生效
++// OPT-1187-01 保持：原时间参数及窗外close_all
++// OPT-1187-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++inDateRange         =       time >= startTime and time <= endTime
+ 
+ // Plotting
+ plot(slowEMA, title="Slow EMA", color=color.red, linewidth=2, transp=50)
+@@ -65,7 +75,10 @@
+     
+ // STRATEGY
+ goLong  = crossover(middEMA, slowEMA) and inDateRange
+-closeLong = crossunder(fastEMA, middEMA) and inDateRange
++// OPT-1187-02：退出不受日期门禁限制
++// OPT-1187-02 保持：原死叉退出信号
++// OPT-1187-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++closeLong = crossunder(fastEMA, middEMA)
+ 
+ 
+ if goLong

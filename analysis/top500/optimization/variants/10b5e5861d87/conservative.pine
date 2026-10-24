@@ -1,0 +1,75 @@
+//@version=3
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于拉里康诺斯的经典策略Oscillation-Breakthrough-Strategy.md
+// 原文件SHA256：aa05e2f820054dc222a6125d4783a32fda5eb0fc64fd815bd068b4104180b492
+// SID：3418；原研究名单序号：423
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-09-26 00:00:00
+end: 2023-10-26 00:00:00
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("RSI Strategy", overlay=true, default_qty_type = strategy.percent_of_equity, default_qty_value = 100)
+
+//Starter Parameters
+
+length = input(title="RSI Lenght", defval=2)
+overBoughtRSI = input(title="OverBought Level for RSI",  defval=10)
+shortLength = input(title="Short MA Length",  defval=5)
+longLength = input(title="Long MA Length",  defval=200)
+
+RuleMRSI=input(title="RSI Moving Average Filter", defval= true)
+lengthmrsi=input(title="RSI Moving Average Length",  defval=4)
+overBoughtMRSI=input(title="OverBought Level for the Moving Average of the RSI",  defval=30)
+
+Rulestop=input(title="Apply Stop Loss", defval=false)
+stop_percentual=input(title="% Stop Loss",  defval=10)
+
+//RSI
+
+vrsi = rsi(close, length)
+
+//Moving Averages
+
+longma = sma(close,longLength)
+shortma = sma(close,shortLength)
+mrsi=sma(vrsi,lengthmrsi)
+
+//Stop Loss
+
+stop_level = strategy.position_avg_price*((100-stop_percentual)/100)
+
+//Backtest Period
+testStartYear = input(2009, "Backtest Start Year")
+testStartMonth = input(1, "Backtest Start Month")
+testStartDay = input(2, "Backtest Start Day")
+testPeriodStart = timestamp(testStartYear,testStartMonth,testStartDay,0,0)
+
+testStopYear = input(2020, "Backtest Stop Year")
+testStopMonth = input(12, "Backtest Stop Month")
+testStopDay = input(30, "Backtest Stop Day")
+testPeriodStop = timestamp(testStopYear,testStopMonth,testStopDay,0,0)
+
+// OPT-3418-01：日期函数恒真。
+// OPT-3418-01 保持：原参数、仓位及方向
+// OPT-3418-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+    
+//Strategy
+
+// OPT-3418-02：均价止损只在信号内设置可能一直na，且恢复日期需不阻断退出。
+// OPT-3418-02 保持：原参数、仓位及方向
+// OPT-3418-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if not na(vrsi)
+    entryAllowed = testPeriod() and vrsi < overBoughtRSI and close > longma and (not RuleMRSI or mrsi < overBoughtMRSI)
+    if entryAllowed
+        strategy.entry("RsiLE", strategy.long, comment="Open")
+    if Rulestop and strategy.position_size > 0
+        strategy.exit("RsiLE", stop=stop_level)
+    if close > shortma
+        strategy.close_all()

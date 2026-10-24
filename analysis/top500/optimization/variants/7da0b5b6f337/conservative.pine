@@ -1,0 +1,56 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：EMA反向买卖策略EMA-Reverse-Buy-Sell-Strategy.md
+// 原文件SHA256：bc9726f8efaa6d728be8886b88d759c11ffc58cbb87e4ad47191328066694a53
+// SID：325；原研究名单序号：396
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-11-21 00:00:00
+end: 2023-11-27 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TheHulkTrading
+
+// Simple EMA strategy, based on ema55+ema21 and ATR(Average True Range) and it enters a deal from ema55 when the other entry conditions are met
+strategy("Simple Ema_ATR Strategy HulkTrading", overlay=true)
+
+atr_multiplier = input(2, minval=1, title="ATR Multiplier") // ATR Multiplier. Recommended values between 1..4
+
+
+emaFast=ema(close,21)
+emaSlow=ema(close,55)
+
+//Basically long and short conditions
+
+//If long: 
+// 1) close must be less than open (because we are searching for a pullback)
+// 2) emaFast(21) must be bigger than emaSlow(55) - for a trend detection
+// 3) Difference between emaFast and emaSlow must be greater than ATR(14) - for excluding flat
+longCond = close < open and emaFast > emaSlow and abs(emaSlow-emaFast) > atr(14)  
+
+//For short conditions are opposite
+shortCond = close > open and emaFast < emaSlow and abs(emaSlow-emaFast) > atr(14) 
+
+//Stop levels and take profits, based on ATR multiplier
+
+stop_level_long = strategy.position_avg_price - atr_multiplier*atr(14)
+take_level_long = strategy.position_avg_price + atr_multiplier*atr(14)
+stop_level_short = strategy.position_avg_price + atr_multiplier*atr(14)
+take_level_short = strategy.position_avg_price - atr_multiplier*atr(14)
+
+
+//Entries and exits 
+strategy.entry("Long", strategy.long, when=longCond, limit = emaSlow)
+strategy.exit("Stop Loss/TP","Long", stop=stop_level_long, limit = take_level_long)
+strategy.entry("Short", strategy.short, when=shortCond, limit = emaSlow)
+// OPT-325-01：多空共用同一exit ID可能互相修改退出订单，短侧必须独立命名。
+// OPT-325-01 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
+// OPT-325-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit("Short Stop Loss/TP","Short", stop=stop_level_short, limit = take_level_short)

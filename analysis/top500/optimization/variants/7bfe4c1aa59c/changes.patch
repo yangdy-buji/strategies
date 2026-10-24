@@ -1,0 +1,45 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双7日突破策略Double-7-Days-Breakout-Strategy.md
++// 原文件SHA256：2bced57e0598b8285d44b7cc0b1ba2536d1d9a479eaa07d19576ea451a05393f
++// SID：1861；原研究名单序号：358
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-12-01 00:00:00
+ end: 2023-12-31 23:59:59
+@@ -5,8 +14,6 @@
+ basePeriod: 15m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ strategy("Double 7's Strategy", overlay=true, default_qty_type = strategy.percent_of_equity, default_qty_value = 100)
+ 
+ value1=input(7, title="Quantity of day low")
+@@ -28,11 +35,17 @@
+ testStopDay = input(30, "Backtest Stop Day")
+ testPeriodStop = timestamp(testStopYear,testStopMonth,testStopDay,0,0)
+ 
+-testPeriod() => true
++// OPT-1861-01：恢复已有起止日期计算。
++// OPT-1861-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-1861-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+ 
+ if testPeriod()
+     if (close>mma200) and (close<entry)
+         strategy.entry("RsiLE", strategy.long , comment="Open")
+ 
+-    if (close>exit)
+-        strategy.close_all()
++    // OPT-1861-02：把退出移到日期入场门槛之外。
++    // OPT-1861-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-1861-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if (close>exit)
++    strategy.close_all()

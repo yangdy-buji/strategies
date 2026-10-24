@@ -1,0 +1,70 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：移动平均线双轨与趋势跟踪策略Dual-Moving-Average-Channel-with-Trend-Tracking-Strategy.md
+// 原文件SHA256：fa3c6caaa8090973f8d96ba4c4da0ee27de1fc38d705d098c88d28036a13a8dc
+// SID：5054；原研究名单序号：48
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-10-01 00:00:00
+end: 2023-10-31 23:59:59
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+// author: codachang0726
+strategy(title = "(S)MA+ADX+DI+time", shorttitle = "(S)MA+ADX+DI+time", overlay = true)
+
+// === INPUT MA LENGTHS ===
+fastMA    = input(defval = 7,   title = "FastMA",          minval = 1, step = 1)
+slowMA    = input(defval = 14,   title = "SlowMA",          minval = 1, step = 1)
+
+// === INPUT BACKTEST RANGE ===
+fromMonth = input(defval = 9,    title = "From Month",      minval = 1, maxval = 12)
+fromDay   = input(defval = 1,    title = "From Day",        minval = 1, maxval = 31)
+fromYear  = input(defval = 2020, title = "From Year",       minval = 1970)
+thruMonth = input(defval = 1,    title = "Thru Month",      minval = 1, maxval = 12)
+thruDay   = input(defval = 1,    title = "Thru Day",        minval = 1, maxval = 31)
+thruYear  = input(defval = 2022, title = "Thru Year",       minval = 1970)
+
+// === INPUT SHOW PLOT ===
+showDate  = input(defval = true, title = "Show Date Range", type = input.bool)
+
+// === FUNCTION EXAMPLE ===
+start     = timestamp(fromYear, fromMonth, fromDay, 00, 00)        // backtest start window
+finish    = timestamp(thruYear, thruMonth, thruDay, 23, 59)        // backtest finish window
+// OPT-5054-01：日期函数恒真。
+// OPT-5054-01 保持：原参数、仓位及窗外退出
+// OPT-5054-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+window()  => time >= start and time <= finish       // create function "within window of time"
+
+// === MA LOGIC ===
+crossOv   =  sma(close, fastMA) > sma(close, slowMA)     // true when fastMA over slowMA
+crossUn   =  sma(close, fastMA) < sma(close, slowMA)     // true when fastMA under slowMA
+
+// DI+ADX
+adxlen      = input(14, title="ADX Smoothing")
+dilen       = input(14, title="DI Period")
+keyLevel    = input(20, title="Keylevel for ADX")
+[diplus, diminus, adx] = dmi(dilen, adxlen)
+di = (diplus - diminus)
+
+buy = di > 0 and crossOv and adx > keyLevel
+sell = di < 0 and crossUn and adx > keyLevel
+
+buy_time = buy and not buy[1]
+sell_time = sell and not sell[1]
+
+// === EXECUTION ===
+strategy.entry("L", strategy.long, when = window() and buy_time)    // enter long when "within window of time" AND crossover
+// OPT-5054-02：退出不能被日期阻断。
+// OPT-5054-02 保持：原参数、仓位及窗外退出
+// OPT-5054-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.close("L", when = sell_time)                   // exit long when "within window of time" AND crossunder         
+
+// === PLOTTING ===
+bgcolor(color = showDate and window() ? color.gray : na, transp = 90)                                     // plot "within window of time"
+plot(sma(close, fastMA), title = 'FastMA', color = color.yellow, linewidth = 2, style = plot.style_line)  // plot FastMA
+plot(sma(close, slowMA), title = 'SlowMA', color = color.aqua,   linewidth = 2, style = plot.style_line)  // plot SlowMA

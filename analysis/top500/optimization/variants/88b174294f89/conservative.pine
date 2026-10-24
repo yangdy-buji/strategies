@@ -1,0 +1,105 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于ATR的均值回复策略Mean-Reversion-Strategy-Based-on-ATR.md
+// 原文件SHA256：13e8b47da2fe9a6ea8c00142f72c65ed12292d7ac854d179d87a2458f9006f64
+// SID：2611；原研究名单序号：261
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-10-16 00:00:00
+end: 2023-10-16 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © DojiEmoji
+strategy("Mean Reversion (ATR) Strategy v2 [KL] ", overlay=true, pyramiding=1)
+var string ENUM_LONG = "Long"
+var string GROUP_TEST = "Hypothesis testing"
+var string GROUP_TSL = "Stop loss"
+var string GROUP_TREND = "Trend prediction"
+
+backtest_timeframe_start = input(defval=timestamp("01 Apr 2000 13:30 +0000"), title="Backtest Start Time")
+// OPT-2611-01：开始时间被恒真绕过；恢复开始时间限定，止损分支在持仓时仍独立。
+// OPT-2611-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-2611-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+within_timeframe = time >= backtest_timeframe_start
+
+// TSL: calculate the stop loss price. {
+ATR_TSL      = ta.atr(input(14, title="Length of ATR for trailing stop loss", group=GROUP_TSL)) * input(2.0, title="ATR Multiplier for trailing stop loss", group=GROUP_TSL)
+TSL_source      = low
+TSL_line_color  = color.green
+TSL_transp      = 100
+var stop_loss_price = float(0)
+
+if strategy.position_size == 0 or not within_timeframe
+    TSL_line_color := color.black
+    stop_loss_price := TSL_source - ATR_TSL
+else if strategy.position_size > 0
+    stop_loss_price := math.max(stop_loss_price, TSL_source - ATR_TSL)
+    TSL_transp := 0
+
+plot(stop_loss_price, color=color.new(TSL_line_color, TSL_transp))
+// } end of "TSL" block
+
+// Entry variables {
+// ATR diversion test via Hypothesis testing (2-tailed):
+//     H0 : atr_fast equals atr_slow
+//     Ha : reject H0 if z_stat is above critical value, say reliability factor of 1.96 for a 95% confidence interval
+len_fast    = input(14,title="Length of ATR (fast) for diversion test", group=GROUP_TEST)
+atr_fast    = ta.atr(len_fast)
+std_error   = ta.stdev(ta.tr, len_fast) / math.pow(len_fast, 0.5) // Standard Error (SE) = std / sq root(sample size)
+
+atr_slow = ta.atr(input(28,title="Length of ATR (slow) for diversion test", group=GROUP_TEST))
+test_stat = (atr_fast - atr_slow) / std_error
+reject_H0 = math.abs(test_stat) > input.float(1.645,title="Reliability factor", tooltip="Strategy uses 2-tailed test; Confidence Interval = Point Estimate (avg ATR) +/- Reliability Factor x Standard Error; i.e use 1.645 for a 90% confidence interval", group=GROUP_TEST)
+
+// main entry signal, subject to confirmation(s), gets passed onto the next bar
+var _signal_diverted_ATR = false
+if not _signal_diverted_ATR
+    _signal_diverted_ATR := reject_H0
+
+
+// confirmation: trend prediction; based on expected lognormal returns
+_prcntge_chng = math.log(close / close[1]) 
+
+// Expected return (drift) = average percentage change + half variance over the lookback period
+len_drift = input(14, title="Length of drift", group=GROUP_TREND)
+_drift = ta.sma(_prcntge_chng, len_drift) - math.pow(ta.stdev(_prcntge_chng, len_drift), 2) * 0.5
+_signal_uptrend = _drift > _drift[1]
+
+entry_signal_all = _signal_diverted_ATR and _signal_uptrend // main signal + confirmations
+// } end of "Entry variables" block
+
+// MAIN {
+// Update the stop limit if strategy holds a position
+if strategy.position_size > 0 and ta.change(stop_loss_price)
+    strategy.exit(ENUM_LONG, comment="sl", stop=stop_loss_price)
+
+// Entry
+if within_timeframe and entry_signal_all
+    strategy.entry(ENUM_LONG, strategy.long, comment=strategy.position_size > 0 ? "adding" : "initial")
+
+// Alerts
+_atr = ta.atr(14)
+alert_helper(msg) =>
+    prefix = "[" + syminfo.root + "] "
+    suffix = "(P=" + str.tostring(close, "#.##") + "; atr=" + str.tostring(_atr, "#.##") + ")"
+    alert(str.tostring(prefix) + str.tostring(msg) + str.tostring(suffix), alert.freq_once_per_bar)
+
+if strategy.position_size > 0 and ta.change(strategy.position_size)
+    if strategy.position_size > strategy.position_size[1]
+        alert_helper("BUY")
+    else if strategy.position_size < strategy.position_size[1]
+        alert_helper("SELL")
+
+// Clean up - set the variables back to default values once no longer in use
+if strategy.position_size == 0
+    stop_loss_price := float(0)
+if ta.change(strategy.position_size)
+    _signal_diverted_ATR := false
+// } end of MAIN block

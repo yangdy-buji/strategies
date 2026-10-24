@@ -1,0 +1,49 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于复合突破策略The-Compound-Breakout-Strategy.md
++// 原文件SHA256：f7d10d25943bb7877571f0e8ae81b6b415861d0a12c9324649a5b7b7e34a82f5
++// SID：3251；原研究名单序号：350
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-02-22 00:00:00
+ end: 2024-02-28 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ strategy("Larry Connors por RON", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+ 
+ value1 = input(7, title="Quantity of day low")
+@@ -34,12 +41,21 @@
+ testStopDay = input(30, "Backtest Stop Day")
+ testPeriodStop = timestamp(testStopYear, testStopMonth, testStopDay, 0, 0)
+ 
+-testPeriod() => true
++// OPT-3251-01：日期函数恒真。
++// OPT-3251-01 保持：原参数、仓位及方向
++// OPT-3251-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+ 
+-if testPeriod()
++// OPT-3251-02：持仓退出跨窗口继续，入场仅窗口内。
++// OPT-3251-02 保持：原参数、仓位及方向
++// OPT-3251-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if testPeriod() or strategy.position_size > 0
+     // Condiciones de entrada
+     conditionMet = (close > mma) and (close < entry) and (low == minLow)
+-    strategy.entry("Buy", strategy.long, when=conditionMet)
++    // OPT-3251-03：窗外不得再次入场。
++    // OPT-3251-03 保持：原参数、仓位及方向
++    // OPT-3251-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.entry("Buy", strategy.long, when=testPeriod() and conditionMet)
+     
+     if conditionMet
+         label.new(bar_index, entry, text="↑", style=label.style_arrowup, color=color.green, size=size.small, yloc=yloc.belowbar)

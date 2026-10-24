@@ -1,0 +1,48 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于EMA平均线交叉的趋势追踪策略Trend-Following-Strategy-Based-on-EMA-Crossover.md
++// 原文件SHA256：54a7897c89d6939efce1fa9b7dbd1dc69a44d1d093a6cfa1607e57279da90107
++// SID：2680；原研究名单序号：316
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-02-15 00:00:00
+ end: 2024-02-21 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © pradhan_abhishek
+-
+-//@version=5
+ strategy('EMA cross-over strategy by AP', overlay=true, shorttitle='EMACS-AP', initial_capital=100000, default_qty_value=100, default_qty_type=strategy.percent_of_equity, commission_value=0.025)
+ 
+ // inputs
+@@ -21,7 +28,10 @@
+ i_showBg = input(defval = true, title = "Show In-trade / Out-trade background")
+ 
+ // create date function "within window of time"
+-date() => true
++// OPT-2680-01：日期恒真绕过输入。
++// OPT-2680-01 保持：原参数、仓位及方向
++// OPT-2680-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++date() => time >= i_from and time <= i_to
+ 
+ // exponential moving average (EMA) variables, derived from input parameters
+ shortTermEMA = ta.ema(close, i_shortTerm)
+@@ -46,7 +56,10 @@
+     strategy.exit('exit', 'long', stop=stopLoss)
+ 
+ // exit if already in trade and take profit conditions are met
+-if date() and exitCondition2 and inTrade
++// OPT-2680-02：平仓不能受日期门禁。
++// OPT-2680-02 保持：原参数、仓位及方向
++// OPT-2680-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if exitCondition2 and inTrade
+     strategy.close(id='long')
+ // ###Trade strategy: ends ###
+ 

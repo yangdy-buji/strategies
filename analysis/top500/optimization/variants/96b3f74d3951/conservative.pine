@@ -1,0 +1,68 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：多重指标动量突破趋势交易策略-Multi-Indicator-Momentum-Breakout-Trend-Trading-Strategy.md
+// 原文件SHA256：cc1f358fd5ba5521b6c66de74ab85a10964d687f188b8cf130142c81501a012a
+// SID：4271；原研究名单序号：214
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2025-02-19 00:00:00
+end: 2025-02-23 00:00:00
+period: 1m
+basePeriod: 1m
+exchanges: [{"eid":"Binance","currency":"SOL_USDT"}]
+*/
+strategy("Williams %R & MACD Swing Strategy", overlay=true)
+
+// INPUTS
+length_wpr = input(14, title="Williams %R Length")
+overbought = input(-20, title="Overbought Level")
+oversold = input(-80, title="Oversold Level")
+
+// MACD Inputs
+fastLength = input(12, title="MACD Fast Length")
+slowLength = input(26, title="MACD Slow Length")
+signalSmoothing = input(9, title="MACD Signal Smoothing")
+
+// EMA for Trend Confirmation
+ema_length = input(55, title="EMA Length")
+ema55 = ta.ema(close, ema_length)
+
+// INDICATORS
+wpr = ta.wpr(length_wpr)
+[macdLine, signalLine, _] = ta.macd(close, fastLength, slowLength, signalSmoothing)
+
+// LONG ENTRY CONDITIONS
+longCondition = ta.crossover(wpr, oversold) and ta.crossover(macdLine, signalLine) and close > ema55
+if longCondition
+    strategy.entry("Long", strategy.long)
+
+// SHORT ENTRY CONDITIONS
+shortCondition = ta.crossunder(wpr, overbought) and ta.crossunder(macdLine, signalLine) and close < ema55
+if shortCondition
+    strategy.entry("Short", strategy.short)
+
+// RISK MANAGEMENT
+riskRewardRatio = input(1.5, title="Risk-Reward Ratio")
+stopLossPerc = input(2, title="Stop Loss %") / 100
+takeProfitPerc = stopLossPerc * riskRewardRatio
+
+longSL = strategy.position_avg_price * (1 - stopLossPerc)
+longTP = strategy.position_avg_price * (1 + takeProfitPerc)
+
+shortSL = strategy.position_avg_price * (1 + stopLossPerc)
+shortTP = strategy.position_avg_price * (1 - takeProfitPerc)
+
+// OPT-4271-01：绝对价格传入tick距离参数loss/profit，退出价格失真。
+// OPT-4271-01 保持：原参数、仓位及方向
+// OPT-4271-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit("Take Profit / Stop Loss", from_entry="Long", stop=longSL, limit=longTP)
+// OPT-4271-02：绝对价格传入tick距离参数loss/profit，退出价格失真。
+// OPT-4271-02 保持：原参数、仓位及方向
+// OPT-4271-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+// OPT-4271-03：多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。
+// OPT-4271-03 保持：原信号、数量、价格参数与Pine版本保持。
+// OPT-4271-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit("Short Take Profit / Stop Loss", from_entry="Short", stop=shortSL, limit=shortTP)

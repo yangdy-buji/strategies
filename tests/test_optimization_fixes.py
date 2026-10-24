@@ -5,6 +5,7 @@ import itertools
 import json
 import re
 import unittest
+from tests.safe_expression import evaluate as safe_eval
 from unittest.mock import patch
 from pathlib import Path
 
@@ -20,7 +21,7 @@ def expression(code, name):
     return re.search(r'^' + re.escape(name) + r' = (.+)$', code, re.M)[1]
 
 def evaluate(expr, **values):
-    return eval(expr.replace('true', 'True').replace('false', 'False'), {'__builtins__': {}}, values)
+    return safe_eval(expr.replace('true', 'True').replace('false', 'False'), **values)
 
 def branch(code, condition):
     lines = clean(code).splitlines()

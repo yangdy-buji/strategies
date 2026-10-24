@@ -1,0 +1,61 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于快速移动均线和慢速移动均线的量化交易策略Dual-Moving-Average-Breakout-Strategy.md
++// 原文件SHA256：d24e89fe877202bb18c21cd8f6fa241ea7ef8d083794beddc547dba5e874d32d
++// SID：3405；原研究名单序号：62
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-01-17 00:00:00
+ end: 2024-01-23 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ strategy("CDC Action Zone V.2", overlay=true)
+ 
+ // CDC ActionZone V2 29 Sep 2016
+@@ -56,12 +63,18 @@
+ // === FUNCTION EXAMPLE ===
+ start     = timestamp(FromYear, FromMonth, FromDay, 00, 00)  // backtest start window
+ finish    = timestamp(ToYear, ToMonth, ToDay, 23, 59)        // backtest finish window
+-window()  => true // create function "within window of time"
++// OPT-3405-01：恢复模式入场时间范围。
++// OPT-3405-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-3405-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++window()  => time >= start and time <= finish // create function "within window of time"
+ 
+ 
+ if LSB == "Long only" and Buy and window()
+     strategy.entry("L",true)
+-if LSB == "Long only" and Sell and window()
++// OPT-3405-02：单向多仓退出独立。
++// OPT-3405-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-3405-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if LSB == "Long only" and Sell
+     strategy.close("L",qty_percent=100,comment="TP Long")
+ if LSB == "Both" and Buy and window()
+     strategy.entry("L",true)
+@@ -69,5 +82,14 @@
+     strategy.entry("S",false)
+ if LSB == "Short only" and Sell and window()
+     strategy.entry("S",false)
+-if LSB == "Short only" and Buy and window()
++// OPT-3405-03：单向空仓退出独立。
++// OPT-3405-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-3405-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if LSB == "Short only" and Buy
++    // OPT-3405-04：双向模式窗外只平原仓，禁止反向新开。
++    // OPT-3405-04 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-3405-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+     strategy.close("S",qty_percent=100,comment="TP Short")
++if LSB == "Both" and not window()
++    strategy.close("L", when=Sell)
++    strategy.close("S", when=Buy)

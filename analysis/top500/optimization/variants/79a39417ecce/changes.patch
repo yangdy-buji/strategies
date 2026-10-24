@@ -1,0 +1,47 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：多周期RSI超卖反转策略-Multi-Timeframe-RSI-Oversold-Reversal-Strategy.md
++// 原文件SHA256：e1aab7e69324f8fc14e28909a498e4a764ada05bb1ed0476479e2f5d2060dc24
++// SID：3762；原研究名单序号：14
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-08-26 00:00:00
+ end: 2024-09-24 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy(" 15min oversold gold", overlay=true)
+ 
+ // Parameters
+@@ -46,10 +53,22 @@
+ 
+ // Distinct exit conditions
+ if (rsiExitCondition)
++    // OPT-3762-01：RSI退出覆盖已有额外入场ID，不改变加仓配置。
++    // OPT-3762-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-3762-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+     strategy.close("Long", comment="RSI Exit")
++    strategy.close("add more", comment="RSI Exit")
+ 
+ if (takeProfitHit)
++    // OPT-3762-02：接入已有收盘止损布尔，并让止盈/止损覆盖两个入场ID。
++    // OPT-3762-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-3762-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+     strategy.close("Long", comment="Take Profit Hit")
++    strategy.close("add more", comment="Take Profit Hit")
++
++if (stopLossHit)
++    strategy.close("Long", comment="Stop Loss Hit")
++    strategy.close("add more", comment="Stop Loss Hit")
+ 
+ 
+ ///add a more limit buy

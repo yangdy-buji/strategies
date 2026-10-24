@@ -1,0 +1,42 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于高斯通道和随机RSI的市场趋势捕捉策略-Gaussian-Channel-and-Stochastic-RSI-Based-Market-Trend-Capture-Strategy.md
++// 原文件SHA256：67cd2a5231cf2bb0cdeab8fd78b2d4f1f0cbfb00723fd95ee1f427abd19413c8
++// SID：3713；原研究名单序号：454
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-02-18 00:00:00
+ end: 2025-02-16 08:00:00
+@@ -8,8 +17,6 @@
+ 
+ // This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © fgkkaraca
+-
+-//@version=5
+ strategy("Alienseeker GC and RSI Strategy", overlay=true, commission_type=strategy.commission.percent, commission_value=0.1, slippage=0, default_qty_type=strategy.percent_of_equity, default_qty_value=200, process_orders_on_close=true)
+ 
+ // Gaussian Channel Inputs
+@@ -51,9 +58,15 @@
+ // Date Range Filter
+ startDate = input(timestamp("2018-01-01"), "Start Date")
+ endDate = input(timestamp("2069-01-01"), "End Date")
+-timeInRange = true
++// OPT-3713-01：恢复日期。
++// OPT-3713-01 保持：仓位和反向回归信号不变。
++// OPT-3713-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++timeInRange = time >= startDate and time <= endDate
+ 
+ // Strategy Execution
+ if timeInRange
+     strategy.entry("Long", strategy.long, when=priceBelowUpper and stochUp)
+-    strategy.close("Long", when=priceAboveUpper ) 
++    // OPT-3713-02：退出脱离窗口。
++    // OPT-3713-02 保持：上轨退出保持。
++    // OPT-3713-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.close("Long", when=priceAboveUpper ) 

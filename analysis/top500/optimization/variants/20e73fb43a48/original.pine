@@ -1,0 +1,46 @@
+/*backtest
+start: 2023-01-16 00:00:00
+end: 2024-01-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy("Long Only Multi-Indicator Strategy", shorttitle="LOMIS", overlay=true)
+
+// Inputs
+lengthMAFast = input(10, title="Fast MA Length")
+lengthMASlow = input(50, title="Slow MA Length")
+rsiLength = input(14, title="RSI Length")
+rsiOverbought = input(70, title="RSI Overbought Level")
+rsiOversold = input(30, title="RSI Oversold Level")
+atrLength = input(14, title="ATR Length")
+riskMultiplier = input(1.5, title="Risk Multiplier for SL and TP")
+
+// Moving averages
+maFast = sma(close, lengthMAFast)
+maSlow = sma(close, lengthMASlow)
+
+// RSI
+rsi = rsi(close, rsiLength)
+
+// ATR
+atr = atr(atrLength)
+
+// Long condition
+longCondition = crossover(maFast, maSlow) and rsi < rsiOverbought
+
+// Entering long trades
+if (longCondition)
+    strategy.entry("Long", strategy.long)
+    slLong = close - atr * riskMultiplier
+    tpLong = close + atr * riskMultiplier * 2
+    strategy.exit("SL Long", "Long", stop=slLong)
+    strategy.exit("TP Long", "Long", limit=tpLong)
+
+// Plotting
+plot(maFast, color=color.red)
+plot(maSlow, color=color.blue)
+hline(rsiOverbought, "Overbought", color=color.red)
+hline(rsiOversold, "Oversold", color=color.blue)

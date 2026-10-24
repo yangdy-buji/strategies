@@ -1,0 +1,59 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：多均线交叉趋势跟踪RSI波动策略-Multi-Moving-Average-Cross-Trend-Following-RSI-Oscillation-Strategy.md
+// 原文件SHA256：19551c3545f43d259b5d28b4130a30f5a55a6de4362745a3c5f7a8dfe104872e
+// SID：3848；原研究名单序号：341
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2025-01-02 00:00:00
+end: 2025-01-09 00:00:00
+period: 5m
+basePeriod: 5m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("EMA/SMA Strategy", overlay=false)
+
+// Input parameters
+ema20Length = input(20, title="20 EMA Length")
+ema50Length = input(50, title="50 EMA Length")
+sma200Length = input(200, title="200 SMA Length")
+rsiLength = input(14, title="RSI Length")
+rsiThreshold = input(40, title="RSI Threshold")
+
+// Calculate indicators
+ema20 = ta.ema(close, ema20Length)
+ema50 = ta.ema(close, ema50Length)
+sma200 = ta.sma(close, sma200Length)
+rsiValue = ta.rsi(close, rsiLength)
+
+// Conditions
+emaCondition = ema20 > ema50 and sma200 < ema20 and sma200 < ema50
+priceNearEMA = (close <= ema20 * 1.01 and close >= ema20 * 0.99) or (close <= ema50 * 1.01 and close >= ema50 * 0.99)
+rsiCondition = rsiValue > rsiThreshold
+
+// Entry condition: Price crosses previous candle high
+entryCondition = priceNearEMA and rsiCondition and emaCondition and (close > high[1])
+
+// Strategy entry
+if entryCondition
+    strategy.entry("Long", strategy.long)
+
+// Take profit and stop loss settings
+takeProfitLevel = strategy.position_avg_price * 1.25 // Take profit at +25%
+stopLossLevel = strategy.position_avg_price * 0.90 // Stop loss at -10%
+
+// Exit conditions
+if strategy.position_size > 0
+    // OPT-3848-01：先提交全仓限价退出会预留全部数量，独立止损无可用仓位。
+    // OPT-3848-01 保持：原目标止损百分比及信号
+    // OPT-3848-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.exit("Take Profit", from_entry="Long", limit=takeProfitLevel, stop=stopLossLevel)
+
+// Plotting indicators for visualization
+plot(ema20, color=color.blue, title="20 EMA")
+plot(ema50, color=color.red, title="50 EMA")
+plot(sma200, color=color.green, title="200 SMA")
+hline(rsiThreshold, "RSI Threshold", color=color.orange)

@@ -1,0 +1,26 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,11 @@
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：双RSI指标突破策略Dual-RSI-Indicator-Breakout-Strategy.md
++// 原文件SHA256：4a2c7ef024188cfd0188ff1b61f02633fd1389378e5971535aaa33fcde6fa08b
++// SID：1907；原研究名单序号：387
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-09-06 00:00:00
+ end: 2023-09-13 00:00:00
+@@ -51,7 +59,10 @@
+ // // ///     SLOW_BUY
+ strategy.entry("Slow Enter", true, when=SlowBuy)
+     
+-strategy.exit("Stop Loss", "Slow Enter", stop=StopLossLine)       
++// OPT-1907-01：两个独立持仓用同一止损ID，存在后调用修改前调用的身份冲突；慢RSI使用独立ID。
++// OPT-1907-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
++// OPT-1907-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.exit("Slow Stop Loss", "Slow Enter", stop=StopLossLine)       
+ 
+ if  SlowRsi > 68    /// SELLS IF RSI == 68
+     strategy.close("Slow Enter", comment="Slow Exit")

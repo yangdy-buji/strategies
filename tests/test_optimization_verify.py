@@ -1,11 +1,12 @@
 import copy
+import csv
 import unittest
 import tempfile
 from pathlib import Path
 import difflib
 import json
 
-from tools.strategy_optimization.verify import validate_manifest, validate_patch, validate_variant, validate_views, _links
+from tools.strategy_optimization.verify import validate_manifest, validate_patch, validate_variant, validate_views, validate_documents, validate_audit_metadata, CSV_FIELDS, _links
 
 
 class OptimizationVerifyTests(unittest.TestCase):
@@ -65,13 +66,79 @@ class OptimizationVerifyTests(unittest.TestCase):
         for field in ('variant','variant_sha256','original_variant','diff','changes'):r[field]=None
         self.assertTrue(self.check(r,r))
 
+    def test_additional_candidates_require_explicit_registry(self):
+        r=self.row();r['sid']=1
+        self.assertTrue(validate_manifest([r],[r],expected_count=1,candidate_sids={1}))
+        with self.assertRaises(ValueError):validate_manifest([r],[r],expected_count=1,candidate_sids=set())
+
+    def test_reviewed_requires_completed_no_defect_audit(self):
+        r=self.row();r['sid']=9000;r['status']='reviewed'
+        for field in ('variant','variant_sha256','original_variant','diff','changes'):r[field]=None
+        with self.assertRaises(ValueError):self.check(r,r)
+        r['audit']=dict(review_scope='full_source_static',verdict='no_confirmed_defect')
+        self.assertTrue(self.check(r,r))
+
 class ArtifactTests(unittest.TestCase):
+    def view_fixture(self):
+        from tools.strategy_optimization.build import render_index
+        from tools.strategy_ranking.build import write_csv
+        rows=[OptimizationVerifyTests().row()]
+        rows[0].update(title='=中文标题,带逗号',category='趋势',audit_synopsis='完整审查',audit_verdict='fix_proposed',audit_findings=[{'detail':'未解决问题'}],patch_review={'status':'approved','review':'通过'})
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'manifest.csv'
+            write_csv(path,rows,CSV_FIELDS)
+            with path.open(encoding='utf-8-sig',newline='') as stream:csv_rows=list(csv.DictReader(stream))
+        return rows,csv_rows,render_index(rows)
+
     def test_index_and_csv_cover_manifest_in_order(self):
-        rows=[dict(id='first',sid=1,card='cards/first.html',status='needs_review'),dict(id='second',sid=2,card='cards/second.html',status='needs_design')]
-        html='<script id="optimization-data" type="application/json">'+json.dumps(rows)+'</script>'
-        self.assertTrue(validate_views(rows,rows,html))
-        with self.assertRaises(ValueError):validate_views(rows,list(reversed(rows)),html)
-        with self.assertRaises(ValueError):validate_views(rows,rows,html.replace('cards/first.html','wrong.html'))
+        rows,csv_rows,html=self.view_fixture()
+        self.assertTrue(validate_views(rows,csv_rows,html))
+        self.assertEqual(csv_rows[0]['title'],"'=中文标题,带逗号")
+        self.assertEqual(csv_rows[0]['audit_findings'],json.dumps(rows[0]['audit_findings'],ensure_ascii=False))
+        with self.assertRaises(ValueError):validate_views(rows,[],html)
+        with self.assertRaises(ValueError):validate_views(rows,csv_rows,html.replace('cards/','wrong/'))
+
+    def test_csv_all_exported_fields_and_missing_columns_rejected(self):
+        rows,csv_rows,html=self.view_fixture()
+        for field in CSV_FIELDS:
+            with self.subTest(field=field):
+                changed=copy.deepcopy(csv_rows);changed[0][field]+='tampered'
+                with self.assertRaises(ValueError):validate_views(rows,changed,html)
+                missing=copy.deepcopy(csv_rows);del missing[0][field]
+                with self.assertRaises(ValueError):validate_views(rows,missing,html)
+
+    def test_index_non_identity_metadata_drift_rejected(self):
+        from tools.strategy_optimization.build import render_index
+        rows,csv_rows,_=self.view_fixture()
+        for field in ('title','category','research_index','severity'):
+            changed=copy.deepcopy(rows);changed[0][field]='stale'
+            with self.assertRaises(ValueError):validate_views(rows,csv_rows,render_index(changed))
+
+    def test_card_and_changes_reject_stale_review_and_remaining(self):
+        from tools.strategy_optimization.build import render_card,changes_md
+        row=OptimizationVerifyTests().row()
+        row.update(validation_cases=['本地用例'],remaining=['仍有未解决缺陷'],patch_review={'status':'approved','review':'复核结论'})
+        card=render_card(row);changes=changes_md(row)
+        self.assertTrue(validate_documents(row,card,changes))
+        for stale in (card.replace('仍有未解决缺陷','全部解决'),card.replace('复核结论','过期结论')):
+            with self.assertRaises(ValueError):validate_documents(row,stale,changes)
+        with self.assertRaises(ValueError):validate_documents(row,card,changes.replace('仍有未解决缺陷','全部解决'))
+        with self.assertRaises(ValueError):validate_documents(row,card,None)
+        row.update(status='needs_design',patch_review={'status':'deferred','review':'需要设计确认'})
+        card=render_card(row)
+        self.assertTrue(validate_documents(row,card))
+        with self.assertRaises(ValueError):validate_documents(row,card.replace('需要设计确认','已批准'))
+
+    def test_audit_export_metadata_matches_authoritative_record(self):
+        audit=dict(synopsis='全文静态审查',verdict='needs_design',findings=[{'detail':'待解决缺陷'}])
+        row={'audit_'+key:copy.deepcopy(value) for key,value in audit.items()}
+        self.assertTrue(validate_audit_metadata(row,audit))
+        for field in audit:
+            with self.subTest(field=field):
+                changed=copy.deepcopy(row);changed['audit_'+field]='过期内容'
+                with self.assertRaises(ValueError):validate_audit_metadata(changed,audit)
+                missing=copy.deepcopy(row);del missing['audit_'+field]
+                with self.assertRaises(ValueError):validate_audit_metadata(missing,audit)
 
     def test_patch_matches_original_and_candidate(self):
         original='//@version=5\nstrategy("a")\n'

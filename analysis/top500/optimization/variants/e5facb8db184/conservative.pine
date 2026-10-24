@@ -1,0 +1,56 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：动态K线大阳线交易策略Dynamic-Candlestick-Big-Yang-Line-Trading-Strategy.md
+// 原文件SHA256：b0162d8ae03c089cba7cadde27b650b24accde002da50e1d252e0d2edd59ae90
+// SID：1434；原研究名单序号：270
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-11-29 00:00:00
+end: 2023-12-05 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Manham Big Bar Trading Strategy", overlay=true)
+
+// Define inputs
+lookback_period = input(20, title="Lookback Period")
+bullish_threshold = input(26, title="Bullish Marubozu Threshold")
+bearish_threshold = input(30, title="Bearish Marubozu Threshold")
+target_points = input(37, title="Target Points")
+stop_loss_points = input(24, title="Stop Loss Points")
+
+// Calculate body size as a percentage of the total range of the candle
+body_size = abs(close - open) / (high - low) * 30
+
+// Identify bullish Marubozu
+is_bullish_marubozu = close > open and body_size >= bullish_threshold
+
+// Identify bearish Marubozu
+is_bearish_marubozu = open > close and body_size >= bearish_threshold
+
+// Calculate stop loss and target levels
+stop_loss = strategy.position_avg_price - stop_loss_points * syminfo.mintick
+take_profit = strategy.position_avg_price + target_points * syminfo.mintick
+
+// Strategy conditions
+if is_bullish_marubozu
+    strategy.entry("Buy", strategy.long)
+    // OPT-1434-01：移除信号分支na均价保护。
+    // OPT-1434-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+    // OPT-1434-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+
+
+if is_bearish_marubozu
+    strategy.entry("Sell", strategy.short)
+    // OPT-1434-02：保护单独立于入场信号，在有效持仓均价存在时每根维护。
+    // OPT-1434-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+    // OPT-1434-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+
+if strategy.position_size > 0
+    strategy.exit("Sell", "Buy", stop=stop_loss, limit=take_profit)
+if strategy.position_size < 0
+    strategy.exit("Cover", "Sell", stop=take_profit, limit=stop_loss)

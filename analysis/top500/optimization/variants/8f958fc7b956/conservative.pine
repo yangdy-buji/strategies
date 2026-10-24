@@ -1,0 +1,72 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于趋势确认的多重指标动态止损策略-Trend-Confirmation-Multi-Indicator-Dynamic-Stop-Loss-Strategy.md
+// 原文件SHA256：958d375d403b8c5634cd8ec041ea092a336838a6c3eae2e833e01f14db7e80ad
+// SID：3634；原研究名单序号：336
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-02-20 00:00:00
+end: 2024-03-12 00:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Binance","currency":"ETH_USDT"}]
+*/
+strategy("Invest SMA|MACD|ADX Long Weekly Strategy (BtTL)", overlay=true)
+
+// SMA Inputs
+smaLength = input.int(30, title="SMA Länge")
+// MACD Inputs
+macdFastLength = input.int(9, title="MACD schnelle Periode")
+macdSlowLength = input.int(18, title="MACD langsame Perside")
+macdSignalLength = input.int(9, title="MACD Signal Smoothing")
+//ADX Inputs
+adxlen = input(14, title="ADX Smoothing")
+dilen = input(14, title="DI Länge")
+
+// SMA-Berechnung
+smaValue = ta.sma(close, smaLength)
+isAboveSMA = close > smaValue
+isBelowSMA = close < smaValue
+
+// MACD-Berechnung
+[macdLine, signalLine, _] = ta.macd(close, macdFastLength, macdSlowLength, macdSignalLength)
+isMACDBuy = macdLine > signalLine and macdLine > 0
+
+// Swing-Low Berechnung (5-Kerzen)
+isSwingLow = low[2] > low[1] and low[3] > low[1] and low[1] < low and low[1] < low[4]
+var float lastSwingLow = na
+var float secondLastSwingLow = na
+
+// Wenn ein neuer Swing-Low gefunden wird
+if (isSwingLow[1])
+    secondLastSwingLow := lastSwingLow
+    // OPT-3634-01：对齐延迟事件与摆动低点历史索引。
+    // OPT-3634-01 保持：保持原事件延迟、第二低点和SMA退出门槛。
+    // OPT-3634-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    lastSwingLow := low[2]
+
+//ADX ermitteln
+[pDI,mDI,ADX] = ta.dmi(dilen, adxlen)
+IsInTrend = ADX > 25
+
+// Einstiegskondition mit MACD und SMA
+longCondition = isAboveSMA and isMACDBuy and IsInTrend
+if (longCondition)
+    strategy.entry("Long", strategy.long)
+
+// Ausstiegskondition am vorletzten Swing-Low
+if (isBelowSMA and na(secondLastSwingLow) == false)
+    strategy.exit("Exit", from_entry="Long", stop=secondLastSwingLow)
+
+// Reset bei Position schließen
+if(strategy.position_size <= 0)
+    secondLastSwingLow := na
+    lastSwingLow := na
+
+// Plots
+plot(smaValue, title="SMA 30", color=#063eda, linewidth=2)
+plot(na(lastSwingLow) ? na : lastSwingLow, title="Last Swing Low", color=#ffb13b, linewidth=1, style=plot.style_circles)
+plot(na(secondLastSwingLow) ? na : secondLastSwingLow, title="Second Last Swing Low", color=color.red, linewidth=1, style=plot.style_circles)

@@ -1,0 +1,74 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：多周期EMA交叉高胜率趋势跟踪策略进阶版-Multi-Timeframe-EMA-Cross-High-Win-Rate-Trend-Following-Strategy-Advanced.md
+// 原文件SHA256：643e41a2e56f66760526326fe09f373e7aa9bd70e74056db6f33563bf8a7c3b9
+// SID：3756；原研究名单序号：275
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-10-28 00:00:00
+end: 2024-11-27 00:00:00
+period: 1h
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("EMA Cross Strategy with Targets and Fill", overlay=true)
+
+// Define EMAs
+ema20 = ta.ema(close, 20)
+ema50 = ta.ema(close, 50)
+ema200 = ta.ema(close, 200)
+
+// Plot EMAs (hidden)
+plot(ema20, color=color.blue, title="EMA 20", display=display.none)
+plot(ema50, color=color.red, title="EMA 50", display=display.none)
+plot(ema200, color=color.green, title="EMA 200", display=display.none)
+
+// Define the conditions
+priceCrossAboveEMA20 = ta.crossover(close, ema20)
+priceCloseAboveEMA20 = close > ema20
+ema20AboveEMA50 = ema20 > ema50
+ema50AboveEMA200 = ema50 > ema200
+
+// Buy condition
+buyCondition = priceCrossAboveEMA20 and priceCloseAboveEMA20 and ema20AboveEMA50 and ema50AboveEMA200
+
+// Plot buy signals
+plotshape(series=buyCondition, location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+
+// Declare and initialize variables for take profit and stop loss levels
+var float longTakeProfit = na
+var float longStopLoss = na
+var float buyPrice = na
+
+// Update levels and variables on buy condition
+if (buyCondition)
+    // Enter a new buy position
+    strategy.entry("Buy", strategy.long)
+
+    // Set new take profit and stop loss levels
+    // OPT-3756-01：把后续连续三行均价赋值放在持仓分支。
+    // OPT-3756-01 保持：10%目标5%止损，原exit和默认成交时机保持。
+    // OPT-3756-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if strategy.position_size > 0
+    longTakeProfit := strategy.position_avg_price * 1.10  // Target is 10% above the buy price
+    longStopLoss := strategy.position_avg_price * 0.95    // Stop loss is 5% below the buy price
+    buyPrice := strategy.position_avg_price
+
+// Plot levels for the new trade
+plotTakeProfit = plot(longTakeProfit, color=color.green, title="Take Profit", linewidth=1, offset=-1)
+plotStopLoss = plot(longStopLoss, color=color.red, title="Stop Loss", linewidth=1, offset=-1)
+plotBuyPrice = plot(buyPrice, color=color.blue, title="Buy Price", linewidth=1, offset=-1)
+
+// Fill areas between buy price and take profit/stop loss levels
+fill(plotBuyPrice, plotTakeProfit, color=color.new(color.green, 90), title="Fill to Take Profit")  // Light green fill to target
+fill(plotBuyPrice, plotStopLoss, color=color.new(color.red, 90), title="Fill to Stop Loss")    // Light red fill to stop loss
+
+// Exit conditions
+// OPT-3756-02：仅对已成交持仓提交保护，防止空仓新入场沿用上一笔保留的价格。
+// OPT-3756-02 保持：保留原入场条件、参数、仓位及Pine版本。
+// OPT-3756-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if strategy.position_size > 0
+    strategy.exit("Take Profit/Stop Loss", from_entry="Buy", limit=longTakeProfit, stop=longStopLoss)

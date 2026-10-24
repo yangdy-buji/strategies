@@ -1,0 +1,57 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：平滑海坚线买卖策略Heikin-Ashi-Smoothed-Buy-and-Sell-Strategy.md
+// 原文件SHA256：929380fa8c0fa6eed95dbc2cde8e5fb7f7631299f5c79110f2b2827b2069b11d
+// SID：4534；原研究名单序号：463
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-09-30 00:00:00
+end: 2023-10-06 00:00:00
+period: 2d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//Masoud Abdoli
+//Heikin Ashi Smoothed Buy & Sell Strategy Rev.4
+//Date: 01-Oct-2021
+strategy(title="Abdoli's Heikin Ashi Smoothed Buy & Sell Strategy Rev.4", shorttitle="Heikin-Ashi Smoothed Rev.4", overlay=true,
+ initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+MaPeriod = input (title="Moving Average Period?", type=input.integer, defval=65, minval=5, maxval=100, step=5)
+
+maOpen  = ema(open , MaPeriod)
+maHigh  = ema(high , MaPeriod)
+maLow   = ema(low  , MaPeriod)
+maClose = ema(close, MaPeriod)
+
+haClose = (maOpen+maHigh+maLow+maClose)/4
+haOpen = 0.0
+haOpen:= na(haOpen[1]) ? (maOpen[1]+maClose[1])/2 : (haOpen[1]+haClose[1])/2
+haHigh = max(maHigh, max(haClose, haOpen))
+// OPT-4534-01：HA低点应包含开收较小值，max可令低点高于开或收。
+// OPT-4534-01 保持：原参数、仓位及方向
+// OPT-4534-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+haLow  = min(maLow , min(haClose, haOpen))
+
+plotcandle(haOpen, haHigh, haLow, haClose, title="heikin-Ashi smoothed", color=haOpen>haClose ? color.orange : color.blue)
+
+B0 = haClose    - haOpen
+B1 = haClose[1] - haOpen[1]
+B2 = haClose[2] - haOpen[2]
+BuyCondition = B0 > 0.0 and B1 > 0.0 and B2 > 0.0 and haClose > haClose[1] and haClose[1] > haClose[2]
+SellCondition= B0 < 0.0 and B1 < 0.0 and B2 < 0.0 and haClose < haClose[1] and haClose[1] < haClose[2]
+
+last_signal = 0
+Buy_final  = BuyCondition  and (nz(last_signal[1]) == 0 or nz(last_signal[1]) ==-1)
+Sell_final = SellCondition and (nz(last_signal[1]) == 0 or nz(last_signal[1]) == 1)
+last_signal := Buy_final ? 1 : Sell_final ? -1 : last_signal[1]
+
+plotshape(Buy_final , style=shape.labelup  , location=location.belowbar, color=color.blue, title="Buy label" , text="BUY" , textcolor=color.white)
+plotshape(Sell_final, style=shape.labeldown, location=location.abovebar, color=color.red , title="Sell label", text="SELL", textcolor=color.white)
+
+strategy.entry("Buy", strategy.long, when=Buy_final)
+strategy.close("Buy", when=Sell_final)

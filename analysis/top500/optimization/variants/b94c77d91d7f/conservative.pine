@@ -1,0 +1,59 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双重确认的优势均线策略A-Dual-Moving-Average-Confirmation-Advantage-Line-Strategy.md
+// 原文件SHA256：cf90d23c8016f22639dc270e04246034d6600ba2562ce42a1b3b7eaf8e153622
+// SID：2324；原研究名单序号：126
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-01-16 00:00:00
+end: 2024-01-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © exlux99
+strategy(title = "Aroon Strategy long only", overlay = true,  pyramiding=1,initial_capital = 100, default_qty_type= strategy.percent_of_equity, default_qty_value = 100, calc_on_order_fills=false, slippage=0,commission_type=strategy.commission.percent,commission_value=0.1)
+
+//Time
+fromDay = input(defval = 1, title = "From Day", minval = 1, maxval = 31)
+fromMonth = input(defval = 1, title = "From Month", minval = 1, maxval = 12)
+fromYear = input(defval = 2010, title = "From Year", minval = 1970)
+ //monday and session 
+// To Date Inputs
+toDay = input(defval = 31, title = "To Day", minval = 1, maxval = 31)
+toMonth = input(defval = 12, title = "To Month", minval = 1, maxval = 12)
+toYear = input(defval = 2021, title = "To Year", minval = 1970)
+
+startDate = timestamp(fromYear, fromMonth, fromDay, 00, 00)
+finishDate = timestamp(toYear, toMonth, toDay, 00, 00)
+// OPT-2324-01：日期恒真绕过输入。
+// OPT-2324-01 保持：原参数、仓位及方向
+// OPT-2324-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+time_cond = time >= startDate and time <= finishDate
+
+//INPUTS
+
+length = input(15, minval=1, title="Aroon Legnth")
+upper = 100 * (highestbars(high, length+1) + length)/length
+lower = 100 * (lowestbars(low, length+1) + length)/length
+
+lengthx = input(title="Length LSMA", type=input.integer, defval=20)
+offset = 0//input(title="Offset", type=input.integer, defval=0)
+src = input(close, title="Source")
+lsma = linreg(src, lengthx, offset)
+
+
+long = crossover(upper,lower) and close > lsma
+longexit = crossunder(upper,lower) and close < lsma
+
+if(time_cond)
+    strategy.entry("long",1,when=long)
+    // OPT-2324-02：退出必须在日期窗外继续。
+    // OPT-2324-02 保持：原参数、仓位及方向
+    // OPT-2324-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.close("long",when=longexit)

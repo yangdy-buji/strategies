@@ -1,0 +1,63 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：多指标趋势跟踪期权交易EMA交叉策略-Multi-Indicator-Trend-Following-Options-Trading-EMA-Cross-Strategy.md
++// 原文件SHA256：2d11a87cb432f3580acaaa5fe35f19fc7a5aab0934998dd6ddf9b344b50802dd
++// SID：4001；原研究名单序号：258
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2024-12-18 08:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1d
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("OptionsMillionaire Strategy with Take Profit Only", overlay=true, default_qty_type=strategy.fixed, default_qty_value=1)
+ 
+ // Define custom magenta color
+@@ -42,22 +49,34 @@
+ var bool positionOpen = false  // To check if a position is open
+ 
+ // Backtesting Execution
+-if callSignal and not positionOpen
++// OPT-4001-02：使用真实空仓判断多头入场，防止伪状态复位后持仓中重写锚价。
++// OPT-4001-02 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
++// OPT-4001-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if callSignal and strategy.position_size == 0
+     // Enter long position (call)
+     strategy.entry("Call", strategy.long, qty=positionSize)
+     entryPrice := close  // Store the entry price
+     positionOpen := true  // Set position as opened
+ 
+-if putSignal and not positionOpen
++// OPT-4001-03：使用真实空仓判断空头入场，避免状态尾部清零造成持仓误入场。
++// OPT-4001-03 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
++// OPT-4001-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if putSignal and strategy.position_size == 0
+     // Enter short position (put)
+     strategy.entry("Put", strategy.short, qty=positionSize)
+     entryPrice := close  // Store the entry price
+     positionOpen := true  // Set position as opened
+ 
+ // Only check for take profit after position is open
+-if positionOpen
++// OPT-4001-04：真实持仓期间启用止盈检查，不依赖发单当根被清零的布尔状态。
++// OPT-4001-04 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
++// OPT-4001-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if strategy.position_size != 0
+     // Calculate take-profit level (5% above entry price for long, 5% below for short)
+-    takeProfitLevel = entryPrice * (1 + takeProfitPercent / 100)
++    // OPT-4001-01：空头目标也向上5%，会立即满足退出，修为按持仓方向计算。
++    // OPT-4001-01 保持：原目标止损百分比及信号
++    // OPT-4001-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    takeProfitLevel = entryPrice * (strategy.position_size < 0 ? 1 - takeProfitPercent / 100 : 1 + takeProfitPercent / 100)
+ 
+     // Exit conditions (only take profit)
+     if strategy.position_size > 0

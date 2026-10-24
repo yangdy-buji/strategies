@@ -1,0 +1,99 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：唐奇安通道趋势跟踪策略Donchian-Channel-Trend-Tracking-Strategy.md
+// 原文件SHA256：be004131a55b062cdcf4061e36e44626a28ebb46455c38bb6e3a20392cd02f18
+// SID：2421；原研究名单序号：411
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-10-30 00:00:00
+end: 2023-11-05 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © kriswaters
+strategy("Donchian Channels Strategy by KrisWaters", overlay=true ) 
+
+// Date filter
+FromDay   = input(defval = 1, title = "From Day", minval = 1, maxval = 31)
+FromMonth = input(defval = 1, title = "From Month", minval = 1, maxval = 12)
+FromYear  = input(defval = 2017, title = "From Year", minval = 1900)
+ToDay     = input(defval = 1, title = "To Day", minval = 1, maxval = 31)
+ToMonth   = input(defval = 1, title = "To Month", minval = 1, maxval = 12)
+ToYear    = input(defval = 9999, title = "To Year", minval = 2017)
+
+start     = timestamp(FromYear, FromMonth, FromDay, 00, 00)  // backtest start window
+finish    = timestamp(ToYear, ToMonth, ToDay, 23, 59)        // backtest finish window
+// OPT-2421-01：恢复日期窗。
+// OPT-2421-01 保持：起止参数不变。
+// OPT-2421-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+window()  => time >= start and time <= finish
+
+// Strategy Settings
+canEnterLong = input(true, title="Can Enter Long Position")
+canEnterShort = input(false, title="Can Enter Short Position")
+
+showLongChannel = input(true, title="Show Donchian Long Channels")
+showShortChannel = input(false , title="Show Donchian Short Channels")
+
+useAtrAsStopRule = input(false, title="Enable ATR Stop Rule") 
+
+// DonCcian Channel Lengths
+longUpperLength = input(20, minval=1)
+longLowerLength = input(10, minval=1)
+
+shortUpperLength = input(10, minval=1)
+shortLowerLength = input(20, minval=1)
+
+// Donchian indicator calculations
+longUpperValue = highest(high,longUpperLength)
+longLowerValue = lowest(low,longLowerLength)
+
+shortUpperValue = highest(high,shortUpperLength)
+shortLowerValue = lowest(low,shortLowerLength)
+
+// Plot Donchian Channels
+uLong = plot(showLongChannel ? longUpperValue : na, color=color.green, offset=1)
+lLong = plot(showLongChannel ? longLowerValue : na, color=color.green, offset=1)
+
+uShort = plot(showShortChannel ? shortUpperValue : na, color=color.red, offset=1)
+lShort = plot(showShortChannel ? shortLowerValue : na, color=color.red, offset=1)
+
+// Styling
+fill(uLong,lLong, color=color.green, transp=95, title="Long Arkaplan")
+fill(uShort,lShort, color=color.red, transp=95, title="Short Arkaplan")
+
+// Stop-loss value calculations
+atrMultiplier = 2.0
+atrValue = atr(20)
+longStopValue = open - (atrMultiplier*atrValue)
+shortStopValue = open + (atrMultiplier*atrValue)
+
+// Plot stop-loss line
+plot(useAtrAsStopRule ? longStopValue : na, color=color.red, linewidth=2, offset=1)
+plot(useAtrAsStopRule ? shortStopValue : na, color=color.red, linewidth=2, offset=1)
+
+// Long and Short Position Rules
+if canEnterLong and na(longUpperValue) != true and na(longLowerValue) != true and window()
+    strategy.entry("Long", true, stop=longUpperValue)
+    strategy.exit("Long Exit", "Long", stop=useAtrAsStopRule ? max(longLowerValue,longStopValue) : longLowerValue)
+    
+if canEnterShort and na(shortUpperValue) != true and na(shortLowerValue) != true and window()
+    strategy.entry("Short", false, stop=shortLowerValue)
+    // OPT-2421-02：保留窗口内入场同时提交保护；窗口外撤入场挂单并持续更新持仓保护。
+    // OPT-2421-02 保持：保留原入场条件、参数、仓位及Pine版本。
+    // OPT-2421-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.exit("Short Exit", "Short", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)
+if not window()
+    strategy.cancel("Long")
+    strategy.cancel("Short")
+    if strategy.position_size > 0
+        strategy.exit("Long Exit", "Long", stop=useAtrAsStopRule ? max(longLowerValue,longStopValue) : longLowerValue)
+    if strategy.position_size < 0
+        strategy.exit("Short Exit", "Short", stop=useAtrAsStopRule ? min(shortUpperValue,shortStopValue) : shortUpperValue)
+    

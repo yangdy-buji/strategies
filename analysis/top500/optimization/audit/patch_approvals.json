@@ -1,0 +1,1678 @@
+{
+  "373": {
+    "status": "approved",
+    "patch_sha256": "89381b1cf38e04a0abd12ed91aee7e1c1a3002d4fac8838e9dbf142f38a45c2b",
+    "review": "已阅读全文并核对实际apply_fix输出。省略from_entry使Long与DCA Long两种互斥入口均匹配同一保护单；无空头入口，不扩大到反向仓位。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "sell_condition限制保护提交及pyramiding=0仍保留；dca_interval未限制正数。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "分别以Long/DCA Long持仓且卖出条件真/假检查退出匹配。"
+    ]
+  },
+  "799": {
+    "status": "approved",
+    "patch_sha256": "3d6875a7968ae1998c460992a4cbe9affd51c3af6065d6598fa7371362ecff27",
+    "review": "已阅读全文并核对实际apply_fix输出。日期只门控市价入场，去缩进后RSI EMA低于SMA可在窗外平long；没有价格挂单需要撤销。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "起止两边及等号边界；窗外emavalue<smavalue仍调用close。"
+    ]
+  },
+  "834": {
+    "status": "approved",
+    "patch_sha256": "0d5aaffe074f704a0485b3bdb066d70cdc221e5f3467a60e559652a85553957b",
+    "review": "已阅读全文并核对实际apply_fix输出。rma两条路径都使用同一rsi_lenght，最小值1排除原允许的0且默认10不变。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "SMA长度输入仍无正数约束。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "长度0应不可配置，1与默认10合法。"
+    ]
+  },
+  "1496": {
+    "status": "approved",
+    "patch_sha256": "6e64967d72171048f0973df1dd2e4fdeecb49f6e3157bf6b59b3f05082ce65d0",
+    "review": "已阅读全文并核对实际apply_fix输出。两个方向均价止损改在对应持仓时持续更新，解决空仓信号柱na后不再补交；3%和信号退出不变。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "首次成交至首次持仓计算间仍无保证保护，反转成交时序未原生验证。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "空仓单次信号后信号消失，持多/持空时仍分别提交均价97%/103%止损。"
+    ]
+  },
+  "1644": {
+    "status": "approved",
+    "patch_sha256": "82b42020dfbe761380dc85d7dee7525a2fccefdc4d7cd39797b0f40400c7cb1c",
+    "review": "已阅读全文并核对实际apply_fix输出。完整计算链使用boxp、boxp-1、boxp-2，minval=3是三者均正的最小合法值，默认5未改。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "boxp=3时三个窗口3/2/1；1和2被输入约束拒绝。"
+    ]
+  },
+  "1688": {
+    "status": "approved",
+    "patch_sha256": "97acadc72bc86b0a16af02d3b2a41095046b69e51dd7c74b7bd7f818f9fc4f06",
+    "review": "已阅读全文并核对实际apply_fix输出。datefilter仅在空仓入场使用，原strategy.exit和信号close均在外；恢复日期不会锁死持仓退出。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗前/窗内/窗后入场布尔及窗外持仓止盈止损。"
+    ]
+  },
+  "1882": {
+    "status": "approved",
+    "patch_sha256": "a609d30c345a761e6d44927d4c77dfcb3ca4cb398b7ae3d3ba9edea6b0f6d260",
+    "review": "已阅读全文并核对实际apply_fix输出。保留useDateFilter开关并恢复实际时间窗；死叉全平去日期限制，既有边界cancel_all再close_all得以生效。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "开关false全时段；true跨越结束边界时撤单且全平。"
+    ]
+  },
+  "1915": {
+    "status": "approved",
+    "patch_sha256": "50e7f6a1c30cc08828ffeba52acfb76242501d3caf1351798c490e4abbfd9515",
+    "review": "已阅读全文并核对实际apply_fix输出。仅活跃Long entry依赖window，Long close本来独立；注释中的空头策略未被启用。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外xnRes<ynRes继续平多，窗外上涨不进场。"
+    ]
+  },
+  "1959": {
+    "status": "approved",
+    "patch_sha256": "bc803beaa69235326877103d0def8b7dea8f2c0a13718960209a243755fa7cb0",
+    "review": "已阅读全文并核对实际apply_fix输出。恢复日期后保留crossLower及VWAP退出在窗外可达；将原已计算cancelBcond接至唯一long stop订单撤销，没有同ID exit。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "最后窗内下单仍可能于下一柱先成交后执行窗外撤单；不保证撮合时间绝对在窗内。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "stop未成交后source跌破ma或超出时间窗，long挂单被取消；已持仓反向信号仍平仓。"
+    ]
+  },
+  "2075": {
+    "status": "approved",
+    "patch_sha256": "214625e36fa73aea2483f85d77f1e7bab21dad530db397634ee3122bd2d5457c",
+    "review": "已阅读全文并核对实际apply_fix输出。v6中持仓判断不使用已移除when参数，均价止盈止损在信号消失后仍提交；保留1%及死叉平仓。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "成交到下一次策略计算间保护空档未消除。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "信号仅一柱、下一柱持仓，止损99%止盈101%；空仓不提交。"
+    ]
+  },
+  "2162": {
+    "status": "approved",
+    "patch_sha256": "6448affd9edff8da7a1d2a022329806576201e36061dc238155ab92996d88cff",
+    "review": "已阅读全文并核对实际apply_fix输出。short信号先取消Long限价单再平Long持仓，与唯一入口ID吻合，v5允许该cancel调用。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "高周期指标计算与实时重绘特性未改。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "Long限价未成交时出现short，再触原价格不应新开多。"
+    ]
+  },
+  "2168": {
+    "status": "approved",
+    "patch_sha256": "bb1deb935f2ab389192c1d62090ac3898658b96e29b8872a38510c16a67246bf",
+    "review": "已阅读全文并核对实际apply_fix输出。两条市价入口同依赖window，两条close原有time>finish且独立，无需新增价格撤单。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "两个Trade开关皆false时count=0导致Amount无效，未修。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "结束后两入口均禁用且两个ID仍可被close。"
+    ]
+  },
+  "2209": {
+    "status": "approved",
+    "patch_sha256": "4ff823d437d257fcea8f66c3df6d065d8b1ebc6456096f8047336cc4becb1fd8",
+    "review": "已阅读全文并核对实际apply_fix输出。四入场路径统一门控；Both窗外以相同Green/Red关闭另一方向，保持窗内自动反转且不在窗外新建反向仓。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "三种LSB乘窗内外乘Green/Red核对：Both窗外Green仅close S，Red仅close L。"
+    ]
+  },
+  "2213": {
+    "status": "approved",
+    "patch_sha256": "750c08b0680faa878edc46e3c675bfe6e4f7d15899feed92bcc55d8f48cbadab",
+    "review": "已阅读全文并核对实际apply_fix输出。两个OR买入路径均带f_dateFilter，恢复日期同时覆盖普通回调和逆势抄底；卖出及止损未加日期。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "stopDistance按当前close作分母，与按买价止损比例不完全等价；原设计未改。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外两个买入分支都为假，但sellCondition/stopCondition仍可平仓。"
+    ]
+  },
+  "2421": {
+    "status": "approved",
+    "patch_sha256": "6e60844956ba4af6ac4511a0b92bcda1833cb7435aa00e96f38f2d4d83c33c6f",
+    "review": "已复审修订补丁及实际备注插入结果：保留两个原入场分支内entry与绝对价exit同时提交，窗外仅cancel Long/Short且更新不同ID的Long Exit/Short Exit，避免新增成交柱无保护回归；原通道与ATR公式保持。 SHA和唯一锚点检查通过，备注保持独立注释行。",
+    "remaining": [
+      "末个窗内下单可能于下一柱先成交后撤单，日期过滤约束的是策略计算时点，不能声称绝无窗外成交。",
+      "未原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "空仓窗内stop入场后同一柱触保护价；窗外撤Long/Short而不撤Long Exit/Short Exit。"
+    ]
+  },
+  "2486": {
+    "status": "approved",
+    "patch_sha256": "0c1411fdbc587e03e8bb63892156c8569a9ce5204ec8e7ecfba4452bcbda2c9c",
+    "review": "已阅读全文并核对实际apply_fix输出。四Buy ID均仅由日期门控入场；两种exit计算去日期后仍保留利润、EMA、RSI和低点条件。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "pyramiding变量只是数量乘数，未设置平台加仓参数。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "结束后四个Buy ID均可由同一exit条件关闭，但不可新增买单。"
+    ]
+  },
+  "2501": {
+    "status": "approved",
+    "patch_sha256": "af21c674fcabb9f8d8eacf76cd013a18222d10ee0becf4f6893a051d5af16dd2",
+    "review": "已阅读全文并核对实际apply_fix输出。四入口及四close关联完整，两种退出去掉日期因子而其余合取项不变，默认数量未改。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "pyramiding输入仅缩放qty，真实加仓行为保持原样。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外利润条件不满足仍不平；满足完整退出条件可关闭Buy1至Buy4。"
+    ]
+  },
+  "2526": {
+    "status": "approved",
+    "patch_sha256": "6607b155763a9338f0fca8602c75951f7244b8ff7c5d4b2aff52764a48c3ae5a",
+    "review": "已阅读全文并核对实际apply_fix输出。空头使用均价上1%止损下3%止盈，并给空头独立exit ID，修复方向错误与覆盖冲突；多头公式保持。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "均价100时多头99/103、空头101/97；反转信号仍沿用原entry/close次序。"
+    ]
+  },
+  "2529": {
+    "status": "approved",
+    "patch_sha256": "e2aab7206d8f0d0c9b12cbe283a80c3341ecce00365c08541507a027e95cf117",
+    "review": "已阅读全文并核对实际apply_fix输出。Pine v3日期timestamp和比较语法沿用原变量；入场门控而HODL信号平仓不门控，无限价挂单。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "结束后收盘跌破均线可close HODL，升破均线不再entry。"
+    ]
+  },
+  "3115": {
+    "status": "approved",
+    "patch_sha256": "febc0935b1643a73d18f535dc3a096d3be35789f6f78efaba260f97a72a56e92",
+    "review": "已阅读全文并核对实际apply_fix输出。保留EMA默认90并将输入下限降至90，使声明范围与既有默认一致；未改默认均线交易规则。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "strategy overlay=1的旧隐式类型兼容性仍需原生检查。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "90与400可选，89被约束；默认EMA仍90。"
+    ]
+  },
+  "3172": {
+    "status": "approved",
+    "patch_sha256": "43c5c2a8437473302315661c68d978666367fe05df18c953b89b25933f20d6a7",
+    "review": "已阅读全文并核对实际apply_fix输出。f_dateFilter仅参与buyCondition，恢复范围不影响两个退出路径及买价更新。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "原版本行是// @version=5，需在目标Pine确认编译器识别；stopDistance分母及信号后open估价保持。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "起点相等允许开仓；窗外stopCondition仍可close Long。"
+    ]
+  },
+  "3295": {
+    "status": "approved",
+    "patch_sha256": "a3413854c49bd1ee8df890ec2ac105479c5c96feeb1272f005d976fd55d89b14",
+    "review": "已阅读全文并核对实际apply_fix输出。ta.dmi顺序为+DI/-DI/ADX，重排绑定使adxThreshold真正比较ADX，其他指标和参数不变。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "均价保护只在空仓入场分支计算为na，仍可能没有止盈止损；应独立修复其生命周期。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "给DMI返回10/30/40，adx>20应真而不是以10判断。"
+    ]
+  },
+  "3387": {
+    "status": "approved",
+    "patch_sha256": "f1834c8efe1be2751e581257a442d47eb1897876821b3e2c3784d6d8d1d34a6e",
+    "review": "已阅读全文并核对实际apply_fix输出。Long限价在窗外或exitLong时撤销；Long close和可选Short close去日期限制，Stop Loss ID与Long取消ID不同。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "空头shortStop未用于退出；开启空头时其原有保护不足未修。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "Long挂单后pos=-1撤单；窗外pos=1关闭Short且不新开Long。"
+    ]
+  },
+  "3634": {
+    "status": "approved",
+    "patch_sha256": "031fcf65c931441dbae66aa279b1c6bc09150139aa942533c98e7463afe0ca14",
+    "review": "已阅读全文并核对实际apply_fix输出。isSwingLow[1]内被比较的low[1]在当前坐标确为low[2]；保存低点延迟修正不改变摆动形态判定。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "空仓时清除摆动记录及仅低于SMA才挂保护单保持原样。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "昨日识别前日低点90，昨日low95时保存90而非95。"
+    ]
+  },
+  "3704": {
+    "status": "approved",
+    "patch_sha256": "7f223414855ea81d63f5564c6dbd4dd80d7839e6bcf967544b8d3c3e8cb2ef7b",
+    "review": "已阅读全文并核对实际apply_fix输出。两条全量exit合并成一条含limit/stop的括号单，避免先止盈预留全仓后止损无可用量；保持原close锚点和3R。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "信号重复时重新计算保护价，原行为未调整。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "持仓10单位同时具有全量止损和止盈，任一成交另一取消。"
+    ]
+  },
+  "3713": {
+    "status": "approved",
+    "patch_sha256": "226734bdbcecde75ed7972c8af0762901ee95ecdee037a0051df2bcebe0d2dc6",
+    "review": "已阅读全文并核对实际apply_fix输出。入口保留timeInRange，close移出if且保持priceAboveUpper；process_orders_on_close与200%仓位未改。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "StochRSI最高最低相等时除零和上下轨命名混淆保持。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外priceAboveUpper仍平Long，priceBelowUpper且stochUp不再开仓。"
+    ]
+  },
+  "3740": {
+    "status": "approved",
+    "patch_sha256": "a9aabd42df0dbff552a16bf3fd04f90da7aa9b05e9ee644f07270a065881ac2c",
+    "review": "已阅读全文并核对实际apply_fix输出。七条EMA入口全部使用window，七条close已自带time>finish，恢复日期无需改变退出或旧v2语法。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "count可为0或负数导致Amount无效；平台pyramiding未设置；保留原样。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "结束后七个ID分别执行原close，任何金叉不再进场。"
+    ]
+  },
+  "3756": {
+    "status": "approved",
+    "patch_sha256": "af0675d91d69f0ab97f72ed9774ed2d618f036321540e442740b2eaf84b9c688",
+    "review": "已复审两个补丁组合：持仓时按实际均价同时更新三价格，末尾exit新增持仓门禁，空仓第二次入场不会用上笔保护价；10%止盈与5%止损及默认成交时机保持。 SHA和唯一锚点检查通过，备注保持独立注释行。",
+    "remaining": [
+      "首次成交至后续持仓计算的保护空档仍存在；空仓图示仍可保留上一笔价格。",
+      "未原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "先以100成交并平仓，再以200出现买信号，不得新挂上一笔110/95保护价。"
+    ]
+  },
+  "3984": {
+    "status": "approved",
+    "patch_sha256": "813b2abb49ed61198ef33cf9e252d3bb5c5991acd0c8d10fead3e07124fe391a",
+    "review": "已阅读全文并核对实际apply_fix输出。修正DMI三个返回值的对应关系，同时恢复ADX斜率与+DI>-DI实际含义；ATR目标/收盘退出设计未改。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "持仓重复longEntry可重置目标，目标依然以信号close计算。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "DMI返回30/10/25时趋势应满足ADX>18与plusDI>minusDI。"
+    ]
+  },
+  "4488": {
+    "status": "approved",
+    "patch_sha256": "86e9d3c6e3aed648937ca92189d3a48d18434c5aa227696d63c1e0a5ad724401",
+    "review": "已阅读全文并核对实际apply_fix输出。仅长仓entry使用恢复的时间窗，close<lower退出独立；数量1和各均线类型参数不变。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "结束后下破下轨仍平Long，上破上轨不能入场。"
+    ]
+  },
+  "4500": {
+    "status": "approved",
+    "patch_sha256": "75d155a370d65306c35c1210cd7eac1851cfbd2a73522c32c7e55888f84839c8",
+    "review": "已阅读全文并核对实际apply_fix输出。BB中轨/上轨互换修正后下轨保持，sell触发引用真实上轨；未擅改Supertrend方向策略。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "Supertrend direction正负与图色含义、shape_triangle_up等字符串合法性仍需目标平台核实。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "给BB返回100/120/80时bb_basis=100，bb_upper=120，median_lower=90。"
+    ]
+  },
+  "4622": {
+    "status": "approved",
+    "patch_sha256": "884a28c40c1c9edb3174e35098af5a97b4ea8bf3828be0ce25ae2c3ff9ab5d03",
+    "review": "已复审整块替换与备注：窗外先cancel入口EMA1，再以独立EMA1 TP提交止盈，最后原EMA1全平；日期门控覆盖三条入口，无新加仓或数量变动，撤单不再误撤TP。 SHA和唯一锚点检查通过，备注保持独立注释行。",
+    "remaining": [
+      "原唯一strategy声明仍是注释，候选有既存原生编译阻断；不擅自启用被注释的10层加仓配置。",
+      "未原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外EMA1加仓挂单取消，但独立TP保留并且全平市场单不被撤销。"
+    ]
+  },
+  "4671": {
+    "status": "approved",
+    "patch_sha256": "99d64ff831d4bf659285ec24fecf931942bae96ff3387a9a412f25625127544c",
+    "review": "已阅读全文并核对实际apply_fix输出。恢复可选结束时间，持仓窗外继续执行原退出和单调上移止损，入口另外显式检查时间；没有价格订单残留。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "源码混合tab与空格缩进，未原生编译确认；stop_loss_price为手动收盘判定非真实止损挂单。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "USE_ENDTIME false结束后仍允许，true结束后仅持仓管理；窗外止损不得因重置降低。"
+    ]
+  },
+  "4707": {
+    "status": "approved",
+    "patch_sha256": "617677c5ec9b84d6075ff9b761c81474f9a0458f04958e9f5e7c96257833bf65",
+    "review": "已阅读全文并核对实际apply_fix输出。isHammer最终强制前柱为阴线，因此下影真实端点是close[1]而非open[1]；上影和入场条件未改。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "前柱open100 close98 low95：下影3不是5；body2不应满足下影>=4。"
+    ]
+  },
+  "4851": {
+    "status": "approved",
+    "patch_sha256": "efa4527ada1d15553f440cd3b32a70b93a349647f65f07c3a9b373746241d68c",
+    "review": "已阅读全文并核对实际apply_fix输出。恢复日期后原not InDateRange全平可达，窗内的EMA退出保留，无价格入场挂单需要撤销。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "原版本行// @version = 5需目标编译确认识别；未改写版本。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外持多触close_all，窗内满足三日下降规则仍entry。"
+    ]
+  },
+  "5084": {
+    "status": "approved",
+    "patch_sha256": "a3116460d9810950d1dabf4f8624155f0f64a43326d9dfe47be1d6fe812f5900",
+    "review": "已阅读全文并核对实际apply_fix输出。ta.bb返回中上下降序映射已修正，只影响三条布林显示，实际MA交叉入场和退出不依赖BB。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "返回100/120/80时三条图分别正确；交易条件文本不变。"
+    ]
+  },
+  "5171": {
+    "status": "approved",
+    "patch_sha256": "2252e6da8e9c109885e36a896c5f95f5a2d490a6814dc6858e6cb01db3a65cad",
+    "review": "已阅读全文并核对实际apply_fix输出。v3 entry仍位于日期if下，sell_signal完整去缩进移到全局，不会形成空if块；注释插入在独立行。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外死叉能close Long；入口嵌套if仍保持两个合法缩进层级。"
+    ]
+  },
+  "5605": {
+    "status": "approved",
+    "patch_sha256": "e6e516504b505238bfbea8843cceb254bf932618634f90898209977be137a743",
+    "review": "已阅读全文并核对实际apply_fix输出。保留日期开关及最低获利退出要求，恢复跨结束边界撤单全平，窗外普通close仍需原收益条件。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "date开关false全时段；true窗口结束原强平不受最低利润限制。"
+    ]
+  },
+  "5607": {
+    "status": "approved",
+    "patch_sha256": "dc88fb269ac8f1cf45bc0d0fc7d307dd329114ca5917c2386d270e57643e3b4f",
+    "review": "已阅读全文并核对实际apply_fix输出。同一SL Long exit同时携带stop与limit，共享全仓可用量；原信号价ATR比例及entry同柱提交保持。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "先触tpLong应全量止盈，先触slLong应全量止损，不再因另一exit预留失败。"
+    ]
+  },
+  "5791": {
+    "status": "approved",
+    "patch_sha256": "edd4caaf485ec57fdd26d855aaa08b3e06fcb4931a14e9d22dc503bfea52fea9",
+    "review": "已阅读全文并核对实际apply_fix输出。日期函数与原背景范围一致，shortCondition和close_all移到窗外仍可计算，保留v3 close_all(true)用法。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外死叉触原全平，窗内金叉触Long Entry；tab缩进调整后退出为全局块。"
+    ]
+  },
+  "5796": {
+    "status": "approved",
+    "patch_sha256": "185cf121c79e162c3d1829b641935925ae48d4be9679d05e2bcac1b05e36f88d",
+    "review": "已阅读全文并核对实际apply_fix输出。datefilter仅用于入场，持仓stop及信号close独立；同名exit未被新增cancel影响。 逐补丁源SHA与唯一锚点检查通过，备注为独立注释行。",
+    "remaining": [
+      "profit参数未接入，原止盈规则不扩展。",
+      "未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。"
+    ],
+    "validation_cases": [
+      "窗外持多仍按均价80%止损，回到短均线上且跌破前低仍close。"
+    ]
+  },
+  "65": {
+    "status": "approved",
+    "patch_sha256": "9f860743a9ccc57f292c798699102acd0780a37c3cf20cd3fb048523f0810fd0",
+    "review": "确认盘中退出后收盘未触阈值会锁死inTrade；以新增closedtrades同步清理保留原信号价保护和下单时点。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "Re-Long分支在平仓时entryPrice已置na，原同价重入逻辑仍不可达，需要明确重入设计。"
+    ],
+    "validation_cases": [
+      "盘中止损而收盘反弹时状态清空；后续新signal_up允许入场，保护仍与入场同次提交。"
+    ]
+  },
+  "235": {
+    "status": "approved",
+    "patch_sha256": "fb323321e1a8e8f31215f0e8172e2cd3f77d3366a3a973ae2b52fb4d84f193f3",
+    "review": "boxp-2须为正，输入下限3是最小合法边界，默认5不变。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "boxp=3使k3长度1；拒绝1、2，默认5的箱体和买卖条件不变。"
+    ]
+  },
+  "379": {
+    "status": "approved",
+    "patch_sha256": "66769056b392a997f9635a6c575264d113b46cc5a645e8c448dca6a03d457fe0",
+    "review": "两次无条件exit复用ID；仅拆空头ID保留两侧from_entry和收盘价动态保护，未增加持仓门禁。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "止盈止损随每根close移动，是否固定锚点属于设计选择。"
+    ],
+    "validation_cases": [
+      "Buy入场同次可创建多头保护；Sell反转时独立空头ID不会改写多头订单。"
+    ]
+  },
+  "496": {
+    "status": "approved",
+    "patch_sha256": "40c176f45c0832ee8a9a165a2e3b5c7b26fed586395a24820ba7fad4e715aeb9",
+    "review": "新平仓变化门槛消除每根重读旧平仓并覆盖已复位标记的问题；不改原再入阈值。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "止损识别仍用退出价格对比trailStopPrice，均线市价退出可能也满足；止损线可下移，是否改为单向追踪需确认。"
+    ],
+    "validation_cases": [
+      "一次止损后复位再入，后续closedtrades不增加时不得重新设置stopLossOccurred。"
+    ]
+  },
+  "804": {
+    "status": "approved",
+    "patch_sha256": "013928e0b5e67d607278a135d55225938483211c416a90554c80ed252ad5ef24",
+    "review": "四个Heavy/Lite多空分支均将独立全量TP和SL合并为各自唯一bracket，解决预留和ID复用；原信号价与同次保护保留。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "分别构造四种仓位先触SL或TP；每种全部数量受保护，另一分档调用不修改本单。"
+    ]
+  },
+  "977": {
+    "status": "approved",
+    "patch_sha256": "18078d0d392a7ac363f410a1d548d37c7e4272025f42e069f7782517e3d9b5f3",
+    "review": "存在strategy.entry却声明study，替换为strategy且保留v4与信号，是明确声明修复。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "beareng复制bulleng公式，但当前只用于未使用的展示文本；ph做多/pl做空方向是否符合策略意图需确认。"
+    ],
+    "validation_cases": [
+      "保留ph优先、pl次选的两方向entry；声明只出现一次且仍为v4。"
+    ]
+  },
+  "983": {
+    "status": "approved",
+    "patch_sha256": "8af6d7ef22aa9914b0ba03c6dcc0dc5b0ad25f830cf18935fbde305588a15275",
+    "review": "恢复可选起点过滤，同时把close移出窗口，避免已有Buy在窗外失去退出。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "useDateFilter=false仍全部日期允许；开启后起点前禁止entry而closeCondition仍可平仓。"
+    ]
+  },
+  "1023": {
+    "status": "approved",
+    "patch_sha256": "eaf5c6219b134aa087ec98ee2990a979fbfd9d98638c596c570e3b1539ab87e0",
+    "review": "毫秒差与bar数门槛混用属确定单位错误；两处比较及赋值统一bar_index，保持严格大于。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "lastEntryTime记录的是入场信号而非实际成交，持仓内新突破也会刷新等待起点；本次不改变信号频率模型。"
+    ],
+    "validation_cases": [
+      "索引100入场，110不通过而111通过；跨周末不凭日历空档增加根数。"
+    ]
+  },
+  "1221": {
+    "status": "approved",
+    "patch_sha256": "5e31eab9a84abde59de46caadfa06cb19f4568f5e987c543a7110191a7abab97",
+    "review": "原信号bar空仓均价na使保护无效；移至持仓分支并修正空头上下方向，不丢原有效绝对价保护。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "均价依赖仍需成交后下一次策略计算才建立保护，未启用成交重算。"
+    ],
+    "validation_cases": [
+      "单次金叉后信号消失仍维护XL；XS均价100时止损102目标96，反转后保护按新方向重建。"
+    ]
+  },
+  "1343": {
+    "status": "approved",
+    "patch_sha256": "ad4525496028e05a399e8624f73af4c75f1281331c18b61db340d49ae647d3b6",
+    "review": "日期常量恢复真实边界，两种正常退出均解除日期限制且原窗外close_all保留。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "分别开启/关闭TakeProfitInput验证结束日期后退出仍执行，窗口外不新开Long。"
+    ]
+  },
+  "1434": {
+    "status": "approved",
+    "patch_sha256": "f731af997d8c01310708605329ad09b784a7c28993b05d78b607d7c6c0755e75",
+    "review": "将原均价na保护移到对应持仓作用域，保持原v4、阈值和价格式；两个from_entry覆盖Buy/Sell。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "空头原公式以target_points作止损距离、stop_loss_points作获利距离，参数语义疑似对调待确认；首次保护要等成交后计算。"
+    ],
+    "validation_cases": [
+      "仅单根Marubozu信号后Buy仍获得保护；空头Cover使用原上方take_profit及下方stop_loss。"
+    ]
+  },
+  "1474": {
+    "status": "approved",
+    "patch_sha256": "869bc37ac3096d3633152abfbe800b17ca07a1e90ab5e16a91dd5744947b9964",
+    "review": "多空两侧各合为唯一全仓bracket，解决前一全量limit预留阻塞stop；供需区价格与原持仓门槛不变。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "新信号close_all与entry同次发送、区域被重写仍沿用原逻辑，未验证其成交顺序。"
+    ],
+    "validation_cases": [
+      "分别Long跌破entryDemandZone、Short突破entrySupplyZone，全部仓位均有止损。"
+    ]
+  },
+  "1494": {
+    "status": "approved",
+    "patch_sha256": "375be05ddb628e1ab09827b7691702e27cad14ab940329de10203e54c18a6fb0",
+    "review": "只拆空头退出ID，Long/Short的动态ATR绝对价和初次提交时点均保持。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "ATR保护随close移动而非锁定，未改锚点设计。"
+    ],
+    "validation_cases": [
+      "Long信号同次仍提交limit与stop；Short信号不会改写Long退出。"
+    ]
+  },
+  "1620": {
+    "status": "approved",
+    "patch_sha256": "e1911ed28d2983a6d416cd07d5c8a70b51c1d27d8fed7f793f0822044cc5c5ee",
+    "review": "反手两个新entry ID原不匹配现有LongExit/ShortExit；统一双方entry ID后覆盖反手仓，倍率及数量不变。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "通过收盘越过止损判断反手可能因止损先成交失去触发，是否要求真实止损后反手需设计确认。"
+    ],
+    "validation_cases": [
+      "多转空以及空转多均沿用Short/Long ID并由对应均价保护覆盖。"
+    ]
+  },
+  "1791": {
+    "status": "approved",
+    "patch_sha256": "0f4434f355dbe9fbabd74e310a22b38495320c2a902c50ac359ebd8f9c092f90",
+    "review": "季节区间错误把非跨年范围扩成全年；分支处理跨年/同年，默认9月至2月不变。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "测试3月至8月只含3..8；9月至2月含9..12和1..2；相同月份只包含该月。"
+    ]
+  },
+  "1861": {
+    "status": "approved",
+    "patch_sha256": "d0a6fbcdeebdb491657c2124ef32719eed0374b0ac2159ea2e11b080f16821d9",
+    "review": "恢复起止日期并将close_all移出窗口，保留原7日高退出信号。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "结束日期后close>exit仍平仓；窗外close<entry且高于MA200不得入场。"
+    ]
+  },
+  "1907": {
+    "status": "approved",
+    "patch_sha256": "ab2064ccfb93a1f495c2019a725bb195092e1cbca034ffb7812b9bbf69487c23",
+    "review": "Fast/Slow同时可持有且pyramiding=2；拆Slow保护ID避免覆盖Fast，均价止损数值不改。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "默认FIFO退出分配可能与Fast/Slow独立退出的文字意图不同，未更改close_entries_rule。"
+    ],
+    "validation_cases": [
+      "Fast Enter及Slow Enter同时存在时各有stop关联；Slow平仓不修改Fast保护ID。"
+    ]
+  },
+  "1977": {
+    "status": "approved",
+    "patch_sha256": "84b44625cbc807056e8c4048c1f785fc2c561e741784c6158a9b65b6e3d7f887",
+    "review": "入场分支清na抹掉刚记录的交叉EMA止损；删除该清零保留最新交叉值及原持仓保护门槛。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "同一绿带内止损后再入会继续用该绿带交叉价，这是原状态锚点，未改为每笔成交价。"
+    ],
+    "validation_cases": [
+      "绿色交叉记录emaB后入场不能清掉；后续无新交叉持仓仍有有效stopLoss。"
+    ]
+  },
+  "2099": {
+    "status": "approved",
+    "patch_sha256": "1143b7f20b2ef5a56f46a30ecf9b00937db680e78cac5cfdea7ea9ade8602f61",
+    "review": "空仓opentrades.size(-1)返回na阻塞入场，两个模式改position_size==0；部分TP加同价stop覆盖预留份额，剩余SL保留。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "S2把部分退出比例同时当目标涨幅，S1追踪允许回落，均属原参数/模型歧义。"
+    ],
+    "validation_cases": [
+      "S1/S2初始空仓可入场；S2部分比例50及100时先触止损均覆盖被预留份额。"
+    ]
+  },
+  "2105": {
+    "status": "approved",
+    "patch_sha256": "60c2bba17525ecf7e1c0086b5e5d6fd1e8fc5fce85619d28b8b9b89c4d11a849",
+    "review": "复审确认先清空旧entryPrice、再为空仓新信号记录close，并删除尾部清零；信号价100而成交价105时仍以100计算保护，解决顺序bug且不更换价格锚点。 已检查完整补丁结果；仅静态审查，未进行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "信号close=100而次根跳空105成交，止盈止损必须仍按100；平仓后无新信号清空，第二笔不得复用100。"
+    ]
+  },
+  "2185": {
+    "status": "approved",
+    "patch_sha256": "cc686914f4a157b45feb40f00cabc93fdd2d443f9f6d5e18910e2fb56ea6bc55",
+    "review": "复审确认两处plot显式将布尔映射为1/0，颜色使用v4命名空间并去除尾逗号；原long/short下单布尔、阈值、方向和版本不变。 已检查完整补丁结果；仅静态审查，未进行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "两条件true/false分别画1/0；颜色均用color.*；entry when仍使用原布尔条件。"
+    ]
+  },
+  "2188": {
+    "status": "approved",
+    "patch_sha256": "2091d555a88e66a842b9852b401ed2bf6098aab9c157758896b41e771471319a",
+    "review": "日期恢复并在窗口外取消挂入场buy，close仍独立执行；cancel的是entry ID，无同名exit保护冲突。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "末根窗口内limit未成交后越界取消buy；已有buy持仓在窗外xsell仍退出。"
+    ]
+  },
+  "2196": {
+    "status": "approved",
+    "patch_sha256": "9a212d7476d6abee874c78dc23d4f7f8646204f3deca4043c527b6b010f842c9",
+    "review": "原Compra信号内均价na导致无保护；保护移到持仓外层按同样0.995/1.015公式建立，保留compra_realizada复位。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "首次成交到下一次计算之间没有有效均价保护，未改变执行设置。"
+    ],
+    "validation_cases": [
+      "首次Compra后无再信号仍有SL/TP；close<ema20才允许复位的原节奏不变。"
+    ]
+  },
+  "2528": {
+    "status": "approved",
+    "patch_sha256": "96a109207fbc567b31b3c3a56231e3f22416b751c3291e258c905317a3665e0e",
+    "review": "只恢复_testPeriod范围；现有BUY退出本就独立于日期，无需移动。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "startP前和end后拒绝入场，但short条件可关闭已有BUY。"
+    ]
+  },
+  "2597": {
+    "status": "approved",
+    "patch_sha256": "5f53990d7a7f50c09476a87130d86e0dbf3ae4f10184a78560e4da31d7877e12",
+    "review": "Long批量退出序列唯独缺count-3，补一条与Short的0..9一致，未改数量或计数。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "计数可超过十个，当前退出仅最近十个且计数含被拒信号，超过范围的覆盖需另行设计。"
+    ],
+    "validation_cases": [
+      "count_open_longs=4时补上Long1退出；其余0..9的现有退出均保留。"
+    ]
+  },
+  "2611": {
+    "status": "approved",
+    "patch_sha256": "cebb78e1024cb598b311b04ada8d94f3651a7c746d7b2343bf6df32e80b909db",
+    "review": "within_timeframe恒真使起点失效，替换只影响入口；stop更新在窗口外仍独立且仅有起始边界。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "首次止损创建仍依赖ta.change(stop_loss_price)，保护建立时点未做原生验证。"
+    ],
+    "validation_cases": [
+      "起点前不entry；起点后信号照旧；既有仓位止损更新不新增日期门槛。"
+    ]
+  },
+  "2687": {
+    "status": "approved",
+    "patch_sha256": "8545b13c4eea0af2f99bd4d392a3805fb52342d4f16e94fc9aee5e597f723038",
+    "review": "恢复日期条件并解除sell_signal窗口约束，不改EMA5/20或仅多方向。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "区间内金叉开Buy，区间外死叉仍close Buy。"
+    ]
+  },
+  "2764": {
+    "status": "approved",
+    "patch_sha256": "4add0fa95eeda7c0bfbf6198b75f6bd4c1a5559cf1bf0192bd437af864e98663",
+    "review": "恢复window仅限制Long入场，MACD死叉退出不再受日期门槛。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "结束时未退出仓位下一根sell可关闭；默认MACD参数保持。"
+    ]
+  },
+  "2868": {
+    "status": "approved",
+    "patch_sha256": "2bf2c92af85918b20e23040a5346bed96a5a33f7b9fa371bcd8e195e7aa2e72e",
+    "review": "均价保护从超卖分支移至持多分支，解决单次信号成交后再无有效保护调用。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "首次保护依赖成交后的下一次计算，未添加成交重算。"
+    ],
+    "validation_cases": [
+      "RSI仅一根低于25随后恢复，持Long仍产生有效均价TP/SL。"
+    ]
+  },
+  "3079": {
+    "status": "approved",
+    "patch_sha256": "ba085e3f3749b517117786c8115c7bfc63c67a9f10d0a77893a1787c7c30050f",
+    "review": "双侧profit/loss是tick距离，百分比价格差需除mintick；同时各自唯一ID，保留close动态基准及同次保护。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "close=100、mintick=.01、0.8%目标应为80ticks；多空均校核，mintick=1时数值不变。"
+    ]
+  },
+  "3121": {
+    "status": "approved",
+    "patch_sha256": "882001e992a2cba6529f30bf003fa3c3fea045f20fc6d509fcad7423ab59e930",
+    "review": "恢复可选开始时间并将退出条件移全局，默认开关false维持原全部日期行为。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "开关false允许开始前入场；true时禁止；buy_exit_condition全时可平已有仓位。"
+    ]
+  },
+  "3250": {
+    "status": "approved",
+    "patch_sha256": "a00dea0ebf53b459b0804014a7d4dc42046deeeb7af0501526d0a361945bc0ab",
+    "review": "原六个日期输入失效；使用已有年/月/日限制BUY入口，原双leadLine下行退出完全不变。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "开始日00:00与结束日23:59边界内允许，之后下降条件仍可退出。"
+    ]
+  },
+  "3301": {
+    "status": "approved",
+    "patch_sha256": "e516e196f68755fa729ac76914890098d63c9315d356cfc7a2b66df4f6a68816",
+    "review": "两处无任何退出价格参数的strategy.exit不能承担市价平仓；对应改close匹配SELL和BUY原入场ID，保留反转与初始保护。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "close与相反entry同次成交数量行为，以及MAX_LOSS默认0立即止亏的原设计仍需验证。"
+    ],
+    "validation_cases": [
+      "多头触发时平SELL后发BUY及BUY_STOP；空头路径对称，初始绝对价保护没有新增持仓门槛。"
+    ]
+  },
+  "3379": {
+    "status": "approved",
+    "patch_sha256": "bcbef186206775f7026f6f5bdb7d94db693ca5f996fe45d80ad2186a9c9b3db4",
+    "review": "恢复窗口且主仓退出解耦；加仓上限改<避免越界；加仓止盈止损百分比正确换算ticks，两侧金额默认均保留。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "entry_price会被未成交信号更新，且无持仓也可能触发consec_LE；是否允许独立加仓需确认。"
+    ],
+    "validation_cases": [
+      "opentrades=A或>A不再加仓；均价100、10%、mintick=.01时退出距离1000ticks；窗外主仓退出有效。"
+    ]
+  },
+  "3405": {
+    "status": "approved",
+    "patch_sha256": "725b43a346c4167f06ed9ce63f0c0895e2a384a13148c9d23e0797e050893c5d",
+    "review": "单边模式退出解耦；Both原靠反向entry同时平仓，窗口外补对应close保留平仓部分而不新开反向仓。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "Both在结束后Sell仅平L不建S，Buy仅平S不建L；Long only及Short only窗外退出对称。"
+    ]
+  },
+  "3422": {
+    "status": "approved",
+    "patch_sha256": "5cc1faf819e01f03e6e209fc9a86e65fcdb4969dd9b39c7063304424eba1029c",
+    "review": "50%部分limit先预留导致其份额无SL；加入同一longStopLoss，不改变原目标、剩余全量退出或初次保护提交。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "动态目标和止损随每根指标变化，未锁定入场。"
+    ],
+    "validation_cases": [
+      "TP1前先触SL须覆盖两组份额；TP1后剩余数量仍由Full Exit止损保护。"
+    ]
+  },
+  "3524": {
+    "status": "approved",
+    "patch_sha256": "e7fb9edc63489f938503a298ed69f9f574b4eb6e4b501aca96e1689f19bd3db7",
+    "review": "日期恢复同时解除止损重置的窗外分支，避免持仓追踪止损回退；重排MAIN让入场受限而两种退出持续执行。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "空仓尾部会清零原entry_price/stop_loss_price，原统计与追踪初始化仍有语义疑点。"
+    ],
+    "validation_cases": [
+      "跨结束日期既有stop_loss_price只能max上移；窗外触TSL或吞没熊条件仍关闭Long。"
+    ]
+  },
+  "3526": {
+    "status": "approved",
+    "patch_sha256": "d7af2056ad905b90fe513197cf5103078e57c28b2c5c32a4e65c5a99fedba02e",
+    "review": "window恢复仅限制五个BUY入口，原close_all未受门槛影响。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "声明未设置支持五档的pyramiding，加仓计划是否需要启用需确认。"
+    ],
+    "validation_cases": [
+      "窗外BUY1..BUY5均禁开，short且盈利仍close_all。"
+    ]
+  },
+  "3549": {
+    "status": "approved",
+    "patch_sha256": "302fd777d7b4d9212244ff5474e4b756724a87a7424f5a3467e03a5b2308649a",
+    "review": "close必须匹配入场Buy而非退出单Take Profit，替换只修关闭目标且保留RSI条件。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "takeProfit和quantityRemainder每根重置，profit参数tick单位与百分比混用、部分退出状态设计仍未解决。"
+    ],
+    "validation_cases": [
+      "closeOverbought=false且RSI>70时关闭Buy；true时原部分退出分支保持。"
+    ]
+  },
+  "3583": {
+    "status": "approved",
+    "patch_sha256": "b2eee987f273104fa7cdca913db3148a78f261e75ea660028933e9a31ddbed37",
+    "review": "恢复原日期输入到入场_testPeriod，不影响close>linreg退出。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "结束日期之后信号不开BUY，已有仓位越过linreg仍退出。"
+    ]
+  },
+  "3675": {
+    "status": "approved",
+    "patch_sha256": "3e16e6fce72ed4d9898be99c3bc196fd1c9e3b9438cf7ffa73187a501b93c56c",
+    "review": "timenow历史bar相同导致间隔判定失真；改time采用每根bar时间，保持分钟到毫秒换算。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "被pyramiding拒绝的重复信号仍更新lastEntryPrice/Time；gap按开仓而非平仓计时的设计未变。"
+    ],
+    "validation_cases": [
+      "两历史信号相隔14与15分钟分别不通过/通过默认15分钟条件，不随运行时钟变化。"
+    ]
+  },
+  "3755": {
+    "status": "approved",
+    "patch_sha256": "0e31125f7fef6e193991a2c87aaef65037f3f77ac1f3738bbba9c0be61fa0853",
+    "review": "恢复FechaValida对应用户日期，原窗内趋势退出与窗外强平两分支已完整覆盖。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "越界已有Compra执行Venta x fin；窗口内原cantidad和alcista条件不变。"
+    ]
+  },
+  "3762": {
+    "status": "approved",
+    "patch_sha256": "a4ea3b5ecd38f46665df948f5adf47b71a2fad809b9abdd284c94df5426e09f0",
+    "review": "RSI与TP关闭补覆盖add more，同时接通已计算的stopLossHit到两个入场ID；维持收盘判断市价退出。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "entryPrice在持续超卖时重写、平仓后不清零；buymore可在空仓依旧用旧价开新仓，且默认pyramiding使持仓加仓可能被拒。"
+    ],
+    "validation_cases": [
+      "Long/add more分别在RSI、TP、SL触发时均有匹配close；必须额外验证平仓后旧morebuy不会造成非预期下一笔。"
+    ]
+  },
+  "4197": {
+    "status": "approved",
+    "patch_sha256": "e3585d62323f682c34e8b477116f26601ece9dc6353ed6bf21a725926f618c5e",
+    "review": "仅拆Sell的退出ID，保留双侧每根close动态价及同次绝对价保护。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "固定入场价还是动态收盘价保护需要设计确认。"
+    ],
+    "validation_cases": [
+      "Buy和Sell反转时from_entry仍对应，任何一侧退出不能被另一侧同ID覆盖。"
+    ]
+  },
+  "4224": {
+    "status": "approved",
+    "patch_sha256": "662885e9f774479f71ec02a065e55e5db74d8fae7e585338549a5ffab6045da3",
+    "review": "Buy1退出漏止损而Buy2已有，同一exit_condition_sl加入第一分支补齐两份保护，不改收盘退出时点。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "默认pyramiding可能只允许Buy1，两个半份订单是否同时成交需原生验证；入场条件会重写持仓锚点。"
+    ],
+    "validation_cases": [
+      "Buy1/Buy2任一持有且close<=stop_loss都发close，TP1/TP2差异保持。"
+    ]
+  },
+  "4563": {
+    "status": "approved",
+    "patch_sha256": "3b1be2cb877f4af6ff3e2472e8a35bc8d75ba10722ba9a38c1d073735d0ae13c",
+    "review": "两个方向退出同ID可相互修改，给es独立ex_short完整覆盖两条现有退出。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "bs/ss计算未实际用于止损；实际退出为三根后close限价，原意图未改。"
+    ],
+    "validation_cases": [
+      "el与es各自等待barssince>3；空退出提交不覆盖多退出，数量2不变。"
+    ]
+  },
+  "4573": {
+    "status": "approved",
+    "patch_sha256": "1ebcff657e77cacb5ac48cd236b79547532d10b6ce381c78d368ee6be5dbf1fb",
+    "review": "修复日期入口过滤与退出信号解耦，空头在追踪/非追踪两个分支均换ID，未遗漏另一模式。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "追踪分支缺trail_offset，当前仅stop可用，追踪距离设计仍未给出；barsSinceEntry动态历史引用需原生验证。"
+    ],
+    "validation_cases": [
+      "分别isTrailingStop=true/false检查sell独立ID；窗外相反信号仍可触发close而不新开仓。"
+    ]
+  },
+  "4877": {
+    "status": "approved",
+    "patch_sha256": "59b82d9de4e933407e672b566520ce59ec3d9ff42cf10d8a9ad5b16164676ef2",
+    "review": "仅恢复window日期到现有Buy入口，跟踪退出本来没有window门禁。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "entryPrice/stopPrice随Fisher变化而重写，trail_offset=.08为ticks，保护激活设计待确认。"
+    ],
+    "validation_cases": [
+      "窗口外不入Buy但已建退出继续维护；原追踪价格与偏移不改变。"
+    ]
+  },
+  "5062": {
+    "status": "approved",
+    "patch_sha256": "9f16f89b90a639a9a327c1633f88e083e96a5e83db82712b3f205c1cccc15027",
+    "review": "恢复原完整strategy声明和日期窗口，全部多空四种组合退出移除when window，保持参数、50%份额与已有持仓门槛。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "追踪价格初始化采用0/999999且默认模式行为需原生验证，未擅改追踪锚点。"
+    ],
+    "validation_cases": [
+      "StpCri两值×ProCri两值×方向两侧全部检查：窗外不再入场但全部退出仍可维护。"
+    ]
+  },
+  "5236": {
+    "status": "approved",
+    "patch_sha256": "328dbab04302c1a8670226cb7716b8c912f1268fe6fa58f2ad242e7a01e566f8",
+    "review": "时间戳变化不可能等于1毫秒表示一小时；!=0修复小时边界检测，保留现有价格条件。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "小时边界close>upper不等于持续一小时在上轨，卖出qty也不等于注释百分比；设计歧义未改。"
+    ],
+    "validation_cases": [
+      "time60从一个时间戳增3600000时hour_breakout生效；同小时不生效。"
+    ]
+  },
+  "5343": {
+    "status": "approved",
+    "patch_sha256": "f14a0061bae0babdf8f5daaa2ed3b3e40fa76b413931525e75fa0e65f1b21ebe",
+    "review": "恢复原声明和time_cond，LongOnly卖出不再受窗约束，双边cancel及原窗外close_all全部保留。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "LongOnly结束后Sell可退出；Both窗口外取消Long/Short未成交订单并close_all。"
+    ]
+  },
+  "5419": {
+    "status": "approved",
+    "patch_sha256": "dd0cf9599a9f9ac23ce03cf7b47d401bf9bb1f4e125720116b8775171122e871",
+    "review": "已有testPeriod未接入口，给唯一Long添加when使日期实际生效，50%目标保护不受日期限制。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "余下50%没有明确退出及动态目标随close上移，原保护设计待确认。"
+    ],
+    "validation_cases": [
+      "窗前/后不新开Long，已有Long的50%limit仍在窗口外提交。"
+    ]
+  },
+  "5503": {
+    "status": "approved",
+    "patch_sha256": "0862d7968c1be141b8abe6eb3a7c251d43ff63e6a80eb5129e6610dddb6021d8",
+    "review": "恢复date并从exit_condition移除日期门槛，active状态收盘退出继续运行。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "末根入场后越界，满足原ATR或stop_loss条件仍平仓并清active。"
+    ]
+  },
+  "5519": {
+    "status": "approved",
+    "patch_sha256": "29af6fdc6f73c2c0edacf10ec1969333dd261e488593a2b1d3afa44ad1152aad",
+    "review": "恢复is_back_test_time只影响entry，原close条件独立，保持成交重算设置。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "结束后无新entry；已有仓位满足2/3倍bhd_unit条件仍close。"
+    ]
+  },
+  "5583": {
+    "status": "approved",
+    "patch_sha256": "c195437dde1dafc322f323e3c678be62d2a70ae593ccae02316e210ff16b8128",
+    "review": "恢复inDateRange限制两个entry，已有两个close原本无日期条件，方向限制与EMA选择不变。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [],
+    "validation_cases": [
+      "Buy/Sell各自窗外退出仍工作；tradeDirection限制保持，窗口内数量配置不变。"
+    ]
+  },
+  "5741": {
+    "status": "approved",
+    "patch_sha256": "161aded760fcfb3626c33cd92da0ae284c7d393695d0254fc3ef9b6fc2113430",
+    "review": "非更新bar每根重建零数组导致阈值归零；var仅持久保存上次五个水平，不改信号或重算周期。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "更新bar先把fibHigh/Low重置为本根再计算，未利用区间极值；pinbar多空影线方向与通常语义相反，待设计确认。"
+    ],
+    "validation_cases": [
+      "bar_index=20更新后21..39保持相同数组；40仍按原本根高低计算五值。"
+    ]
+  },
+  "5753": {
+    "status": "approved",
+    "patch_sha256": "6613bc7eba2d253b2113bb5f7e263d90615b985e9cb5b947eda023c9011453cc",
+    "review": "仅给Sell保护独立ID，原绝对收盘价保护同次提交，未触碰一目模型。 已阅读全文及相关catalog，以静态控制流和补丁核对审查；未执行原生Pine编译或回测。",
+    "remaining": [
+      "senkouSpanA是和的两期SMA近双倍价，其他一目线亦非典型定义，模型需确认。"
+    ],
+    "validation_cases": [
+      "Buy首次入场同次仍有保护；Sell反转时独立保护ID，公式保持。"
+    ]
+  },
+  "2": {
+    "status": "approved",
+    "patch_sha256": "bd5688b593ea97a4397bcd52a08ea55afc273af6fed692c54f236c14c970b651",
+    "review": "空头风险距离应为高点减入场价，与多头对称；仅修第二比较方向，保留1.00下限与10.40上限。 短侧exit独立命名，from_entry=sell与价格表达式保持，避免与多侧exit共用ID。",
+    "remaining": [
+      "trail_points=low仍混合价格与tick；stop-limit入场意图需原生订单验证。"
+    ],
+    "validation_cases": [
+      "入场100、保护高点111时拒绝；高点105时止损105。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。",
+      "同根执行多空exit时，exit仅绑定buy、Short exit仅绑定sell，不覆盖对方订单。"
+    ]
+  },
+  "1168": {
+    "status": "approved",
+    "patch_sha256": "01c40c9768e93bf48a20b6818d4d29b0a9c6c39ba14efc03a040ccd11b962d30",
+    "review": "恢复v6编译指令，全文的ta/input/color调用与v6相容；无交易逻辑变动。",
+    "remaining": [],
+    "validation_cases": [
+      "首个有效上轨突破仍只建Trade多头，下轨跌破仍关Trade。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "1187": {
+    "status": "approved",
+    "patch_sha256": "688c1b1a4873e1816712a90cb31e1b365abd908a8f49aed570c774eaf8f218e1",
+    "review": "日期输入接入入场，EMA平仓不被日期限制，原close_all仍在窗外运行。",
+    "remaining": [],
+    "validation_cases": [
+      "结束日之后已有Long遇fastEMA下穿仍退出，窗外交叉不得开仓。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "1223": {
+    "status": "approved",
+    "patch_sha256": "482b595193c0d8eb5d61089f6c537b69da46aeec4a9d6499550e29cd2cecb35e",
+    "review": "DMI返回顺序改为DI+、DI-、ADX，ADX阈值由正确第三项控制。",
+    "remaining": [
+      "riskAmount计算仍未用于qty，未改变原默认仓位。"
+    ],
+    "validation_cases": [
+      "DI+=35、DI-=15、ADX=20时不得因35误过25阈值。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "1506": {
+    "status": "approved",
+    "patch_sha256": "a0ff69003d15a4301be14e0aebc6e79ca789c989f50ec1803e9918ce1072e454",
+    "review": "第15格entry修正为Long15与对应close配对；ATR独立长度接入，无网格级数或倍率改动。",
+    "remaining": [
+      "15格与pyramiding=10及手工order标志可能失配；默认FIFO平仓需原生验证。"
+    ],
+    "validation_cases": [
+      "只触发15格后仅Long15开平；MA100/ATR14时ATR按14计算。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "1738": {
+    "status": "approved",
+    "patch_sha256": "18c29f409b46842cc502538b23466c831134cfc0dd606e089a847514ce3dd82c",
+    "review": "起止时间仅限制BUY创建，Short平BUY继续无条件工作，v4语法保持。",
+    "remaining": [],
+    "validation_cases": [
+      "startP前Long忽略，startP后允许；已持仓Short仍平仓。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "1776": {
+    "status": "approved",
+    "review": "平仓ID与实际入场配对并保留50%/100%；旗形状态在失效处理后重新门控突破，避免被拒形态继续下单。",
+    "remaining": [],
+    "validation_cases": [
+      "回撤51%且newHigh与breakoutVolOk均真时不下单。",
+      "有效旗形突破可下单；首次最高量红K关50%，第二次关余量。"
+    ],
+    "patch_sha256": "bed55f22a0b40338967dee91026aab46c322bc094a39011406f7dda368708243"
+  },
+  "1990": {
+    "status": "approved",
+    "patch_sha256": "b46741035326842973eeebc9e989e77a819319b817c20e35e9443eaf9e6d112e",
+    "review": "空头目标从入场价减正ATR风险距离，修复错误负负相消；原倍数不变。",
+    "remaining": [
+      "180按bar计数而非时钟小时，尾部TP调用绕过最短持仓；未擅自选择时长语义。"
+    ],
+    "validation_cases": [
+      "entry100、ATR2、mult1.5、RR2时空头目标94，多头仍106。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "1994": {
+    "status": "approved",
+    "review": "按对应实仓方向持续刷新退出，修复信号消失后不提交保护，避免反手待成交单引用旧方向均价；原百分比与保本判据保持。",
+    "remaining": [
+      "首次成交/反手成交后至下一次策略计算前仍无该方向保护；不承诺入场bar内止损。",
+      "保本条件仍按当前close计算，回落后可退回原SL；未擅改为单向追踪。"
+    ],
+    "validation_cases": [
+      "Long实仓无buySignal仍更新Long Exit；Short待成交时不以Long均价挂Short Exit。",
+      "新Short成交且下一计算均价100时挂shortSL102、shortTP96。"
+    ],
+    "patch_sha256": "0ac9e821d766ce3054e3a0354c35f04131139c04caf3312f7da0bc42ad7d0e67"
+  },
+  "2013": {
+    "status": "approved",
+    "patch_sha256": "018ca64327b88bd217e5f3d94628946655135e6203262bf5e5695efe00590ad0",
+    "review": "open低于ma5时距离必须取ma5-open；0.002绝对点数阈值保持。",
+    "remaining": [
+      "场景1仅盈利退出、场景2仅亏损退出属于原有不对称设计，未扩写。"
+    ],
+    "validation_cases": [
+      "open99、ma5100时场景2为真；open99.999、ma5100时不满足距离。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2094": {
+    "status": "approved",
+    "patch_sha256": "ae6d2dd679c5f49bb5f591439c597412d859faeb3dbbd8dedd02514a47e23787",
+    "review": "使用引擎已平仓+未平仓与胜负计数，避免逐bar累加及累计盈亏代替单笔盈亏。",
+    "remaining": [],
+    "validation_cases": [
+      "持仓10根只计一笔；先赚100后亏20应胜1负1。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2178": {
+    "status": "approved",
+    "patch_sha256": "d08b4c1cd8120411a3bb637bb7ac8849551786e5eb21aeccad017551bc9622e2",
+    "review": "恢复可选结束日，并把退出移出日期门控；持仓止损不再因窗外重置。",
+    "remaining": [],
+    "validation_cases": [
+      "跨结束日已有多头保留最高止损并可退出；关闭USE_ENDTIME后结束日不限制。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2199": {
+    "status": "approved",
+    "patch_sha256": "d7d9cbd74952920f114ca8aee7a78cc84baf8f4a337787858853b4bdbe1a1732",
+    "review": "v2数值inlong延续跨日期边界，只有新买入需要testPeriod，止损及状态继续演进。",
+    "remaining": [
+      "手工inlong与实际成交仍非完全同步；未改撮合假设。"
+    ],
+    "validation_cases": [
+      "窗内入场后窗外stopval跌破stop仍平买，空仓窗外不买。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2251": {
+    "status": "approved",
+    "patch_sha256": "79d47ba77e495e8f27efe0e45b659f3c3c3dc01d72be1f80d7a3277fcffc5f5b",
+    "review": "恢复日期函数，仅限制Buy；Sell平全部保留窗外执行。",
+    "remaining": [],
+    "validation_cases": [
+      "窗外Buy无订单，窗外Sell关闭既有多头。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2324": {
+    "status": "approved",
+    "patch_sha256": "63d90eb5eec894c5c2af66130acc9aa1e54bf14142da56e27d93aa41c56c4be1",
+    "review": "恢复起止日期并将close去缩进，保持longexit的Aroon与LSMA双条件。",
+    "remaining": [],
+    "validation_cases": [
+      "结束日后longexit可平long，long不可新开。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2462": {
+    "status": "approved",
+    "patch_sha256": "5ba4b723feded679486948f40aa74ba5bbb77c4ef47c30d67c7691bd416d19f9",
+    "review": "恢复日期输入，持仓继续更新TSL和退出，else-if新入场显式日期门控。",
+    "remaining": [],
+    "validation_cases": [
+      "窗外低点触及旧TSL时退出，不把止损重新降到low-ATR。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2497": {
+    "status": "approved",
+    "patch_sha256": "ac00df654ade08020a1bdb23f0302b06efa12ecc4c539a0230e35222e09a3e77",
+    "review": "close<=close*0.95对正价格永不成立，改用持仓成本实现原5%损失比较。",
+    "remaining": [
+      "仍为收盘触发市价退出，不是盘中95止损单；加仓后按新均价计算。"
+    ],
+    "validation_cases": [
+      "均价100、close94触发平仓；close96不触发。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2680": {
+    "status": "approved",
+    "patch_sha256": "c52bc6cdc0cd1e8705fc8edad82665469fbab784f600540a71413126b84dc0d0",
+    "review": "日期仅约束开仓，ATR预挂单不撤销，均线退出不再被日期阻断。",
+    "remaining": [],
+    "validation_cases": [
+      "结束后close低于短EMA仍关long；窗外不创建新entry。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "2849": {
+    "status": "approved",
+    "patch_sha256": "4dc5eab5e6fb2f51af463988cf15771c317b4deea374346cdcdbabc698a0bcf3",
+    "review": "唯一开始日输入接入空仓买入条件，不影响三类退出及ATR状态。",
+    "remaining": [
+      "RSI退出额外要求take_profit_long，是否应无条件RSI退出属于设计选择。"
+    ],
+    "validation_cases": [
+      "开始日前RSI低不买，开始后低RSI允许；已有仓位止损不受日期阻挡。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3103": {
+    "status": "approved",
+    "patch_sha256": "0d1226703a8d236d0676677bd2f680c39bba995f63abdfdd882be3efee4fd515",
+    "review": "按注释使用time_close激活起始日期，平仓交叉解除日期条件，未修改方向选项。",
+    "remaining": [
+      "非时间图实时time_close可能na；适用图表类型需说明。"
+    ],
+    "validation_cases": [
+      "startDate之前不置入场信号；到起始边界后正常多空交叉。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3210": {
+    "status": "approved",
+    "patch_sha256": "2eb240b2e91f7fa2279f0d417d86956c8b47946dc80a25e49f199c9ff124deb6",
+    "review": "退出改为持多仓后持续调用，使一次交叉之后可用成交均价建立保护；无参数改动。",
+    "remaining": [
+      "默认只收盘计算，首笔成交bar在下一次计算前尚无有效保护；原源码已有此缺陷。"
+    ],
+    "validation_cases": [
+      "交叉当根均价na，次根实仓均价100应挂101.5/99；后续无交叉仍保留。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3251": {
+    "status": "approved",
+    "patch_sha256": "a3e0e767c3b25851435f6c8cd03c1bfb103d2770a42eaf600cae9bf42ab103e8",
+    "review": "日期仅门控entry，已有多头窗外仍检查最高价退出；不改变Connors条件。",
+    "remaining": [
+      "窗外持仓conditionMet仍可能画入场箭头但无订单。"
+    ],
+    "validation_cases": [
+      "窗内Buy跨到窗外后close>exit仍平仓；窗外conditionMet不下Buy。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3418": {
+    "status": "approved",
+    "patch_sha256": "22ef231bffbd9b3085264ab442296a8a73b424473a763976b980ab567b345c15",
+    "review": "合并四分支保留RSI/MRSI与止损开关，日期约束entry且持仓stop持续计算。",
+    "remaining": [
+      "首笔入场均价na，到成交后下一次计算前无有效保护；未改变订单成交重算设置。"
+    ],
+    "validation_cases": [
+      "MRSI关闭只需RSI与长均线；窗外持仓仍按stop_level退出。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3425": {
+    "status": "approved",
+    "patch_sha256": "19a2e9b62b9df16d18b8f595e926bef377eac0b0e9cb425ca607ca7e57704416",
+    "review": "函数返回pivot_high/pivot_low，绑定阻力/支撑纠正，与后续突破方向一致。",
+    "remaining": [
+      "pivot值未持久化，常为na且exit同时要求两值有效；日线数据在图表周期上求pivot的设计尚未修改。"
+    ],
+    "validation_cases": [
+      "确认高点120低点100时long比较120，short比较100。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3460": {
+    "status": "approved",
+    "patch_sha256": "46b96a5902f73a1c63b357b0b50344b5929fc80a9a19ff6d4d4c987e6859c659",
+    "review": "接入已声明开始时间，仅门控golden开仓；三个退出保留。",
+    "remaining": [],
+    "validation_cases": [
+      "开始日前to_long为真不买，之后允许；已持仓10%亏损仍平。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3552": {
+    "status": "approved",
+    "patch_sha256": "4e9cdbdf2e8801054109109303bb1aa018613b253b301ad401edf870a1adb588",
+    "review": "仅纠正v4编译指令，均值回归条件及百分比不变。",
+    "remaining": [],
+    "validation_cases": [
+      "shortMA下穿buyMA买入，上穿bigMA平仓。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3553": {
+    "status": "approved",
+    "patch_sha256": "783aa4c08af5abb07296193fcc10e5771ad6f1557b0a11e7f8f29d7f1abb95eb",
+    "review": "window恢复日期，sell保持窗外触发；只在窗内允许反手Short，窗外转为关Long。",
+    "remaining": [
+      "原Short无独立止盈止损，窗外buy被禁也不能反手平Short；需确定Short退出政策。"
+    ],
+    "validation_cases": [
+      "enableShorts=true且窗外SHORT信号应只平Long不建Short。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3594": {
+    "status": "approved",
+    "patch_sha256": "7e6b21bfad6f3cce291467132f87b5de8d796218e1cbf1897eae63d232d4f2f2",
+    "review": "损坏的孤立SMA函数体封装为合法calc_sma；未调用函数不会影响md/sb交易序列。",
+    "remaining": [
+      "未运行TradingView原生编译。"
+    ],
+    "validation_cases": [
+      "MACD上穿仍Buy、下穿仍close；全文不再存在顶层未定义len函数体。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3599": {
+    "status": "approved",
+    "patch_sha256": "e7164aeb26f9659ffb70e396e74551068764f2af50fcf90592fd5f70177c9a02",
+    "review": "恢复v4指令，KAMA与可选三退出公式保持。",
+    "remaining": [],
+    "validation_cases": [
+      "同一KAMA序列生成相同long/longClose布尔表达式。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "3848": {
+    "status": "approved",
+    "patch_sha256": "9bf4b445d8860ca746102b1bc5b6667b1e5c50529f2bd20f0a16ebdfde0d1010",
+    "review": "把同一Long的TP与SL合为同一个括号单，解除前一exit预留全部数量导致止损无量。",
+    "remaining": [
+      "首成交bar尚未到持仓计算前仍无保护，属于原行为。"
+    ],
+    "validation_cases": [
+      "均价100挂125与90，任一成交应关闭全部并取消同组另一单。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4001": {
+    "status": "approved",
+    "review": "三个交易门控改用实仓，修复发单当根伪布尔复位导致永久不止盈和持仓覆盖entryPrice；空头目标下移5%，原信号收盘锚保留。",
+    "remaining": [
+      "止盈仍在close达到目标后才提交限价单，并非入场预挂；信号close与实际成交价可有滑点。"
+    ],
+    "validation_cases": [
+      "putSignal信号收盘100，下bar成交后无新信号且close95，仍提交Put止盈95。",
+      "持多/空期间反向信号不改entryPrice、不反手；平仓后新信号可再次入场。"
+    ],
+    "patch_sha256": "77a98405512ae03928bafe7ac8fd06d0f925229864d282e1401b46447e84503e"
+  },
+  "4127": {
+    "status": "approved",
+    "patch_sha256": "b0649eb3096e61c25b410798b8e98b68cf53aa80fad033b6d517bcae51ea104d",
+    "review": "日期恢复后沿用持仓标志让窗外退出继续工作，新entry有独立日期门控。",
+    "remaining": [
+      "手工持仓标志仍假设订单成交；不改变历史撮合行为。"
+    ],
+    "validation_cases": [
+      "窗内bPositionOpened为true跨窗后跌破stopLossPrice仍关myPosition。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4134": {
+    "status": "approved",
+    "review": "四个exit明确from_entry并按实仓方向持续计算，不再依赖原入场信号重现；保留均价与动态ATR公式。",
+    "remaining": [
+      "首次成交至下一次计算前保护空窗仍存在；ATR随bar变化仍会移动止损/止盈。"
+    ],
+    "validation_cases": [
+      "Koop Range一根信号成交后次根信号为false，仍由Verkoop Range保护，其他from_entry不占其数量。",
+      "Short Range仓仅由空头价差保护，不以旧多仓均价向待成交Short挂单。"
+    ],
+    "patch_sha256": "38a771c6d5cc0f781e7fba060ddeaaa69ecbf3d24b0904f1e93a40f0c218b8dc"
+  },
+  "4215": {
+    "status": "approved",
+    "patch_sha256": "4f4647700a03d5d2f28f9cc1c98bcf0be60ecaef16a5c7d69268915dcd39c9e1",
+    "review": "日线EMA请求取消未偏移lookahead_on，修复低周期历史bar提前读取未来日线收盘。",
+    "remaining": [
+      "lookahead_off实时仍使用未确认日线EMA，不能承诺不重绘；重复bullishEntry会重置目标/最高价。"
+    ],
+    "validation_cases": [
+      "日内首小时不得取得本日最终EMA；到日线收盘才有历史确认值。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4221": {
+    "status": "approved",
+    "patch_sha256": "0ac6364ce39f3a0bbcdb174da700ed16f5061189ab8470cc4222c00d5a2e02c4",
+    "review": "trail_points与trail_offset需要tick数，除mintick保留1.5ATR价格距离，不改激活倍数。",
+    "remaining": [
+      "longStopLoss计算未用于硬止损，激活前无硬保护；positionSize风险假设不等于实得亏损上限。"
+    ],
+    "validation_cases": [
+      "ATR2、mintick0.01时两个参数为300tick即价格3；mintick1时为3。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4236": {
+    "status": "approved",
+    "patch_sha256": "f27a3d495cf3c8efdfb9b765d184ee0946bd8621dbd1643e5468f21b44a140fd",
+    "review": "ta.bb返回中轨、上轨、下轨，改正绑定后附加信号与上轨绘制正确。",
+    "remaining": [
+      "Sell ID无入场且qty_percent=1的close无效，但真实sellSignal仍关闭Buy；未猜测做空意图。"
+    ],
+    "validation_cases": [
+      "basis100、upper110、lower90应分别绑定，附加卖出比较110。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4271": {
+    "status": "approved",
+    "patch_sha256": "33fa6eac18f36a0f44e037ff24f978189750edd7b2c4223ecf3e2ef82c43f214",
+    "review": "已计算绝对价格改传stop/limit，避免将价格当tick距离；多空百分比保留。 短侧独立exit ID，避免同根调用修改多侧退出。",
+    "remaining": [
+      "首笔均价na空窗及反手时旧均价引用仍需原生验证。"
+    ],
+    "validation_cases": [
+      "均价100、SL2%/RR1.5时Long stop98 limit103、Short stop102 limit97。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。",
+      "两方向exit拥有不同ID且各自from_entry仍为Long/Short。"
+    ]
+  },
+  "4332": {
+    "status": "approved",
+    "patch_sha256": "b27d8663b060ccdea9c7afe89b2921d0c6d3aed7476b2ba7ffe8de1ac6471a82",
+    "review": "恢复v5和日期，慢VMA独立使用length2，平仓及close_all不被窗外阻断。",
+    "remaining": [
+      "VMA平坦序列分母为零及SMMA初值为0仍属原实现风险。"
+    ],
+    "validation_cases": [
+      "length10/length2200时慢VMA极值看200；结束后已有Long可关闭。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4393": {
+    "status": "approved",
+    "patch_sha256": "74a67f7f13d3520f11e929f47dd0bbd3fd53b46249c17515410c0b5003b38f02",
+    "review": "恢复可选结束日，持仓TSL状态保留并可退出，所有新增/加仓由within_timeframe约束。",
+    "remaining": [],
+    "validation_cases": [
+      "跨结束后低点击穿既有TSL时关仓；窗外波动收缩不再加仓。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4534": {
+    "status": "approved",
+    "patch_sha256": "a32a7436ba471120b4fbaaec449e50bcc214e1f39a01444b7ca36b2303bfb5e3",
+    "review": "HA低点应取maLow、haClose、haOpen三者最小值，修复绘制低点高于开盘问题。",
+    "remaining": [
+      "补丁只影响图形，买卖仍基于HA实体趋势。"
+    ],
+    "validation_cases": [
+      "maLow100、haClose105、haOpen95时haLow应95。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4705": {
+    "status": "approved",
+    "patch_sha256": "258e5929aa16f35043b8f422276fb1da52067c67cfddc62533754fc0fa448829",
+    "review": "入口开关接入真正strategy.entry条件，原信号/ATR倍数不变。",
+    "remaining": [
+      "持仓重复形态仍覆盖entryLongPrice1并移动目标/止损；是否冻结属设计选择。"
+    ],
+    "validation_cases": [
+      "entryCondition1=false时即使swingLow为真也不能下Long。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4815": {
+    "status": "approved",
+    "patch_sha256": "df13a2031e9abdf3dba1167af9c12a2055bcf454630a4ded3c966f51e9ea6e77",
+    "review": "每次持仓以实际均价更新该方向记录，直接反手后同方向再次进入不再沿用第一笔价格。",
+    "remaining": [
+      "首次成交至下一次收盘计算仍有保护空窗；ATR继续随bar变化。"
+    ],
+    "validation_cases": [
+      "Long100→Short90→Long120无空仓bar时最后longEntryPrice为120。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "4868": {
+    "status": "approved",
+    "patch_sha256": "39666acb6e10fb473abda96066a856fe3023a9b0e77cd02a7bb8ce06e7d95526",
+    "review": "恢复日期窗并限制新开/反手，持仓窗外继续所有退出；四个价格和方向时间锚点仅由窗内有效信号更新，消除无实际入场的窗外信号污染存量保护。v2历史递归语法保持。",
+    "remaining": [
+      "锚价仍取信号bar的open而非实际成交均价；窗内信号与实际成交可能不一致，未改变原撮合假设。"
+    ],
+    "validation_cases": [
+      "窗内Long锚100，结束日后先short_signal再long_signal且open120，Long锚仍100，原in_long方向继续，last_high可抬升。",
+      "窗外long_sl/long_tp/long_call满足时仍关闭Long，但不创建Short或Long新仓。",
+      "窗内原信号仍按open/time记录锚点，原RSI原始信号及追踪极值连续计算。"
+    ]
+  },
+  "4962": {
+    "status": "approved",
+    "patch_sha256": "68bc6c3c73aabe0bb91b0d46352e7d0f18756802e728cc0518e191c0df2f51c4",
+    "review": "日期仅限制entry，TSL持仓不重置，窗外保留止损和报警执行。",
+    "remaining": [],
+    "validation_cases": [
+      "窗外高成交量条件不能加仓，但low<=stop_loss_price仍退出。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5054": {
+    "status": "approved",
+    "patch_sha256": "4aca15c5d7e98f3d17261db80e4e6820a9f8f6b56a09ccf0063239b98fbb9ef5",
+    "review": "window恢复日期且卖出解除日期限制，MA与ADX/DI条件保持。",
+    "remaining": [],
+    "validation_cases": [
+      "finish后sell_time为真仍关闭L，buy_time不建L。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5078": {
+    "status": "approved",
+    "patch_sha256": "20f540669868edbeea3bb7ca91de51d2d4fa2118a05cbd3144a3e8241a0b0662",
+    "review": "日期接入entry并解除exit门控，原窗外close_all继续执行。",
+    "remaining": [
+      "DEMA/TEMA/LSMA在选项中但ma函数未实现，选择后返回na；不应宣称全部选项可用。"
+    ],
+    "validation_cases": [
+      "窗外exit信号关long，且无新buy订单。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5218": {
+    "status": "approved",
+    "patch_sha256": "69446ad67479eb6673e418a69a986d7a3171112d6afd8e04f0c095561441afaa",
+    "review": "用实际持仓方向取代失配标志，允许反手后再反手；同次入场SL/TP预挂保持。",
+    "remaining": [
+      "美元金额仍直接作为价格距离，合约点值/数量口径需明确；未擅改原1.25/37.5。"
+    ],
+    "validation_cases": [
+      "Long→Short→Long连续交叉且无空仓bar应三次合法变向。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5335": {
+    "status": "approved",
+    "patch_sha256": "39ae431a396db56af62518124c307ea25f5c86493e89c4807d8626658b2fe31c",
+    "review": "TrendDown重置使用上方DOWN带，平多不再受日期零散字段门控，原BUY撤单仍在else。",
+    "remaining": [
+      "入场日期仍为年/月/日独立比较，跨年范围语义非连续时间窗，需单独设计确认。"
+    ],
+    "validation_cases": [
+      "上根价格高于TrendDown时新TrendDown=hlc3+FactorATR；窗外shortCond平BUY。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5391": {
+    "status": "approved",
+    "patch_sha256": "891d46cb80b36f46c1cd5dd9803e4b9ba882b265955dbcb7d63c91f44dc3e565",
+    "review": "TP/SL合并消除全量预留冲突；2R目标改为close+2*(close-SL)，维持注释2:1意图。",
+    "remaining": [
+      "重复longSignal仍重设SL/TP；length输入未使用而最低点固定7。"
+    ],
+    "validation_cases": [
+      "close100、SL95时TP110且SL95共同保护同一Long全部数量。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5613": {
+    "status": "approved",
+    "patch_sha256": "fac3a693802a09527ea4bb5297706351cba973d99eee6e5d24cd4baa1d6d020f",
+    "review": "日期开关实际接入，关闭开关即不限日期；出场交叉保持窗外有效。",
+    "remaining": [],
+    "validation_cases": [
+      "useDateFilter=false时窗外entry允许；true时禁止，但既有Long Entry仍可退出。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "5678": {
+    "status": "approved",
+    "patch_sha256": "0a2d3ee4ec520422e9d556b531d8a729bfddee2d635d17839c065e99a877e9da",
+    "review": "结束时间改用End年月日，函数接入真实区间并约束simpleBuy；simpleBuy平仓保持窗外。",
+    "remaining": [],
+    "validation_cases": [
+      "Start2000/End2018时2010允许买，2019不得买且可按dcAverage退出。",
+      "仅全文静态复核；未执行原策略、原生编译、回测或券商操作。"
+    ]
+  },
+  "146": {
+    "status": "approved",
+    "review": "真实空仓门控入场与entryDay更新，避免持仓重复信号将退出锁定日期移到今天；原日期比较及紧急止损不变。",
+    "remaining": [
+      "信号日期仍是发单日期而非下一bar成交日期；未改原同日交易政策。"
+    ],
+    "validation_cases": [
+      "昨天入场、今天持仓时再次longCondition，不更新entryDay；今天closeCondition可平仓。",
+      "空仓原longCondition仍可入场；同日dropCondition仍强制退出。"
+    ],
+    "patch_sha256": "782cda9a72a33be2f8fea01897dbeecadc607c3f7cbfe0749da1fc14c944b390"
+  },
+  "325": {
+    "status": "approved",
+    "review": "短侧退出改为独立ID，保持Long/Short各自from_entry与原ATR价差，避免跨方向更新同名退出。",
+    "remaining": [
+      "信号消失后限价entry未撤销，反向挂单也未设互斥；需要明确信号有效期。",
+      "均价na与反手旧方向均价的首次保护空窗/价位仍需原生验证。"
+    ],
+    "validation_cases": [
+      "Long Stop Loss/TP与Short Stop Loss/TP各自只关联对应入场；ATR倍数不变。"
+    ],
+    "patch_sha256": "fe0c1c05aeb2af410cdd6b6a3a86a84088342d99be299291ecb76bf33fbb3a11"
+  },
+  "71": {
+    "status": "approved",
+    "review": "已全文核对锤头与流星多空入场及ATR退出；短侧采用独立退出ID，消除双侧同名exit互相修改风险，from_entry、动态价格、仓位与信号保持。",
+    "remaining": [
+      "退出价格仍随每根low/high/close/ATR变化，未固定到成交价；属于原动态设计。"
+    ],
+    "validation_cases": [
+      "Hammer Buy对应Take Profit / Stop Loss，ShootingStar Sell对应Short Take Profit / Stop Loss；同根调用不复用ID。",
+      "close100、ATR2、low98/high102时多头stop95/limit105，空头stop105/limit95保持不变。"
+    ],
+    "patch_sha256": "a6bff4cd40edc738829501413eeedb104f21f88c7cd06101cbe0fa3920877d05"
+  }
+}

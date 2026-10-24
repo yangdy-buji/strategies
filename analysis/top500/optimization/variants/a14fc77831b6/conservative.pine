@@ -1,0 +1,67 @@
+//@version=6
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：动量突破旗形模式交易策略基于量价确认的日内高频交易系统-Momentum-Breakout-Flag-Pattern-Trading-Strategy-Volume-Price-Confirmed-Intraday-High-Frequency-Trading-System.md
+// 原文件SHA256：97aeb38dab11c43d2fd5e39c0745cb9954f4c6be136351421008c3dd82ea2910
+// SID：1776；原研究名单序号：127
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-03-26 00:00:00
+end: 2025-03-25 00:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"ETH_USDT"}]
+*/
+strategy(title="Small Cap Bull Flag Pattern Trader v2", shorttitle="BullFlag_1L", overlay=true)
+// (1) INPUTS & VARIABLES
+impulseATRMultiplier=input.float(2.0,"Impulse:Min Candle Range in ATR"),impulseVolumeMultiplier=input.float(1.5,"Impulse:Vol vs. Avg"),avgVolLen=input.int(20,"Vol SMA Len"),atrLen=input.int(14,"ATR Len"),maxPullbackPct=input.float(50.0,"Max Pullback(%)"),maxPullbackBars=input.int(5,"Max Pullback Bars"),breakoutVolumeMult=input.float(1.0,"Breakout Vol vs. Avg"),rrRatio=input.float(2.0,"R:R Target")
+bool sessActive=not na(time(timeframe.period,"0930-1200"))
+var bool inFlag=false,var bool partialExitUsed=false,var float flagImpulseHigh=0.0,flagImpulseLow=0.0,pullbackLow=0.0,var float maxVolSinceEntry=0.0
+var int pullbackBars=0
+// (2) INDICATORS
+volAvg=ta.sma(volume,avgVolLen),atrVal=ta.atr(atrLen),candleRange=high-low,isImpulseBar=close>open and candleRange>=impulseATRMultiplier*atrVal and volume>=impulseVolumeMultiplier*volAvg
+// (3) IMPULSE DETECTION
+if barstate.isnew and isImpulseBar and sessActive
+    inFlag:=true,flagImpulseHigh:=high,flagImpulseLow:=low,pullbackLow:=low,pullbackBars:=0
+// (4) FLAG,PULLBACK,BREAKOUT
+if inFlag and sessActive
+    pullbackBars+=1,pullbackLow:=math.min(pullbackLow,low),retracementPct=(flagImpulseHigh-pullbackLow)/(flagImpulseHigh-flagImpulseLow)*100
+    inFlag:=retracementPct>maxPullbackPct or pullbackBars>maxPullbackBars?false:inFlag
+    newHigh=high>high[1],breakoutVolOk=volume>=breakoutVolumeMult*volAvg and volume>100000
+    // OPT-1776-03：旗形在本块因回撤或超时失效后，入场须重新确认inFlag，不能继续突破下单。
+    // OPT-1776-03 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
+    // OPT-1776-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    if inFlag and newHigh and breakoutVolOk
+        strategy.entry("Long Flag Breakout",strategy.long)
+        stopLevel=pullbackLow,approxEntry=close,risk=approxEntry-stopLevel,target=approxEntry+rrRatio*risk
+        strategy.exit("StopTargetExit","Long Flag Breakout",stop=stopLevel,limit=target)
+        partialExitUsed:=false,maxVolSinceEntry:=volume
+        inFlag:=false
+// (5) PARTIAL EXIT ON HIGHEST-VOLUME RED CANDLE
+posSize=strategy.position_size
+if posSize>0
+    // Update maxVolSinceEntry each bar while in a trade
+    float oldMaxVol=maxVolSinceEntry
+    maxVolSinceEntry:=math.max(maxVolSinceEntry,volume)
+    // If we have a NEW highest volume (volume>oldMaxVol) AND candle is red (close<open)
+    newMaxVol=(volume>oldMaxVol) and (close<open)
+    if newMaxVol
+        if not partialExitUsed
+            // First big red candle => exit 50%
+            // OPT-1776-01：strategy.close首参必须是入场ID，现与实际入场不匹配。
+            // OPT-1776-01 保持：原参数、信号与仓位
+            // OPT-1776-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+            strategy.close("Long Flag Breakout",comment="PartialVolExit",qty_percent=50)
+            partialExitUsed:=true
+        else
+            // Second big red candle => exit remainder
+            // OPT-1776-02：strategy.close首参必须是入场ID，现与实际入场不匹配。
+            // OPT-1776-02 保持：原参数、信号与仓位
+            // OPT-1776-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+            strategy.close("Long Flag Breakout",comment="FullVolExit",qty_percent=100)
+// (6) PLOTS
+plotshape(isImpulseBar,style=shape.triangleup,color=color.new(color.lime,0),size=size.tiny,title="Impulse Bar")
+plot(inFlag?flagImpulseHigh:na,color=color.yellow,style=plot.style_line,linewidth=2,title="Impulse High")
+plot(inFlag?pullbackLow:na,color=color.teal,style=plot.style_line,linewidth=2,title="Pullback Low")

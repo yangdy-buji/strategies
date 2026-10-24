@@ -1,0 +1,68 @@
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于双移动平均线交叉的回调入场策略EintSimple-Pullback-Strategy.md
+// 原文件SHA256：256e60aced2641ca55fa0a1b2aeda968117d15fed543982af4e68c0afaf9b6b8
+// SID：3172；原研究名单序号：292
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-12-01 00:00:00
+end: 2023-12-31 23:59:59
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © ZenAndTheArtOfTrading / www.PineScriptMastery.com
+// @version=5
+strategy("Simple Pullback Strategy", 
+     overlay=true, 
+     initial_capital=50000,
+     default_qty_type=strategy.percent_of_equity, 
+     default_qty_value=100)// 100% of balance invested on each trade
+
+// Get user input
+i_ma1           = input.int(title="MA 1 Length", defval=75, step=1, group="Strategy Parameters", tooltip="Long-term EMA")
+i_ma2           = input.int(title="MA 2 Length", defval=9, step=1, group="Strategy Parameters", tooltip="Short-term EMA")
+i_stopPercent   = input.float(title="Stop Loss Percent", defval=0.10, step=0.1, group="Strategy Parameters", tooltip="Failsafe Stop Loss Percent Decline")
+i_lowerClose    = input.bool(title="Exit On Lower Close", defval=true, group="Strategy Parameters", tooltip="Wait for a lower-close before exiting above MA2")
+i_startTime     = input(title="Start Filter", defval=timestamp("01 Jan 1995 13:30 +0000"), group="Time Filter", tooltip="Start date & time to begin searching for setups")
+i_endTime       = input(title="End Filter", defval=timestamp("1 Jan 2099 19:30 +0000"), group="Time Filter", tooltip="End date & time to stop searching for setups")
+
+// Get indicator values
+ma1 = ta.ema(close, i_ma1)
+ma2 = ta.ema(close, i_ma2)
+
+// Check filter(s)
+// OPT-3172-01：恢复入场时间窗。
+// OPT-3172-01 保持：均线、退出及默认风险参数保留。
+// OPT-3172-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+f_dateFilter = time >= i_startTime and time <= i_endTime
+
+// Check buy/sell conditions
+var float buyPrice = 0
+buyCondition    = close > ma1 and close < ma2 and strategy.position_size == 0 and f_dateFilter
+sellCondition   = close > ma2 and strategy.position_size > 0 and (not i_lowerClose or close < low[1])
+stopDistance    = strategy.position_size > 0 ? ((buyPrice - close) / close) : na
+stopPrice       = strategy.position_size > 0 ? buyPrice - (buyPrice * i_stopPercent) : na
+stopCondition   = strategy.position_size > 0 and stopDistance > i_stopPercent
+
+// Enter positions
+if buyCondition
+    strategy.entry(id="Long", direction=strategy.long)
+
+if buyCondition[1]
+    buyPrice := open
+
+// Exit positions
+if sellCondition or stopCondition
+    strategy.close(id="Long", comment="Exit" + (stopCondition ? "SL=true" : ""))
+    buyPrice := na
+
+// Draw pretty colors
+plot(buyPrice, color=color.lime, style=plot.style_linebr)
+plot(stopPrice, color=color.red, style=plot.style_linebr, offset=-1)
+plot(ma1, color=color.blue)
+plot(ma2, color=color.fuchsia)

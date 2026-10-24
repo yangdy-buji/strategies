@@ -1,0 +1,95 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：移动平均线回抽策略Snap-Back-Moving-Average-Counter-trend-Strategy.md
++// 原文件SHA256：5d80e10d06600787bc67e08f8aa2317137e91dbae314819d16cab4cfbc1206b5
++// SID：5062；原研究名单序号：473
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-10-22 00:00:00
+ end: 2022-12-14 00:00:00
+@@ -5,9 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+-
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © MakeMoneyCoESTB2020
+ 
+@@ -43,7 +49,10 @@
+ // 1. Define Strategy Variables*************************************************************************************************************************************************************************
+ 
+ //Title
+-// strategy("SNAP BACK 2.0 Strategy", shorttitle="SNAP Back 2.0", default_qty_type=strategy.percent_of_equity, default_qty_value=5, initial_capital=20000,slippage=2, currency=currency.USD, overlay=true)
++// OPT-5062-01：恢复源码中已存在的策略声明，不更改其参数。
++// OPT-5062-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-5062-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy("SNAP BACK 2.0 Strategy", shorttitle="SNAP Back 2.0", default_qty_type=strategy.percent_of_equity, default_qty_value=5, initial_capital=20000,slippage=2, currency=currency.USD, overlay=true)
+ 
+ //Define calculations price source
+ price = input(title="Price Source", defval=close)
+@@ -87,7 +96,10 @@
+ // === FUNCTION EXAMPLE ===
+ start     = timestamp(fromYear, fromMonth, fromDay, 00, 00)        // backtest start window
+ finish    = timestamp(thruYear, thruMonth, thruDay, 23, 59)        // backtest finish window
+-window()  => true       // create function "within window of time"
++// OPT-5062-02：恢复用户设定的交易窗口。
++// OPT-5062-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-5062-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++window()  => time >= start and time <= finish       // create function "within window of time"
+ 
+ bgcolor(color = showDate and window() ? color.gray : na, transp = 90) 
+ 
+@@ -191,30 +203,33 @@
+ 
+ 
+ //exit position conditions and orders
++// OPT-5062-03：所有持仓保护脱离日期入场窗口。
++// OPT-5062-03 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-5062-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+ if strategy.position_size > 0 //long side exit conditions
+     if StpCri=="SL" and ProCri=="TGT%"
+-        strategy.exit(id="Close Long", when = window(), stop=longStop, limit=longTake)// sell when either the TGT or the SL is hit
++        strategy.exit(id="Close Long", stop=longStop, limit=longTake)// sell when either the TGT or the SL is hit
+     if StpCri=="SL" and ProCri=="MD_EMA"
+-        strategy.exit(id="Close Long (50%)", when = window(), stop=longStop, limit=MD_EMA_percent*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SL then transition to a trailing stop loss
+-        strategy.exit(id="Close Long Trailing Stop", when = window(), stop=longStopPrice, qty_percent=100)
++        strategy.exit(id="Close Long (50%)", stop=longStop, limit=MD_EMA_percent*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SL then transition to a trailing stop loss
++        strategy.exit(id="Close Long Trailing Stop", stop=longStopPrice, qty_percent=100)
+     if StpCri=="SH_EMA" and ProCri=="MD_EMA"
+-        strategy.exit(id="Close Long (50%)", when = window(), stop=SH_EMA*SH_EMA_percent, limit=MD_EMA_percent*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SH_EMA hit then transition to a trailing stop loss
+-        strategy.exit(id="Close Long Trailing Stop", when = window(), stop=longStopPrice, qty_percent=100)
++        strategy.exit(id="Close Long (50%)", stop=SH_EMA*SH_EMA_percent, limit=MD_EMA_percent*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SH_EMA hit then transition to a trailing stop loss
++        strategy.exit(id="Close Long Trailing Stop", stop=longStopPrice, qty_percent=100)
+     if StpCri=="SH_EMA" and ProCri=="TGT%"
+-        strategy.exit(id="Close Long", when = window(), stop=SH_EMA*SH_EMA_percent, limit=longTake)// sell when either the TGT or the SH_EMA is hit
++        strategy.exit(id="Close Long", stop=SH_EMA*SH_EMA_percent, limit=longTake)// sell when either the TGT or the SH_EMA is hit
+         
+         
+ if strategy.position_size < 0 //short side exit conditions
+     if StpCri=="SL" and ProCri=="TGT%"
+-        strategy.exit(id="Close Short", when = window(), stop=shortStop, limit=shortTake)// sell when either the TGT or the SL is hit
++        strategy.exit(id="Close Short", stop=shortStop, limit=shortTake)// sell when either the TGT or the SL is hit
+     if StpCri=="SL" and ProCri=="MD_EMA"
+-        strategy.exit(id="Close Short (50%)", when = window(), stop=shortStop, limit=(2-MD_EMA_percent)*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SL then transition to a trailing stop loss
+-        strategy.exit(id="Close Short Trailing Stop", when = window(), stop=shortStopPrice, qty_percent=100)
++        strategy.exit(id="Close Short (50%)", stop=shortStop, limit=(2-MD_EMA_percent)*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SL then transition to a trailing stop loss
++        strategy.exit(id="Close Short Trailing Stop", stop=shortStopPrice, qty_percent=100)
+     if StpCri=="SH_EMA" and ProCri=="MD_EMA"
+-        strategy.exit(id="Close Short (50%)", when = window(), stop=SH_EMA*(2-SH_EMA_percent), limit=(2-MD_EMA_percent)*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SH_EMA hit then transition to a trailing stop loss
+-        strategy.exit(id="Close Short Trailing Stop", when = window(), stop=shortStopPrice, qty_percent=100)
++        strategy.exit(id="Close Short (50%)", stop=SH_EMA*(2-SH_EMA_percent), limit=(2-MD_EMA_percent)*MD_EMA, qty_percent=50)// sell 50% when MD_EMA hit or SH_EMA hit then transition to a trailing stop loss
++        strategy.exit(id="Close Short Trailing Stop", stop=shortStopPrice, qty_percent=100)
+     if StpCri=="SH_EMA" and ProCri=="TGT%"
+-        strategy.exit(id="Close Short", when = window(), stop=SH_EMA*(2-SH_EMA_percent), limit=shortTake)// sell when either the TGT or the SH_EMA is hit
++        strategy.exit(id="Close Short", stop=SH_EMA*(2-SH_EMA_percent), limit=shortTake)// sell when either the TGT or the SH_EMA is hit
+ 
+ 
+ 

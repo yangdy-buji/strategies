@@ -1,0 +1,62 @@
+//@version=4
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于EMA指标的趋势跟踪策略EMA-Crossover-Trend-Following-Strategy.md
+// 原文件SHA256：2bc4ac72d2bd702f1bd450c7d23900c0e403b4341af5d4530a5262663f59468a
+// SID：2687；原研究名单序号：163
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-12-20 00:00:00
+end: 2023-12-26 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("EMA交叉策略by GPT",
+     format = format.inherit,
+     overlay = true,
+     default_qty_type= strategy.percent_of_equity,
+     default_qty_value = 100,
+     currency = currency.USD,
+     initial_capital = 1000000)
+
+
+// 定義回測交易開始和結束時間的變數
+start_time = input(title="開始時間", type=input.time, defval=timestamp("01 Jan 2020 00:00 +0000"))
+end_time = input(title="結束時間", type=input.time, defval=timestamp("31 Dec 2050 23:59 +0000"))
+
+
+// 判斷是否在回測交易時間範圍內
+// OPT-2687-01：恢复时间输入。
+// OPT-2687-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-2687-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+in_range = time >= start_time and time <= end_time
+
+
+// Define input variables
+fast_length = input(title="Fast EMA Length", type=input.integer, defval=5)
+slow_length = input(title="Slow EMA Length", type=input.integer, defval=20)
+
+
+// Define EMAs
+fast_ema = ema(close, fast_length)
+slow_ema = ema(close, slow_length)
+
+
+// Define buy and sell signals
+buy_signal = crossover(fast_ema, slow_ema)
+sell_signal = crossunder(fast_ema, slow_ema)
+
+
+// Buy signal
+if in_range and buy_signal
+    strategy.entry("Buy", strategy.long, when=in_range)
+   
+// Sell signal
+// OPT-2687-02：解除平仓的日期限制。
+// OPT-2687-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-2687-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if sell_signal
+    strategy.close("Buy", when=sell_signal)
