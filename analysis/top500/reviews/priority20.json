@@ -1,0 +1,1281 @@
+[
+  {
+    "filename": "动态阈值价格变化突破策略-Dynamic-Threshold-Price-Change-Breakout-Strategy.md",
+    "source_sha256": "a999081d483ae618481f9f959b6237f1140b1a733175b62a1373c9755d1f679d",
+    "principle": "固定单根收益率触发的只做多策略：单根收盘上涨至少10%才买入，下跌至少10%或跌破信号时冻结的六根低点才退出；代码没有动态阈值估计。",
+    "entry_explanation": [
+      "priceChange=close/close[1]-1；达到change且手工position为na或-1时发出Long市价入场。",
+      "卖出条件是收益率≤-change且手工状态为na或1；该分支只平多，没有开空或反手。"
+    ],
+    "exit_explanation": [
+      "买信号时stop记录lowest(low,6)，包含当前信号K线，此后不逐根上移。",
+      "sell_condition或low<stop时strategy.close(\"Long\")并将状态置-1；这是条件触发市价平仓，不是预置止损挂单，触及等号不退出。",
+      "没有止盈、时间退出或真实日期/时段过滤；backtest日期只是注释。"
+    ],
+    "position_explanation": [
+      "quantity和资金模式未声明，依赖平台属性；没有显式加仓。",
+      "手工position在发单即改变，未读取实际成交状态；平仓后stop未清空，后续低点仍可反复触发close。"
+    ],
+    "parameter_explanation": [
+      "唯一input change=0.1，范围0.0001～1，表示10%而非0.1%；止损窗口固定6根。",
+      "未设置calc_on_order_fills或calc_on_every_tick，同K成交后重算未开启。"
+    ],
+    "strengths": [
+      "单根涨幅和固定参考低点都有可复核的价格依据。"
+    ],
+    "weaknesses": [
+      "标题和介绍称动态阈值，实际上参数恒定；介绍中的空头状态只是手工标记，并非真实空仓。",
+      "10%单根门槛对不同周期差异很大；追涨后止损距离随六根波动扩张，没有风险定仓。"
+    ],
+    "verification_notes": [
+      "应逐笔核查极高曝光率是否与稀疏10%门槛和冻结低点一致，排名收益不能替代订单语义核验。",
+      "外部综合排名旧榜#1（sid 1653）：日线CAGR=0.2303、Sharpe=1.1447、最大回撤=-0.3484、trades=4371.0、exposure=0.9961；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 91,
+        "claim": "固定0.1阈值"
+      },
+      {
+        "line": 105,
+        "claim": "手工状态限制买入"
+      },
+      {
+        "line": 112,
+        "claim": "六根低点冻结"
+      },
+      {
+        "line": 114,
+        "claim": "条件平多而非开空"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "固定涨幅追涨",
+    "critical_findings": [
+      "所谓动态阈值实为固定10%；只平多不做空。",
+      "low触六根低点只发市价close，无止损挂单，手工状态未追踪成交。"
+    ]
+  },
+  {
+    "filename": "关键反转信号回测策略Key-Reversal-Backtest-Strategy.md",
+    "source_sha256": "6a439b027916220522075301fb59d86877bb49ec2005682ddeb8a8c76c768509",
+    "principle": "新低后收盘回升的反转做多，借助posprice状态持有；止盈止损是修改状态，不是交易引擎价格保护单。",
+    "entry_explanation": [
+      "low低于前nLength根最低low，且close>close[1]时C1成立；默认nLength=1即跌破上一根低点后收盘高于上一根收盘。",
+      "C1将posprice覆盖为当根close；posprice>0就每根提交Long。无空头入场，介绍中的双向交易未实现。"
+    ],
+    "exit_explanation": [
+      "posprice为0才close_all；但是当根pos先计算、订单先发，再检查low≤posprice-10或high≥posprice+20，将posprice清零。",
+      "因此触及20/10绝对价差后通常在下一根才发平仓；下一根若再次C1，锚价被重设，退出可被覆盖。无limit/stop挂单。",
+      "无日期或时段过滤，注释的七天区间不参与条件。"
+    ],
+    "position_explanation": [
+      "默认仓位属性，未开pyramiding；反复Long指令不等于持续加仓。",
+      "posprice是信号收盘锚，不是实际成交均价；重复信号即使已有仓位也重置锚。"
+    ],
+    "parameter_explanation": [
+      "nLength=1、input_takeprofit=20、input_stoploss=10，后两者直接加减价格，不换算pip或百分比。",
+      "无同K成交重算参数；Strategy Arguments把nLength展示为true，与源码整数1不一致。"
+    ],
+    "strengths": [
+      "新低与收盘反转的信号因果关系清楚，没有未来引用。"
+    ],
+    "weaknesses": [
+      "介绍声称做空、止盈止损锁定利润，源码只做多且价格触发后有平仓延迟。",
+      "绝对价差不适配不同标的价格量级，状态重置可能使止损失效。"
+    ],
+    "verification_notes": [
+      "外部大量交易应结合状态延迟检查；不能把触发low/high直接当该价成交。",
+      "外部综合排名旧榜#2（sid 1371）：日线CAGR=0.2215、Sharpe=1.0413、最大回撤=-0.3774、trades=33098.0、exposure=0.9993；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 149,
+        "claim": "窗口整数1"
+      },
+      {
+        "line": 153,
+        "claim": "新低且收盘回升"
+      },
+      {
+        "line": 158,
+        "claim": "信号反复重置锚价"
+      },
+      {
+        "line": 160,
+        "claim": "先下单后清零状态"
+      },
+      {
+        "line": 164,
+        "claim": "绝对价差清状态"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "新低收盘反转",
+    "critical_findings": [
+      "止盈止损只在订单之后清状态，通常下一根才平仓；新信号可覆盖退出。",
+      "源码仅做多，pip参数实际是绝对价差。"
+    ]
+  },
+  {
+    "filename": "基于EMA均线的短线交易策略Short-term-Trading-Strategy-Based-on-EMA.md",
+    "source_sha256": "0e8b627b0d585c98b09f03c8162e70a64c8b20da2298d191600a11514d070a80",
+    "principle": "EMA短期交叉双向策略，但空头要求三个交叉同根发生，长仓只要求EMA10上穿EMA20，因此实际具有很强多头不对称。",
+    "entry_explanation": [
+      "做空必须同时满足close上穿EMA75、close下穿EMA50、EMA10下穿EMA20；不是简单处于50/75均线之间。",
+      "否则若EMA10上穿EMA20，则strategy.entry(\"daily\",long)；空仓也会开多，已有空仓按反手处理。"
+    ],
+    "exit_explanation": [
+      "没有独立close、exit、止盈止损；只靠另一方向entry反转。",
+      "else if给予三条件空信号优先级；无日期/交易时段过滤。"
+    ],
+    "position_explanation": [
+      "initial_capital=10000，commission_value=1，未指定qty或加仓；佣金类型未显式指定，不能将1自动当1美元。",
+      "未开启同K成交重算；图表周期决定10/20/50/75的实际时间尺度。"
+    ],
+    "parameter_explanation": [
+      "无input参数，EMA长度固定10、20、50、75；名为ema200的线实际是EMA(EMA(close,200),35)。",
+      "EMA200二次平滑仅用于绘图，不过滤交易。"
+    ],
+    "strengths": [
+      "空头触发与多头触发均可明确定位到交叉K线。"
+    ],
+    "weaknesses": [
+      "介绍说回补结束空单，代码却直接开多；没有文中建议的止损止盈。",
+      "三交叉同时成立很苛刻，长仓退出可能长时间等不到；1%默认百分比佣金语义需核查外部引擎。"
+    ],
+    "verification_notes": [
+      "应检查外部实现是否保持三个crossover/crossunder同根相与，以及长仓入场和反手，而非仅平空。",
+      "外部综合排名旧榜#3（sid 2679）：日线CAGR=0.2297、Sharpe=1.0757、最大回撤=-0.3901、trades=1415.0、exposure=0.992；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 106,
+        "claim": "资金10000与佣金1"
+      },
+      {
+        "line": 117,
+        "claim": "200再平滑35仅绘图"
+      },
+      {
+        "line": 126,
+        "claim": "三事件同根空头"
+      },
+      {
+        "line": 132,
+        "claim": "买信号直接开多"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "不对称EMA交叉",
+    "critical_findings": [
+      "长信号直接开多/反手，不只是平空；空头要求三交叉同根，方向高度不对称。",
+      "无独立止损退出，默认佣金1的单位需核对。"
+    ]
+  },
+  {
+    "filename": "多重指标动态波动交易策略-Multi-Indicator-Dynamic-Volatility-Trading-Strategy.md",
+    "source_sha256": "aeb34c5f91aca4abb0d794ed99a626fd6818d6a59b07e8a82d95378b408d0690",
+    "principle": "SMA9/21交叉叠加放量与ATR扩张的只做多趋势策略；同样严格的过滤同时用于入场与退出。",
+    "entry_explanation": [
+      "SMA9上穿SMA21，volume>21根均量×1.5，且ATR14>SMA(ATR14,14)三者同时成立，市价开Buy多仓。",
+      "sellCondition只用于close(\"Buy\")，没有开空和反手。"
+    ],
+    "exit_explanation": [
+      "SMA9下穿SMA21且同根仍放量、ATR扩张才平多；若死叉时量或ATR不满足，之后即使持续下跌也不会因均线状态自动退出。",
+      "无止损、止盈、超时、日期和时段保护，alertcondition只是报警定义。"
+    ],
+    "position_explanation": [
+      "未指定数量、加仓、资金或风险预算，使用平台默认属性。",
+      "未启用逐tick或成交后同K重算。"
+    ],
+    "parameter_explanation": [
+      "shortPeriod=9、longPeriod=21、volumeThreshold=1.5、volatilityPeriod=14。",
+      "longPeriod同时决定慢SMA和均量窗口；volatilityPeriod同时决定ATR与其比较均线。"
+    ],
+    "strengths": [
+      "趋势、交易活跃度和波动扩张有独立可解释过滤条件。"
+    ],
+    "weaknesses": [
+      "动态波动只是开平仓筛选，没有动态仓位或动态止损；退出过滤可能漏掉唯一死叉。",
+      "对低成交量时段和缺失volume数据敏感，持仓风险无硬保护。"
+    ],
+    "verification_notes": [
+      "外部高曝光率应与严格退出相互印证，不能理解为强风控。",
+      "外部综合排名旧榜#4（sid 4267）：日线CAGR=0.2727、Sharpe=0.9559、最大回撤=-0.3894、trades=2773.0、exposure=0.987；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 103,
+        "claim": "四个参数"
+      },
+      {
+        "line": 123,
+        "claim": "放量阈值"
+      },
+      {
+        "line": 126,
+        "claim": "ATR扩张"
+      },
+      {
+        "line": 129,
+        "claim": "开平仓均三条件"
+      },
+      {
+        "line": 142,
+        "claim": "卖出只平多"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "量能波动过滤SMA交叉",
+    "critical_findings": [
+      "死叉平仓仍需同根放量与ATR扩张，漏过死叉可能继续持有下跌仓；无硬止损。"
+    ]
+  },
+  {
+    "filename": "加权移动平均线和相对强弱指数交叉策略与风险管理优化系统Weighted-Moving-Average-and-Relative-Strength-Index-Crossover-Strategy-with-Risk-Management-Optimization-System.md",
+    "source_sha256": "f0ddb771b4869ae124882dd19b7643066518a04293240d8ed8ddd7652ac6802a",
+    "principle": "WMA7上穿WMA9且RSI14仍低于40时逆势转强做多，之后用均价加40与减20的固定价格括号单退出。",
+    "entry_explanation": [
+      "ta.crossover(wma7,wma14)且RSI<40才开Long；wma14变量名误导，实际周期为9。",
+      "没有空头、反手、RSI上穿确认或趋势方向过滤。"
+    ],
+    "exit_explanation": [
+      "持仓量>0时每根提交limit=均价+40、stop=均价-20的strategy.exit；不靠RSI60退出。",
+      "开仓信号K线还未持仓时不提交保护单；未启用成交后重算，因此初始保护建立时点需复核。",
+      "无日期/时段限制，回测块是注释。"
+    ],
+    "position_explanation": [
+      "未设置qty、pyramiding或风险定仓，2:1名义价差不保证实际成交盈亏比。"
+    ],
+    "parameter_explanation": [
+      "无input：WMA7/9、RSI14、超卖40、止盈40点、止损20点均硬编码。",
+      "rsiOverbought=60未参与交易；隐藏plot/hline也不参与决策。"
+    ],
+    "strengths": [
+      "真实exit括号单明确，价格边界容易复算。"
+    ],
+    "weaknesses": [
+      "固定20/40点对不同标的和价格阶段风险不一致。",
+      "标题的风险管理优化不包含仓位预算、最大亏损或动态止损。"
+    ],
+    "verification_notes": [
+      "外部引擎须区分下一根建立的止损与信号当根已存在的止损，并核验同K触及双边的排序。",
+      "外部综合排名旧榜#5（sid 1409）：日线CAGR=0.2666、Sharpe=1.0227、最大回撤=-0.422、trades=3023.0、exposure=0.9945；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 252,
+        "claim": "变量wma14实际9根"
+      },
+      {
+        "line": 264,
+        "claim": "交叉且RSI小于40"
+      },
+      {
+        "line": 271,
+        "claim": "均价加40减20"
+      },
+      {
+        "line": 275,
+        "claim": "持仓后才发保护单"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "超卖WMA转强",
+    "critical_findings": [
+      "止损/止盈仅持仓后创建，成交后同K重算未开启，初始保护时点需验证。",
+      "固定20/40绝对价差不等于按账户风险定仓。"
+    ]
+  },
+  {
+    "filename": "多指标融合交易策略Multi-indicator-Composite-Trading-Strategy.md",
+    "source_sha256": "a46c0efa7c6575a6588d608d2229c41d2e0e8736c67e25691117319c530d94c1",
+    "principle": "MACD交叉主导、RSI/CCI限制与随机指标方向共同确认的双向反手系统；并非StochRSI。",
+    "entry_explanation": [
+      "MACD线上穿信号线、RSI<70、CCI<100且原始随机值>其3根SMA时买入Buy，并关闭Sell。",
+      "MACD线下穿信号线、RSI>30、CCI>0且随机值<其3根SMA时开Sell，并关闭Buy；CCI阈值是100-100=0而非-100。"
+    ],
+    "exit_explanation": [
+      "仅相反信号的close与反向entry退出；无止盈止损或持仓期限。",
+      "同一信号同时涉及反向entry和close已有ID，需由平台订单处理次序解释净仓，不应重复计算收益。",
+      "无日期/时段过滤。"
+    ],
+    "position_explanation": [
+      "未声明数量和加仓；双方entry允许原生反手，另有显式close可能冗余。",
+      "未声明同K重算。"
+    ],
+    "parameter_explanation": [
+      "MACD fastLength=12、slowLength=26、signalLength=9；RSI length=14、rsiLevel=70。",
+      "CCI length=8、cciLevel=100；Stoch length=14、stochK=3、stochD=3。",
+      "stochK未被引用，stochValue来自价格OHLC而非RSI；只有D平滑3根实际使用。"
+    ],
+    "strengths": [
+      "信号事件与过滤职责明确，多空都有完整方向转换。"
+    ],
+    "weaknesses": [
+      "多个相与过滤会延迟或漏掉退出；CCI多空区间不对称。",
+      "脚本名StochRSI和K参数容易误导，代码没有StochRSI也没有K平滑。"
+    ],
+    "verification_notes": [
+      "需复核同根close/entry的订单去重，外部固定单位净仓结果不能自动证明原生反手处理一致。",
+      "外部综合排名旧榜#6（sid 3971）：日线CAGR=0.1543、Sharpe=0.9644、最大回撤=-0.2411、trades=9475.0、exposure=0.9867；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 193,
+        "claim": "价格随机指标"
+      },
+      {
+        "line": 197,
+        "claim": "多空完整条件"
+      },
+      {
+        "line": 201,
+        "claim": "同信号entry与close"
+      },
+      {
+        "line": 191,
+        "claim": "stochK仅声明"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "MACD多指标确认",
+    "critical_findings": [
+      "Stoch并非StochRSI，stochK闲置；空头CCI阈值实际0而非-100。",
+      "相同信号同时entry反手和close旧ID，订单去重/次序须核验。"
+    ]
+  },
+  {
+    "filename": "多重目标移动均线交叉趋势跟踪策略-Multi-Target-EMA-Crossover-Trend-Following-Strategy.md",
+    "source_sha256": "722b2874df8ca612846219778e0b5454c1dd1766805776c89f05516d6ea82361",
+    "principle": "价格任一方向穿越EMA34时在EMA价挂多头限价单，以输入资金或当前权益定量，意图使用7%止损及5/10/15%三档止盈。实际订单数量预约和错误ID影响设计落地。",
+    "entry_explanation": [
+      "close上穿或下穿EMA均可做多；距离上次发单严格大于8小时或从未发单时才允许。",
+      "entry_price设为信号当根EMA，Long按该价限价挂单；下穿时买限价高于现价可能成为可立即成交的限价单，不等价于等待向上突破。",
+      "没有空头和反手；没有平仓状态门禁，持仓或挂单期间新交叉可重写entry_price及Long限价，延时从发单而非成交开始。"
+    ],
+    "exit_explanation": [
+      "每根先提交覆盖默认全部数量的Stop Loss，价为entry_price×0.93；随后分别发5%、10%、15%限价exit、各qty=当根position_size/3。",
+      "原生exit会预约可退出数量，先发全仓stop可能占用后续三个止盈可用数量；不能按文字直接认定三段止盈全部生效。",
+      "strategy.close(\"Long Term Hold\")找不到实际Long入场ID，不构成保留10%仓位；三份各1/3本来也未扣除10%。",
+      "无日期和session过滤；8小时节流真实参与下单。"
+    ],
+    "position_explanation": [
+      "默认Fixed Volume按50000×1×100%/close定qty；Current Balance改用strategy.equity，input initial_capital并未设置strategy初始资金。",
+      "position_size每根重算，退出数量并非冻结的成交数量；无pyramiding设置，不可把重复信号视为允许加仓。",
+      "未开启同K成交重算；限价成交、exit预约和部分退出均需原生引擎验证。"
+    ],
+    "parameter_explanation": [
+      "initial_capital=50000、leverage=1、mode=\"Fixed Volume\"；ema_length=34（标题EMA25不符）。",
+      "stop_loss_percent=7%、take_profit_1/2/3=5%/10%/15%、position_size_percent=100%、long_term_hold_percent=10%、trade_delay=8小时。"
+    ],
+    "strengths": [
+      "仓位算法、限价参考和交易节流都显式给出，可追踪设计意图。"
+    ],
+    "weaknesses": [
+      "保护与目标依赖可被后续交叉改写的EMA锚而非实际均价。",
+      "多目标与长期保留存在数量预约和ID缺陷；默认输入资金也不等于策略声明的初始权益。"
+    ],
+    "verification_notes": [
+      "该策略涉及qty、限价、部分退出和多exit，外部固定单位引擎尤其不保真，排名不能证明三段管理有效。",
+      "外部综合排名旧榜#7（sid 4314）：日线CAGR=0.037、Sharpe=1.0943、最大回撤=-0.0513、trades=988.0、exposure=0.1048；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 127,
+        "claim": "EMA真实34"
+      },
+      {
+        "line": 143,
+        "claim": "严格超过8小时"
+      },
+      {
+        "line": 157,
+        "claim": "双向交叉均挂多限价"
+      },
+      {
+        "line": 164,
+        "claim": "先发全仓止损"
+      },
+      {
+        "line": 171,
+        "claim": "三份退出数量"
+      },
+      {
+        "line": 178,
+        "claim": "错误close ID"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "EMA双向穿越限价做多",
+    "critical_findings": [
+      "全仓stop先预约数量，后续三个部分止盈可能无可用数量；外部不支持部分退出。",
+      "close(\"Long Term Hold\")无对应入场ID，不实现保留10%。",
+      "价格上下穿EMA都挂Long限价，锚可被新信号重写，非固定成交均价风控。"
+    ]
+  },
+  {
+    "filename": "连续高点突破策略N-Consecutive-Higher-Closes-Breakout-Strategy.md",
+    "source_sha256": "d6ca360d9aa41dac57c17c1e801dced44cd59e0e63648e72a17d8a78d787594b",
+    "principle": "统计之前连续非阴线数量达到4后做多；它不是连续更高收盘价突破，止盈止损仅通过状态变量间接退出。",
+    "entry_explanation": [
+      "上一根close≥open时nCounter增加，阴线清零；十字星也算上涨，计数只看前一根实体方向。",
+      "nCounter≥4时C1=1，将posprice重设为当前close；posprice>0时每根发Long。没有空头或反手。"
+    ],
+    "exit_explanation": [
+      "posprice=0时close_all；检查止损/止盈在发entry/close之后，low≤锚-10或high≥锚+20只清零，下根才有机会平仓。",
+      "连续满足C1时下一根又将锚重置，可覆盖退出状态；C1变0本身并不立即平仓。",
+      "没有价格止损单、时间退出或session/date过滤。"
+    ],
+    "position_explanation": [
+      "未开启加仓，反复entry不能当独立新增单位；锚价不是实际均价。",
+      "未开启同K成交重算。"
+    ],
+    "parameter_explanation": [
+      "nLength=4；Take Profit pip=20、Stop Loss pip=10，均直接作绝对价差，非百分比/最小跳动数。"
+    ],
+    "strengths": [
+      "非阴线连贯性可直观核验，信号不依赖未来价格。"
+    ],
+    "weaknesses": [
+      "标题Higher Closes与源码非阴线计数不符；介绍声称否则平仓，也与状态延续不符。",
+      "止损延迟、反复重锚和绝对价差使名义盈亏比不能代表实际风险。"
+    ],
+    "verification_notes": [
+      "须重点核验外部回测是否错误地在触及价即刻成交，而不是执行状态机。",
+      "外部综合排名旧榜#8（sid 5507）：日线CAGR=0.223、Sharpe=1.0338、最大回撤=-0.3933、trades=20081.0、exposure=0.9982；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 159,
+        "claim": "统计上一根阳线含十字星"
+      },
+      {
+        "line": 165,
+        "claim": "连续信号重置锚"
+      },
+      {
+        "line": 167,
+        "claim": "清零才平仓"
+      },
+      {
+        "line": 171,
+        "claim": "订单之后清状态"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "连续非阴线追涨",
+    "critical_findings": [
+      "计数是连续非阴线含十字星，不是连续更高收盘。",
+      "止盈止损只清状态且连续信号重锚，退出可能延迟或被覆盖。"
+    ]
+  },
+  {
+    "filename": "基于布林带B指标的长线交易策略Long-Term-Trading-Strategy-Based-on-Bollinger-Bands-B-Indicator.md",
+    "source_sha256": "8637e9238b926156759354b8d49f1b3cbeff4a7e9e6ef7fe0aeee08dd75207bf",
+    "principle": "收盘跌破20根、2倍标准差布林下轨时逆势做多，目标为持仓均价上方5%；实际默认止损为100%而非介绍的5%。",
+    "entry_explanation": [
+      "percentB=(src-lower)/(upper-lower)，小于0时开Long；连续在下轨外也会重复发相同ID。",
+      "没有空头/反手，未显式设置pyramiding，介绍的动态加仓并未由默认声明保证。"
+    ],
+    "exit_explanation": [
+      "仅longCondition成立的分支内发exit，limit=均价×1.05，stop=均价×0；默认100%止损对正价格几乎没有实际保护。",
+      "初次发entry时均价尚不可用，且未开启成交后重算；若下一根不再满足入场，可能没有机会建立有效exit，须检查原生订单日志。",
+      "start_date与end_date输入完全未引用，不限制交易日期；无session过滤。"
+    ],
+    "position_explanation": [
+      "仓位模式/qty/加仓均未声明，重复entry不等于动态追加。",
+      "止盈计算虽每根执行，exit更新却仅在入场条件成立时执行，已有挂单会按引擎规则保留。"
+    ],
+    "parameter_explanation": [
+      "length=20、src=close、dev=2.0、kar_hedefi=5、zarar_durumu=100、altinda_kalirsa_long=0。",
+      "start_date=2023-01-01 00:00 UTC，end_date=2024-01-01 00:00 UTC，两个日期均闲置。"
+    ],
+    "strengths": [
+      "均值回归触发器与均价止盈可直接复算。"
+    ],
+    "weaknesses": [
+      "下跌趋势中逆势持有且默认止损为0；文中95%止损不符代码。",
+      "布林带宽为0时%B除法无保护；有效退出的创建时点存在缺口。"
+    ],
+    "verification_notes": [
+      "外部回测不能把连续信号当作加仓，也不能替源码补上5%止损或日期过滤。",
+      "外部综合排名旧榜#9（sid 3322）：日线CAGR=0.242、Sharpe=1.0072、最大回撤=-0.412、trades=17012.0、exposure=0.9923；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 147,
+        "claim": "止损输入100"
+      },
+      {
+        "line": 148,
+        "claim": "闲置起止日期"
+      },
+      {
+        "line": 160,
+        "claim": "下轨外做多"
+      },
+      {
+        "line": 169,
+        "claim": "exit受入场条件约束"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "布林下轨抄底",
+    "critical_findings": [
+      "默认Stop Loss=100%，止损价为0，与介绍5%止损不符。",
+      "exit仅在入场条件成立时提交，初始均价不可用可能留下无有效退出仓位。",
+      "日期输入闲置，未设置pyramiding却称动态加仓。"
+    ]
+  },
+  {
+    "filename": "RSI50_EMA长仓策略-RSI50_EMA-Long-Only-Strategy.md",
+    "source_sha256": "a82e0b961539d2b7d6cb3a9df58a2eadf4c7abbaeb0d0e24229cb16d294bf610",
+    "principle": "SMA2价格线上穿EMA11加2×ATR11通道时追涨做多；RSI20另有同根触发分支，但不是主入场过滤，且其平仓ID错误。",
+    "entry_explanation": [
+      "bull_cross是SMA(close,2)上穿EMA11+2×ATR11，直接开Buy，不要求RSI>50。",
+      "RSI20上穿rsicap=50同根又有bull_cross时，额外发RSI多头entry；没有空头，注释中的空单不执行。"
+    ],
+    "exit_explanation": [
+      "bear_level上穿SMA2，即SMA2跌破EMA11-2×ATR11时只关闭Buy。",
+      "RSI20下穿固定50后还要求bull_cross才close(\"RSICLose\")；没有该入场ID，不能关闭Buy或RSI。",
+      "没有真正百分比止损，也无价格挂单、日期或时段门禁。"
+    ],
+    "position_explanation": [
+      "default_qty_type=percent_of_equity，default_qty_value=100；没有加仓声明，双ID同根发单的实际接受情况需原生订单核验。",
+      "RSI分支若成交，没有匹配的正常平仓；未开启同K成交重算。"
+    ],
+    "parameter_explanation": [
+      "len=11同时用于EMA与ATR；mul=2、rsicap=50；RSI周期固定20、price平滑固定SMA2。",
+      "EXIT阈值硬编码50，修改rsicap只改RSI入场门槛不改退出阈值。"
+    ],
+    "strengths": [
+      "ATR通道按波动率扩张，突破阈值比纯均线交叉有清楚噪音缓冲。"
+    ],
+    "weaknesses": [
+      "介绍的RSI确认与RSI退出不成立；主Buy不受RSI限制，close ID失配。",
+      "百分比权益定仓不是百分比止损；长时间持仓可能包含未关闭RSI订单。"
+    ],
+    "verification_notes": [
+      "应分别追踪Buy与RSI订单ID，外部单一净仓实现可能掩盖孤立仓位。",
+      "外部综合排名旧榜#10（sid 735）：日线CAGR=0.1969、Sharpe=1.0533、最大回撤=-0.3627、trades=4630.0、exposure=0.9926；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 92,
+        "claim": "100%权益仓位"
+      },
+      {
+        "line": 98,
+        "claim": "使用SMA2而非原始close"
+      },
+      {
+        "line": 108,
+        "claim": "主Buy无RSI限制"
+      },
+      {
+        "line": 113,
+        "claim": "不存在的RSICLose ID"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "EMA与ATR通道突破",
+    "critical_findings": [
+      "strategy.close(\"RSICLose\")无匹配入场ID，RSI订单缺失有效退出。",
+      "主Buy入场不要求RSI过滤；100%权益仓位不是百分比止损。"
+    ]
+  },
+  {
+    "filename": "三均线交叉趋势跟踪策略结合RSI和成交量确认系统-Triple-EMA-Crossover-Trend-Following-Strategy-with-RSI-and-Volume-Confirmation-System.md",
+    "source_sha256": "c11197681490290fcf2f7efd843dea3fc182c780c781132f8397febd7cb60df6",
+    "principle": "EMA50/200金叉结合RSI动量和成交量确认做多，另用每根重算的ATR价格括号单管理退出。标题称三均线，源码只有两根EMA。",
+    "entry_explanation": [
+      "EMA50上穿EMA200、RSI14>50且volume>SMA(volume,20)×1.5同根成立才开Long。",
+      "没有空头或反手，死叉分支只是关闭Long。"
+    ],
+    "exit_explanation": [
+      "EMA50下穿EMA200、RSI<50且仍放量时市价平仓。",
+      "每根无条件重发exit：sl=当根low-1.5×ATR14，tp=当根close+3×(close-sl)；不是固定入场时3R，也不是只上移的追踪止损，低点下降/ATR放大可放宽止损。",
+      "无真实起止日期和session限制，未开启同K成交重算。"
+    ],
+    "position_explanation": [
+      "没有明确qty、加仓或按ATR风险定仓，使用平台默认数量。"
+    ],
+    "parameter_explanation": [
+      "emaShortLength=50、emaLongLength=200、rsiLength=14、rsiOverbought=70、rsiOversold=30。",
+      "70/30两个input未使用；交易硬编码RSI50、均量20×1.5、ATR14×1.5、目标倍数3。"
+    ],
+    "strengths": [
+      "趋势与量能确认独立，exit明确提供stop和limit。"
+    ],
+    "weaknesses": [
+      "动态止损可向不利方向移动，目标也不断重置，不能按固定3:1盈亏比解读。",
+      "标题三均线与源码双均线、70/30参数与真实50阈值不符。"
+    ],
+    "verification_notes": [
+      "外部引擎必须逐根更新exit，不能把首次sl/tp冻结；同K双触价排序仍需验证。",
+      "外部综合排名旧榜#11（sid 1180）：日线CAGR=0.141、Sharpe=1.059、最大回撤=-0.2135、trades=748.0、exposure=0.646；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 100,
+        "claim": "只有两根EMA"
+      },
+      {
+        "line": 120,
+        "claim": "三条件开多"
+      },
+      {
+        "line": 125,
+        "claim": "三条件平多"
+      },
+      {
+        "line": 130,
+        "claim": "每根重算SL与TP"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "EMA量能RSI确认",
+    "critical_findings": [
+      "止损和目标每根以当前low/close重算，止损可放宽，不是固定3R。",
+      "标题三均线实为两根EMA，RSI70/30输入未使用。"
+    ]
+  },
+  {
+    "filename": "动态移动止损长仓与季节性过滤的价格突破策略Dynamic-Trailing-Stop-Long-Only-Trend-Following-Strategy-with-Seasonality-Filter.md",
+    "source_sha256": "0b874ba152c41c4a11bb634f7e5314db14d5be266bb30bf09996f52bcf00b00a",
+    "principle": "ADX上穿27且+DI>-DI时进入多头趋势，采用只上移的收盘减5.5×ATR追踪止损；季节窗口可选，时段过滤已被恒真函数替代。",
+    "entry_explanation": [
+      "空仓时ADX从下向上穿27，+DI>-DI且isTradingTime()成立才开Long；默认季节开关false，不筛选月份。",
+      "若开启季节过滤，还须isSeason(time)为真；没有空头或反手，趋势已强但无新上穿不追加入场。"
+    ],
+    "exit_explanation": [
+      "入场信号时longTrailingSL=close-5.5×ATR14，持多时逐根max(原止损,close-5.5×ATR14)，用stop挂单退出。",
+      "没有止盈、DI反转平仓或季节结束强平；季节条件只管新仓。",
+      "isTradingTime()恒true，09:30～20:30、UTC偏移和周一至周五开关均不约束交易。"
+    ],
+    "position_explanation": [
+      "strategy.position_size==0限制入场，无qty或加仓设置；openPrice/openBarIndex仅赋值，绘制关联代码被注释。",
+      "未开启成交后同K重算；止损以信号收盘而非成交均价初始化。"
+    ],
+    "parameter_explanation": [
+      "len=14、lensig=14、adxLongThreshold=27、atrLength=14、atrLongMultiplier=5.5。",
+      "startTimeHH/MM=9/30、endTimeHH/MM=20/30、timezoneOffset=1；tradeMonday～Friday均true，均因恒真时段函数而不起门禁作用。",
+      "enableSeasonality=false；开启后允许1月全月、2月1～15、3月23日起、4月1～17、5月12日起、7月1～29、10月15日起、11月全月、12月1～2及20～27。",
+      "6月表达式d>=27且d<=8永不可能成立；8月、9月无允许分支。"
+    ],
+    "strengths": [
+      "追踪止损使用max确保不向下放宽，趋势强度和方向分开判断。"
+    ],
+    "weaknesses": [
+      "标题季节过滤默认关闭；日内时间与工作日参数看似可配实际失效。",
+      "6月日期条件逻辑矛盾；5.5ATR止损可能较宽且没有按距离控制仓位。"
+    ],
+    "verification_notes": [
+      "外部引擎忽略session的限制与该源码恒真时段要分别说明；季节功能需在开关true情景单独核验。",
+      "外部综合排名旧榜#12（sid 1588）：日线CAGR=0.1609、Sharpe=1.0237、最大回撤=-0.2691、trades=12391.0、exposure=0.9821；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 188,
+        "claim": "时段函数恒true"
+      },
+      {
+        "line": 194,
+        "claim": "季节窗口及6月矛盾"
+      },
+      {
+        "line": 215,
+        "claim": "ADX与DI入场"
+      },
+      {
+        "line": 228,
+        "claim": "空仓门禁"
+      },
+      {
+        "line": 239,
+        "claim": "止损只上移"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "ADX突破与ATR追踪",
+    "critical_findings": [
+      "isTradingTime恒true，时段/时区/工作日参数失效。",
+      "6月季节条件d>=27且d<=8永假；季节过滤默认关闭。"
+    ]
+  },
+  {
+    "filename": "交叉动能趋势跟踪策略SMA-RSI交叉动量系统-Cross-Momentum-Trend-Following-Strategy-SMA-RSI-Cross-Momentum-System.md",
+    "source_sha256": "adc0b92bfa36a0c19de60f481bad696d3fe49b15f940d7e4a59969f09b7c1ede",
+    "principle": "价格穿越SMA20同时得到RSI8强弱确认的只做多趋势系统；附带信号统计表，2%与七根窗口并不是实际交易退出规则。",
+    "entry_explanation": [
+      "close上穿SMA20且RSI8>60时开Buy，并重置信号收盘价、低点和计数器。",
+      "没有空头或反手；信号统计会记录持仓期间被加仓限制拒绝的重复买信号。"
+    ],
+    "exit_explanation": [
+      "close下穿SMA20且RSI8<40时strategy.close(\"Buy\")；没有止盈、止损或最大持仓七根的规则。",
+      "high≥信号价×1.02只增加successCount，low<信号低点且计数≤7只增加failureCount，两者可都被记录。",
+      "计数器信号当根立即+1，超过7后才停；success检查在停表之前，因此所谓七根窗口还存在边界差异。",
+      "无日期/时段限制。"
+    ],
+    "position_explanation": [
+      "未指定数量/加仓；fill_orders_on_standard_ohlc=true要求标准OHLC成交语义，不能使信号统计等于真实成交。",
+      "未启用逐tick或成交后同K重算。"
+    ],
+    "parameter_explanation": [
+      "无input；SMA20、RSI8、多头阈值60、退出阈值40、成功2%、失败窗口7、表格每10根刷新均硬编码。"
+    ],
+    "strengths": [
+      "实际订单只有两个清楚的价格交叉条件，统计与下单代码可分开审计。"
+    ],
+    "weaknesses": [
+      "统计分母是信号数量而非已成交交易，success/failure不是互斥完整胜负分类。",
+      "趋势退出缺少价格保护，无法用表格2%成功率推导净利润或风险。"
+    ],
+    "verification_notes": [
+      "外部回测应依据strategy.entry/close，不能把success/failure统计误译成止盈止损。",
+      "外部综合排名旧榜#13（sid 1289）：日线CAGR=0.2277、Sharpe=1.0074、最大回撤=-0.3861、trades=17470.0、exposure=0.9913；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 173,
+        "claim": "标准OHLC成交选项"
+      },
+      {
+        "line": 182,
+        "claim": "SMA加RSI入场"
+      },
+      {
+        "line": 205,
+        "claim": "只有反向信号平仓"
+      },
+      {
+        "line": 212,
+        "claim": "2%只统计"
+      },
+      {
+        "line": 224,
+        "claim": "窗口终止在检查之后"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "价格SMA突破与RSI确认",
+    "critical_findings": [
+      "2%和七根窗口只统计信号，不是实际止盈止损；表格信号数不等于已成交交易。"
+    ]
+  },
+  {
+    "filename": "双EMA黄金交叉止盈策略Dual-EMA-Golden-Cross-Profit-Taking-Strategy.md",
+    "source_sha256": "af3e5372afeccf66c2cd5ec92a271a51bda9c285202b332eeeafbf1ca6dde9e1",
+    "principle": "EMA9/26金叉做多，另一组EMA100下穿EMA55时退出；其退出通常代表较短EMA55走强，并非普通的9/26死叉止盈。",
+    "entry_explanation": [
+      "EMA_L对应EMA9上穿EMA_L2对应EMA26时开long；所有空头entry均被注释。",
+      "没有附加趋势、量能或RSI过滤，也没有反手。"
+    ],
+    "exit_explanation": [
+      "EMA_S对应EMA100下穿EMA_S2对应EMA55时close long；不检查是否盈利，没有价格止盈止损。",
+      "同根买入与平仓条件可能并存，两条指令独立执行，需要核验平台订单次序。",
+      "无日期/时段门禁，注释回测日期不约束策略。"
+    ],
+    "position_explanation": [
+      "initial_capital=1000，未指定qty/加仓；未开启同K成交重算。"
+    ],
+    "parameter_explanation": [
+      "EMA_L=9、EMA_L2=26、EMA_S=100、EMA_S2=55，四input均范围1～100步长1。",
+      "用于绘图的四条EMA另写死9/26/100/55，改input后图线可能不再对应实际信号。",
+      "entry comment=\"EXIT-LONG\"、close comment=\"ENTER-LONG\"倒置，只影响标签不改变交易方向。"
+    ],
+    "strengths": [
+      "入场与退出可独立研究不同时间尺度，条件明确。"
+    ],
+    "weaknesses": [
+      "标题止盈不保证盈利；100下穿55不能误读为55下穿100。",
+      "绘图硬编码与输入信号分离，视觉核验容易误判；没有硬止损。"
+    ],
+    "verification_notes": [
+      "对外部实现须核对退出交叉顺序及同根entry/close，不可根据倒置comment识别交易。",
+      "外部综合排名旧榜#14（sid 1885）：日线CAGR=0.2327、Sharpe=1.0181、最大回撤=-0.3993、trades=9207.0、exposure=0.9897；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 113,
+        "claim": "四输入默认"
+      },
+      {
+        "line": 121,
+        "claim": "绘图另硬编码"
+      },
+      {
+        "line": 144,
+        "claim": "100下穿55退出"
+      },
+      {
+        "line": 149,
+        "claim": "入场comment倒置"
+      },
+      {
+        "line": 155,
+        "claim": "市价退出"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "两组EMA交叉",
+    "critical_findings": [
+      "退出为EMA100下穿EMA55，不是EMA9/26死叉；无价格止盈止损。",
+      "绘图EMA硬编码、信号EMA使用input，修改参数后可不一致。"
+    ]
+  },
+  {
+    "filename": "趋势价格简单移动平均量化策略Simple-Moving-Average-Trend-Price-Quantitative-Strategy.md",
+    "source_sha256": "96452178fd848ba9d71492ab33871aa3cde502ed5bae4bcbbc25ed6fb864ed40",
+    "principle": "SMA50价格交叉配合布林位置的双向趋势系统，但bb返回值变量顺序错配使多头实际只过滤中轨；VWMA动量完全未参与交易。",
+    "entry_explanation": [
+      "close上穿SMA50且close>upperBB时开Buy并平Sell；bb返回中轨、上轨、下轨，因此变量upperBB实际为SMA20中轨。",
+      "close下穿SMA50且close<lowerBB（实际下轨）时开Sell并平Buy；多空过滤不对称。"
+    ],
+    "exit_explanation": [
+      "相反信号同时发close旧ID和entry反向ID；没有止盈止损、时间退出或单独风控。",
+      "无日期/时段过滤，同K成交重算未开启。"
+    ],
+    "position_explanation": [
+      "数量和pyramiding未指定；反向entry与显式close需按净仓订单次序核验，不能重复计交易收益。"
+    ],
+    "parameter_explanation": [
+      "trendPeriod=50、momentumPeriod=14、bbPeriod=20、bbDeviation=2。",
+      "VWMA(close,14)只计算未引用，momentumPeriod对交易无影响；middleBB变量实际承接上轨且未使用。"
+    ],
+    "strengths": [
+      "价格交叉作为事件触发清楚，实际过滤仍可按中轨与下轨复核。"
+    ],
+    "weaknesses": [
+      "趋势/动量/波动名称夸大组合，动量未接入且多头上轨变量误接中轨。",
+      "双向持续持仓缺少硬止损，反手时受成交成本影响明显。"
+    ],
+    "verification_notes": [
+      "外部翻译若按变量名修正upperBB会改变原策略；应忠实保留返回顺序并说明错误。",
+      "外部综合排名旧榜#15（sid 5369）：日线CAGR=0.1325、Sharpe=0.9694、最大回撤=-0.1826、trades=27591.0、exposure=0.9812；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 122,
+        "claim": "VWMA未使用"
+      },
+      {
+        "line": 125,
+        "claim": "bb返回值变量错序"
+      },
+      {
+        "line": 128,
+        "claim": "多空过滤不对称"
+      },
+      {
+        "line": 132,
+        "claim": "双向entry加close"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "趋势跟随",
+    "family": "SMA交叉与布林位置",
+    "critical_findings": [
+      "bb返回顺序错配，upperBB变量实际中轨，多空过滤不对称。",
+      "VWMA动量计算未接交易；无硬止损。"
+    ]
+  },
+  {
+    "filename": "多层级跌幅ATH动态追踪三段买入策略-Multi-level-ATH-Dynamic-Tracking-Triple-Entry-Strategy.md",
+    "source_sha256": "02ce2e430748815e7aa1762cb67b30c4f7df0278c3b8358f41cdb19fb24a97b4",
+    "principle": "相对历史最高价回撤10/15/20%分层买入、回升至历史高点下方5%清仓的长线抄底设计；层级状态按信号更新，未保证各层实际成交。",
+    "entry_explanation": [
+      "ATH初始化为当前high，随后仅取此前ATH与high[1]较大值；以后各根排除当前high。",
+      "close相对ATH下跌≥10%、15%、20%且对应bought为false时分别发Dip1/2/3 Buy；一次大跌可同根触发三层。",
+      "每层发单即置bought=true，不等成交；只有前一根创新ATH才将全部标记复位，清仓本身不复位。",
+      "仅做多，无空头/反手。"
+    ],
+    "exit_explanation": [
+      "持仓且close≥ATH×0.95时close_all；没有止损、持仓时限或分批卖出。",
+      "无日期/时段限制；样本起点决定所见ATH，不一定是完整上市历史高点。"
+    ],
+    "position_explanation": [
+      "buy_amount/当根close为每次显式qty，默认每层50000金额；并非警报文本所写1000。",
+      "strategy未设置pyramiding，不能直接保证跨K的三层加仓；不同ID及同根多信号成交须原生验证。",
+      "未开启同K成交重算，层标记可能先于成交且拒单仍被标记买过。"
+    ],
+    "parameter_explanation": [
+      "dip1=10%、dip2=15%、dip3=20%、recovery_threshold=5%、buy_amount=50000。",
+      "绘图标签10/15/20、警报1000均硬编码，改参数后显示可能失真。"
+    ],
+    "strengths": [
+      "避免每根重复买同一层，ATH更新排除当前高点的意图明确。"
+    ],
+    "weaknesses": [
+      "熊市无止损且固定金额层级并不限制总风险；跌深后可能长期等待接近ATH。",
+      "pyramiding和发单即更新状态使三段实际执行与标题不一致，平仓后未创新高不能再次启动已用层。"
+    ],
+    "verification_notes": [
+      "外部固定单位不支持qty与pyramiding，本策略的分层资本暴露不能由排名回测重现。",
+      "外部综合排名旧榜#16（sid 3883）：日线CAGR=0.2508、Sharpe=0.9878、最大回撤=-0.4075、trades=11799.0、exposure=0.9989；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：无。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 125,
+        "claim": "用前一根更新ATH"
+      },
+      {
+        "line": 136,
+        "claim": "三层独立条件"
+      },
+      {
+        "line": 141,
+        "claim": "每层50000除价格"
+      },
+      {
+        "line": 145,
+        "claim": "发单即标记"
+      },
+      {
+        "line": 160,
+        "claim": "接近ATH全平"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "ATH回撤分层抄底",
+    "critical_findings": [
+      "三层显式qty但未配置pyramiding；发单即更新买过标记，拒单也可能消耗层级。",
+      "默认每层50000而警报称1000；无止损，平仓不重置层标记。"
+    ]
+  },
+  {
+    "filename": "形态识别吊颈线交易策略Pattern-Recognition-Pinbar-Trading-Strategy.md",
+    "source_sha256": "9f67d1c7add16774126c0333cc20665e6dae0bec70161237ab21027ba00f5185",
+    "principle": "Pinbar形态反转系统：下影线拒绝更低价格时做多，上影线拒绝更高价格时做空；按成交K线振幅计算保护和目标，默认追踪设置缺少offset。",
+    "entry_explanation": [
+      "多头要求open、close均位于当根最高30%内且low<low[1]；上半区条件被30%条件包含。",
+      "空头要求open、close均位于最低30%内且high>high[1]；下半区条件同样冗余。",
+      "仅strategy.position_size==0时入场；多空默认均允许，不自动反手。isCloseOnOppositSignal默认false。"
+    ],
+    "exit_explanation": [
+      "以最近开仓的实际entry_bar_index定位candleFromEntry，因此默认下一根成交时取成交K振幅而非信号K振幅。",
+      "多头目标=均价+振幅×2，止损=成交K低点×(1-振幅/均价×1)；空头目标=均价-振幅×2，止损依据均价/目标价-1再除2并乘成交K高点，非对称简单一倍振幅。",
+      "isTrailingStop=true时exit只传trail_price和stop，没有trail_offset，不能认定有效追踪止损已实现；stop是独立绝对价格保护。",
+      "关闭追踪后才用limit目标与stop括号单；若开启反向信号平仓，shortSignal平buy、longSignal平sell，但持仓门禁阻止同次计算直接反手。",
+      "useDateFilter与backtestStartDate未接入，inTradeWindow=true；日期实际不筛选。"
+    ],
+    "position_explanation": [
+      "默认100%权益，initial_capital=10000；空仓门禁限制加仓，未开启同K成交后重算。",
+      "barsSinceEntry依赖opentrades；外部若不支持成交索引/历史动态下标，就不能忠实复现风险距离。"
+    ],
+    "parameter_explanation": [
+      "profitMultiplier=2、lossMultiplier=1、isTrailingStop=true、isCloseOnOppositSignal=false、isLongEligible=true、isShortEligible=true。",
+      "useDateFilter=true、backtestStartDate=2021-01-01，均闲置；Pinbar区域30%硬编码。"
+    ],
+    "strengths": [
+      "形态及前根极值条件精确，双向开仓都有空仓约束。"
+    ],
+    "weaknesses": [
+      "名称吊颈线不能覆盖全部实现，代码同时交易牛熊Pinbar且不检查前置趋势。",
+      "默认追踪未提供offset，且振幅取成交K非信号K；空头目标接近0时比例公式不稳定。"
+    ],
+    "verification_notes": [
+      "未编译Pine，须原生验证trail_price无offset的行为及同ID exit对不同from_entry的绑定；外部收益不能证明默认追踪有效。",
+      "外部综合排名旧榜#17（sid 4573）：日线CAGR=0.2123、Sharpe=1.0186、最大回撤=-0.3985、trades=769.0、exposure=0.9993；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 143,
+        "claim": "交易窗口恒true"
+      },
+      {
+        "line": 153,
+        "claim": "熊Pinbar最低30%"
+      },
+      {
+        "line": 167,
+        "claim": "牛Pinbar最高30%"
+      },
+      {
+        "line": 189,
+        "claim": "空仓才能入场"
+      },
+      {
+        "line": 196,
+        "claim": "成交K振幅"
+      },
+      {
+        "line": 211,
+        "claim": "追踪无offset"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "Pinbar极值反转",
+    "critical_findings": [
+      "默认trail_price未提供trail_offset，不能认定追踪止损有效。",
+      "振幅取成交K而非信号K；日期输入未接入。"
+    ]
+  },
+  {
+    "filename": "双均线黄金交叉算法Dual-Moving-Average-Golden-Cross-Algorithm.md",
+    "source_sha256": "0522d5d6c3cf0b94d9184502f58288fac587e8de0c8f23be8159ab19ff34e0bb",
+    "principle": "价格相对EMA8的负偏离开始回升时做多，正偏离开始转弱且受近期EMA低点约束时才挂20%止盈；并非双均线金叉。",
+    "entry_explanation": [
+      "ema=EMA(close,8)，ema1=EMA(close[1],8)，diff=close-ema，diff1=close[1]-ema1。",
+      "diff<0、diff<ema-lowest(ema,8)且diff上穿diff1时开Buy；因diffLow非负，diff<0时diffUnder通常冗余。",
+      "没有空头或反手；这是偏离值与其滞后值交叉，不是两根不同周期均线交叉。"
+    ],
+    "exit_explanation": [
+      "diff>0、diff<diffLow且diff下穿diff1时发strategy.exit(\"Buy\",limit=均价×1.2)。",
+      "卖出信号只创建/更新限价单，不立即平仓；挂单随后保留等待达到20%目标，没有止损或失效取消。",
+      "无日期、时段或持仓时间限制，未开启同K重算。"
+    ],
+    "position_explanation": [
+      "未指定qty/加仓；strategy.exit第一参数是退出订单ID，未填from_entry，不能把该调用理解为同名市价close。"
+    ],
+    "parameter_explanation": [
+      "无input；emaPeriod=8，lowestEMA窗口8，gain=均价×1.2硬编码。",
+      "Low0=diffLow==0计算后未使用；diffUnder多头中冗余但空头形态退出仍有约束。"
+    ],
+    "strengths": [
+      "负偏离改善的反转逻辑可以逐根复算，限价目标明确。"
+    ],
+    "weaknesses": [
+      "标题双均线黄金交叉不符实际；20%目标只有卖信号时才挂，跌破成本无保护。",
+      "EMA处于近期最低时diffLow=0，正diff<diffLow不可能，退出信号可能长期缺失。"
+    ],
+    "verification_notes": [
+      "外部实现需保留限价挂单语义，不可把sell_signal直接当成交退出。",
+      "外部综合排名旧榜#18（sid 2122）：日线CAGR=0.2276、Sharpe=1.0532、最大回撤=-0.4013、trades=8050.0、exposure=0.9963；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：rat_backfilled_manual。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 98,
+        "claim": "滞后输入EMA"
+      },
+      {
+        "line": 114,
+        "claim": "20%目标"
+      },
+      {
+        "line": 116,
+        "claim": "负偏离入场"
+      },
+      {
+        "line": 118,
+        "claim": "正偏离受限退出信号"
+      },
+      {
+        "line": 124,
+        "claim": "仅挂limit"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "EMA负偏离回升",
+    "critical_findings": [
+      "卖信号只挂均价上方20%限价，不立即平仓且无止损。",
+      "实际为EMA偏离回升，并非双均线金叉。"
+    ]
+  },
+  {
+    "filename": "动量突破策略Momentum-Breakout-Strategy.md",
+    "source_sha256": "dd4abbbb5e3b41f916d84dd97f036e74bed92004fd666642c59375dc66173baa",
+    "principle": "StochRSI平滑K从20超卖区回升时只做多，用最近20根最低价止损和以tick计量的追踪单退出；计算了风险仓位但未用于下单。",
+    "entry_explanation": [
+      "RSI14(close)再做14根随机归一化并SMA3得K，K上穿oversold=20且year>2015时发buy多头。",
+      "不是代码注释所说K>80买入；无空头和反手，也无空仓门禁。"
+    ],
+    "exit_explanation": [
+      "仅买信号分支内更新exit：stop=lowest(20)默认低点，trail_points=500、trail_offset=100；后两者是追踪激活距离/偏移的tick单位而非价格点。",
+      "profit=1000与stop=1500输入不参与exit；没有固定止盈。既有exit按订单规则继续有效，新买信号可重算低点和更新保护。",
+      "year>2015真实控制信号，没有截止日期或session筛选；risk.max_drawdown/max_intraday_loss均被注释，不生效。"
+    ],
+    "position_explanation": [
+      "default_qty_type=fixed、currency=USD，未把tamanio_de_la_posicion传给entry，15美元风险并不约束实际仓位。",
+      "calc_on_every_tick=true仅声明实时逐tick计算，不能据此把历史OHLC回测解释为拥有真实tick；未启用calc_on_order_fills。"
+    ],
+    "parameter_explanation": [
+      "smoothK=3、smoothD=3、lengthRSI=14、lengthStoch=14、src=close、overbought=80、oversold=20。",
+      "stop=1500、stop_dentro_de_los_ultimos_lows=20、trail_points=500、trail_offset=100、profit=1000、riesgo_en_dolares=15。",
+      "smoothD得到d但未参与交易，overbought未使用；risk/仓位计算结果也闲置。"
+    ],
+    "strengths": [
+      "真正使用StochRSI且追踪激活和偏移均给出，止损基准为历史低点。"
+    ],
+    "weaknesses": [
+      "输入看似有固定止损/止盈与美元风险，但三者没有形成实际下单约束。",
+      "实时逐tick信号可在K线内变化，历史外部OHLC结果无法复现。"
+    ],
+    "verification_notes": [
+      "核验tick单位和实时/历史差异；不要把被注释risk.*当已启用风险控制。",
+      "外部综合排名旧榜#19（sid 1779）：日线CAGR=0.2489、Sharpe=0.9648、最大回撤=-0.3639、trades=39571.0、exposure=0.993；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 221,
+        "claim": "实时逐tick声明"
+      },
+      {
+        "line": 243,
+        "claim": "上穿20入场"
+      },
+      {
+        "line": 246,
+        "claim": "2015之后日期门禁"
+      },
+      {
+        "line": 251,
+        "claim": "仓位算出未使用"
+      },
+      {
+        "line": 253,
+        "claim": "实际追踪及低点止损"
+      },
+      {
+        "line": 256,
+        "claim": "risk调用被注释"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "均值回归",
+    "family": "StochRSI超卖回升",
+    "critical_findings": [
+      "15美元风险仓位只计算未传entry；stop/profit输入未用于订单。",
+      "逐tick实时计算与历史OHLC不等价，追踪参数为tick单位。"
+    ]
+  },
+  {
+    "filename": "双项式动量突破反转策略Binomial-Momentum-Breakout-Reversal-Strategy.md",
+    "source_sha256": "5a7906cd9ac0e9b41ae2698e3bd52f470a5baf8c2bc6172b09dc60512d9720bc",
+    "principle": "持久化的123反转方向与BullPower价格区间方向一致才交易，不一致即平仓；默认双向，reverse开关可翻转最终方向。",
+    "entry_explanation": [
+      "123多状态：连续两次收盘上升、平滑随机vFast<vSlow且vFast>50；空状态：连续两次收盘下降、vFast>vSlow且vFast<50；否则沿用前状态。",
+      "BullPower按阳/阴/十字K及前收盘与开盘关系分段取high-low、high-open、high-close[1]、close-low等区间的最大值；value>15为空状态，value≤3为多状态，中间沿用前状态。",
+      "两模块都为1才Long，都为-1才Short；reverse=true时互换；相反entry允许反手，状态持续一致会重复发同向entry。"
+    ],
+    "exit_explanation": [
+      "两模块不同向或仍有0状态时possig=0，strategy.close_all；这是独立的退出而非必须等待完整反向一致信号。",
+      "没有止损、止盈挂单或持仓时限，也无日期/时段过滤；同K成交重算未开启。"
+    ],
+    "position_explanation": [
+      "未指定qty/加仓，重复同向信号不表示加仓；两个子模块内部pos均有历史状态记忆，不可简化为当根布尔条件。"
+    ],
+    "parameter_explanation": [
+      "Length=14、KSmoothing=1、DLength=3、Level=50、SellLevel=15、BuyLevel=3、reverse=false。",
+      "随机K为SMA(stoch(close,high,low,14),1)，D为K的SMA3；BullPower阈值15/3是绝对价格区间不是百分比。"
+    ],
+    "strengths": [
+      "方向一致才暴露风险、分歧主动空仓，组合逻辑和中性状态清楚。"
+    ],
+    "weaknesses": [
+      "注释叙述随机位置与真实vFast>50买/<50卖不一致，需以代码为准。",
+      "BullPower绝对阈值跨价格量级失真，状态记忆会让旧信号长期参与新信号共识；无价格保护。"
+    ],
+    "verification_notes": [
+      "外部复现必须逐根保留两个函数内历史pos与分段value公式；仅指标当前阈值向量化会改变持仓。",
+      "外部综合排名旧榜#20（sid 2351）：日线CAGR=0.1646、Sharpe=1.0854、最大回撤=-0.2655、trades=23223.0、exposure=0.9932；这些是用户提供的聚合字段，不等于单一标的逐笔绩效。标记：intraday_partial_tf。",
+      "本轮完整读取附带源码做静态精读，未执行策略、未编译Pine、未重新回测；保留原逻辑分，不据本次发现新增评分。外部回测末3年属于历史回看，不是独立样本外OOS。",
+      "外部源回测采用固定单位仓位，不支持qty、pyramiding、部分退出及risk.*，并忽略session；不能将其收益视作原生仓位管理或真实执行的完整复现。"
+    ],
+    "review_evidence": [
+      {
+        "line": 180,
+        "claim": "123持久化方向"
+      },
+      {
+        "line": 186,
+        "claim": "BullPower分段价格区间"
+      },
+      {
+        "line": 196,
+        "claim": "15/3阈值与记忆"
+      },
+      {
+        "line": 211,
+        "claim": "同向共识"
+      },
+      {
+        "line": 215,
+        "claim": "反手及中性平仓"
+      }
+    ],
+    "review_status": "本轮源码精读",
+    "detail_level": "源码精读+外部回测解读",
+    "category": "复合信号",
+    "family": "123反转与BullPower状态共识",
+    "critical_findings": [
+      "BullPower绝对价格阈值与两个子模块的持久状态不能简化为当前阈值信号；无硬止损。"
+    ]
+  }
+]

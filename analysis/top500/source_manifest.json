@@ -1,0 +1,98 @@
+[
+  {
+    "path": "/Users/xixi/workspace/claude/strategies/.claude/worktrees/strategy-catalog/analysis/catalog.json",
+    "source_file": "/Users/xixi/workspace/claude/strategies/.claude/worktrees/strategy-catalog/analysis/catalog.json",
+    "sha256": "1bdbbebc132c07478528016955b3b29489d7a58ebdef89ad669832f4b0d4e5ed",
+    "bytes": 105370224
+  },
+  {
+    "path": "0_代码与中间数据/results/rationality/features.jsonl",
+    "source_file": "0_代码与中间数据/results/rationality/features.jsonl",
+    "sha256": "e50d1d2272ebe6a5b8e66a2d4b7bd160a180c39f2a28635f6e960a0f2f3fb54c",
+    "bytes": 8523813
+  },
+  {
+    "path": "2_合理性Top500/all_scored.csv",
+    "source_file": "2_合理性Top500/all_scored.csv",
+    "sha256": "7d725fca5ba0a7d1d4a4973550eabbc04c5b11a0a580ab261e084094e0d60d29",
+    "bytes": 3224775
+  },
+  {
+    "path": "0_代码与中间数据/results/all_results.csv",
+    "source_file": "0_代码与中间数据/results/all_results.csv",
+    "sha256": "a5626d470658ec82fda361868cadf8fd471ec47313be9d4584e393ebe935bf35",
+    "bytes": 2790644
+  },
+  {
+    "path": "3_552策略日线重跑/all_552_daily.csv",
+    "source_file": "3_552策略日线重跑/all_552_daily.csv",
+    "sha256": "e86603a8a4704fd00a3cd6dfebf7b26dffc7c3e92a3b0703b004bf1539a3552a",
+    "bytes": 307522
+  },
+  {
+    "path": "4_综合排名/final_ranking.csv",
+    "source_file": "4_综合排名/final_ranking.csv",
+    "sha256": "37bf217324a95ed6650aec5b444023c8d2db635fe1196c8a4009fb2e348ceb27",
+    "bytes": 155067
+  },
+  {
+    "path": "0_代码与中间数据/results/stage1/stage1.jsonl",
+    "source_file": "0_代码与中间数据/results/stage1/stage1.jsonl",
+    "sha256": "a013091d065a663cb21dfb6515ee7d98612f81877789f713939cdda660a748ac",
+    "bytes": 2900487
+  },
+  {
+    "path": "0_代码与中间数据/results/stage2/stage2.jsonl",
+    "source_file": "0_代码与中间数据/results/stage2/stage2.jsonl",
+    "sha256": "c3592a7d37a79239f4297cefe80976b8e9fadb32a369c140d0ad931d52115a64",
+    "bytes": 195084
+  },
+  {
+    "path": "0_代码与中间数据/results/rationality/daily/daily.jsonl",
+    "source_file": "0_代码与中间数据/results/rationality/daily/daily.jsonl",
+    "sha256": "25122bbec8f349edb835d40bbd36dd6dcd249919e5fa51b0a1c406e89524fa62",
+    "bytes": 206120
+  },
+  {
+    "path": "0_代码与中间数据/results/intraday/set552/ranked_1h.csv",
+    "source_file": "0_代码与中间数据/results/intraday/set552/ranked_1h.csv",
+    "sha256": "c85cf04bf8bdb9ce411ebb033742c62da9fc28a45f47782eb0aa77bcac296e81",
+    "bytes": 225105
+  },
+  {
+    "path": "5_日内回测_set552/top100_5m.csv",
+    "source_file": "5_日内回测_set552/top100_5m.csv",
+    "sha256": "8830ab6b035abe3df45c01de02c1d262ffe272173e47fc3077f88f7be9797acb",
+    "bytes": 30588
+  },
+  {
+    "path": "5_日内回测_set552/top100_10m.csv",
+    "source_file": "5_日内回测_set552/top100_10m.csv",
+    "sha256": "b2a1404489e683cedccfaa1c896a82a8e1a8786b07c45ab2b980564ccf5c1461",
+    "bytes": 30646
+  },
+  {
+    "path": "5_日内回测_set552/top100_15m.csv",
+    "source_file": "5_日内回测_set552/top100_15m.csv",
+    "sha256": "1ecdb3697ac9efebd77a9d073e6176bd9c301b481d699d0ea33aa8ce2b4c116d",
+    "bytes": 31302
+  },
+  {
+    "path": "5_日内回测_set552/top100_30m.csv",
+    "source_file": "5_日内回测_set552/top100_30m.csv",
+    "sha256": "cd2bd4310a877e72c79df21347b22dd8037d38997dbd2deee73b8fb84bee6ae2",
+    "bytes": 31344
+  },
+  {
+    "path": "5_日内回测_set552/top100_1h.csv",
+    "source_file": "5_日内回测_set552/top100_1h.csv",
+    "sha256": "d37d23fb1445408a86650c175ea63ce28638aa86dc5d0e3256f8cc6e7ef33a8b",
+    "bytes": 30941
+  },
+  {
+    "path": "0_代码与中间数据/results/summary.json",
+    "source_file": "0_代码与中间数据/results/summary.json",
+    "sha256": "981c8a24c7b19f2d6ca999a4f227bcc527e14131987e8991b2aab8374d1bc032",
+    "bytes": 867
+  }
+]

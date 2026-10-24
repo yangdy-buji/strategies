@@ -9,3 +9,10 @@ analysis/catalog.json
 analysis/catalog.csv
 analysis/index.html
 analysis/summary.json
+
+# Reproducible combined ranking artifacts
+analysis/top500/cards/
+analysis/top500/ranking.json
+analysis/top500/ranking.csv
+analysis/top500/index.html
+analysis/top500/excluded.csv
