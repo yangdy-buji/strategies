@@ -28,9 +28,21 @@ def tier(r):return '同口径日线主榜' if r.get('cohort')=='full_daily' else
 def score_rows(r):
     return [('日线表现分',r.get('daily_score'),'70%'),('近三年历史分段分',r.get('recent_score'),'10%'),('已有逻辑合理性分',r.get('current_logic_score'),'20%'),('静态风险扣分',r.get('risk_penalty'),'直接扣除'),('综合研究分',r.get('combined_score'),'用于本证据层内排序')]
 
+def optimization_notice(r,markdown=False):
+    opt=r.get('_optimization')
+    if not opt:return ''
+    if opt['source_sha256']!=r['source_sha256']:raise ValueError('优化记录来源过期')
+    label='带中文备注的修复候选（未回测）' if opt['status']=='candidate' else '优化状态与待处理问题'
+    href='../optimization/cards/'+r['id']+'.html'
+    note='本页收益与排名仅属于原版，不代表优化候选表现。'
+    if markdown:return '['+label+']('+href+')。'+note
+    return '<p class="notice"><a href="'+href+'">'+label+'</a>。'+note+'</p>'
+
+
 def ranked_card_html(r,base,details):
     e=html.escape;rank=r.get('primary_rank');cohort=tier(r)
     body='<main class="card"><nav><a href="../index.html">← 排名目录</a> · <a href="../../cards/'+r['id']+'.html">原逻辑卡片</a> · <a href="../../../'+quote(r['filename'])+'">原始策略</a> · <a href="'+r['id']+'.md">Markdown版</a></nav>'
+    body+=optimization_notice(r)
     body+='<h1>'+e(r['title'])+'</h1><p class="notice">研究名单 #'+str(r['research_index'])+' · '+cohort+' · '+('主榜第 '+str(rank)+' 名' if rank else '不占用同口径主榜名次')+'<br>外部历史回测，尚未独立复现；规范化源码匹配不等于严格版本绑定。近三年为历史末段，非严格样本外。</p>'
     body+='<div class="meta">'+''.join('<span class="badge">'+e(str(v))+'</span>' for v in [r['category'],details.get('detail_level','自动精细分析'),r.get('current_logic_review','未知'),r.get('cohort','')])+'</div>'
     body+='<h2>先读结论</h2><p class="prose">'+e(details.get('overview',''))+'</p><p class="prose">'+e(details.get('verdict',''))+'</p>'
@@ -76,6 +88,7 @@ def ranked_card_md(r,base,details):
          '## 报告日线表现（未经独立复现）',
          '|指标|全历史|近三年历史末段|\n|---|---:|---:|\n'+'\n'.join(f'|{label}|{fmt(r.get("reported_daily",{}).get(k),pct)}|{fmt(r.get("reported_recent",{}).get(k),pct)}|' for k,label,pct in METRICS),
          '日线窗口2016-01-04至2026-10-16。现成分股回看历史，单边0.1%成本。近三年为末756个观测，不是严格样本外。']
+    out.insert(2,optimization_notice(r,markdown=True))
     for title,key in SECTIONS:
         v=details.get(key,[]);out+=['## '+title,v if isinstance(v,str) else '\n'.join('- '+str(x) for x in v)]
     out.append('## 原策略与回测引擎差异')
@@ -90,7 +103,7 @@ def ranked_card_md(r,base,details):
     out+=['## 完整源码',fence(numbered_code(base)),'## 溯源',fence(json.dumps({'sid':r['sid'],'source_sha256':base['source_sha256'],'daily_source':r.get('daily_source'),'source_match':r.get('source_match'),'eligibility_notes':r.get('eligibility_notes')},ensure_ascii=False,indent=2),'json')]
     return '\n\n'.join(out)+'\n'
 
-def ranking_index(records,summary):
+def ranking_index(records,summary,optimization=False):
     cols=['id','title','category','research_index','primary_rank','cohort','combined_score','daily_score','recent_score','current_logic_score','current_logic_review','risk_penalty','red_flags','detail_level','critical_findings']
     small=[]
     for r in records:
@@ -104,6 +117,7 @@ def ranking_index(records,summary):
 <label>源码复核<select id="detail"><option value="">全部</option><option value="reviewed">本轮源码精读</option></select></label>
 <label>排序<select id="sort"><option value="rank">名单顺序</option><option value="combined_score">综合分</option><option value="cagr">年化收益</option><option value="sharpe">Sharpe</option><option value="max_dd">回撤更小</option></select></label></div>
 <p id="summary" role="status" aria-live="polite"></p><div class="table-wrap"><table><thead><tr><th>策略 · 打开详细卡片</th><th>名单 / 主榜</th><th>类别 / 证据层</th><th>综合 / 逻辑</th><th>年化 / Sharpe</th><th>回撤 / 风险扣分</th></tr></thead><tbody id="rows"></tbody></table><div id="empty" class="empty" hidden>没有匹配结果，请放宽筛选。</div></div><div class="pager"><button id="prev">上一页</button><span id="page"></span><button id="next">下一页</button></div></main>'''
+    if optimization:body=body.replace('</nav>',' · <a href="optimization/index.html">500项优化登记与修复代码</a></nav>',1)
     script='<script id="ranking-data" type="application/json">'+data+'''</script><script>
 'use strict';const data=JSON.parse(document.getElementById('ranking-data').textContent);const $=id=>document.getElementById(id);let pn=0;const size=50;
 for(const cat of [...new Set(data.map(r=>r.category))].sort()){const o=document.createElement('option');o.value=cat;o.textContent=cat;$('category').append(o)}

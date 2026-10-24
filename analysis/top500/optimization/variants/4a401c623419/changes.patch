@@ -1,0 +1,53 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=4
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：白盒冰山策略Robot-White-Box-Iceberg-Strategy.md
++// 原文件SHA256：2ee97c3e5f0eb56a6bcbbc73e569ab101709ea0d36b30bd61b4cc8f895ae6ae3
++// SID：4941；原研究名单序号：7
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-09-19 00:00:00
+ end: 2023-09-25 00:00:00
+@@ -8,8 +17,6 @@
+ 
+ //Noro
+ //2019
+-
+-//@version=4
+ strategy(title = "Robot WhiteBox Iceberg", shorttitle = "Robot WhiteBox Iceberg", overlay = true, default_qty_type = strategy.percent_of_equity, default_qty_value = 100, pyramiding = 3)
+ 
+ //Settings
+@@ -40,7 +47,10 @@
+ lots = 0.0
+ size = strategy.position_size
+ mult = 1 / syminfo.mintick
+-needtime = true
++// OPT-4941-01：原needtime恒真；按既有日期参数恢复严格起止时间条件（边界不入场）。
++// OPT-4941-01 保持：默认日期、层级、仓位、零qty退出；与既有严格晚于结束时间全平条件一致，恰好结束时仅撤入场单。
++// OPT-4941-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++needtime = time > timestamp(fromyear, frommonth, fromday, 00, 00) and time < timestamp(toyear, tomonth, today, 23, 59)
+ 
+ //MA
+ oc2 = (open + close) / 2
+@@ -82,6 +92,16 @@
+ //Trading
+ lot = 0.0
+ lot := size == 0 ? strategy.equity / close * capital / 100 : lot[1]
++// OPT-4941-02：原窗口外可能遗留入场限价单；在窗口外逐次撤销六个入场ID。
++// OPT-4941-02 保持：TPL/TPS不在此撤销；原期末全平及八单撤销分支完整保留。
++// OPT-4941-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++if not needtime
++    strategy.cancel("L1")
++    strategy.cancel("L2")
++    strategy.cancel("L3")
++    strategy.cancel("S1")
++    strategy.cancel("S2")
++    strategy.cancel("S3")
+ if ma > 0
+     lots := round(size / lot)
+     strategy.entry("L1", strategy.long, lot, limit = longline1, when = (lots == 0 and long1 and needtime))

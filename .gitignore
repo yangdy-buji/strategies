@@ -16,3 +16,9 @@ analysis/top500/ranking.json
 analysis/top500/ranking.csv
 analysis/top500/index.html
 analysis/top500/excluded.csv
+
+# Rebuildable optimization views; annotated Pine variants are versioned
+analysis/top500/optimization/cards/
+analysis/top500/optimization/index.html
+analysis/top500/optimization/manifest.json
+analysis/top500/optimization/manifest.csv

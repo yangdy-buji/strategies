@@ -1,0 +1,36 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=6
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：均值回归型连续K线反转交易策略-Mean-Reversion-Consecutive-Candle-Reversal-Trading-Strategy.md
++// 原文件SHA256：bc5722e8427f767693149c947e9776c5b45e7fdcee8e1b555dc4dac9dfe2195f
++// SID：2458；原研究名单序号：2
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2025-01-19 00:00:00
+ end: 2025-02-18 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=6
+ strategy("3 Down, 3 Up Strategy", overlay=true, initial_capital = 1000000, default_qty_value = 200, default_qty_type = strategy.percent_of_equity, process_orders_on_close = true, margin_long = 5, margin_short = 5, calc_on_every_tick = true)
+ 
+ 
+@@ -16,7 +23,10 @@
+ // ============================================
+ startTimeInput = input(timestamp("1 Jan 2014"), "Start Time", group = "Time Settings")
+ endTimeInput = input(timestamp("1 Jan 2099"), "End Time", group = "Time Settings")
+-isWithinTradingWindow = true
++// OPT-2458-01：原日期门禁恒真；恢复起止参数并包含边界，仅限制入场。
++// OPT-2458-01 保持：日期默认值、EMA过滤及独立退出条件。
++// OPT-2458-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++isWithinTradingWindow = time >= startTimeInput and time <= endTimeInput
+ 
+ // ============================================
+ // Strategy Settings

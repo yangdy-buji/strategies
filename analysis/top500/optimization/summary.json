@@ -1,0 +1,12 @@
+{
+  "selected": 500,
+  "counts": {
+    "candidate": 11,
+    "needs_design": 20,
+    "needs_review": 469
+  },
+  "ranking_sha256": "b7a5d3f07f30af8786ff121fa05d6a0da1c878c4af986b7d629cc8f8864839c4",
+  "catalog_sha256": "1bdbbebc132c07478528016955b3b29489d7a58ebdef89ad669832f4b0d4e5ed",
+  "native_compile": false,
+  "backtest": false
+}

@@ -1,5 +1,5 @@
 import unittest
-from tools.strategy_ranking.build import fmt, format_metrics, ranked_card_html, ranking_index
+from tools.strategy_ranking.build import fmt, format_metrics, ranked_card_html, ranking_index, optimization_notice
 
 class RankingRenderTests(unittest.TestCase):
     def test_missing_is_not_zero(self):
@@ -16,4 +16,12 @@ class RankingRenderTests(unittest.TestCase):
         self.assertIn('application/json',out)
         self.assertIn('textContent',out)
         self.assertIn('非严格样本外',out)
+    def test_optimization_is_optional_and_source_bound(self):
+        r=dict(id='abcdef123456',source_sha256='abc')
+        self.assertEqual(optimization_notice(r),'')
+        r['_optimization']=dict(source_sha256='abc',status='candidate')
+        self.assertIn('../optimization/cards/abcdef123456.html',optimization_notice(r))
+        self.assertIn('原版',optimization_notice(r))
+        r['_optimization']['source_sha256']='changed'
+        with self.assertRaises(ValueError):optimization_notice(r)
 if __name__=='__main__':unittest.main()

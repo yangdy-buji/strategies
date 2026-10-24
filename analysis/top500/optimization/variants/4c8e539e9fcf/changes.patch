@@ -1,0 +1,34 @@
+--- original.pine
++++ conservative.pine
+@@ -1,3 +1,12 @@
++//@version=5
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：N-Bars-Breakout-Strategy-N-Bars-突破策略.md
++// 原文件SHA256：ae4106355ea696bcb1e5c7cc84aebbc283beacd2efe0c211a07706d37be56054
++// SID：621；原研究名单序号：4
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-04-06 00:00:00
+ end: 2024-04-11 00:00:00
+@@ -5,8 +14,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=5
+ strategy("Breakout", overlay=true, precision=6, pyramiding=0, initial_capital=1000, default_qty_type=strategy.percent_of_equity, default_qty_value=25.0, commission_value=0.05)
+ 
+ n = input.int(5, "N Bars", minval=1)
+@@ -49,5 +56,9 @@
+ if long
+     strategy.entry(id="Long", direction=strategy.long, limit=open, alert_message=enter_long_alert)
+ 
++// OPT-621-01：原反向信号仅平仓且遗留限价单；先撤Long待成交单再平仓。
++// OPT-621-01 保持：原short条件、Long限价入场、平仓及警报。
++// OPT-621-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+ if short
++    strategy.cancel("Long")
+     strategy.close(id="Long", comment="Close Long", alert_message=exit_long_alert)
