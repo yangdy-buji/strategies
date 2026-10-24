@@ -2,3 +2,10 @@
 .claude/worktrees/
 __pycache__/
 *.pyc
+
+# Reproducible local catalog artifacts (source and reviews are versioned)
+analysis/cards/
+analysis/catalog.json
+analysis/catalog.csv
+analysis/index.html
+analysis/summary.json

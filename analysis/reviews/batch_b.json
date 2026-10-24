@@ -1,0 +1,1181 @@
+[
+  {
+    "filename": "一种定期购买加密货币的策略Simple-Holder-Strategy.md",
+    "source_sha256": "10c19977716a63bf6695f58bfd691daeccad822eff44e94b31d07817d2c31eb6",
+    "category": "配置／定投",
+    "family": "定额累积与外部机器人告警",
+    "tags": [
+      "定额累积与外部机器人告警",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "设计意图是每根K线投入现金并通知3Commas累积币；实际分支顺序会在首单后优先执行一次退出，之后才累积，且外部取消交易保留币与Pine平仓卖出并非同一行为。",
+    "entry_explanation": [
+      "首次计算时startFirstDeal为真，发出Long买入及启动机器人告警；没有价格信号。",
+      "首单后的下一次计算先执行退出并将done置真；之后每次计算dealCount<7时加买并计数，达到7后平仓、清零、重启循环。done没有复位，因此那次优先退出只发生一次。"
+    ],
+    "exit_explanation": [
+      "首次买入后优先strategy.close(\"Long\")，不是到期检查。",
+      "计数达到7时关闭Pine多仓并发送取消deal告警；未设置价格止损、止盈。",
+      "Start_date和Finish_date均未参与time_cond，后者恒为true，没有实际日期截止。"
+    ],
+    "position_explanation": [
+      "初始本金3650美元，每笔10美元现金，允许365层同向加仓；成交后重新计算可能令计数和信号多于每根K线一次。",
+      "3Commas金额和取消行为取决于用户填写的外部消息，默认均为占位文字。"
+    ],
+    "parameter_explanation": [
+      "closeCount=7；日期输入2023-09-21 16:30至23:05但无效。",
+      "手续费0.1%；收盘处理订单，calc_on_order_fills=true，calc_on_every_tick=false。"
+    ],
+    "strengths": [
+      "固定现金投入与机器人告警映射清楚，便于理解定额累积意图。"
+    ],
+    "weaknesses": [
+      "首个退出条件缺少日期判断，破坏预期的购买节奏；成交重算进一步影响计数。",
+      "取消机器人deal不等于卖出持仓，回测资产曲线不能直接代表外部HODL账户。",
+      "无资金耗尽处理或回撤限制，日期参数失效。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。",
+      "原说明称到期退出，但源码并未引用输入日期；应先修复状态机再验证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 11,
+        "max": 20,
+        "reason": "累积资产依赖长期上涨，不存在独立择时优势。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 16,
+        "max": 25,
+        "reason": "未引用未来数据，但成交重算影响节奏。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 4,
+        "max": 20,
+        "reason": "日期和首单退出逻辑明显偏离设计。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 4,
+        "max": 20,
+        "reason": "定额存在，但没有总投入上限控制。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 4,
+        "max": 15,
+        "reason": "外部加密机器人消息不能直接用于美股。"
+      }
+    ],
+    "score": 39,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 179,
+        "claim": "策略现金仓位及成交重算配置"
+      },
+      {
+        "line": 201,
+        "claim": "time_cond恒真"
+      },
+      {
+        "line": 204,
+        "claim": "优先退出分支"
+      },
+      {
+        "line": 210,
+        "claim": "加仓和计数"
+      },
+      {
+        "line": 223,
+        "claim": "达到计数后重置"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "穿越限价单双向跨期交易策略Cross-Limit-Order-Cross-Period-Trading-Strategy.md",
+    "source_sha256": "44e807f3b53847d17bc85bc61312babb61685012289c87490b060c96829fb70e",
+    "category": "趋势跟随",
+    "family": "单均线限价回调",
+    "tags": [
+      "单均线限价回调",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "用单个5周期SMA确定方向，在均线价等待回调成交；仅交易一个图表标的，没有第二腿或期限价差，名称中的跨期不成立。",
+    "entry_explanation": [
+      "默认整根K线最低价高于SMA才转多，最高价低于SMA才转空；横跨均线时沿用之前方向。",
+      "多空均启用，在对应方向持续提交SMA价格的限价入场；Reverse=true可颠倒方向。"
+    ],
+    "exit_explanation": [
+      "默认依靠相反方向entry成交反手，没有独立硬止损或止盈。",
+      "关闭做空后，多仓遇下跌方向挂均线价卖出限价；关闭做多后的空仓同理，名为Stop但参数为limit，不保证突破时止损。",
+      "超过终止日期平仓并取消两种挂单；方向改变时未显式取消旧方向未成交挂单。"
+    ],
+    "position_explanation": [
+      "目标数量=权益/收盘价×Lot百分比，默认100%，不允许同向金字塔。",
+      "lot仅在持仓数量变化时计算，否则取lot[1]；启动时历史值可能为na，需要实际编译运行核实首次订单数量。"
+    ],
+    "parameter_explanation": [
+      "SMA使用close、长度5、历史偏移0；Anti-saw=true，Reverse=false；多空均true。",
+      "日期1900-01-01至2100-12-31；佣金0，默认Lot=100%，允许输入至10000%。"
+    ],
+    "strengths": [
+      "趋势方向与回调价格分离，限价价格明确。"
+    ],
+    "weaknesses": [
+      "没有真正的保护性stop；趋势反转时旧挂单可能残留。",
+      "lot递推初始化可使默认交易无法启动；零成本设定不支持净收益结论。",
+      "允许极高仓位百分比，缺少借券和隔夜跳空处理。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。",
+      "仅源码静态判断lot初始化疑点，未断言平台实际执行结果。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 12,
+        "max": 20,
+        "reason": "趋势回调有可解释逻辑但未证实优势。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 21,
+        "max": 25,
+        "reason": "均线与历史方向因果清楚。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 7,
+        "max": 20,
+        "reason": "数量初始化与撤单生命周期不完整。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 4,
+        "max": 20,
+        "reason": "满权益且缺少硬止损。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 7,
+        "max": 15,
+        "reason": "普通限价可迁移，但做空与成本未处理。"
+      }
+    ],
+    "score": 51,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 196,
+        "claim": "单一SMA"
+      },
+      {
+        "line": 202,
+        "claim": "方向保持逻辑"
+      },
+      {
+        "line": 215,
+        "claim": "lot历史递推"
+      },
+      {
+        "line": 217,
+        "claim": "限价入场"
+      },
+      {
+        "line": 220,
+        "claim": "Stop命名实际使用limit"
+      },
+      {
+        "line": 223,
+        "claim": "日期结束撤单平仓"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "相对强弱RSI反转策略RSI-Reversal-Trading-Strategy.md",
+    "source_sha256": "e4ed2f6a1463a6811959957381af5d6bf72731355734d907da46bd99b4e553fc",
+    "category": "均值回归",
+    "family": "RSI2超买回落做空",
+    "tags": [
+      "RSI2超买回落做空",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "仅保留超买后的向下突破做空模块；所有多头交易代码都被注释，不能按双向RSI反转介绍理解。",
+    "entry_explanation": [
+      "收盘价计算2周期RSI；RSI>=90的每次计算更新最高价为保护线，并在该K线最低价挂卖出stop入场。",
+      "不是RSI上穿90立刻市价做空，而是超买状态配合跌破信号K线低点。"
+    ],
+    "exit_explanation": [
+      "空仓保护性stop设为最近一次超买K线最高价；持续超买会重新设置，可能放宽。",
+      "追踪止损默认激活距离200个最小跳动、回撤20个跳动；RSI<=30后激活距离改100。",
+      "else if RSI<=20分支被<=30先行覆盖，80个跳动的设置不可达。",
+      "距离最后一次超买超过3根且当前非超买时cancel_all取消未成交订单，并非强制平仓；也可能取消仍需的退出挂单后在下次计算重挂。"
+    ],
+    "position_explanation": [
+      "实际每次entry指定0.3333单位；声明的10000默认数量被覆盖。初始资本1000美元，每单现金费用5美元。"
+    ],
+    "parameter_explanation": [
+      "RSI长度2、来源close；阈值90和30、数量0.3333及止损追踪200/100/20均写死。",
+      "calc_on_every_tick=true，实盘未收盘RSI和高低价会变动；回测示例为BTC一小时。"
+    ],
+    "strengths": [
+      "有明确超买状态、向下触发价和保护性价格，比仅RSI阈值市价入场更具体。"
+    ],
+    "weaknesses": [
+      "介绍中的做多、中性区止盈及3根强平均未实现。",
+      "固定币数量和跳动止损不按权益或波动率控制；超买时保护线可上移扩大损失。",
+      "逐tick运行与历史K线回测口径不同，cancel_all需核实退出单影响。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 13,
+        "max": 20,
+        "reason": "短期过度上涨后的回落有解释。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 18,
+        "max": 25,
+        "reason": "当前K线逐tick信号可能撤回。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 9,
+        "max": 20,
+        "reason": "存在死分支和撤单/平仓语义差异。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 8,
+        "max": 20,
+        "reason": "有stop与追踪，但仓位及风险单位失配。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 5,
+        "max": 15,
+        "reason": "单边做空依赖借券，币数量需重设。"
+      }
+    ],
+    "score": 53,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 236,
+        "claim": "多头代码注释开始"
+      },
+      {
+        "line": 260,
+        "claim": "仅空头信号"
+      },
+      {
+        "line": 269,
+        "claim": "30阈值覆盖20阈值"
+      },
+      {
+        "line": 281,
+        "claim": "stop入场与实际数量"
+      },
+      {
+        "line": 282,
+        "claim": "价格止损及跳动追踪"
+      },
+      {
+        "line": 287,
+        "claim": "超时仅撤单"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "StochRSI反转交易策略StochRSI-Reversal-Trading-Strategy.md",
+    "source_sha256": "557cdea1ce3e18d7175d0977d13e30be3dd024a8899d13a556b0ac4dde02bd5b",
+    "category": "均值回归",
+    "family": "StochRSI极值区交叉",
+    "tags": [
+      "StochRSI极值区交叉",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "先把RSI在自身近期区间内标准化，再在低位出现向上交叉时买入、高位出现向下交叉时做空，期待短期反转。",
+    "entry_explanation": [
+      "计算14周期RSI，再计算其14周期随机指标，K为3周期SMA，D为K的3周期SMA。",
+      "K仍低于20且当根上穿D时做多；K仍高于80且当根下穿D时做空，不要求K从一个极端穿越到另一个极端。"
+    ],
+    "exit_explanation": [
+      "空头信号关闭L并开S；多头信号开L并关闭S；既有显式close又有反向entry，需运行检查订单组合。",
+      "无固定止盈、保护止损或持仓时限，只等相反极值交叉。"
+    ],
+    "position_explanation": [
+      "未指定数量、资金和费用，依赖Pine策略属性默认值；未设置加仓。"
+    ],
+    "parameter_explanation": [
+      "RSI=14、随机区间=14、K=3、D=3、超买80、超卖20；周期是图表K线而非固定日。"
+    ],
+    "strengths": [
+      "极值区加交叉确认，比只碰阈值多一个回转条件；无跨周期数据请求。"
+    ],
+    "weaknesses": [
+      "单边趋势中反向交叉可反复失败；缺少损失边界。",
+      "RSI与StochRSI来自同一价格序列，不能视为独立证据。",
+      "多空反手与close并发、手续费和仓位均需补验。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 13,
+        "max": 20,
+        "reason": "震荡反转机制可解释。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 23,
+        "max": 25,
+        "reason": "只使用当前及历史常规指标。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 12,
+        "max": 20,
+        "reason": "入场明确但退出仅依赖反向极值。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 2,
+        "max": 20,
+        "reason": "无显式仓位与止损。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 7,
+        "max": 15,
+        "reason": "可映射普通股票但做空和费用未配置。"
+      }
+    ],
+    "score": 57,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 151,
+        "claim": "全部指标参数"
+      },
+      {
+        "line": 159,
+        "claim": "RSI与随机RSI计算"
+      },
+      {
+        "line": 171,
+        "claim": "低位金叉和高位死叉"
+      },
+      {
+        "line": 175,
+        "claim": "开仓、平仓与反手"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "布林带反转趋势策略Bollinger-Bands-Reversal-Trend-Strategy.md",
+    "source_sha256": "4bda90495b66cbaeea9299a8c4f9751b197af815dd228f9e294786d79b35086a",
+    "category": "混合策略",
+    "family": "趋势过滤布林反转",
+    "tags": [
+      "趋势过滤布林反转",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "只在布林通道整体位于长期均线同侧时交易短线回摆；多头等收盘重返下轨，空头却在收盘向上突破上轨时逆势开空。",
+    "entry_explanation": [
+      "通道中线为20周期EMA，上下轨为中线±2.3倍20周期标准差；并非标准SMA布林。",
+      "上轨、中线都>SMA200且下轨>=SMA200，收盘上穿下轨时做多。",
+      "上轨、中线都<SMA200且下轨<=SMA200，收盘上穿上轨时做空；这里同样是crossover，不是跌回上轨。"
+    ],
+    "exit_explanation": [
+      "多仓在high上穿上轨或close下穿SMA300时市价关闭。",
+      "空仓在low下穿下轨或close上穿SMA250时市价关闭。",
+      "不是固定价格挂止损；多空长期退出均线与文字介绍的250/300顺序相反，没有到期。"
+    ],
+    "position_explanation": [
+      "初始资金1000，固定1单位，未按波动率/止损距离调仓，未配置手续费。"
+    ],
+    "parameter_explanation": [
+      "布林长度20、倍数2.3、趋势SMA200；退出SMA300/250写死。示例1分钟，因此200是200根分钟K线而非200日。"
+    ],
+    "strengths": [
+      "长期方向过滤避免在所有极端位置机械逆势；入场和退出均可定位。"
+    ],
+    "weaknesses": [
+      "空头使用向上突破，不能当作确认回落；多空逻辑不对称。",
+      "长期均线退出可能很远，缺少每笔风险上限；一分钟高低价穿越对成交模型敏感。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 14,
+        "max": 20,
+        "reason": "趋势内回摆逻辑可解释。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 22,
+        "max": 25,
+        "reason": "均线和交叉没有显式未来引用。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 13,
+        "max": 20,
+        "reason": "完整双向出口，但非固定保护单。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 5,
+        "max": 20,
+        "reason": "固定数量与迟缓均线退出。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 8,
+        "max": 15,
+        "reason": "价格信号可迁移，但微周期成本和做空缺失。"
+      }
+    ],
+    "score": 62,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 99,
+        "claim": "中线为EMA"
+      },
+      {
+        "line": 108,
+        "claim": "趋势过滤"
+      },
+      {
+        "line": 113,
+        "claim": "两侧入场均为上穿"
+      },
+      {
+        "line": 119,
+        "claim": "真实300/250退出"
+      },
+      {
+        "line": 96,
+        "claim": "固定1单位"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "布林带与日内强度指数均值回归策略Bollinger-Band-Mean-Reversion-Strategy-with-Intraday-Intensity-Index.md",
+    "source_sha256": "e151671a114bc595849e1dcfc3d6cbd56696763d6369cc3205888d217bcd1a73",
+    "category": "均值回归",
+    "family": "布林重返通道与量价过滤",
+    "tags": [
+      "布林重返通道与量价过滤",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "等待价格从布林带外回到带内，同时用近期收盘在K线中的位置乘成交量来确认买卖压力，赚取回归中线的机会。",
+    "entry_explanation": [
+      "前一根close低于前下轨、本根close高于本下轨，且21根强度之和>0时买入。",
+      "前一根close高于前上轨、本根close低于本上轨，且强度之和<0时做空；关闭withIII后不看强度。",
+      "强度=(2×close-high-low)×volume/(high-low)；零振幅分母改1。"
+    ],
+    "exit_explanation": [
+      "多仓close>中线即关闭，或10根前曾出现buy信号，或当前浮盈>0且最近4根均无buy信号。",
+      "空仓close<中线，或10根前有short信号，或浮盈>0且最近4根无short信号时关闭。",
+      "10根是信号历史索引，不是实际成交后的计时器；无论盈亏都可触发，非“仅未盈利才时间止损”。",
+      "反向entry也可能反手；没有价格硬止损。"
+    ],
+    "position_explanation": [
+      "数量、初始权益、费用未显式指定，依赖策略属性；没有分批加仓或风险预算。"
+    ],
+    "parameter_explanation": [
+      "布林20周期、close、SMA（可选EMA）、2倍标准差；时间参数10、强度21、过滤默认启用。示例2小时。"
+    ],
+    "strengths": [
+      "带外回归确认和量价方向要求均明确；中线、获利停滞、时间三个出口。"
+    ],
+    "weaknesses": [
+      "成交量信号不能证明必然反转；跳空损失没有保护。",
+      "时间退出绑定信号而非仓位，历史信号可能提前结束后来交易；浮盈出口忽略费用。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 15,
+        "max": 20,
+        "reason": "回带后回中线是清楚的均值回归假设。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 23,
+        "max": 25,
+        "reason": "历史索引均向过去。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 14,
+        "max": 20,
+        "reason": "三个出口明确，但时间语义存在错位。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 5,
+        "max": 20,
+        "reason": "没有价格止损和明确仓位。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 9,
+        "max": 15,
+        "reason": "普通股票量价可用，仍缺做空成本和时段。"
+      }
+    ],
+    "score": 66,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 134,
+        "claim": "默认参数"
+      },
+      {
+        "line": 152,
+        "claim": "强度计算"
+      },
+      {
+        "line": 168,
+        "claim": "多头进出"
+      },
+      {
+        "line": 170,
+        "claim": "空头进出"
+      },
+      {
+        "line": 173,
+        "claim": "执行入口"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "EMA背离均值回归策略-EMA-Divergence-Mean-Reversion-Strategy.md",
+    "source_sha256": "363993362ef60ed4acbcfb67d82011478bc2f4388e8d18899dc2c2c96481f3dc",
+    "category": "均值回归",
+    "family": "EMA深跌限价抄底",
+    "tags": [
+      "EMA深跌限价抄底",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "收盘较EMA50低逾10%时试图买入，在价格触及均线且账面盈利后卖出；是单均线偏离而非双均线趋势交叉。",
+    "entry_explanation": [
+      "每根计算(EMA50-close)/EMA50；大于10%且无多仓时，在当根open价格发买入limit订单。",
+      "BuyTrigger默认false，每根条件满足时被改true；没有显式撤单逻辑，信号消失后旧限价单仍可能待成交。"
+    ],
+    "exit_explanation": [
+      "本根high>EMA50且strategy.openprofit>1时关闭全部long；这里1是账户货币利润，不是1%。",
+      "没有亏损退出、到期或最长持仓时间；仅触及均线且仍亏损不会卖出。"
+    ],
+    "position_explanation": [
+      "初始100、每笔100现金，近似一次用完初始资本；只在无多仓时挂单。"
+    ],
+    "parameter_explanation": [
+      "EMA周期50、偏离10%、获利1均写死；来源输入open和Offset=5未参与计算。",
+      "BuyTrigger/SellTrigger为可手改布尔输入，默认false；process_orders_on_close=false，非逐tick。"
+    ],
+    "strengths": [
+      "深跌阈值和获利回均线出口简单，可明确检验。"
+    ],
+    "weaknesses": [
+      "亏损仓位可能无限持有；只盈利才卖并不保护损失。",
+      "限价设open而非当前价，若open更高可成为可立即成交的限价，不能假定总是更便宜。",
+      "无撤单导致信号与成交时间分离；注释SUIBTC/2H和示例ETH/1H不一致。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 12,
+        "max": 20,
+        "reason": "深跌修复有解释但单边衰退会失效。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 21,
+        "max": 25,
+        "reason": "只用当根及历史，high触线不能保证按均线成交。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 10,
+        "max": 20,
+        "reason": "正常退出明确，旧挂单和亏损退出缺失。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 3,
+        "max": 20,
+        "reason": "满初始现金且无止损。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 8,
+        "max": 15,
+        "reason": "多头现金逻辑可迁移，碎股和订单有效期需配置。"
+      }
+    ],
+    "score": 54,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 110,
+        "claim": "现金仓位与执行配置"
+      },
+      {
+        "line": 113,
+        "claim": "输入开关和未使用参数"
+      },
+      {
+        "line": 119,
+        "claim": "真实EMA50"
+      },
+      {
+        "line": 132,
+        "claim": "买入和卖出条件"
+      },
+      {
+        "line": 149,
+        "claim": "open限价入场"
+      },
+      {
+        "line": 152,
+        "claim": "全部平仓"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "基础网格交易策略.md",
+    "source_sha256": "fb954c7b3104e16ecc06fffcc42970cc537e4da1b05f993876c5c2ddd2b07ff6",
+    "category": "做市／网格",
+    "family": "现货等距库存网格",
+    "tags": [
+      "现货等距库存网格",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "预先买入供上方卖单使用的库存，在固定价格区间中重复低买高卖；保留当前价附近一个空白格，成交后调整空白格并重挂另一侧订单。",
+    "entry_explanation": [
+      "区间按(上限-下限)/网格数分割，包含两个边界，共grid_num+1个价格点。",
+      "启动按当前价上方格数估算所需库存，不足时以市价逐次买入；随后低于或等于参考价的空闲格挂买单，高于参考价挂卖单。",
+      "每秒检查完成订单；若有买单完成，参考价设为已完成/待建格最低价减半格，用于相邻格换向。"
+    ],
+    "exit_explanation": [
+      "已成交的低位买单在重挂高位卖单成交后实现价差；没有统一平仓、止损或截止日期。",
+      "价格超出区间时只调整空白格逻辑，不撤销全部挂单或止损，可能持币承受单边下跌或卖空库存后踏空。"
+    ],
+    "position_explanation": [
+      "每格固定trading_per_grid数量；卖前检查可用库存，不足再次市价补买。",
+      "没有整体资金预算或冻结资金校验；循环市价补库存直到目标数量，API失败无明确退出上限。"
+    ],
+    "parameter_explanation": [
+      "界面默认BTC_USDT、2格、价格精度2、数量精度5；上下限及每格数量默认false，视作0不能直接运行有效网格。",
+      "内嵌回测覆盖为30000至50000、200格、每格0.1 BTC，资金1000000，费用0.06%/0.075%，轮询1000毫秒。"
+    ],
+    "strengths": [
+      "明确追踪每格订单编号、方向和完成状态；成交后才补挂，避免单凭K线穿越假定成交。"
+    ],
+    "weaknesses": [
+      "零默认区间会导致除零；需区分参数面板默认与内嵌回测覆盖。",
+      "未处理部分成交、取消、GetOrder失败等状态，网格内存重启后无法重建。",
+      "价格四舍五入后用浮点键索引存在精度风险；无整体损失边界。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。",
+      "Python依赖FMZ exchange、Sleep、_N和全局参数，不是独立可运行脚本；没有执行连接交易所。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 13,
+        "max": 20,
+        "reason": "区间反复波动可产生价差，但库存方向风险未对冲。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 22,
+        "max": 25,
+        "reason": "使用真实订单状态与当前行情。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 8,
+        "max": 20,
+        "reason": "生命周期只覆盖部分状态且默认参数无效。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 4,
+        "max": 20,
+        "reason": "固定格数仍无资金及下跌风控。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 3,
+        "max": 15,
+        "reason": "币安现货API、币数量及24小时轮询需改造。"
+      }
+    ],
+    "score": 50,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 23,
+        "claim": "参数面板默认值"
+      },
+      {
+        "line": 41,
+        "claim": "回测参数覆盖"
+      },
+      {
+        "line": 63,
+        "claim": "等距网格及库存预购"
+      },
+      {
+        "line": 75,
+        "claim": "市价补库存"
+      },
+      {
+        "line": 106,
+        "claim": "读取订单完成状态"
+      },
+      {
+        "line": 170,
+        "claim": "按参考价挂双侧单"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "RSI统计套利策略.md",
+    "source_sha256": "6e961cda6ce0aff8ebce453c43fb5be201d0602ad68b5265c22be06fa242e27f",
+    "category": "混合策略",
+    "family": "RSI回升择时与ATR顺势加仓",
+    "tags": [
+      "RSI回升择时与ATR顺势加仓",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "名称虽然叫统计套利，实际是各交易对独立的单边做多：RSI6回升买入，上涨半个ATR逐步加仓，RSI高位或每批独立止损退出，没有配对或价差对冲。",
+    "entry_explanation": [
+      "超过50根行情数据后计算ATR20与RSI6；RSI6较上一根增加超过1点，且上一根RSI<=65时允许首次开多。",
+      "当前无内部持仓、单位数量大于对应币种最小量时，以最新成交价挂买入限价；等120秒查询并撤销未完成余量，以实际成交记录建仓。",
+      "已有仓位时价格比最后一批买价高至少0.5×当前ATR，且已买批数<4即可再买；加仓不再要求RSI入场信号。"
+    ],
+    "exit_explanation": [
+      "每批初始止损=该批平均成交价-当次ATR；最新价跌到止损则卖该批，先限价等120秒，再撤余单并尝试市价卖剩余。",
+      "当前RSI6>=60时对所有内部持仓执行同样的退出流程；入场允许上一根<=65，所以某些入场当轮就满足清仓条件。",
+      "没有持仓期限；stoploss_price并不随盈利上移。"
+    ],
+    "position_explanation": [
+      "manage_assets写死1（注释BCH）；单批=min(1×1%/ATR,可用余额/最新价×95%)；最多累计4批。",
+      "风险基数不是实际权益，只用余额约束数量；部分止损后add_already不下降，新建首批才重设为1。"
+    ],
+    "parameter_explanation": [
+      "RSI6有效；RSI12虽计算但未用于信号。ATR20；初次RSI增幅>1且前值<=65，退出>=60。",
+      "每单等待120000毫秒；常规等待1000毫秒；盈亏估算费率0.0005，币对精度和最低量只硬编码BTC/ETH/XRP/EOS/LTC/DASH/CET对BCH。"
+    ],
+    "strengths": [
+      "按实际成交量记账，并为限价未完全退出提供市价补单；每批有ATR尺度损失线。"
+    ],
+    "weaknesses": [
+      "阻塞等待120秒期间不能及时监控其他批次，多个交易所依序处理更加滞后。",
+      "内部positions未持久化，重启不能恢复现有持仓；退出后直接丢弃批记录，最小量余仓或失败成交可能脱离管理。",
+      "ATR用最新K线，缺少收盘确认；不是市场中性策略，固定BCH风险基数不可直接解释为账户1%风险。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 12,
+        "max": 20,
+        "reason": "RSI回升加趋势加仓有解释，非套利。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 19,
+        "max": 25,
+        "reason": "实时未完结K线及顺序等待影响信号一致性。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 11,
+        "max": 20,
+        "reason": "成交与撤单有处理，余仓和重启恢复不完整。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 9,
+        "max": 20,
+        "reason": "每批ATR止损但阻塞执行且风险基数固定。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 2,
+        "max": 15,
+        "reason": "硬编码加密币对与FMZ接口，需完整迁移。"
+      }
+    ],
+    "score": 53,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 39,
+        "claim": "风险基数与最多4批"
+      },
+      {
+        "line": 145,
+        "claim": "ATR数量公式"
+      },
+      {
+        "line": 158,
+        "claim": "RSI进出阈值"
+      },
+      {
+        "line": 172,
+        "claim": "限价买及120秒等待"
+      },
+      {
+        "line": 207,
+        "claim": "上涨0.5ATR加仓"
+      },
+      {
+        "line": 244,
+        "claim": "逐批止损"
+      },
+      {
+        "line": 285,
+        "claim": "RSI清仓"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "高频跨期套利策略.md",
+    "source_sha256": "d11c115ad0f3f73b210c2882bdd87c694d5f98456b924753a68ec1bd2903f8a1",
+    "category": "相对价值／配对",
+    "family": "固定均值双合约价差回归",
+    "tags": [
+      "固定均值双合约价差回归",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "取两个配置合约最新价之差，在偏离人工给定均值时等数量反向开仓，价差越过均值后退出；未计算协整、动态均值或对冲比例。",
+    "entry_explanation": [
+      "两个合约实际持仓数量均为0且A-B<均值-阈值：买A、卖B；A-B>均值+阈值：卖A、买B。",
+      "开仓均为限价：买价最新价+1、卖价最新价-1；顺序提交，不能保证两腿同时成交。"
+    ],
+    "exit_explanation": [
+      "A多B空且价差>均值，卖A、买B；A空B多且价差<均值，买A、卖B。",
+      "平仓使用买价最新价-1、卖价最新价+1等待被动成交；没有超时撤单、价差止损、换月或到期处理。",
+      "第二种平仓分支直接把负的position_a_qty当订单size传入；两腿数量均取A而不核对B，未设reduce-only，需修复并按SDK确认。"
+    ],
+    "position_explanation": [
+      "配置size相同数量下两腿，leverage同值；等张数不保证等名义风险，取决于合约乘数。",
+      "只检查已成交持仓，不检查在途委托；未成交时下一轮可能重复开仓，一腿成交后也缺少补救分支。"
+    ],
+    "parameter_explanation": [
+      "config.json需提供API凭证、sandbox标记、symbol_a/b、spread_mean、leverage、size和num_param；源码未给任何交易参数默认值。",
+      "轮询每60秒一次，不是毫秒高频；依赖kumex.client的Trade/Market。"
+    ],
+    "strengths": [
+      "双腿价差方向与回归平仓条件明确，比单标的“套利”命名更符合相对价值结构。"
+    ],
+    "weaknesses": [
+      "源码缺外部配置，不能复现默认仓位或阈值；均值固定而期限和资金费会变化。",
+      "无两腿成交协调、挂单去重、异常重试与止损，可能残留裸露方向。",
+      "负数量平空与共用A数量是明确实现疑点，不能按理想配对回测解释。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。",
+      "未调用任何真实交易API；仅分析给出的源码，外部SDK行为尚未验证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 14,
+        "max": 20,
+        "reason": "价差均值回归机制成立为假设，但无统计检验。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 20,
+        "max": 25,
+        "reason": "顺序快照存在不同步，未显式使用未来数据。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 5,
+        "max": 20,
+        "reason": "两腿订单状态和空仓平仓数量不完整。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 3,
+        "max": 20,
+        "reason": "无裸腿补救、止损和换月。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 1,
+        "max": 15,
+        "reason": "加密衍生品SDK无法直接执行美股。"
+      }
+    ],
+    "score": 43,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 58,
+        "claim": "外部配置未包含默认值"
+      },
+      {
+        "line": 91,
+        "claim": "两合约原始价差"
+      },
+      {
+        "line": 94,
+        "claim": "双向开仓限价"
+      },
+      {
+        "line": 104,
+        "claim": "多价差退出"
+      },
+      {
+        "line": 111,
+        "claim": "空价差退出传负数量"
+      },
+      {
+        "line": 119,
+        "claim": "60秒轮询"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "套利图表.md",
+    "source_sha256": "e3115fa443e23d5a127c5b9002bb8af7cb3fab02c38ff7b92e99967f7147a3d3",
+    "category": "辅助资料",
+    "family": "双品种价格比值图表",
+    "tags": [
+      "双品种价格比值图表",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "读取两个品种及基准品种历史收盘，绘制价格比值的20期均线与2倍标准差通道；只返回图表，没有任何交易下单。",
+    "entry_explanation": [
+      "无入场规则；计算(symbol1/base)/(symbol2/base)，在基准价格非零时等于symbol1/symbol2。"
+    ],
+    "exit_explanation": [
+      "无退出、止盈止损、订单有效期。"
+    ],
+    "position_explanation": [
+      "无仓位、资金配置或对冲比例；不能把两条价格相除当作已经建立中性组合。"
+    ],
+    "parameter_explanation": [
+      "SYMBOL1、SYMBOL2、BASESYBMOL、PERIOD面板未给默认值；PERIOD是1分钟至1周的13项数组下标。",
+      "设置swap合约类型；均线20、通道标准差2均写死。"
+    ],
+    "strengths": [
+      "提供相对价格与波动区间的直观观察视图，可辅助提出配对研究假设。"
+    ],
+    "weaknesses": [
+      "按数组位置而非时间戳对齐，缺失K线或起始时间不同时会混合不同时刻价格。",
+      "未处理数据为空、基准零价与不足20根的有效输出；每个点重算历史指标，开销随长度增加。",
+      "没有检验比值平稳性、可交易价差或费用，不能赋予策略收益评分。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。",
+      "没有Buy/Sell或strategy订单调用，按工具归类；初始不足20期的均值/标准差填充函数也应在实际绘图环境确认。"
+    ],
+    "scores": [],
+    "score": null,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 28,
+        "claim": "时间周期索引"
+      },
+      {
+        "line": 51,
+        "claim": "不足周期的SMA填充"
+      },
+      {
+        "line": 94,
+        "claim": "swap环境"
+      },
+      {
+        "line": 156,
+        "claim": "读取三份行情"
+      },
+      {
+        "line": 165,
+        "claim": "按索引配对并计算比值"
+      },
+      {
+        "line": 175,
+        "claim": "20期2倍标准差"
+      },
+      {
+        "line": 186,
+        "claim": "返回图表而非订单"
+      }
+    ],
+    "kind": "tool"
+  },
+  {
+    "filename": "均值回归型布林带美元成本平均投资策略-Mean-Reversion-Bollinger-Band-Dollar-Cost-Averaging-Investment-Strategy.md",
+    "source_sha256": "35a93404f15371fb7a5ffb845e21ff7f65f9fe9734622e38032c06b1ce4bdcb7",
+    "category": "配置／定投",
+    "family": "布林超跌触发定额累积",
+    "tags": [
+      "布林超跌触发定额累积",
+      "源码复核",
+      "未回测"
+    ],
+    "principle": "每次价格向下穿越布林下轨时买入固定金额，等待指定日期统一清仓；属于信号触发的累积而非按日历等间隔定投。",
+    "entry_explanation": [
+      "来源默认close，当其下穿指定周期布林下轨时，以investment_amount/当前close作为单位数发市价买单。",
+      "使用strategy.order，可在已有多仓时继续累积；只在穿越当根触发，不是始终低于下轨就每根买。",
+      "open_date输入没有用于条件；截止后仍可出现新买单，因为买入未受close_date限制。"
+    ],
+    "exit_explanation": [
+      "每根time>=close_date时strategy.close_all；无均线止盈、价格止损或分批卖出。",
+      "截止之后仍满足买入条件时，开单与close_all同次计算的订单时序需实际验证；不能认为到期自动永久停机。"
+    ],
+    "position_explanation": [
+      "每次目标10000美元，数量用信号收盘价换算，实际市价成交金额可因跳空偏离。",
+      "未设置总投入上限、初始资金或现金补充模型；重复order不受通常entry金字塔限制。"
+    ],
+    "parameter_explanation": [
+      "每次投入10000；open_date=2024-01-01但未生效，close_date=2024-08-04。",
+      "布林来源close、200周期EMA、2倍标准差；请求周期默认240分钟，而示例图表是日线。"
+    ],
+    "strengths": [
+      "定额金额与超跌触发条件透明，避免把金额和单位数量混淆。"
+    ],
+    "weaknesses": [
+      "开启日期无效、截止后仍能下单；资金预算与现金流缺失。",
+      "日线请求4小时数据只得到映射结果，并不逐根交易所有4小时下穿；换到小于4小时图表时还需核实未确认高周期值变化。",
+      "说明建议按已平交易数回填初始资本，不能替代真实逐笔现金流收益率计算；无下跌风险限制。"
+    ],
+    "verification_notes": [
+      "已阅读完整源码；未编译、未运行、未回测，评分衡量规则合理性，不代表收益。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 12,
+        "max": 20,
+        "reason": "下跌累积依赖长期价格修复，非稳定套利。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 17,
+        "max": 25,
+        "reason": "跨周期映射需验证，不能按完整4小时信号解读。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 7,
+        "max": 20,
+        "reason": "日期门禁缺失且到期下单冲突。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 3,
+        "max": 20,
+        "reason": "定额明确但总投入与亏损无上限。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 8,
+        "max": 15,
+        "reason": "多头买入可迁移，碎股、时段和资金流需实现。"
+      }
+    ],
+    "score": 47,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 92,
+        "claim": "金额和日期输入"
+      },
+      {
+        "line": 102,
+        "claim": "4小时请求周期"
+      },
+      {
+        "line": 105,
+        "claim": "EMA200布林"
+      },
+      {
+        "line": 116,
+        "claim": "下穿信号"
+      },
+      {
+        "line": 120,
+        "claim": "order定额累积"
+      },
+      {
+        "line": 123,
+        "claim": "截止后每根平仓"
+      },
+      {
+        "line": 140,
+        "claim": "按交易数回填资本的注释"
+      }
+    ],
+    "kind": "strategy"
+  }
+]

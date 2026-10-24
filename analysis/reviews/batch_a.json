@@ -1,0 +1,1287 @@
+[
+  {
+    "filename": "基于两个移动平均线的交叉策略Moving-Average-Crossover-Strategy.md",
+    "source_sha256": "370a3fa104f0a01e358bed368673a3c9fec9339a78f3441c44cc981a52744b66",
+    "category": "趋势跟随",
+    "family": "双均线交叉",
+    "tags": [
+      "SMA",
+      "双向",
+      "反向平仓"
+    ],
+    "principle": "用9根收盘价的简单均线与21根简单均线判断近期价格相对长期价格的方向变化；依赖趋势在交叉之后继续延伸赚取价差。",
+    "entry_explanation": [
+      "9期SMA从下向上穿过21期SMA时发出多头市价入场。",
+      "9期SMA从上向下穿过21期SMA时发出空头市价入场；不是价格穿越均线，也没有其他过滤。"
+    ],
+    "exit_explanation": [
+      "只有相反方向strategy.entry形成反手退出；没有单独平仓、止盈、止损或持仓时限。",
+      "注释中的2024年1月BTC回测区间不是代码日期过滤，策略本身持续工作。"
+    ],
+    "position_explanation": [
+      "未声明仓位模式、数量或初始资金，数量依赖平台策略属性；没有按止损风险定仓。",
+      "未开启加仓；反向指令按策略引擎的反转语义处理。"
+    ],
+    "parameter_explanation": [
+      "fastLength=9、slowLength=21，单位是图表K线根数；src固定为收盘价。",
+      "使用SMA简单均线而非EMA；没有佣金、滑点、交易时段参数。"
+    ],
+    "strengths": [
+      "规则只有两个交叉事件，因果链清晰，容易逐笔复核。",
+      "不靠价格绝对阈值，均线长度可跨不同报价量级解释。"
+    ],
+    "weaknesses": [
+      "横盘时均线反复交叉会造成换向成本；趋势结束后退出存在滞后。",
+      "单笔亏损无价格保护，持仓可以跨夜承受跳空；数量和成本没有明确建模。"
+    ],
+    "verification_notes": [
+      "源码只引用当前及历史收盘数据；未见跨周期或未来数据请求，但仍需在标准K线和收盘计算条件下验证。",
+      "未配置美股常规交易时段、借券或整股数量；空头信号不等于账户能够借券卖空。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 15,
+        "max": 20,
+        "reason": "延续趋势的价差来源明确，但无震荡过滤。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 23,
+        "max": 25,
+        "reason": "只用当期与历史SMA交叉，无明显前视引用。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 12,
+        "max": 20,
+        "reason": "开仓和反向退出完整可读，但没有独立退出及有效期。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 3,
+        "max": 20,
+        "reason": "仓位未明确且无止损。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 5,
+        "max": 15,
+        "reason": "无成本、时段和空头约束，美股适配工作较多。"
+      }
+    ],
+    "score": 58,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 152,
+        "claim": "默认9/21周期"
+      },
+      {
+        "line": 157,
+        "claim": "SMA由收盘价计算"
+      },
+      {
+        "line": 165,
+        "claim": "双向交叉条件"
+      },
+      {
+        "line": 169,
+        "claim": "只有多空entry，无exit"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "海龟突破回撤自适应交易策略Turtle-Breakout-Drawdown-Adaptive-Trading-Strategy.md",
+    "source_sha256": "6a44a37f776253f18ea71b26b74a4c6414cdb38ab5706a45ef0d352d457cc152",
+    "category": "动量／突破",
+    "family": "海龟通道突破",
+    "tags": [
+      "Donchian",
+      "止损单入场",
+      "默认仅多",
+      "回撤展示"
+    ],
+    "principle": "同时提供20根与55根最高价突破入场、10根与20根最低价通道退出，尝试捕捉较大趋势。标题中的回撤自适应并未落实为交易过滤或风险缩放：回撤只用于显示变量。",
+    "entry_explanation": [
+      "默认开启快速和慢速系统，只允许做多；空仓且在日期区间内，分别在20根最高价和55根最高价挂买入止损单。",
+      "开启Short后，在对应20/55根最低价挂卖出止损单；通道包含当前K线，订单在本次计算后提交，不是事后按当前突破价已经成交。",
+      "两套系统可同时挂单，源码未设置OCA互斥组，实际同时触发及默认pyramiding行为必须验证。"
+    ],
+    "exit_explanation": [
+      "快速多头退出止损价为10根最低价，慢速多头为20根最低价；空头则为10/20根最高价。没有固定止盈。",
+      "四个strategy.exit没有指定from_entry，不能仅凭ID名称认定快速退出只管理快速入场；两套保护单的实际覆盖关系待订单回放。",
+      "超过结束日强制close_all并取消四类入场挂单；日期内关闭某开关没有显式取消此前挂单。"
+    ],
+    "position_explanation": [
+      "声明初始资金100、默认100%权益；sizelong/sizeshort默认100，计算数量为权益÷当前收盘价×仓位百分比。",
+      "数量变量仅在position_size变化时刷新，其余取上一根值，初始na链及qty为na时平台默认数量回退需要核对；并非每笔始终按最新权益重新计算。",
+      "没有原版海龟的ATR单位风险定仓或分批加仓规则；回撤不影响数量。"
+    ],
+    "parameter_explanation": [
+      "needlong=true、needshort=false；needfast=true、needslow=true。",
+      "enter_fast=20、exit_fast=10、enter_slow=55、exit_slow=20，单位为K线根数。",
+      "sizelong/sizeshort=100%，输入最高允许10000%；日期默认1900-01-01至2100-12-31，边界使用严格大于/小于。",
+      "commission_value=0.1，未显式指定佣金类型；showof=true仅把通道图向后画一根，showll=false隐藏通道，showlabel=true计算回撤展示。"
+    ],
+    "strengths": [
+      "突破与通道止损对应趋势延续机制，退出随市场通道更新。",
+      "提供方向、系统、日期开关及结束后的挂单清理。"
+    ],
+    "weaknesses": [
+      "标题夸大回撤自适应，源码回撤只在showlabel分支计算。",
+      "两套订单互斥与退出归属不明确，数量初始化也依赖运行语义。",
+      "百分比权益满仓不同于固定风险定仓，跳空和高杠杆输入会扩大损失。"
+    ],
+    "verification_notes": [
+      "源码末尾只计算标签颜色和位置，未见label.new，不能保证实际回撤标签会显示。",
+      "需重点验证首次下单数量、双系统同时触发、exit覆盖范围和结束日平仓；美股跳空止损可能偏离触发价。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 16,
+        "max": 20,
+        "reason": "通道突破机制明确，但回撤自适应名不副实。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 20,
+        "max": 25,
+        "reason": "通道基于历史与当前价格，需核对挂单提交时点和绘图偏移。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 11,
+        "max": 20,
+        "reason": "有退出和日期清理，但多系统订单归属、初始化仍有缺口。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 8,
+        "max": 20,
+        "reason": "具备通道止损和费用字段，缺乏固定风险定仓且允许极高仓位。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 6,
+        "max": 15,
+        "reason": "默认多头可迁移研究，但整股、交易时段和跳空成交未建模。"
+      }
+    ],
+    "score": 61,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 151,
+        "claim": "初始资金与默认权益仓位"
+      },
+      {
+        "line": 175,
+        "claim": "快速通道包含当前bar"
+      },
+      {
+        "line": 205,
+        "claim": "数量只在持仓变化时刷新"
+      },
+      {
+        "line": 210,
+        "claim": "两系统挂单"
+      },
+      {
+        "line": 212,
+        "claim": "exit未绑定from_entry"
+      },
+      {
+        "line": 221,
+        "claim": "到期清仓并撤单"
+      },
+      {
+        "line": 230,
+        "claim": "回撤仅展示计算"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "Heikin-Ashi非重绘趋势确认策略-Heikin-Ashi-Non-Repainting-Trend-Confirmation-Strategy.md",
+    "source_sha256": "235aaa23271d939cb4ee03a97d8a8b73ce6b270c2c103ee36eeda3f9341acf12",
+    "category": "趋势跟随",
+    "family": "Heikin-Ashi连续确认",
+    "tags": [
+      "Heikin-Ashi",
+      "默认仅多",
+      "收盘执行",
+      "连续K线"
+    ],
+    "principle": "手工计算平均K线，把原始OHLC平滑成Heikin-Ashi实体；连续两根同向实体作为趋势确认。策略在普通图表上使用合成K线判断方向，而订单仍由所运行图表的策略引擎撮合。",
+    "entry_explanation": [
+      "默认Only Long且不反转逻辑：空仓时连续至少2根haClose>haOpen的平均K线买入。",
+      "启用双向后，连续至少2根阴线可卖空；invertTrades=true会对调多空入场及退出逻辑。",
+      "相等实体同时清零两种计数；判断是>=阈值，所以趋势持续时每根均满足，而非只在第2根触发。"
+    ],
+    "exit_explanation": [
+      "默认连续至少2根平均阴线平多；没有价格止损、止盈或日期到期退出。",
+      "双向模式有反向入场信号时先close原仓再entry新仓，优先于普通退出；不同入场/退出阈值会改变优先路径。"
+    ],
+    "position_explanation": [
+      "初始资金100000，每次默认100%权益；无按波动率或风险预算调整仓位。",
+      "只在空仓开普通仓位，持仓时处理反转或退出，没有显式分批加仓。"
+    ],
+    "parameter_explanation": [
+      "openThreshold=2、exitThreshold=2分别控制入场和退出所需连续根数。",
+      "tradeMode=Only Long；invertTrades=false；hideStandard=true只是隐藏原蜡烛实体。",
+      "commission_value=0.01、slippage=2个最小跳动单位，process_orders_on_close=true请求收盘成交；这些是假设，不是现实收盘价格保证。"
+    ],
+    "strengths": [
+      "平均K线递推和连续计数均清晰，默认单向模式便于股票多头研究。",
+      "显式建模手续费、滑点及收盘成交选项，比完全无成本假设更透明。"
+    ],
+    "weaknesses": [
+      "平均K线平滑与两根确认都带来滞后，急跌可在确认退出前造成大额损失。",
+      "无硬性止损且满仓；双向反转同次close与entry的订单语义需要实际回放。",
+      "标题“非重绘”不能代替运行验证；合成图表价格与真实可交易价格也不能混为一谈。"
+    ],
+    "verification_notes": [
+      "haOpen仅递推前一根haOpen和haClose，未见security或未来引用；实时当前K线OHLC仍会变化。",
+      "应在标准真实OHLC图表验证，不能直接以Heikin-Ashi图表上的合成撮合价声称可成交。",
+      "未配置美股盘前盘后过滤，process_orders_on_close在现实收盘后报警执行存在时点差。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 15,
+        "max": 20,
+        "reason": "连续平滑方向用于趋势延续，有明确但滞后的机制。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 22,
+        "max": 25,
+        "reason": "历史递推清晰，但当前bar与合成图表使用方式仍需验证。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 16,
+        "max": 20,
+        "reason": "方向限制、计数重置和反转路径明确，缺失价格保护及有效期。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 7,
+        "max": 20,
+        "reason": "有成本设置但满仓且无硬止损。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 8,
+        "max": 15,
+        "reason": "默认仅多和滑点假设有帮助，收盘成交及交易时段需适配。"
+      }
+    ],
+    "score": 68,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 158,
+        "claim": "满仓、手续费、滑点和收盘执行声明"
+      },
+      {
+        "line": 186,
+        "claim": "手工平均K线递推"
+      },
+      {
+        "line": 214,
+        "claim": "同向计数及平实体清零"
+      },
+      {
+        "line": 235,
+        "claim": "阈值及反向逻辑"
+      },
+      {
+        "line": 251,
+        "claim": "交易模式限制"
+      },
+      {
+        "line": 264,
+        "claim": "反转优先退出逻辑"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "超级趋势策略SuperTrend-Strategy.md",
+    "source_sha256": "fdb8eff2c382e106a1c044ee55e02eaf4bcacdd2a974b70a51f7c95ed22839d9",
+    "category": "趋势跟随",
+    "family": "SuperTrend方向翻转",
+    "tags": [
+      "ATR",
+      "默认仅多",
+      "声明缺失",
+      "日期过滤失效"
+    ],
+    "principle": "以高低价中点为中心加减3倍22期ATR形成上下带，通过沿趋势方向收紧带线并观察收盘价突破前一根带线，判断趋势翻转。",
+    "entry_explanation": [
+      "意图默认仅做多：方向从-1转为1时发出Long入场。",
+      "关闭LongOnly后，向上翻转买入、向下翻转卖空；无信号时取消相应未成交入场。",
+      "源码唯一strategy声明被注释，以下行为仅是逻辑意图，原文不能视为已可独立运行策略。"
+    ],
+    "exit_explanation": [
+      "默认向下翻转时strategy.close平多；双向模式通过相反entry反转。",
+      "虽然带线名为Long Stop/Short Stop，但没有向经纪模拟器提交对应价格止损单，只在收盘翻向时发出市价指令；没有止盈。",
+      "time_cond恒为true，日期外close_all分支不可达，日期输入不限制交易。"
+    ],
+    "position_explanation": [
+      "被注释的声明写了100%权益和初始1000，但这些不是生效设置。",
+      "活动代码没有数量或资金声明，需要恢复并核验策略头部后才能确定仓位。"
+    ],
+    "parameter_explanation": [
+      "LongOnly=true、length=22、mult=3.0、showLabels=true。",
+      "起止日期输入默认2019-01-01至2020-01-01，startDate/finishDate虽计算但未用于time_cond。",
+      "length为ATR根数，mult决定通道与中价距离；这些线不是已挂出的止损订单。"
+    ],
+    "strengths": [
+      "ATR通道能随波动扩张和收缩，方向切换规则具有明确价格含义。",
+      "默认多头模式给出独立平仓逻辑。"
+    ],
+    "weaknesses": [
+      "strategy声明缺失是首要可运行性问题。",
+      "日期控制失效；可视止损线容易让人误以为有盘中保护单。",
+      "没有费用、滑点或仓位风险设定；横盘可能频繁换向。"
+    ],
+    "verification_notes": [
+      "所附Pine代码的唯一strategy声明被注释，缺少有效脚本声明；按静态结构判断不能作为完整Pine策略编译。未执行实际编译。",
+      "源码仅静态读取，未修复或编译；需要先恢复有效声明并确认Pine版本。",
+      "美股跳空与盘中跌破后收回可能在收盘翻转规则下产生与价格止损完全不同的结果。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 15,
+        "max": 20,
+        "reason": "波动通道趋势延续机制成立。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 22,
+        "max": 25,
+        "reason": "使用当前与前一根带线，无跨周期请求。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 5,
+        "max": 20,
+        "reason": "声明被注释且日期门禁恒真，原稿规则落地有阻碍。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 3,
+        "max": 20,
+        "reason": "所谓止损仅信号线，生效仓位声明缺失。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 3,
+        "max": 15,
+        "reason": "源码待修复，未提供费用、时段和跳空约束。"
+      }
+    ],
+    "score": 48,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 212,
+        "claim": "strategy声明被注释"
+      },
+      {
+        "line": 214,
+        "claim": "默认仅多和ATR参数"
+      },
+      {
+        "line": 235,
+        "claim": "日期条件恒true"
+      },
+      {
+        "line": 242,
+        "claim": "递推通道"
+      },
+      {
+        "line": 252,
+        "claim": "收盘突破前一根带线翻向"
+      },
+      {
+        "line": 269,
+        "claim": "默认买入与平仓"
+      },
+      {
+        "line": 287,
+        "claim": "日期外退出不可达"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "双均线SuperTrend量化交易策略Dual-Moving-Average-Supertrend-Quantitative-Trading-Strategy.md",
+    "source_sha256": "96e08e35c70481f1f4011e3b34d390df3d4ad4fe24f08608b63da512e5890d5a",
+    "category": "趋势跟随",
+    "family": "双周期SuperTrend与MACD确认",
+    "tags": [
+      "多周期",
+      "SMA-MACD",
+      "双向",
+      "版本混用"
+    ],
+    "principle": "当前周期SuperTrend刚翻向时，要求120分钟趋势同向，再用SMA差值及其信号线确认动量；入场后配置固定跳数止盈止损。",
+    "entry_explanation": [
+      "多头：当前Trend从-1变1、主周期MTrend为1，且12期SMA减26期SMA大于该差值的9期SMA。",
+      "空头：当前Trend从1变-1、主周期MTrend为-1，且MACD差值小于信号线。",
+      "高周期价格通过request.security取得，但高周期趋势递推发生在当前图表上下文，不能简单等同于在120分钟图上完整计算SuperTrend。"
+    ],
+    "exit_explanation": [
+      "Buy和Sell分别绑定profit=500、loss=400的退出单，单位是最小价格跳动数，不是500/400美元或百分比。",
+      "相反方向entry可反转持仓；没有日期有效期或收盘清仓。"
+    ],
+    "position_explanation": [
+      "strategy声明未指定数量类型、数量或资金，依赖平台属性；没有根据400跳风险反推股数。",
+      "默认未声明加仓，反向订单与挂着的保护单需要回放核验。"
+    ],
+    "parameter_explanation": [
+      "source=close、fastLength=12、slowLength=26、signalLength=9，三条均线都是SMA。",
+      "res=\"120\"表示120分钟；Factor=1、Pd=1使波动通道非常敏感。",
+      "tp=500、sl=400为跳数；对0.01跳股票对应5和4的价格距离，但其他品种不同。"
+    ],
+    "strengths": [
+      "方向翻转、高周期方向、动量三者有明确组合关系。",
+      "每个入场ID都有绑定的止盈止损，结构比只反转退出更完整。"
+    ],
+    "weaknesses": [
+      "声明Pine v2却使用request.security命名空间，存在明显版本兼容问题，未编译前不应称可运行。",
+      "未对高周期未收盘值做确认，高周期方向历史/实时一致性需验证。",
+      "ATR只有1根且倍数1，高周期平滑效果可能被底层递推方式削弱；固定跳数不适应波动和股价。"
+    ],
+    "verification_notes": [
+      "先统一版本，再验证request.security映射、lookahead默认语义及高周期闭合时点，不能宣称无重绘。",
+      "未设佣金、滑点、美股交易时段及借券条件。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 16,
+        "max": 20,
+        "reason": "趋势与动量确认具有明确获利假设。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 13,
+        "max": 25,
+        "reason": "多周期值确认和计算上下文存在关键待验证项。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 8,
+        "max": 20,
+        "reason": "有绑定退出，但版本混用影响落地。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 9,
+        "max": 20,
+        "reason": "固定保护存在，仓位与止损风险未连接。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 4,
+        "max": 15,
+        "reason": "未处理美股执行，且需先解决版本问题。"
+      }
+    ],
+    "score": 50,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 118,
+        "claim": "声明v2"
+      },
+      {
+        "line": 129,
+        "claim": "MACD采用SMA"
+      },
+      {
+        "line": 136,
+        "claim": "主周期120分钟、ATR1倍1期"
+      },
+      {
+        "line": 146,
+        "claim": "request.security跨版本调用"
+      },
+      {
+        "line": 154,
+        "claim": "高周期趋势在外部递推"
+      },
+      {
+        "line": 178,
+        "claim": "组合入场条件"
+      },
+      {
+        "line": 182,
+        "claim": "固定跳数退出"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "趋势强度确认策略Trend-Strength-Confirm-Bars-Strategy.md",
+    "source_sha256": "53919a4c96120101e57f4bf4aca62672c72b6afc160ef45bfe528c06dd6d2066",
+    "category": "趋势跟随",
+    "family": "连续收盘动量",
+    "tags": [
+      "连续涨跌",
+      "双向",
+      "日期过滤失效"
+    ],
+    "principle": "累计收盘价连续上涨或下跌的根数，在计数恰好达到阈值时顺势开仓。默认阈值只有1，因此本质是每段连续收盘涨跌的第一根触发，并非多根确认趋势强度。",
+    "entry_explanation": [
+      "close大于上一根close则上涨计数加1，否则清零；计数恰好等于confirmBars时买入。",
+      "close小于上一根close则下跌计数加1，否则清零；计数恰好等于阈值时卖空。",
+      "相等收盘会将两种计数都清零；条件为==，连续上涨到第2根后不会重复触发默认买入。"
+    ],
+    "exit_explanation": [
+      "相反方向entry反转；没有价格止损、止盈、持仓期限或独立平仓。",
+      "起止时间虽由输入生成，但inBacktestRange=true使日期范围失效，也没有结束日清仓。"
+    ],
+    "position_explanation": [
+      "未指定数量、初始资金或风险预算，按平台策略属性执行；没有显式加仓。"
+    ],
+    "parameter_explanation": [
+      "confirmBars=1，没有minval约束，0或负数等输入需要另行防护。",
+      "日期输入默认2019-01-01到2023-12-31，但代码不实际使用计算出的时间戳。",
+      "回测注释写2小时BTC样本，不能视为股票参数或收益证据。"
+    ],
+    "strengths": [
+      "用收盘对收盘比较，简单且容易核对；没有跨周期数据依赖。"
+    ],
+    "weaknesses": [
+      "默认仅一根涨跌，信号噪声很高且频繁换向可能消耗成本。",
+      "无硬止损与明确仓位；日期设置给出虚假的范围控制观感。"
+    ],
+    "verification_notes": [
+      "未配置佣金和滑点；美股日内噪声、隔夜跳空以及卖空约束需要独立评估。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 10,
+        "max": 20,
+        "reason": "短期延续假设清楚，但一根确认缺少趋势强度依据。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 23,
+        "max": 25,
+        "reason": "仅用收盘及历史计数，无明显前视引用。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 9,
+        "max": 20,
+        "reason": "反转可读，但日期过滤失效且缺乏独立退出。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 2,
+        "max": 20,
+        "reason": "无风险或数量控制。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 4,
+        "max": 15,
+        "reason": "无交易成本、时段及空头执行设定。"
+      }
+    ],
+    "score": 48,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 115,
+        "claim": "确认根数默认为1"
+      },
+      {
+        "line": 125,
+        "claim": "时间戳被计算"
+      },
+      {
+        "line": 128,
+        "claim": "日期条件恒真"
+      },
+      {
+        "line": 132,
+        "claim": "上涨计数及等号触发"
+      },
+      {
+        "line": 137,
+        "claim": "下跌计数及等号触发"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "基于一目均衡表的趋势追踪策略Ichimoku-Balance-Line-Trend-Tracking-Strategy.md",
+    "source_sha256": "938c9c0d18396bff0f7b3af5a181330ae355cba9803291349aa6f83c522cdf22",
+    "category": "动量／突破",
+    "family": "一目云边界突破",
+    "tags": [
+      "Ichimoku",
+      "双向",
+      "固定百分比意图",
+      "最小跳动假设"
+    ],
+    "principle": "以9/26/52根高低价中点构建一目云，收盘价穿过26根之前计算的云上沿做多、跌穿云下沿做空；入场后按价格距离设置目标与止损。",
+    "entry_explanation": [
+      "仅在空仓时，close向上穿越max(先行A[26],先行B[26])买入。",
+      "仅在空仓时，close向下穿越min(先行A[26],先行B[26])卖空；持仓时不会因相反突破直接反手。"
+    ],
+    "exit_explanation": [
+      "多头目标意图为均价上方5%，止损意图为均价下方0.5%；空头目标以均价减均价/1.05计算，约为均价下方4.762%，止损意图为上方0.5%。",
+      "代码把价格距离乘100传给profit/loss跳数参数，只有最小跳动恰好0.01时才对应上述价格百分比。",
+      "没有日期结束、反向信号平仓或时间退出。"
+    ],
+    "position_explanation": [
+      "策略头声明初始资金20000、禁止加仓、每单现金手续费10；后续又写strategy.initial_capital=50000，疑似尝试改写只读内置量，需编译核验。",
+      "lotes按初始资金和当前open向下取100股整数倍计算，而非按当前净值或止损风险定仓；若价格过高可能为0股。"
+    ],
+    "parameter_explanation": [
+      "转换线periodoLinhaDeConversao=9、基准线periodoLinhaBase=26、先行B=52、deslocamento=26。",
+      "percentGoal=5.0、percentStop=0.5；乘100隐含分报价跳动假设。",
+      "calc_on_every_tick=true使实时逐tick可能参与计算；历史K线回测不能自动重现全部实时路径。"
+    ],
+    "strengths": [
+      "空仓限制避免同向加仓，入场明确突破云边界。",
+      "包含目标、止损和每单现金手续费设定。"
+    ],
+    "weaknesses": [
+      "初始资金赋值可运行性存疑，仓位所用资金来源存在冲突。",
+      "100倍转换把报价跳动假设硬编码；初始资金全额定仓不随账户亏损缩小。",
+      "逐tick信号在未收盘前可变化，历史收盘回测与实时触发可能不一致。"
+    ],
+    "verification_notes": [
+      "未编译，内置量赋值问题应先解决；需核查止盈止损在首次成交后的生效时点。",
+      "需按具体股票最小跳动、整股及空头条件测试；10现金/单费用并非普遍美股真实费用。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 15,
+        "max": 20,
+        "reason": "云边界突破具有趋势延续含义。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 18,
+        "max": 25,
+        "reason": "使用历史云值，但逐tick实时路径需要验证。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 8,
+        "max": 20,
+        "reason": "退出存在，内置初始资本赋值带来可执行性疑问。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 9,
+        "max": 20,
+        "reason": "有止损和百股定仓，但跳数转换及固定资本风险明显。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 6,
+        "max": 15,
+        "reason": "有费用与整百股考虑，但硬编码报价跳数和空头条件不足。"
+      }
+    ],
+    "score": 56,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 121,
+        "claim": "初始资金、手续费与逐tick模式"
+      },
+      {
+        "line": 128,
+        "claim": "一目参数"
+      },
+      {
+        "line": 140,
+        "claim": "重新赋值内置初始资金"
+      },
+      {
+        "line": 143,
+        "claim": "百股数量公式"
+      },
+      {
+        "line": 147,
+        "claim": "目标距离乘100"
+      },
+      {
+        "line": 152,
+        "claim": "止损距离乘100"
+      },
+      {
+        "line": 155,
+        "claim": "空仓突破及绑定退出"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "Ichimoku云图量化交易策略A-Quantitative-Ichimoku-Cloud-Trading-Strategy.md",
+    "source_sha256": "c842d9aa1a7ab83094b4ed200eebf2d839b17d7f9089d8dee89208f3e9191125",
+    "category": "趋势跟随",
+    "family": "一目多线云外确认",
+    "tags": [
+      "Ichimoku",
+      "双向",
+      "反向平仓",
+      "绘图位移"
+    ],
+    "principle": "要求一目基准线、转换线和当前价格在各自参照的历史云同一侧，且三者之一刚完成穿越，用多条件共振确认趋势。它不是简单的价格穿云策略。",
+    "entry_explanation": [
+      "做多要求基准线高于26根前云上沿、转换线高于26根前云上沿、收盘价高于52根前云上沿；其中基准线、转换线或收盘价至少一项在本根刚上穿对应边界。",
+      "做空为三者低于对应云下沿，并至少一项刚下穿。三段if共用同一个Buy或Sell订单ID。",
+      "价格比较的是2×displacement之前的云；不能把图上向后画的迟行线误读成使用未来数据。"
+    ],
+    "exit_explanation": [
+      "只有相反entry进行反转；云内震荡或任一条件失效本身不平仓。",
+      "没有止盈、止损、日期有效期或持仓时限，可能长时间等待完整反向共振。"
+    ],
+    "position_explanation": [
+      "初始资金100000美元，default_qty_type=strategy.cash且每笔名义金额100000；是固定金额，不是动态100%权益。",
+      "账户亏损后仍请求同样金额，没有风险定仓和显式加仓参数。"
+    ],
+    "parameter_explanation": [
+      "conversionPeriods=9、basePeriods=26、laggingSpan2Periods=52；displacement=26，既影响绘图也用于信号历史索引。",
+      "云由转换线/基准线均值和52根高低价中点组成；迟行收盘线绘图offset=-26，先行云绘图offset=+26。"
+    ],
+    "strengths": [
+      "三条件与触发事件区分清楚，能够限定趋势共振。",
+      "信号历史索引明确，图形前后移与信号逻辑可分别审查。"
+    ],
+    "weaknesses": [
+      "三重确认增加入场及反转滞后，离场只能等完整相反组合。",
+      "固定100000美元名义仓位和无止损组合可能在账户回撤后形成更高风险比例。",
+      "前后位移绘图容易让肉眼误判信号领先；费用与滑点缺失。"
+    ],
+    "verification_notes": [
+      "未见负索引取未来值；向前/后绘图不等于未来信息，但应对照订单时点验证。",
+      "现金仓位转换成股数、碎股支持和空头借券未明确。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 15,
+        "max": 20,
+        "reason": "多线趋势共振有清楚假设，但过度滞后可能降低适应性。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 22,
+        "max": 25,
+        "reason": "信号引用明确历史云，需避免用位移图作先知判断。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 12,
+        "max": 20,
+        "reason": "组合入场与反手明确，独立离场缺失。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 3,
+        "max": 20,
+        "reason": "固定金额且无保护单。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 5,
+        "max": 15,
+        "reason": "美元现金仓位可解释，成本、碎股和空头条件未建模。"
+      }
+    ],
+    "score": 57,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 139,
+        "claim": "固定10万美元现金仓位"
+      },
+      {
+        "line": 142,
+        "claim": "9/26/52/26参数"
+      },
+      {
+        "line": 156,
+        "claim": "绘图位移"
+      },
+      {
+        "line": 170,
+        "claim": "基准线相对26根前云"
+      },
+      {
+        "line": 184,
+        "claim": "价格相对52根前云"
+      },
+      {
+        "line": 192,
+        "claim": "三个多头触发分支"
+      },
+      {
+        "line": 202,
+        "claim": "三个空头触发分支"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "MACD机器人交易策略MACD-Robot-Trading-Strategy.md",
+    "source_sha256": "711af6ba1e3cc5d3438befb9dd99dd7d927f0b3aed6a65f9671c9c87be210cdf",
+    "category": "趋势跟随",
+    "family": "MACD绝对阈值多头",
+    "tags": [
+      "MACD",
+      "仅多",
+      "未使用参数",
+      "双组MACD"
+    ],
+    "principle": "当第一组MACD从下向上穿越固定负值阈值时买入，押注下跌动量减弱后继续反弹；退出却使用第一组MACD上穿第二组信号线且信号线为正的条件，不是标题描述中常见的金叉买死叉卖。",
+    "entry_explanation": [
+      "currMacd按fastMA=12、slowMA=26计算；上穿linebuy=-0.00045触发long。",
+      "绘图柱色使用currMacd与上一根对应MACD比较，颜色本身不参与下单；仅做多。"
+    ],
+    "exit_explanation": [
+      "exitLong为currMacd向上穿过第二组signal且signal>0时平多；这是上穿条件，不能写成死叉退出。",
+      "止损价为持仓均价×(1-0.05%)，没有固定止盈、日期有效期或持仓时限。",
+      "linesell=0.0001只绘图，根本不用于平仓条件。"
+    ],
+    "position_explanation": [
+      "未声明初始资金、默认数量或风险仓位；止损很窄但不代表总体风险已控制。",
+      "没有显式加仓或反向开空。"
+    ],
+    "parameter_explanation": [
+      "fastMA/slowMA=12/26用于入场MACD；另一组fast_length/slow_length=12/26、signal_length=9、src=close用于signal。",
+      "sma_source=false、sma_signal=false，第二组默认EMA；若修改第二组参数而不改第一组，会比较两套不同口径指标。",
+      "linebuy=-0.00045是报价绝对值，不是百分比；linesell=0.0001无交易作用。",
+      "sl_inp输入0.05后除100，实际止损0.05%，不是5%。"
+    ],
+    "strengths": [
+      "包含基于均价的明确止损价；默认只做多减少借券依赖。",
+      "入场阈值与退出交叉可以从源码直接还原。"
+    ],
+    "weaknesses": [
+      "策略名GBPUSD且阈值极小，直接用于高价股票会改变阈值实际含义。",
+      "两套MACD参数可能分叉，Close Long输入不生效容易误导调参者。",
+      "0.05%止损易受价差、滑点和跳空影响，源码却未设置交易成本。"
+    ],
+    "verification_notes": [
+      "需逐单验证同根入场/平仓条件重叠及止损首次挂出时点；没有运行证据。",
+      "美股应先处理报价量级、最小跳动、实际价差和滑点，不能把外汇绝对阈值直接当通用参数。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 12,
+        "max": 20,
+        "reason": "负阈值回升可解释，但退出上穿与常见动量退出机制不一致。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 22,
+        "max": 25,
+        "reason": "基于当期和历史MACD，无多周期引用。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 12,
+        "max": 20,
+        "reason": "有平仓与止损，死参数和双口径导致维护风险。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 8,
+        "max": 20,
+        "reason": "有均价止损但未定仓，止损极窄且无成本。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 3,
+        "max": 15,
+        "reason": "外汇阈值与股票报价不匹配，需重新标定。"
+      }
+    ],
+    "score": 57,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 154,
+        "claim": "第一组MACD"
+      },
+      {
+        "line": 178,
+        "claim": "第二组MACD和signal"
+      },
+      {
+        "line": 190,
+        "claim": "买卖绝对阈值"
+      },
+      {
+        "line": 198,
+        "claim": "实际止损为0.05%"
+      },
+      {
+        "line": 202,
+        "claim": "入场及上穿平仓条件"
+      },
+      {
+        "line": 208,
+        "claim": "仅多头订单与止损"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "MACD和EMA金叉死叉策略MACD-and-EMA-Crossover-Strategy.md",
+    "source_sha256": "f9d64dd4a92f9e1eaed83bfd6866c038067fec44e8babae13f30a76abaeafc1c",
+    "category": "趋势跟随",
+    "family": "EMA200过滤MACD回调",
+    "tags": [
+      "MACD",
+      "EMA200",
+      "双向意图",
+      "反手不对称",
+      "固定信号价括号单"
+    ],
+    "principle": "价格处于200期EMA上方时寻找零轴下MACD金叉，反向则在EMA下方找零轴上死叉，尝试在大趋势内捕捉回调结束；目标按信号收盘价到EMA的距离设为两倍。",
+    "entry_explanation": [
+      "多头需MACD上穿信号线、MACD<0、close>EMA200且持仓数量<=0；允许从空头反转为多头。",
+      "空头需MACD下穿信号线、MACD>0、close<EMA200且持仓数量<=0；该条件不允许从已有多头直接反转为空头，并允许空仓或已有空仓状态提交。"
+    ],
+    "exit_explanation": [
+      "多单止损固定为信号当根EMA200，止盈为信号close+2×(close-EMA200)。空单止损为当根EMA200，止盈为close-2×(EMA200-close)。",
+      "保护单只在相应入场条件分支中创建，不是每根跟随EMA更新；已有空仓再次满足空头条件时可能重发/修改该ID的退出价格。",
+      "实际成交可能在下一根开盘，故所谓2:1只相对信号close计算，不保证相对真实成交均价2:1；无时间退出。"
+    ],
+    "position_explanation": [
+      "未指定数量和风险预算；不同信号与EMA距离不同，每笔货币风险不恒定。",
+      "未声明pyramiding；已有空头时再次entry通常受默认加仓约束，但同分支退出单更新仍需验证。"
+    ],
+    "parameter_explanation": [
+      "fastLength=12、slowLength=26、signalLength=9用于标准MACD。",
+      "EMA长度固定200不可通过input调整；两倍盈亏距离固定写在公式中。",
+      "没有佣金、滑点、起止日期和美股时段输入。"
+    ],
+    "strengths": [
+      "大趋势过滤与逆向回调动量恢复相结合，盈利逻辑具体。",
+      "多空各绑定明确价格止盈止损，能够解释信号时刻风险距离。"
+    ],
+    "weaknesses": [
+      "多空持仓门禁同写<=0导致不对称，已有多头不能按空头信号反转。",
+      "价格靠近EMA时止损极窄，跳空成交会改变盈亏比甚至使保护价位关系不合理。",
+      "无风险定仓与成本假设；反复空头信号可能改变已有保护单。"
+    ],
+    "verification_notes": [
+      "需重点回放多转空、空转多、已有空仓再发信号和跳空入场情形，不能宣称对称双向实现。",
+      "美股做空借券、最小报价与成交成本未建模。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 17,
+        "max": 20,
+        "reason": "趋势内回调机制与2倍信号距离目标清楚。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 23,
+        "max": 25,
+        "reason": "只用当前及历史指标，未见前视请求。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 12,
+        "max": 20,
+        "reason": "括号退出明确，但持仓门禁不对称。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 10,
+        "max": 20,
+        "reason": "价格止损存在，仓位未按风险距离缩放。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 5,
+        "max": 15,
+        "reason": "缺少费用和跳空成交处理，股票执行需补验。"
+      }
+    ],
+    "score": 67,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 113,
+        "claim": "MACD与EMA计算"
+      },
+      {
+        "line": 120,
+        "claim": "多头条件及<=0门禁"
+      },
+      {
+        "line": 123,
+        "claim": "信号EMA止损与2倍目标"
+      },
+      {
+        "line": 128,
+        "claim": "空头也用<=0门禁"
+      },
+      {
+        "line": 131,
+        "claim": "空头保护价"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "MACD-TEMA-交叉策略-MACD-TEMA-Crossover-Strategy.md",
+    "source_sha256": "020fbb8b5eee0ea160d0a5951a57592d1d3e41d0ac6f5b9bd298a16256d95375",
+    "category": "趋势跟随",
+    "family": "TEMA-MACD交叉",
+    "tags": [
+      "TEMA",
+      "双向",
+      "绘图提前一根",
+      "反向平仓"
+    ],
+    "principle": "把MACD两条均线和信号平滑都改为三重指数均线TEMA，通过抵消一部分平滑滞后追踪更快的动量转向；金叉做多、死叉做空。",
+    "entry_explanation": [
+      "12期TEMA减26期TEMA构成macd，对该差值再计算9期TEMA作为signal。",
+      "macd向上穿越signal发出Buy，向下穿越发出Sell；柱状图颜色不参与下单。"
+    ],
+    "exit_explanation": [
+      "没有显式exit或close，只靠相反方向entry反手退出。",
+      "没有价格止损、止盈、日期范围或持仓时限。"
+    ],
+    "position_explanation": [
+      "未声明数量模式、数量或初始资金，依赖平台策略属性；未实现风险定仓或显式分批加仓。"
+    ],
+    "parameter_explanation": [
+      "slow变量默认12，对应短周期；fast默认26，对应长周期，变量名称与通常快慢含义相反。",
+      "signal1=9；TEMA公式为3×一次EMA-3×二次EMA+三次EMA。",
+      "plotarrow使用offset=-1把信号图形画到前一根，但订单仍在实际交叉发生后提交。"
+    ],
+    "strengths": [
+      "交叉触发条件简洁，TEMA构造全部由当前及历史EMA递推。",
+      "降低平滑滞后的设计有明确数学表达，便于与普通MACD做同条件研究。"
+    ],
+    "weaknesses": [
+      "更快并不等于更准确，TEMA可能在横盘产生更多假交叉。",
+      "箭头提前一根显示容易营造早知信号的错觉。",
+      "无硬止损、仓位和成本设置，反向信号前风险不受保护。"
+    ],
+    "verification_notes": [
+      "offset=-1是可视化回移，不代表策略订单提前成交；不得按箭头所在K线计算收益。",
+      "未编译或验证实时表现；美股交易时段、借券、手续费均需另行建模。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 14,
+        "max": 20,
+        "reason": "减滞后动量交叉可解释，但没有震荡过滤。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 19,
+        "max": 25,
+        "reason": "交易公式未见前视，但图形回移增加时间解释风险。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 11,
+        "max": 20,
+        "reason": "交叉与反手清楚，缺少独立退出。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 2,
+        "max": 20,
+        "reason": "没有保护价及风险仓位。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 4,
+        "max": 15,
+        "reason": "美股执行约束与成本未配置。"
+      }
+    ],
+    "score": 50,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 98,
+        "claim": "变量快慢命名反常"
+      },
+      {
+        "line": 103,
+        "claim": "TEMA公式"
+      },
+      {
+        "line": 114,
+        "claim": "TEMA差值MACD"
+      },
+      {
+        "line": 117,
+        "claim": "TEMA信号线"
+      },
+      {
+        "line": 134,
+        "claim": "箭头向过去偏移一根"
+      },
+      {
+        "line": 138,
+        "claim": "双向entry"
+      }
+    ],
+    "kind": "strategy"
+  },
+  {
+    "filename": "基于EMA均线和MACD指标的趋势跟踪策略EMA-Crossover-and-MACD-Signals-Trend-Following-Strategy.md",
+    "source_sha256": "5ab489a04cc1f5be61276bf434a234592b5e5b3debc92d089fe0560634b61d80",
+    "category": "趋势跟随",
+    "family": "EMA9/21交叉",
+    "tags": [
+      "EMA",
+      "双向",
+      "标题无对应MACD",
+      "仅多头保护",
+      "动态重算退出"
+    ],
+    "principle": "9期EMA上穿21期EMA且收盘站在21期线上时做多，反向做空。尽管标题提到MACD，源码没有MACD计算或条件；止盈止损每根按当前收盘重新计算，且仅绑定多头。",
+    "entry_explanation": [
+      "EMA9向上穿过EMA21且close>EMA21时买入Buy。",
+      "EMA9向下穿过EMA21且close<EMA21时卖空Sell；没有趋势、成交量或MACD过滤。"
+    ],
+    "exit_explanation": [
+      "每根都给Buy更新止损为当根close×0.99、止盈为当根close×1.02；它们不是相对入场价固定的1%/2%。",
+      "价格下跌时多头止损也可能下移，价格上涨时止盈上移，因此不能描述成固定风险或固定2:1盈亏比。",
+      "Sell没有对应exit，空头只有下一次Buy反手才能退出；多头也可由Sell反手退出。没有日期或持仓期限。"
+    ],
+    "position_explanation": [
+      "没有明确初始资金、数量模式或数量；没有按照止损距离控制每笔损失。",
+      "未启用显式加仓；双向反手由策略引擎处理。"
+    ],
+    "parameter_explanation": [
+      "EMA长度9和21硬编码，不是可调input。",
+      "stopLossPct输入1后除100，takeProfitPct输入2后除100；二者只控制当前close比例。",
+      "未设置佣金、滑点或交易时段。"
+    ],
+    "strengths": [
+      "均线交叉加价格位置确认的入场规则容易复核。",
+      "多头退出单绑定Buy，至少给出了明确的价格订单路径。"
+    ],
+    "weaknesses": [
+      "标题含MACD但代码不存在，描述与源码不一致。",
+      "多头止损可随下跌放宽，空头没有保护，双向风险高度不对称。",
+      "浮动目标跟随当前close，不能按固定入场盈亏比评价。"
+    ],
+    "verification_notes": [
+      "需要逐bar绘制实际生效的退出订单价，验证更新时点与盘中触发；不能只看当根公式推断成交。",
+      "没有成本或卖空约束，美股跳空可能使下根挂单与预期风险显著不同。",
+      "仅逐行静态复核所附源码，未编译、未回测、未实盘；分数评价规则合理性，不代表收益或可执行保证。"
+    ],
+    "scores": [
+      {
+        "dimension": "获利机制",
+        "score": 14,
+        "max": 20,
+        "reason": "EMA延续假设明确，标题中的MACD协同不存在。"
+      },
+      {
+        "dimension": "信号因果性",
+        "score": 23,
+        "max": 25,
+        "reason": "只用当前及历史EMA，无多周期请求。"
+      },
+      {
+        "dimension": "规则完整性",
+        "score": 9,
+        "max": 20,
+        "reason": "多空退出不对称且动态重算与常见描述不同。"
+      },
+      {
+        "dimension": "风险与仓位",
+        "score": 5,
+        "max": 20,
+        "reason": "只有多头有保护，止损可放宽且无风险定仓。"
+      },
+      {
+        "dimension": "美股执行",
+        "score": 4,
+        "max": 15,
+        "reason": "未建模股票成本、时段或借券。"
+      }
+    ],
+    "score": 55,
+    "review_status": "源码复核",
+    "classification_confidence": "高",
+    "review_evidence": [
+      {
+        "line": 135,
+        "claim": "只计算EMA9/21"
+      },
+      {
+        "line": 139,
+        "claim": "多空交叉与价格条件"
+      },
+      {
+        "line": 143,
+        "claim": "默认1%/2%参数"
+      },
+      {
+        "line": 146,
+        "claim": "退出价按当前close重算"
+      },
+      {
+        "line": 154,
+        "claim": "双向entry"
+      },
+      {
+        "line": 160,
+        "claim": "exit仅绑定Buy"
+      }
+    ],
+    "kind": "strategy"
+  }
+]
