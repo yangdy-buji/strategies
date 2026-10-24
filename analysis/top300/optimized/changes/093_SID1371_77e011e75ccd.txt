@@ -1,0 +1,34 @@
+{
+  "rank": 93,
+  "sid": 1371,
+  "source_sha256": "6a439b027916220522075301fb59d86877bb49ec2005682ddeb8a8c76c768509",
+  "base_kind": "original",
+  "base_sha256": "0e6c06f6e82849d303d815e85749cabd905bc576f813b560459881d976c9a163",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：关键反转形态做多，但止盈止损只清手工状态，和真实保护订单不是同一模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "发单和平仓判断在清posprice之前；触价后下一次计算才close_all，且新形态会重锚旧仓参考价。已有审查已列待设计，当前原版仍如此。 暂缓原因：改变订单类型和状态时序会显著改变旧回测结果。"
+  ],
+  "validation_plan": [
+    "逐根模拟入场根即触阈值、持仓重复形态、同根两端触及及次根跳空；核对实际成交。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "77e011e75ccd",
+  "title": "关键反转信号回测策略Key-Reversal-Backtest-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/093_SID1371_77e011e75ccd_original.pine",
+  "original": "originals/093_SID1371_77e011e75ccd.pine",
+  "baseline": "baselines/093_SID1371_77e011e75ccd.pine",
+  "changes": "changes/093_SID1371_77e011e75ccd.txt",
+  "card": "cards/77e011e75ccd.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "0e6c06f6e82849d303d815e85749cabd905bc576f813b560459881d976c9a163",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

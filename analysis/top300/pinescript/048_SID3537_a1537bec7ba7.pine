@@ -1,0 +1,33 @@
+/*backtest
+start: 2023-02-16 00:00:00
+end: 2024-02-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy('Trading EMAs', overlay=true)
+
+// Definir las medias móviles con colores personalizados
+ema8 = ta.ema(close, 8)
+ema18 = ta.ema(close, 18)
+ema50 = ta.ema(close, 50)
+
+plot(ema8, color=color.new(color.green, 0), title='EMA8')
+plot(ema18, color=color.new(color.blue, 0), title='EMA18')
+plot(ema50, color=color.new(color.red, 0), title='EMA50')
+
+// Condiciones de entrada
+longCondition = ta.crossover(close, ema8) and close > ema50 // Señal de compra cuando el precio de cierre cruza al alza la EMA de 8 y el precio está por encima de la EMA de 50
+
+// Condiciones de salida
+exitLongCondition = ta.crossunder(ema8, ema18) // Señal de venta cuando EMA8 cruza por debajo de EMA18
+
+// Ejecutar las operaciones basadas en las condiciones de entrada
+if longCondition
+    strategy.entry('Long', strategy.long)
+
+// Salida de las operaciones basadas en las condiciones de salida
+if exitLongCondition
+    strategy.close('Long')

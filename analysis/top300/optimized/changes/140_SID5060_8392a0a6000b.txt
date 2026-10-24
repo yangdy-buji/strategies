@@ -1,0 +1,34 @@
+{
+  "rank": 140,
+  "sid": 5060,
+  "source_sha256": "6ace9f3053cef3cac963e1171a378f0a42ee4423dca257ede94239a9e32a9db3",
+  "base_kind": "original",
+  "base_sha256": "cea946566bfb3f2f2d79506d7ef5788327cbcf14efeac3341e5ddcc53cdd404e",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：MACD回升、RSI偏弱且价格在布林中轨下买反弹，可解释；显式止损模块存在但默认关闭。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "不能因代码含strategy.exit就认为默认有保护；启用ATR模式时保护锚随buy信号更新，百分比模式则基于均价，两种语义不同。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "检查重复buy期间ATR保护线是否放宽，分别统计默认、ATR、百分比模式的尾部亏损和成交差异。"
+  ],
+  "id": "8392a0a6000b",
+  "title": "移动平均线和偏差指标多周期交易策略A-Multi-Period-Trading-Strategy-Based-on-Moving-Averages",
+  "category": "均值回归",
+  "priority": "P2",
+  "script": "scripts/140_SID5060_8392a0a6000b_original.pine",
+  "original": "originals/140_SID5060_8392a0a6000b.pine",
+  "baseline": "baselines/140_SID5060_8392a0a6000b.pine",
+  "changes": "changes/140_SID5060_8392a0a6000b.txt",
+  "card": "cards/8392a0a6000b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "cea946566bfb3f2f2d79506d7ef5788327cbcf14efeac3341e5ddcc53cdd404e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

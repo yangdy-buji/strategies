@@ -1,0 +1,38 @@
+{
+  "rank": 274,
+  "sid": 2529,
+  "source_sha256": "583711766c4cd6e7a9ed7dc703be188fd53ceacb0d8f1d56d7d3e7fdaa76a592",
+  "base_kind": "prior_candidate",
+  "base_sha256": "bc3ffcf154c6c6c2817587ed3ab960961af866795b633413321e0b698b014616",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；收盘高于可选EMA/SMA200全权益做多，低于均线平多，逐tick计算。 价格相对200EMA持有规则清楚，但calc_on_every_tick使实时柱内反复进出与历史收盘不同。",
+  "patches": [],
+  "resolved": [
+    "恢复日期。",
+    "保留窗外退出。"
+  ],
+  "remaining": [
+    "价格相对200EMA持有规则清楚，但calc_on_every_tick使实时柱内反复进出与历史收盘不同。 后续验证：同一根反复跨均线、重载后信号、手续费累计与窗外退出验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "同一根反复跨均线、重载后信号、手续费累计与窗外退出验证。"
+  ],
+  "id": "ffd9f19cf1f3",
+  "title": "均线震荡突破HODL策略Moving-Average-Oscillation-HODL-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/274_SID2529_ffd9f19cf1f3_candidate.pine",
+  "original": "originals/274_SID2529_ffd9f19cf1f3.pine",
+  "baseline": "baselines/274_SID2529_ffd9f19cf1f3.pine",
+  "changes": "changes/274_SID2529_ffd9f19cf1f3.txt",
+  "card": "cards/ffd9f19cf1f3.html",
+  "diff": "changes/274_SID2529_ffd9f19cf1f3.patch",
+  "original_diff": "changes/274_SID2529_ffd9f19cf1f3.original.patch",
+  "script_sha256": "b72d2483a5862ad7f1061ce08bc5066ba5537ee1c75f6298580936dd0027271d",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

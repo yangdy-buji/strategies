@@ -1,0 +1,38 @@
+{
+  "rank": 300,
+  "sid": 2,
+  "source_sha256": "58a34de7648ae6ca4abb5c795d4e52e9b1188da5004def801fb5bc97116ce745",
+  "base_kind": "prior_candidate",
+  "base_sha256": "3bc04c2c1f6a19d49d2b09afed201b6123a226d5d8736a38d7e6f80975378740",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；10/50 EMA交叉后五根内结合200 EMA筛选回撤K线，以突破确认挂多空止损限价入场，1.62倍风险目标及跟踪退出。 EMA回撤突破有可解释条件，但stop-limit入口不是止损保护，trail_points=low是价格冒充tick；已有负号/ID候选只修局部。",
+  "patches": [],
+  "resolved": [
+    "空头风险距离第二比较使用反向差值，距离大于10.40仍通过。",
+    "多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。"
+  ],
+  "remaining": [
+    "EMA回撤突破有可解释条件，但stop-limit入口不是止损保护，trail_points=low是价格冒充tick；已有负号/ID候选只修局部。 后续验证：不同价格/mintick、停止触发后限价未成交、风险>10.40拒绝、多空保护与时区测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；trail_points=low仍混合价格与tick；stop-limit入场意图需原生订单验证。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "不同价格/mintick、停止触发后限价未成交、风险>10.40拒绝、多空保护与时区测试。"
+  ],
+  "id": "48ce0df7ec53",
+  "title": "10EMA双重交叉趋势追踪策略10EMA-Double-Cross-Trend-Tracking-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/300_SID2_48ce0df7ec53_candidate.pine",
+  "original": "originals/300_SID2_48ce0df7ec53.pine",
+  "baseline": "baselines/300_SID2_48ce0df7ec53.pine",
+  "changes": "changes/300_SID2_48ce0df7ec53.txt",
+  "card": "cards/48ce0df7ec53.html",
+  "diff": "changes/300_SID2_48ce0df7ec53.patch",
+  "original_diff": "changes/300_SID2_48ce0df7ec53.original.patch",
+  "script_sha256": "f90013874c963e7568e992a976c10211195b05e7aded17225081b8a42226aef3",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

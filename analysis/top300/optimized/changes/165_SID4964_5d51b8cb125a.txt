@@ -1,0 +1,57 @@
+{
+  "rank": 165,
+  "sid": 4964,
+  "source_sha256": "168daf2ead460e47617048483dd8a60fa96f93226b066c0596b9d89c36f53c60",
+  "base_kind": "original",
+  "base_sha256": "b68ba57411a19bf8309283a9f567c6e50575390eec8ff7764cec7e94c31676ea",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "TSI绝对变化平滑值为零时保持NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+  "patches": [
+    {
+      "old": "tsi_value = 100 * (double_smoothed_pc / double_smoothed_abs_pc)",
+      "new": "tsi_value = not na(double_smoothed_abs_pc) and double_smoothed_abs_pc > 0 ? 100 * (double_smoothed_pc / double_smoothed_abs_pc) : na",
+      "reason": "TSI绝对变化平滑值为零时保持NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    }
+  ],
+  "resolved": [
+    "TSI绝对变化平滑值为零时保持NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。"
+  ],
+  "remaining": [
+    "仍仅图表周期多头；是否增加跨周期确认属于新策略，不依据注释自动启用。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "对比单指标与双指标同成本结果，覆盖平价窗口和长期弱趋势无出口的持仓长度。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "5d51b8cb125a",
+  "title": "真实相对运动MA均线策略True-Relative-Movement-Moving-Average-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/165_SID4964_5d51b8cb125a_candidate.pine",
+  "original": "originals/165_SID4964_5d51b8cb125a.pine",
+  "baseline": "baselines/165_SID4964_5d51b8cb125a.pine",
+  "changes": "changes/165_SID4964_5d51b8cb125a.txt",
+  "card": "cards/5d51b8cb125a.html",
+  "diff": "changes/165_SID4964_5d51b8cb125a.patch",
+  "original_diff": "changes/165_SID4964_5d51b8cb125a.original.patch",
+  "script_sha256": "1f8d0077acd54f5f7494439ad0e8303607a3e1e50dc930d472dc5a25003d0e4b",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "cc1754f63a484f2e6d96453eab4a6bff6d44b75c0a9ff047125bde3348189413",
+    "review": "v4双重EMA始终在guard外逐柱调用，分母绝对变化平滑为正才计算TSI；零或暖机输出NA，TSI信号EMA及RSI过滤继续求值。Long信号/平仓ID和阈值不变。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "仍仅图表周期多头；是否增加跨周期确认属于新策略，不依据注释自动启用。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

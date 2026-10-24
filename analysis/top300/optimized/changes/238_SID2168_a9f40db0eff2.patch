@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 2168：沿用旧候选·未回测
++// 原文件SHA256：c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：双时间轴波动率价差交易策略Dual-Timeframe-Volatility-Spread-Trading-Strategy.md
+ // 原文件SHA256：c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97

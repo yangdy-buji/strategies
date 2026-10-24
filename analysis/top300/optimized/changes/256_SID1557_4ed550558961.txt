@@ -1,0 +1,58 @@
+{
+  "rank": 256,
+  "sid": 1557,
+  "source_sha256": "8114479dcbe6ce860ef8b7ec5680e800767857f5b53b9e6803a618e2466db930",
+  "base_kind": "original",
+  "base_sha256": "cababcc1f5d847baade38297dd4cee2e3454cf80e93aed7aa45e7625215ec7de",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "新增候选：指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。",
+  "patches": [
+    {
+      "old": "enterTrade = true",
+      "new": "enterTrade = time >= entryDate and strategy.position_size == 0",
+      "reason": "指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。",
+      "preserved": "原5%跟踪公式与low触发市价平仓；允许退出后再入。",
+      "validation_cases": [
+        "持仓峰值110后高105不重置；日期前不买、日期后空仓可以买。"
+      ]
+    }
+  ],
+  "resolved": [
+    "指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。"
+  ],
+  "remaining": [
+    "日期采用起始门槛而非只交易指定一天，退出后允许再次入场，属于明确设计假设。",
+    "low触发仍是市价请求而非原生stop单；信号峰值与成交时点仍有差异。",
+    "当前柱先更新最高价再以同柱low触发退出，OHLC无法确认高低发生顺序。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "最高价100后回落90仍保留峰值、指定日期前禁止入场、出场后是否再入三个测试。"
+  ],
+  "id": "4ed550558961",
+  "title": "动态止损追踪策略Trailing-Stop-Loss-Percent-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/256_SID1557_4ed550558961_candidate.pine",
+  "original": "originals/256_SID1557_4ed550558961.pine",
+  "baseline": "baselines/256_SID1557_4ed550558961.pine",
+  "changes": "changes/256_SID1557_4ed550558961.txt",
+  "card": "cards/4ed550558961.html",
+  "diff": "changes/256_SID1557_4ed550558961.patch",
+  "original_diff": "changes/256_SID1557_4ed550558961.original.patch",
+  "script_sha256": "96cce81105d672d40a33b2bee3ea9071c6b078420e58179f16abd3780a1994ee",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "c2f7a0e10e463cb00a95e7006d256cee8eb7e92fe7c4cba3e3bc9eae09b3274c",
+    "review": "日期从恒真恢复为起始门槛且仅空仓请求入场。持仓峰值先以max更新，此后入口不再覆盖，退出后下一空仓柱允许重新种子和入场。保留low触发市价close及原公式；门槛日期与重复再入为明确设计选择。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "日期采用起始门槛而非只交易指定一天，退出后允许再次入场，属于明确设计假设。",
+      "low触发仍是市价请求而非原生stop单；信号峰值与成交时点仍有差异。",
+      "当前柱先更新最高价再以同柱low触发退出，OHLC无法确认高低发生顺序。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

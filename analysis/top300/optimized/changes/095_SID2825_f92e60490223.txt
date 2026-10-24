@@ -1,0 +1,34 @@
+{
+  "rank": 95,
+  "sid": 2825,
+  "source_sha256": "fc356350942824d5f38440396ee54f062ca1742061ac964e60109405fc8e35f1",
+  "base_kind": "original",
+  "base_sha256": "084fd0ccec66d2e28eabc6dbd2ad88429c99bf996f6f2db6d0e6447997102621",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：平滑RSI跌入超卖区做多、价上穿WMA退出，是逆势低吸等待回归。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "若入场时价已在WMA上，随后下跌可能需先跌破再重新上穿才退出；启用做空而shortExit保持false也缺独立空头退出。 暂缓原因：入场过滤或强制出口会减少交易并改变长期反弹收益。"
+  ],
+  "validation_plan": [
+    "枚举四个开关组合、价在WMA上下的入场、持续下跌和空头未退出路径。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "f92e60490223",
+  "title": "基于RSI和WMA的趋势追踪策略RSI-WMA-Trend-Tracking-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/095_SID2825_f92e60490223_original.pine",
+  "original": "originals/095_SID2825_f92e60490223.pine",
+  "baseline": "baselines/095_SID2825_f92e60490223.pine",
+  "changes": "changes/095_SID2825_f92e60490223.txt",
+  "card": "cards/f92e60490223.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "084fd0ccec66d2e28eabc6dbd2ad88429c99bf996f6f2db6d0e6447997102621",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

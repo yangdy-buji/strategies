@@ -1,0 +1,35 @@
+{
+  "rank": 122,
+  "sid": 4470,
+  "source_sha256": "ca680705fbd6a132aa4b4a9e9830635b3d70a148ff0f150f9dca5d459a40ae67",
+  "base_kind": "original",
+  "base_sha256": "2441dfc65418d82ba8c6da7af402fa15dc4ccd984f6a4e3f3dc6c92eaca62acf",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：同柱双交叉可能有意筛选急反转；改状态过滤会扩大交易集合，需明确事件同步要求。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "同柱双交叉可能有意筛选急反转；改状态过滤会扩大交易集合，需明确事件同步要求。",
+    "买入须同柱穿下轨与SMA50，退出须同柱穿上轨与SMA50；若两线分离，信号稀少且退出可被错过，没有后续状态补偿。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测试两条线交叉相差一柱与同柱的路径，报告信号覆盖率、最长持有期和费用敏感性。"
+  ],
+  "id": "32a9b43196ba",
+  "title": "布林带反转与移动平均线趋势过滤Bollinger-Bands-Reversal-with-MA-Trend-Filter",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/122_SID4470_32a9b43196ba_original.pine",
+  "original": "originals/122_SID4470_32a9b43196ba.pine",
+  "baseline": "baselines/122_SID4470_32a9b43196ba.pine",
+  "changes": "changes/122_SID4470_32a9b43196ba.txt",
+  "card": "cards/32a9b43196ba.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2441dfc65418d82ba8c6da7af402fa15dc4ccd984f6a4e3f3dc6c92eaca62acf",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

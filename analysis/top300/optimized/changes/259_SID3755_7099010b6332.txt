@@ -1,0 +1,37 @@
+{
+  "rank": 259,
+  "sid": 3755,
+  "source_sha256": "ac96502c40214248bcd9b8c5e65170cae90dc157a4a9201998b069733d5b389e",
+  "base_kind": "prior_candidate",
+  "base_sha256": "f1161b34ad4347d16b8d7d100be03cf5a9748d7c1f591a4a03f1a8b6813f297c",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；EMA10>100>200且空仓时以权益/收盘四舍五入买入，排列破坏或日期窗外平仓。 三EMA多头排列为状态入场而非注释交叉；round(equity/close)可能超买预算或数量为0。",
+  "patches": [],
+  "resolved": [
+    "日期函数恒真使用户范围及窗外平仓无效；恢复用户日期即可，已有窗外平仓分支。"
+  ],
+  "remaining": [
+    "三EMA多头排列为状态入场而非注释交叉；round(equity/close)可能超买预算或数量为0。 后续验证：低资金高股价、费用后余额不足、日期截止全平及重复状态条件检查。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "低资金高股价、费用后余额不足、日期截止全平及重复状态条件检查。"
+  ],
+  "id": "7099010b6332",
+  "title": "多周期EMA交叉量化交易策略Multi-Period-EMA-Crossover-Quantitative-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/259_SID3755_7099010b6332_candidate.pine",
+  "original": "originals/259_SID3755_7099010b6332.pine",
+  "baseline": "baselines/259_SID3755_7099010b6332.pine",
+  "changes": "changes/259_SID3755_7099010b6332.txt",
+  "card": "cards/7099010b6332.html",
+  "diff": "changes/259_SID3755_7099010b6332.patch",
+  "original_diff": "changes/259_SID3755_7099010b6332.original.patch",
+  "script_sha256": "eb471d73f03603e0854b056884e36bab1bdf70cedc1d6bd7e248a4a19d97e85e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

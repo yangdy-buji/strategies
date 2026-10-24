@@ -1,0 +1,25 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1499：本轮新候选·未回测
++// 原文件SHA256：f9a18165c666bb9a68f826bc30c8e2da17043a177e34039ad9a9a21c2a4f6433
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-01-05 00:00:00
+ end: 2024-02-04 00:00:00
+@@ -39,9 +42,13 @@
+ // Risk and Position Sizing
+ riskCapital = tradingCapital * tradeRisk / 100
+ lossThreshold = atr(14) * 2
+-tradeSize = riskCapital / lossThreshold
++// OPT-T300-01 修改原因：ATR未就绪/为零或风险资金非正时不生成数量。
++// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++tradeSize = not na(lossThreshold) and lossThreshold > 0 and riskCapital > 0 ? riskCapital / lossThreshold : na
+ 
+-if (enterLong)
++// OPT-T300-02 修改原因：入口显式拒绝NA/零数量，防止NA退回默认仓位。
++// OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++if (enterLong and not na(tradeSize) and tradeSize > 0)
+     strategy.entry("Enter Long", strategy.long, qty=tradeSize)
+ 
+ if (exitLong)

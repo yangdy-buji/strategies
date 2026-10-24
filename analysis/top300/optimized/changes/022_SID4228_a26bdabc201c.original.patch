@@ -1,0 +1,45 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 4228：本轮新候选·未回测
++// 原文件SHA256：ac66d510a20b6ec59abf314d57ec7781f3c759f74db7c8c0c4309491a01c78b7
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-01-01 00:00:00
+ end: 2024-11-11 00:00:00
+@@ -21,12 +24,21 @@
+ 
+ // محاسبه A/D به‌صورت دستی
+ var float ad = na
+-ad := na(ad[1]) ? 0 : ad[1] + ((close - low) - (high - close)) / (high - low) * volume
++// OPT-T300-01 修改原因：零振幅K线的AD增量为0，避免0/0污染累计值并在下一根重置为0。
++// OPT-T300-01 保持行为：首根AD仍初始化0，正常振幅下计算及七项投票不变。
++adIncrement = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low) * volume
++ad := na(ad[1]) ? 0 : ad[1] + adIncrement
+ 
+ // محاسبه CMF (Chaikin Money Flow)
+-moneyFlowMultiplier = ((close - low) - (high - close)) / (high - low)
++// OPT-T300-02 修改原因：平价K线没有可分配的收盘区间方向，资金流乘数置0。
++// OPT-T300-02 保持行为：正常K线仍使用原收盘区间比率；不变更MFI方向归类。
++moneyFlowMultiplier = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low)
+ moneyFlowVolume = moneyFlowMultiplier * volume
+-cmf = ta.sma(moneyFlowVolume, lengthCMF) / ta.sma(volume, lengthCMF)
++// OPT-T300-03 修改原因：完整窗口均量为0时CMF给中性0，避免无交易窗口的0/0；只对精确零回退。 两个SMA每根无条件求值，guard仅使用缓存标量，避免跳过历史样本。
++// OPT-T300-03 保持行为：暖机NA不强行补零；正常成交量比率与投票阈值保持。
++avgMoneyFlowVolume = ta.sma(moneyFlowVolume, lengthCMF)
++avgVolume = ta.sma(volume, lengthCMF)
++cmf = avgVolume == 0 ? 0.0 : avgMoneyFlowVolume / avgVolume
+ 
+ // محاسبه MFI به‌صورت دستی
+ typicalPrice = (high + low + close) / 3
+@@ -40,7 +52,9 @@
+     positiveFlow := positiveFlow + (close[i] > close[i + 1] ? moneyFlow[i] : 0)
+     negativeFlow := negativeFlow + (close[i] < close[i + 1] ? moneyFlow[i] : 0)
+ 
+-mfi = 100 - (100 / (1 + (positiveFlow / negativeFlow)))
++// OPT-T300-04 修改原因：有正资金流且负流为0时MFI取单边极限100；双零保持NA而不虚构超买超卖。
++// OPT-T300-04 保持行为：按close方向归类及有负流的原MFI公式保持；双零不产生MFI投票。
++mfi = negativeFlow == 0 ? positiveFlow > 0 ? 100.0 : na : 100 - (100 / (1 + (positiveFlow / negativeFlow)))
+ 
+ // محاسبه VWAP
+ vwap = ta.vwap(close)

@@ -1,0 +1,59 @@
+{
+  "rank": 248,
+  "sid": 2719,
+  "source_sha256": "13a71b4dcd4adba123261f80058be2250a81ff683ab319b51f99845b94b5e1df",
+  "base_kind": "original",
+  "base_sha256": "8d72f0deef8ae3888225bd18d716dc97d419b582ed989188c859364ddbac05ad",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "最小边界修复：完整零波动窗口效率比取0，避免0/0污染KAMA递推；非零窗口沿原公式。",
+  "patches": [
+    {
+      "old": "efficiency_ratio = price_change / volatility_sum",
+      "new": "efficiency_ratio = volatility_sum == 0 ? 0.0 : price_change / volatility_sum",
+      "reason": "完整零波动窗口效率比取0，避免0/0污染KAMA递推；非零窗口沿原公式。",
+      "preserved": "原交易信号阈值、仓位和其余退出设计；不调整参数。",
+      "validation_cases": [
+        "常量窗口分母0输出0；非零10/20输出0.5；暖机na不被替换为0。"
+      ]
+    }
+  ],
+  "resolved": [
+    "完整零波动窗口效率比取0，避免0/0污染KAMA递推；非零窗口沿原公式。"
+  ],
+  "remaining": [
+    "ATR止损止盈仍随close平移，风险锚点设计暂缓。",
+    "未原生编译、回放或回测。",
+    "ama_length/fast_length/slow_length未限制正数；历史不足时KAMA可出现na与重新种子，需单独暖机验证。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "常量窗口分母0输出0；非零10/20输出0.5；暖机na不被替换为0。",
+    "原生Pine编译和逐柱回放待执行。"
+  ],
+  "id": "90fb594e73a6",
+  "title": "基于KAMA与MACD的自适应趋势跟踪量化交易策略-Adaptive-Trend-Following-Strategy-Based-on-KAMA-and-MACD-Integration",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/248_SID2719_90fb594e73a6_candidate.pine",
+  "original": "originals/248_SID2719_90fb594e73a6.pine",
+  "baseline": "baselines/248_SID2719_90fb594e73a6.pine",
+  "changes": "changes/248_SID2719_90fb594e73a6.txt",
+  "card": "cards/90fb594e73a6.html",
+  "diff": "changes/248_SID2719_90fb594e73a6.patch",
+  "original_diff": "changes/248_SID2719_90fb594e73a6.original.patch",
+  "script_sha256": "65f2391a08fb80f6fa4756d54376b898cc93ad5c8a4882b8a98be4cdd156961a",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "7360ead25c114b95b90c89b10a8d6e8cf82cc2fdf2d170f10460f76b09034c31",
+    "review": "仅零分母完整窗口效率比归零，非零窗口公式不变；平坦窗口平滑系数为慢速系数平方，KAMA仍逐柱更新。未用nz把未暖机历史伪装成有效零波动；历史不足的na/重种子行为保留，不能将本修复视为完整暖机处理。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "ATR止损止盈仍随close平移，风险锚点设计暂缓。",
+      "未原生编译、回放或回测。",
+      "ama_length/fast_length/slow_length未限制正数；历史不足时KAMA可出现na与重新种子，需单独暖机验证。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

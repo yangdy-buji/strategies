@@ -1,0 +1,34 @@
+{
+  "rank": 34,
+  "sid": 972,
+  "source_sha256": "295bffc9410c283896fb6485532d0cbcb503d929254a2dabcfa5e2a0b04c983a",
+  "base_kind": "original",
+  "base_sha256": "f67c660da4e6743fec7a06fa31e204549fba1b267b31cf47ea3666dc7b178263",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：EMA20/50交叉叠加Supertrend，入场合理但退出采用同根共振而非持续失效。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "死叉与Supertrend空头不同步会漏掉退出；100/200均线显示不参与交易。 暂缓原因：更早退出可能降低长趋势捕捉率。"
+  ],
+  "validation_plan": [
+    "分别构造先死叉后翻空、先翻空后死叉，核对是否及时平仓。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "6a512b3f32c6",
+  "title": "Supertrend和EMA组合策略-Supertrend-and-EMA-Combination-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/034_SID972_6a512b3f32c6_original.pine",
+  "original": "originals/034_SID972_6a512b3f32c6.pine",
+  "baseline": "baselines/034_SID972_6a512b3f32c6.pine",
+  "changes": "changes/034_SID972_6a512b3f32c6.txt",
+  "card": "cards/6a512b3f32c6.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "f67c660da4e6743fec7a06fa31e204549fba1b267b31cf47ea3666dc7b178263",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,62 @@
+// OPT-T300 SID 3159：本轮新候选·未回测
+// 原文件SHA256：e1158f0c116f6829a7a321e3a0cc784d25dc58bdf7a88feaaf2b821f2280c1fb
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-01-29 00:00:00
+end: 2024-02-28 00:00:00
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Combined Golden Cross and Progressive Trend Tracker", shorttitle="GCC-PTT", overlay=true)
+
+// Inputs
+fastMA_period = input(50, title="Fast MA Period")
+slowMA_period = input(200, title="Slow MA Period")
+src = input(close, title="Source")
+lengthBB = input(20, title="Bollinger Bands Length")
+mult = input(2.0, title="Bollinger Bands Multiplier")
+mavType = input.string(title="Moving Average Type", defval="VAR", options=['SMA', 'EMA', 'WMA', 'TMA', 'VAR', 'WWMA', 'ZLEMA', 'TSF'])
+
+// Calculate Moving Averages for Golden Cross
+fastMA = ta.sma(src, fastMA_period)
+slowMA = ta.sma(src, slowMA_period)
+bullish_cross = ta.crossover(fastMA, slowMA)
+bearish_cross = ta.crossunder(fastMA, slowMA)
+
+// Progressive Trend Tracker Components (Adjusted for NA assignment issue)
+Var_Func(src, length) =>
+    valpha = 2 / (length + 1)
+    vud1 = src > src[1] ? src - src[1] : 0
+    vdd1 = src < src[1] ? src[1] - src : 0
+    vUD = math.sum(vud1, length)
+    vDD = math.sum(vdd1, length)
+    // OPT-T300-01 修改原因：完整窗口上涨量和下跌量均为0时CMO取中性0，避免0/0进入EMA。
+    // OPT-T300-01 保持行为：原src乘绝对CMO的VAR定义保持，不冒充标准自适应均线；暖机NA仍NA。
+    vCMO = (vUD + vDD) == 0 ? 0.0 : (vUD - vDD) / (vUD + vDD)
+    VAR = 0.0 // Adjusted here, assign an initial value
+    VAR := ta.ema(src * math.abs(vCMO), length)
+    VAR
+
+VAR = Var_Func(src, 14) // Example VAR calculation, adjust as needed
+
+// Bollinger Bands for dynamic support and resistance
+BBandTop = fastMA + mult * ta.stdev(src, lengthBB)
+BBandBot = fastMA - mult * ta.stdev(src, lengthBB)
+
+// Plotting
+plot(fastMA, color=color.blue, title="Fast MA")
+plot(slowMA, color=color.red, title="Slow MA")
+plot(BBandTop, color=color.green, title="Bollinger Band Top")
+plot(BBandBot, color=color.red, title="Bollinger Band Bottom")
+plot(VAR, color=color.purple, title="VAR", linewidth=2)
+
+// Strategy Logic (Adjusted for strategy use)
+// Long Entry when bullish cross and close above VAR
+// Exit when bearish cross or close below VAR
+if (bullish_cross and close > VAR)
+    strategy.entry("CGC_PTT_Long", strategy.long)
+if (bearish_cross or close < VAR)
+    strategy.close("CGC_PTT_Long")

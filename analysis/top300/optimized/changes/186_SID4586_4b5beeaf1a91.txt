@@ -1,0 +1,34 @@
+{
+  "rank": 186,
+  "sid": 4586,
+  "source_sha256": "e2838da35e0b9570041c93de060409b581963add4ea6fe05a20e511f42caf18c",
+  "base_kind": "original",
+  "base_sha256": "6376d6e42ad7a4e39b83a5fad2b1d236c639ba7c81d97df6fac0632d3ffe00a5",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：EMA37/370交叉是低复杂度长趋势系统，原理与执行一致，优先验证而不是再叠指标。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "慢均线370根导致明显预热和低交易频率，收益可能由少量长持有交易驱动；无独立跳空损失控制。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "剔除最盈利数笔后重算、按年份与股票分布检查，比较不同预热长度和费用冲击。"
+  ],
+  "id": "4b5beeaf1a91",
+  "title": "快速EMA和慢速EMA动量突破策略fast-EMA-and-slow-EMA-Momentum-Breakthrough-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/186_SID4586_4b5beeaf1a91_original.pine",
+  "original": "originals/186_SID4586_4b5beeaf1a91.pine",
+  "baseline": "baselines/186_SID4586_4b5beeaf1a91.pine",
+  "changes": "changes/186_SID4586_4b5beeaf1a91.txt",
+  "card": "cards/4b5beeaf1a91.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "6376d6e42ad7a4e39b83a5fad2b1d236c639ba7c81d97df6fac0632d3ffe00a5",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

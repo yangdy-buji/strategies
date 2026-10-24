@@ -1,0 +1,61 @@
+// OPT-T300 SID 3458：本轮新候选·未回测
+// 原文件SHA256：19c320d19213627753b232095f4bb5356b42272130c9a0eb133f4f56d087a704
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-03-26 00:00:00
+end: 2024-03-31 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy('Equity control', 'EC')
+// study('Exponential bands', 'EB', overlay = true)
+
+
+er(src) =>
+    var start = src
+    var total = 0.0
+
+    total += abs(src - nz(src[1], src))
+    net    = abs(src - start          )
+    
+    // OPT-T300-01 修改原因：首根及累计平价段total=0时效率比取0，让均值保留而非被NA打断。
+    // OPT-T300-01 保持行为：从首根累计的start/total及后续指数带公式保留；不改变历史起点依赖。
+    total == 0 ? 0.0 : net / total
+
+pine_ema(src, alpha) =>
+    mean = 0.0
+    dev  = 0.0
+
+    mean := na(mean[1]) ? src : (1 - alpha) * mean[1] + alpha *     src
+    dev  := na(dev [1]) ? 0   : (1 - alpha) * dev [1] + alpha * abs(src - mean)
+
+    [mean, dev]
+
+
+src = input(close)
+
+
+a           = er      (src   )
+[mean, dev] = pine_ema(src, a)
+
+dev_lower = mean - dev
+dev_upper = mean + dev
+
+
+// plot(dev_lower, 'lower deviation', color.silver, 2, plot.style_stepline)
+// plot(mean     , 'basis'          , color.purple, 1, plot.style_stepline)
+// plot(dev_upper, 'upper deviation', color.silver, 2, plot.style_stepline)
+
+
+if src > dev_upper
+    strategy.entry('event', true, comment = 'on')
+if src < dev_lower
+    strategy.close('event', comment = 'off')
+
+
+plot(strategy.equity)
+
+//bigDope

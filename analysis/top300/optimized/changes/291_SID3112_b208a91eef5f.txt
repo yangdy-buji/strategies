@@ -1,0 +1,66 @@
+{
+  "rank": 291,
+  "sid": 3112,
+  "source_sha256": "fcb5743b5dd45cbec25bafd30b662923b85be4243f348c04cedfb736dfeb457a",
+  "base_kind": "original",
+  "base_sha256": "217d110cdf4bf1df843705322958a5b9268ea5bfb07851e35e2359cfa34fedd9",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "最小边界修复：删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。",
+  "patches": [
+    {
+      "old": "if delta_sma < below_60_threshold*0.5 and crossed_above_70\n    crossed_above_70 := false  // Reset after triggering sell\n",
+      "new": "",
+      "reason": "删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。",
+      "preserved": "原交易信号阈值、仓位和其余退出设计；不调整参数。",
+      "validation_cases": [
+        "之前已越高阈值，delta20、退出阈值50时sell为真，再清状态；delta40退出为真但保持原未深跌状态。"
+      ]
+    },
+    {
+      "old": "sell_condition = crossed_above_70 and delta_sma < below_60_threshold",
+      "new": "sell_condition = crossed_above_70 and delta_sma < below_60_threshold\nif delta_sma < below_60_threshold*0.5 and crossed_above_70\n    crossed_above_70 := false",
+      "reason": "先保存当柱退出结果，再清跨柱状态。",
+      "preserved": "原深跌清零门槛和普通回落的状态持续规则。",
+      "validation_cases": [
+        "之前已越高阈值，delta20、退出阈值50时sell为真，再清状态；delta40退出为真但保持原未深跌状态。"
+      ]
+    }
+  ],
+  "resolved": [
+    "删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。"
+  ],
+  "remaining": [
+    "成交量方向仍为阴阳柱代理，365根非固定一年；原买入状态清零阈值10000保留。",
+    "未原生编译、回放或回测。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "之前已越高阈值，delta20、退出阈值50时sell为真，再清状态；delta40退出为真但保持原未深跌状态。",
+    "原生Pine编译和逐柱回放待执行。"
+  ],
+  "id": "b208a91eef5f",
+  "title": "基于历史Delta-SMA高低点的交易趋势捕捉策略-Delta-SMA-Historical-High-Low-Based-Trend-Capture-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/291_SID3112_b208a91eef5f_candidate.pine",
+  "original": "originals/291_SID3112_b208a91eef5f.pine",
+  "baseline": "baselines/291_SID3112_b208a91eef5f.pine",
+  "changes": "changes/291_SID3112_b208a91eef5f.txt",
+  "card": "cards/b208a91eef5f.html",
+  "diff": "changes/291_SID3112_b208a91eef5f.patch",
+  "original_diff": "changes/291_SID3112_b208a91eef5f.original.patch",
+  "script_sha256": "f9121baf0cd65e7b75fc2005ee2898bfd17aacaeae8b4fae2804418801a52776",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "5e2ee081de506b9a580041e7d178a5cae5fd80d9340fbf40f897281735e55f9e",
+    "review": "先以当前crossed_above_70保存sell_condition，再按原半阈值清跨柱状态，深跌当柱不再丢掉退出。普通回落只触发卖出而不清状态、买入was_very_low和10000清零规则均未改变；生成注释未打断两个补丁匹配或改变缩进。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "成交量方向仍为阴阳柱代理，365根非固定一年；原买入状态清零阈值10000保留。",
+      "未原生编译、回放或回测。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

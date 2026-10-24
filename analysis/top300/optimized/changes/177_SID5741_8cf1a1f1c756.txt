@@ -1,0 +1,67 @@
+{
+  "rank": 177,
+  "sid": 5741,
+  "source_sha256": "f0dbe549f62a5bc9ee7869dc7b6611bc38d79c9b3a8181923aaf1c7a90a65110",
+  "base_kind": "prior_candidate",
+  "base_sha256": "561b67a79798cdd98fceba6bb6edf0735d96936c42077613d0c512e66a6a3720",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "独立分块设计实验：先发布累计块内极值，避免更新柱先重置为单柱高低。；分块发布后重置，下一柱开始新块，保持原更新节奏。",
+  "patches": [
+    {
+      "old": "if (bar_index % fibLength == 0)\n    fibHigh := high\n    fibLow := low",
+      "new": "if (bar_index % fibLength == 0)",
+      "reason": "独立分块设计实验：先发布累计块内极值，避免更新柱先重置为单柱高低。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "块内先高120后高100，发布高120而非100。"
+      ]
+    },
+    {
+      "old": "    array.set(fibonacciLevels, 4, fibLow)",
+      "new": "    array.set(fibonacciLevels, 4, fibLow)\n    fibHigh := na\n    fibLow := na",
+      "reason": "分块发布后重置，下一柱开始新块，保持原更新节奏。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "下一块不继承旧块高120；非更新柱数组不变。"
+      ]
+    }
+  ],
+  "resolved": [
+    "数组每根新建归零，非更新bar比较0导致信号失真；应持久保存水平。另高低重置顺序与pinbar方向需设计确认。",
+    "独立分块设计实验：先发布累计块内极值，避免更新柱先重置为单柱高低。",
+    "分块发布后重置，下一柱开始新块，保持原更新节奏。"
+  ],
+  "remaining": [
+    "分块极值为独立design_experiment，保留原bar_index取模节奏；滚动20柱属另一实验。",
+    "pinbar影线方向原意不明，保持不变；未原生编译回放。",
+    "fibLength输入仍未限制正整数，零周期配置未在本次分块实验修复。"
+  ],
+  "validation_plan": [
+    "打印连续21柱全部fib值，非更新柱应保持；验证极值更新前后及长上/下影线各对应方向。"
+  ],
+  "id": "8cf1a1f1c756",
+  "title": "高级斐波那契回调与成交量加权价格行为交易策略-Advanced-Fibonacci-Retracement-and-Volume-Weighted-Price-Action-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/177_SID5741_8cf1a1f1c756_candidate.pine",
+  "original": "originals/177_SID5741_8cf1a1f1c756.pine",
+  "baseline": "baselines/177_SID5741_8cf1a1f1c756.pine",
+  "changes": "changes/177_SID5741_8cf1a1f1c756.txt",
+  "card": "cards/8cf1a1f1c756.html",
+  "diff": "changes/177_SID5741_8cf1a1f1c756.patch",
+  "original_diff": "changes/177_SID5741_8cf1a1f1c756.original.patch",
+  "script_sha256": "b3066797e858f549ec4d69d5c6eee71e83e7fd4c50e2b8081168250eb5ee167d",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "a4b48324cf86ac9fce8ae693e59bee3ea286781a53ab0b6b268f75b02d7e2880",
+    "review": "v5持久数组保留，更新柱先累计本柱极值再发布五个水平，发布后将累积值清NA，下一柱启动新块；首块仅bar0、后续每fibLength柱块，符合已标记的分块实验而非滚动窗口。双向entry及量能过滤未改。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "分块极值为独立design_experiment，保留原bar_index取模节奏；滚动20柱属另一实验。",
+      "pinbar影线方向原意不明，保持不变；未原生编译回放。",
+      "fibLength输入仍未限制正整数，零周期配置未在本次分块实验修复。"
+    ]
+  }
+}

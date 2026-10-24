@@ -1,0 +1,56 @@
+{
+  "rank": 214,
+  "sid": 3958,
+  "source_sha256": "8696c43f637b04ac929ef74536873ba80b404d43449702031c6c053bfac1eb50",
+  "base_kind": "original",
+  "base_sha256": "8630c487f6dbc28b820531e11dbf6be239ec03891a2d6d18641a44a8d2af592f",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "新增候选：按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。",
+  "patches": [
+    {
+      "old": "strategy.opentrades.profit(trade_num) >= strategy.opentrades.entry_price(trade_num) * 0.30",
+      "new": "close >= strategy.opentrades.entry_price(trade_num) * 1.30",
+      "reason": "按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。",
+      "preserved": "原入场、仓位与close订单ID；不引入真实期权交易。",
+      "validation_cases": [
+        "成本100，价格129不平、130平；持仓1份和100份结果相同。"
+      ]
+    }
+  ],
+  "resolved": [
+    "按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。"
+  ],
+  "remaining": [
+    "此版本是图表标的多头，不是期权模型；采用标的价格涨30%目标并不等同含成本净收益30%。",
+    "仍无硬止损；未原生编译或回测。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "相同价格路径用1股、10股、100股检查价格收益阈值是否一致。"
+  ],
+  "id": "12887accd7eb",
+  "title": "多指标结合期权交易策略-Multi-Indicator-Options-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/214_SID3958_12887accd7eb_candidate.pine",
+  "original": "originals/214_SID3958_12887accd7eb.pine",
+  "baseline": "baselines/214_SID3958_12887accd7eb.pine",
+  "changes": "changes/214_SID3958_12887accd7eb.txt",
+  "card": "cards/12887accd7eb.html",
+  "diff": "changes/214_SID3958_12887accd7eb.patch",
+  "original_diff": "changes/214_SID3958_12887accd7eb.original.patch",
+  "script_sha256": "264bb21dd1f6b1d0127c6c2b4271abf8cd71a805ee8d073e7ba4beb2739d3efc",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "b1ab4e9beb447fcad42b08b993d1028d3e8f7b52b7d8260a47a81751835844a5",
+    "review": "核对完整基线与生成代码，唯一执行变更把总货币盈亏比较改为close对成交单价的1.30倍；成本100在129/130边界及不同数量下阈值一致。原多头入口、10%权益、订单ID和逐笔循环保留；这是标的价格收益目标的设计候选，非期权收益模型。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "此版本是图表标的多头，不是期权模型；采用标的价格涨30%目标并不等同含成本净收益30%。",
+      "仍无硬止损；未原生编译或回测。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

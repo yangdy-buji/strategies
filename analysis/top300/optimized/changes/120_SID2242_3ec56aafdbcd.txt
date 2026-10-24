@@ -1,0 +1,34 @@
+{
+  "rank": 120,
+  "sid": 2242,
+  "source_sha256": "0c10931e0d5b20d041b2bbdff9bac6cc840dd9447fb88cdbd55547f50c6e516b",
+  "base_kind": "original",
+  "base_sha256": "9e8ebb5703c584732c4ec0e9d1386c9c0474a46815fa6dc9dc33bf7f6837abf8",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：价格重新上穿下轨买入、从上轨跌回卖出的回归规则简洁；标题趋势跟踪并不准确。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "注释的cross方向与真实交易相反，实际是带内回归；offset只改变绘图不改变交易，手动看图容易混淆。没有独立止损。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "以offset=-10/0/10验证成交完全不变；逐柱核验两个交叉方向，并按趋势下跌段分析尾部风险。"
+  ],
+  "id": "3ec56aafdbcd",
+  "title": "双轨带趋势跟踪策略Dual-Rail-Trend-Tracking-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/120_SID2242_3ec56aafdbcd_original.pine",
+  "original": "originals/120_SID2242_3ec56aafdbcd.pine",
+  "baseline": "baselines/120_SID2242_3ec56aafdbcd.pine",
+  "changes": "changes/120_SID2242_3ec56aafdbcd.txt",
+  "card": "cards/3ec56aafdbcd.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9e8ebb5703c584732c4ec0e9d1386c9c0474a46815fa6dc9dc33bf7f6837abf8",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

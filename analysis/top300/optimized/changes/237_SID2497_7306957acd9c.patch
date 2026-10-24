@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 2497：沿用旧候选·未回测
++// 原文件SHA256：1000e9ffd1d4cb0053ce6d9fe1513d393159cd10be064fc17b2de02831b6f070
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：均线反弹吸筹策略Moving-Average-Rebound-Strategy.md
+ // 原文件SHA256：1000e9ffd1d4cb0053ce6d9fe1513d393159cd10be064fc17b2de02831b6f070

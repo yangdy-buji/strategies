@@ -1,0 +1,40 @@
+{
+  "rank": 204,
+  "sid": 2462,
+  "source_sha256": "68070f67d4671a4eb3d9ca3c76e454d7fbcf632b274dc1d3c04a38f905d67677",
+  "base_kind": "prior_candidate",
+  "base_sha256": "203ea82606d806f78fdc883560f620679164cced2833bc02b2efaab520b08d08",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；ATR偏离自身均值标准差且对数收益漂移向上做多，低价减2 ATR单调跟踪市价退出，原日期条件恒真。 ATR偏离叠加漂移向上更像波动择时做多，非价格均值回归；以low触线后市价平仓并不按止损价成交。",
+  "patches": [],
+  "resolved": [
+    "日期恒真绕过输入。",
+    "窗外不应重置已有持仓止损。",
+    "恢复日期只门控入场；已有持仓需继续处理退出。",
+    "已有持仓窗外不能加仓。"
+  ],
+  "remaining": [
+    "ATR偏离叠加漂移向上更像波动择时做多，非价格均值回归；以low触线后市价平仓并不按止损价成交。 后续验证：跟踪线不下降、低点触线收回、窗外持仓继续保护三个场景逐笔比对。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "跟踪线不下降、低点触线收回、窗外持仓继续保护三个场景逐笔比对。"
+  ],
+  "id": "e61446137522",
+  "title": "均值恢复ATR趋势策略Mean-Reversion-ATR-Trend-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/204_SID2462_e61446137522_candidate.pine",
+  "original": "originals/204_SID2462_e61446137522.pine",
+  "baseline": "baselines/204_SID2462_e61446137522.pine",
+  "changes": "changes/204_SID2462_e61446137522.txt",
+  "card": "cards/e61446137522.html",
+  "diff": "changes/204_SID2462_e61446137522.patch",
+  "original_diff": "changes/204_SID2462_e61446137522.original.patch",
+  "script_sha256": "d3aab1dc13d0516b4be385ad87d8c3090e556190759927564d5fe45b572fa475",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

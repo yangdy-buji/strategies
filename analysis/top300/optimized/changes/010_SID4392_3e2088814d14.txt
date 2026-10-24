@@ -1,0 +1,34 @@
+{
+  "rank": 10,
+  "sid": 4392,
+  "source_sha256": "144323a032161c4ee739269f1925f085403e3b84aadc91a047e522e56f48fce3",
+  "base_kind": "original",
+  "base_sha256": "ed0f4c89fc8ef0551af1335014aa1cdda6949af21c4533f87ff0403637b480d2",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：1.5倍标准差上轨突破做多、下轨或中轨退出，意图清楚且参数较少。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "固定qty=1使价格高低股票的资金权重不同，外部统一仓位回测不能直接反映源码资金曲线。 暂缓原因：改为统一资金属于仓位设计变更，收益与回撤都可能改变。"
+  ],
+  "validation_plan": [
+    "逐笔核对持股数、名义金额和成本；将高价/低价股票分组比较收益贡献。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "3e2088814d14",
+  "title": "宽带突破策略Bollinger-Band-Breakout-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/010_SID4392_3e2088814d14_original.pine",
+  "original": "originals/010_SID4392_3e2088814d14.pine",
+  "baseline": "baselines/010_SID4392_3e2088814d14.pine",
+  "changes": "changes/010_SID4392_3e2088814d14.txt",
+  "card": "cards/3e2088814d14.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ed0f4c89fc8ef0551af1335014aa1cdda6949af21c4533f87ff0403637b480d2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

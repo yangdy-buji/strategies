@@ -1,0 +1,109 @@
+//@version=4
+// OPT-T300 SID 2209：沿用旧候选·未回测
+// 原文件SHA256：f4919da828cadb078c7b6613d818a2d09c8f1bb78a9796e999716f391fa84172
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双移动平均线交叉MACD趋势跟踪策略Dual-Moving-Average-Crossover-MACD-Trend-Following-Strategy.md
+// 原文件SHA256：f4919da828cadb078c7b6613d818a2d09c8f1bb78a9796e999716f391fa84172
+// SID：2209；原研究名单序号：130
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-01-16 00:00:00
+end: 2024-01-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © DeMindSET
+strategy("MACD Trend Follow Strategy", overlay=false)
+// Getting inputs
+LSB = input(title="Long/Short", defval="Long only", options=["Long only", "Short only" , "Both"]) 
+fast_length = input(title="Fast Length", type=input.integer, defval=12)
+slow_length = input(title="Slow Length", type=input.integer, defval=26)
+src = input(title="Source", type=input.source, defval=close)
+signal_length = input(title="Signal Smoothing", type=input.integer, minval = 1, maxval = 50, defval = 9)
+sma_source = input(title="Simple MA(Oscillator)", type=input.bool, defval=false)
+sma_signal = input(title="Simple MA(Signal Line)", type=input.bool, defval=false)
+
+// Plot colors
+col_grow_above = #26A69A
+col_grow_below = #FFCDD2
+col_fall_above = #B2DFDB
+col_fall_below = #EF5350
+col_macd = #0094ff
+col_signal = #ff6a00
+
+// Calculating
+fast_ma = sma_source ? sma(src, fast_length) : ema(src, fast_length)
+slow_ma = sma_source ? sma(src, slow_length) : ema(src, slow_length)
+macd = fast_ma - slow_ma
+signal = sma_signal ? sma(macd, signal_length) : ema(macd, signal_length)
+hist = macd - signal
+
+plot(hist, title="Histogram", style=plot.style_columns, color=(hist>=0 ? (hist[1] < hist ? col_grow_above : col_fall_above) : (hist[1] < hist ? col_grow_below : col_fall_below) ), transp=0 )
+plot(macd, title="MACD", color=col_macd, transp=0)
+plot(signal, title="Signal", color=col_signal, transp=0)
+//
+Bull= macd > signal
+Bear= macd < signal
+ConBull=macd>0
+ConBear=macd<0
+//
+Green= Bull and ConBull
+Red= Bear and ConBear
+Yellow= Bull and ConBear
+Blue= Bear and ConBull
+//
+bcolor = Green ? color.green : Red ? color.red : Yellow ? color.yellow : Blue ? color.blue : na
+barcolor(color=bcolor)
+// === INPUT BACKTEST RANGE ===
+FromYear  = input(defval = 2019, title = "From Year", minval = 1920)
+FromMonth = input(defval = 1, title = "From Month", minval = 1, maxval = 12)
+FromDay   = input(defval = 1, title = "From Day", minval = 1, maxval = 31)
+ToYear    = input(defval = 9999, title = "To Year", minval = 2009)
+ToMonth   = input(defval = 12, title = "To Month", minval = 1, maxval = 12)
+ToDay     = input(defval = 31, title = "To Day", minval = 1, maxval = 31)
+
+// === FUNCTION EXAMPLE ===
+start     = timestamp(FromYear, FromMonth, FromDay, 00, 00)  // backtest start window
+finish    = timestamp(ToYear, ToMonth, ToDay, 23, 59)        // backtest finish window
+// OPT-2209-01：恢复日期函数。
+// OPT-2209-01 保持：边界设置不变。
+// OPT-2209-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+window()  => time >= start and time <= finish
+
+// OPT-2209-02：接入入口日期门禁。
+// OPT-2209-02 保持：独立退出条件不变。
+// OPT-2209-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if LSB == "Long only" and Green and window()
+    strategy.entry("L",true)
+// OPT-2209-07：双向窗外保留反向平多。
+// OPT-2209-07 保持：窗内双向仍由entry反转。
+// OPT-2209-07 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (LSB == "Long only" or (LSB == "Both" and not window())) and Red
+    strategy.close("L",qty_percent=100,comment="TP Long")
+// OPT-2209-03：接入入口日期门禁。
+// OPT-2209-03 保持：独立退出条件不变。
+// OPT-2209-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if LSB == "Both" and Green and window()
+    strategy.entry("L",true)
+// OPT-2209-04：接入入口日期门禁。
+// OPT-2209-04 保持：独立退出条件不变。
+// OPT-2209-04 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if LSB == "Both" and Red and window()
+    strategy.entry("S",false)
+// OPT-2209-05：接入入口日期门禁。
+// OPT-2209-05 保持：独立退出条件不变。
+// OPT-2209-05 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if LSB == "Short only" and Red and window()
+    strategy.entry("S",false)
+// OPT-2209-06：双向窗外保留反向平空。
+// OPT-2209-06 保持：窗内双向仍由entry反转。
+// OPT-2209-06 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (LSB == "Short only" or (LSB == "Both" and not window())) and Green
+    strategy.close("S",qty_percent=100,comment="TP Short")

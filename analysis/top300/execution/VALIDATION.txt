@@ -1,0 +1,42 @@
+TOP300 本地实施与验证记录
+
+基线提交：a9fd501ef48db12ddc0366fe4b623ec82529ae44
+分支：feat/top300-logic-fixes
+环境：macOS本地隔离worktree；不部署、不接券商、不下单。
+
+执行结果：56项本轮新候选、59项沿用旧候选、60项保留原版、125项待设计并保留原版，共300项。
+本轮56项包含43项正确性修复、12项混合修复/设计选择、1项独立设计实验。
+92项P0中35项本轮修改、57项沿用旧候选；候选仍可能有逐项列明的剩余问题，不能解释为92项全部风险消失。
+所有新候选均完成规格复核与独立代码质量复核，approval绑定完整proposal摘要。
+
+实际执行：
+- python3 -m unittest discover -s tests -q：209项通过。
+- python3 -m tools.strategy_top300.build：完整生成300项。
+- python3 -m tools.strategy_top300.verify：PASS，300条记录、1737文件、3235本地链接。
+- 重建1737个文件SHA完全一致，ZIP固定元数据，内容可复现。
+- 原始300份Markdown及导出Pine指纹逐项一致；185项未改脚本与原版字节相同。
+- 所有本轮候选保持修改基线Pine版本。SID3552沿用此前已存在的版本注解修正，不是本轮语言迁移。
+- 数量覆盖、唯一替换、缺失/过期审批拒绝、备注不能干扰后续补丁、符号链接输出拒绝、卡片/CSV/ZIP内容一致性均有检查。
+
+关键反例经历失败→通过：803重复RSI下穿保护锚、4632初始R及平仓同柱再入/突破冷却、1776冲击后回撤/实时确认/持仓重复信号、2604分档多空保护、零分母与历史函数逐根更新。
+
+验证边界：
+- 没有原生Pine编译器；本机pine/pinec命令未找到，未执行原生编译或Pine订单回放。
+- Python标量、有限状态及源码约束测试不是Pine执行器，不能证明所有版本语法、历史指标状态、同柱成交先后或实盘正确。
+- 未运行新行情回测；没有优化后收益指标，不能继承原TOP300的名次或绩效。
+- 多档成交均价保护的首成交柱空窗、动态通道、旧限价模拟等风险见每项remaining及复核补充。
+- 125项经济设计存在明确取舍，未按旧收益选参或强行替换；逐项validation_plan给出后续验证路径。
+
+交付入口：analysis/top300/optimized/index.html
+脚本包：analysis/top300/optimized/top300_candidates.zip（包含候选与明确标记的原版）
+本轮本地保存，未部署、未推送。此前一次推送的门禁豁免不自动扩展到本轮。
+
+Code/test SHA256:
+tools/strategy_top300/build.py be8083e8c3df1ede330e480a5603442c5e7ebb0430dc5469e20c068346c3540a
+tools/strategy_top300/core.py 303b695e753482f8c9c76c3a5180c6e9886ce5a1ea92f7a4f5bcdf7194b392f0
+tools/strategy_top300/verify.py e2d45e7ef3b2a8d2d53249145f92845e91aed9e53a9f8004e7a2a76b68fec21c
+tests/test_top300_batch_a.py 278c8437bd93d1ddeb51f7c35ef4a289d5cbde74677688b062937622aee46016
+tests/test_top300_batch_b.py ec89373ced06fde212af2f9d0c8bc74bb3ff9e330f274ee78e8e2a6bf09057ad
+tests/test_top300_batch_c.py 52edcc1616dee488c896cd10601d8cf9c728d6e3662c3c3135c0a73a098d3087
+tests/test_top300_core.py 4cbfb7fdf92800e9ff13803ac9cf1a468964ea2b147d3644b758e15573838f82
+tests/test_top300_delivery.py 9d33ea09083d6cba5f41514267d2974c79446871113f8899052d638528a2f361

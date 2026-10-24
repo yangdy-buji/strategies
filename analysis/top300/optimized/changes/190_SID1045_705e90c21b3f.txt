@@ -1,0 +1,34 @@
+{
+  "rank": 190,
+  "sid": 1045,
+  "source_sha256": "4f40b4fb2dd37392dd27dd122309beeb7eefdf6e55c46ce2e6de412fe0fe13ac",
+  "base_kind": "original",
+  "base_sha256": "f6bb8f420e33f60c61d5203fc7dfa8e4a8fef793b8623e7f81bd5751f4d158e7",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：成交量加权MACD、StochRSI动量和均线多路径做多有可解释部分，但较多OR分支增加过拟合自由度。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "三条入场路径并联，固定10000现金与统一回测仓位不同；volume EMA为零时比值失效，细碎差分阈值需稳定性检验。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "分路径留一消融、低成交量数据和费用加倍压力；报告交易数、年度贡献及样本外稳定性。"
+  ],
+  "id": "705e90c21b3f",
+  "title": "VRSI-EMA交叉与VMACD融合的波浪寻找者策略VSTOCHASTIC-RSI-EMA-CROSSOVER-COMBINED-WITH-VMACD-WAVEFINDER-STRATEGY",
+  "category": "均值回归",
+  "priority": "P2",
+  "script": "scripts/190_SID1045_705e90c21b3f_original.pine",
+  "original": "originals/190_SID1045_705e90c21b3f.pine",
+  "baseline": "baselines/190_SID1045_705e90c21b3f.pine",
+  "changes": "changes/190_SID1045_705e90c21b3f.txt",
+  "card": "cards/705e90c21b3f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "f6bb8f420e33f60c61d5203fc7dfa8e4a8fef793b8623e7f81bd5751f4d158e7",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

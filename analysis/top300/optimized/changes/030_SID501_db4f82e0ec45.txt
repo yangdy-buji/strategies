@@ -1,0 +1,34 @@
+{
+  "rank": 30,
+  "sid": 501,
+  "source_sha256": "833a5768be879bdd6eb427996732760177af7adb31fcbe14bb9de38b70d69df4",
+  "base_kind": "original",
+  "base_sha256": "169d981eca9119d08920a3afec099a17c1b8cf65490ae4f0e3f7456eae47c2b8",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：快慢EMA与价格共同确定牛熊区域，首次进入区域时交易，规则比标题MACD更接近EMA状态切换。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "灰色中性区域一直保持旧仓，风险随下一次熊区出现而定，未限制最大亏损或时间。 暂缓原因：中性区减仓会改变趋势持有收益。"
+  ],
+  "validation_plan": [
+    "按趋势/震荡拆分，检查区域连续转换、重入和费用后的稳定性。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "db4f82e0ec45",
+  "title": "MACD-Crossover-Strategy-MACD-交叉策略",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/030_SID501_db4f82e0ec45_original.pine",
+  "original": "originals/030_SID501_db4f82e0ec45.pine",
+  "baseline": "baselines/030_SID501_db4f82e0ec45.pine",
+  "changes": "changes/030_SID501_db4f82e0ec45.txt",
+  "card": "cards/db4f82e0ec45.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "169d981eca9119d08920a3afec099a17c1b8cf65490ae4f0e3f7456eae47c2b8",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

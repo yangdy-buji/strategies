@@ -1,0 +1,34 @@
+{
+  "rank": 131,
+  "sid": 5635,
+  "source_sha256": "7bc0e7585c078c1468012b9ab4a104045a628781bba9c602803ca73160b884ae",
+  "base_kind": "original",
+  "base_sha256": "53f54a87fcf0594d4b5020315c6d8e0cc06cf57e55ac68a6b938bb2e7a62dd67",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：RSI6在多个超卖阈值回升买入、多个超买阈值回落退出，实际是多阈值事件并集而非随机指标。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "5/7/8/9/10等密集阈值提供大量自由度，可能在相似反弹上反复触发；绝大多数定义的阈值没有用于订单。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "按阈值触发标签统计实际成交贡献，对多个相邻阈值组合做滚动外样本稳定性检查。"
+  ],
+  "id": "11487f2e0087",
+  "title": "随机超买超卖区间RSI策略Stochastic-Oversold-and-Overbought-Range-RSI-Strategy",
+  "category": "均值回归",
+  "priority": "P2",
+  "script": "scripts/131_SID5635_11487f2e0087_original.pine",
+  "original": "originals/131_SID5635_11487f2e0087.pine",
+  "baseline": "baselines/131_SID5635_11487f2e0087.pine",
+  "changes": "changes/131_SID5635_11487f2e0087.txt",
+  "card": "cards/11487f2e0087.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "53f54a87fcf0594d4b5020315c6d8e0cc06cf57e55ac68a6b938bb2e7a62dd67",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

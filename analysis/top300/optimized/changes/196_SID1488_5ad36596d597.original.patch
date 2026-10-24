@@ -1,0 +1,20 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1488：本轮新候选·未回测
++// 原文件SHA256：a7c24e1d2eea1f451653ae66f86666fce5c548206360462914d34066fa371666
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-01-06 00:00:00
+ end: 2024-02-05 00:00:00
+@@ -28,7 +31,9 @@
+ 
+ double_smoothed_pc = double_smooth(pc, longLength, shortLength)
+ double_smoothed_abs_pc = double_smooth(math.abs(pc), longLength, shortLength)
+-tsi_value = 100 * (double_smoothed_pc / double_smoothed_abs_pc)
++// OPT-T300-01 修改原因：TSI绝对变化平滑值为零时保持NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
++// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++tsi_value = not na(double_smoothed_abs_pc) and double_smoothed_abs_pc > 0 ? 100 * (double_smoothed_pc / double_smoothed_abs_pc) : na
+ tsi_signal = ta.ema(tsi_value, signalLength)
+ 
+ riskAmount = (initialCapital * riskPercent) / close

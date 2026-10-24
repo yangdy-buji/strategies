@@ -1,0 +1,64 @@
+{
+  "rank": 158,
+  "sid": 3133,
+  "source_sha256": "529ff5c124374088f73e744962b554396d6ccb45d87fdd5d899164fe26bd2c25",
+  "base_kind": "original",
+  "base_sha256": "557f86bd661842c4fba5306b974375cdaba2818876f6644a19b5b95bb1212aee",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "恢复ALL/MANUAL日期语义；DAYS/WEEKS缺少唯一时间锚，候选明确拒绝自动模式入场。；已有仓位退出不被日期窗口阻断。",
+  "patches": [
+    {
+      "old": "window() => true",
+      "new": "window() => useRange == \"ALL\" or (useRange == \"MANUAL\" and time >= timestamp(FromYear, FromMonth, FromDay, 0, 0) and time <= timestamp(ToYear, ToMonth, ToDay, 23, 59))",
+      "reason": "恢复ALL/MANUAL日期语义；DAYS/WEEKS缺少唯一时间锚，候选明确拒绝自动模式入场。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "ALL允许；MANUAL包含边界；DAYS/WEEKS不静默绕过范围。"
+      ]
+    },
+    {
+      "old": "when=window() and sell",
+      "new": "when=sell",
+      "reason": "已有仓位退出不被日期窗口阻断。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "窗口外死叉仍平多。"
+      ]
+    }
+  ],
+  "resolved": [
+    "恢复ALL/MANUAL日期语义；DAYS/WEEKS缺少唯一时间锚，候选明确拒绝自动模式入场。",
+    "已有仓位退出不被日期窗口阻断。"
+  ],
+  "remaining": [
+    "独立design_experiment：默认WEEKS模式明确不入场；需用户定义当前时间/数据末端/固定as-of锚后实现自动窗口，不称完整恢复自动模式。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "在同一历史数据不同运行日期验证结果一致；测试四种模式、边界及窗外持仓退出。"
+  ],
+  "id": "003f8c7ee2f3",
+  "title": "基于双MA叠加的自适应回测时间范围选择策略Adaptive-Backtest-Date-Range-Selection-Strategy-Based-on-Double-MA",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/158_SID3133_003f8c7ee2f3_candidate.pine",
+  "original": "originals/158_SID3133_003f8c7ee2f3.pine",
+  "baseline": "baselines/158_SID3133_003f8c7ee2f3.pine",
+  "changes": "changes/158_SID3133_003f8c7ee2f3.txt",
+  "card": "cards/003f8c7ee2f3.html",
+  "diff": "changes/158_SID3133_003f8c7ee2f3.patch",
+  "original_diff": "changes/158_SID3133_003f8c7ee2f3.original.patch",
+  "script_sha256": "e6fc560f8123d3873491b77f260e2c371f1e86865d0ab4e3c664cc6725073c82",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "70f2af1dc41c345191985da868b63824f335851d4392bbe864b000304126edfb",
+    "review": "v4 ALL及MANUAL窗口显式实现，MANUAL含起日00:00至止日23:59；原均线交叉在全局逐柱求值。关闭L移除日期限制，窗外仍可退出。默认WEEKS不交易是明确披露的独立设计取舍，非完整自动窗口实现。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "独立design_experiment：默认WEEKS模式明确不入场；需用户定义当前时间/数据末端/固定as-of锚后实现自动窗口，不称完整恢复自动模式。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 5240：本轮新候选·未回测
++// 原文件SHA256：5455817804f192caf44f009646677dfc932adc1633b7e147e3b563790af1e651
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2024-12-18 08:00:00
+@@ -28,15 +31,21 @@
+ longTP = close + 3 * (close - longSL) // TP SL ga nisbatan 1:2 masofada
+ 
+ // Savdoni ochish va 2% foyda bo'lganda SLni break-even ga o‘zgartirish
+-if (bullishCross)
+-    strategy.entry("Buy", strategy.long)  // Buy pozitsiyasini ochish
+-    strategy.exit("Exit Buy", "Buy", stop=longSL, limit=longTP)  // SL va TP qo'yish
++// OPT-T300-01 修改原因：保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。
++// OPT-T300-01 保持行为：2%保本触发、原3倍风险目标及金叉入口；激活后不下降。
++var float activeSL = na
++var float activeTP = na
++if (bullishCross and strategy.position_size == 0)
++    activeSL := longSL
++    activeTP := longTP
++    strategy.entry("Buy", strategy.long)
++    strategy.exit("Exit Buy", "Buy", stop=activeSL, limit=activeTP)
+ 
+-    // 2% foyda bo'lganda SLni break-even ga o'zgartirish
+-    if (strategy.position_size > 0)
+-        profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100
+-        if (profitPercentage >= 2)
+-            strategy.exit("Exit Buy BE", "Buy", stop=strategy.position_avg_price) // SLni break-even ga o'zgartirish
++if strategy.position_size > 0
++    profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100
++    if profitPercentage >= 2
++        activeSL := math.max(activeSL, strategy.position_avg_price)
++    strategy.exit("Exit Buy", "Buy", stop=activeSL, limit=activeTP)
+ 
+ // Signalni ko'rsatish
+ plotshape(bullishCross, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")

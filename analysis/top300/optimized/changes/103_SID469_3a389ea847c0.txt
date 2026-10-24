@@ -1,0 +1,35 @@
+{
+  "rank": 103,
+  "sid": 469,
+  "source_sha256": "c10342a0a54e09994a92625ad3bf69c9c22700035a2509b0722a7fd51c539eb8",
+  "base_kind": "original",
+  "base_sha256": "c13e12d0faff0cf3db864595b757ead3bf37ddd9d4ffdacd1c454dc38c4b2ecc",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：退出要按开盘可知值还是收盘更新上轨尚未定义；改成交持仓标志可改变同柱出口时机，需先逐笔还原原下一柱成交。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "退出要按开盘可知值还是收盘更新上轨尚未定义；改成交持仓标志可改变同柱出口时机，需先逐笔还原原下一柱成交。",
+    "in_trade在发单时而非成交时设置；退出用当柱open与收盘后确定的upper_band比较并到下一撮合机会退出，不等于开盘越轨即时成交。entry_price不参与风险控制。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "检查发单未成交/资金不足、隔夜跳空及开盘越轨后收盘回落案例，逐笔核对时间与持仓。"
+  ],
+  "id": "3a389ea847c0",
+  "title": "Keltner-Channels-EMA-ATR-Strategy-Keltner通道EMA-ATR策略",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/103_SID469_3a389ea847c0_original.pine",
+  "original": "originals/103_SID469_3a389ea847c0.pine",
+  "baseline": "baselines/103_SID469_3a389ea847c0.pine",
+  "changes": "changes/103_SID469_3a389ea847c0.txt",
+  "card": "cards/3a389ea847c0.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c13e12d0faff0cf3db864595b757ead3bf37ddd9d4ffdacd1c454dc38c4b2ecc",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,104 @@
+// OPT-T300 SID 3620：本轮新候选·未回测
+// 原文件SHA256：fc781f47bdc018e4674b23c833a200b65f41ec3981581a678397053dbb0792fa
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-02-12 00:00:00
+end: 2024-02-18 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy("STPP20 + ADX", overlay = true)
+
+///////////////////////////
+// SuperTrend + Pivot Point
+//////////////////////////
+
+src =  input(close, title="EMA Source")
+PPprd = input(defval = 2, title="Pivot Point Period", minval = 1, maxval = 50)
+AtrFactor=input(defval = 5, title = "ATR Factor", minval = 1, step = 0.1)
+AtrPd=input(defval = 20, title = "ATR Period", minval=1)
+
+float ph = na
+float pl = na
+ph := pivothigh(PPprd, PPprd)
+pl := pivotlow(PPprd, PPprd)
+
+float center = na
+center := center[1]
+float lastpp = ph ? ph : pl ? pl : na
+if lastpp
+    if na(center)
+        center := lastpp
+    else
+        center := (center * 2 + lastpp) / 3
+
+Up = center - (AtrFactor * atr(AtrPd))
+Dn = center + (AtrFactor * atr(AtrPd))
+
+float TUp = na
+float TDown = na
+Trend = 0
+TUp := close[1] > TUp[1] ? max(Up, TUp[1]) : Up
+TDown := close[1] < TDown[1] ? min(Dn, TDown[1]) : Dn
+Trend := close > TDown[1] ? 1: close < TUp[1]? -1: nz(Trend[1], 1)
+Trailingsl = Trend == 1 ? TUp : TDown
+
+// Lines
+linecolor = Trend == 1 and nz(Trend[1]) == 1 ? color.lime : Trend == -1 and nz(Trend[1]) == -1 ? color.red : na
+plot(Trailingsl, color = linecolor ,  linewidth = 2, title = "PP SuperTrend")
+
+bsignalSSPP = close > Trailingsl
+ssignalSSPP = close < Trailingsl
+
+
+///////
+// ADX
+//////
+
+lenADX = 14
+th = 25
+TrueRange = max(max(high-low, abs(high-nz(close[1]))), abs(low-nz(close[1])))
+DirectionalMovementPlus = high-nz(high[1]) > nz(low[1])-low ? max(high-nz(high[1]), 0): 0
+DirectionalMovementMinus = nz(low[1])-low > high-nz(high[1]) ? max(nz(low[1])-low, 0): 0
+SmoothedTrueRange = 0.0
+SmoothedTrueRange := nz(SmoothedTrueRange[1]) - (nz(SmoothedTrueRange[1])/lenADX) + TrueRange
+SmoothedDirectionalMovementPlus = 0.0
+SmoothedDirectionalMovementPlus := nz(SmoothedDirectionalMovementPlus[1]) - (nz(SmoothedDirectionalMovementPlus[1])/lenADX) + DirectionalMovementPlus
+SmoothedDirectionalMovementMinus = 0.0
+SmoothedDirectionalMovementMinus := nz(SmoothedDirectionalMovementMinus[1]) - (nz(SmoothedDirectionalMovementMinus[1])/lenADX) + DirectionalMovementMinus
+// OPT-T300-01 修改原因：DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
+// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+DIPlus = not na(SmoothedTrueRange) and SmoothedTrueRange > 0 ? SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100 : na
+// OPT-T300-02 修改原因：DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
+// OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+DIMinus = not na(SmoothedTrueRange) and SmoothedTrueRange > 0 ? SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100 : na
+// OPT-T300-03 修改原因：DX方向和为零时显式NA，不构造虚假趋势强度。
+// OPT-T300-03 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+DX = not na(DIPlus + DIMinus) and DIPlus + DIMinus > 0 ? abs(DIPlus-DIMinus) / (DIPlus+DIMinus)*100 : na
+ADX = sma(DX, lenADX)
+
+
+//////
+// MA
+/////
+
+lenMA = 21
+srcMA = input(close, title="Source")
+offsetMA = input(title="Offset", type=input.integer, defval=0, minval=-500, maxval=500)
+outMA = sma(srcMA, lenMA)
+
+
+// Buy - Sell Entries
+buy = bsignalSSPP and outMA < close and ADX > th
+sell = ssignalSSPP 
+
+if (buy)
+    // .order // Tuned version
+    strategy.entry("Buy", strategy.long)
+
+
+if (sell) and (strategy.position_size > 0)
+    strategy.order("Sell", false, when = sell)

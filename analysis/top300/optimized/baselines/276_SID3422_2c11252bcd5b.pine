@@ -1,0 +1,61 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于支持位和趋势EMA的多空策略-Support-Level-and-Trend-EMA-Based-Long-Strategy.md
+// 原文件SHA256：fd7a3fda84536ac031b14b09b47a4fb186b441eff946a2b0445296fc4ad44555
+// SID：3422；原研究名单序号：131
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-02-22 00:00:00
+end: 2024-05-30 00:00:00
+period: 2d
+basePeriod: 2d
+exchanges: [{"eid":"Binance","currency":"ETH_USDT"}]
+*/
+strategy("Ultra-Profitable SMC Long-Only Strategy", shorttitle="Ultra_Profit_SMC", overlay=true)
+
+// User Inputs
+emaTrendLength = input.int(100, title="Trend EMA Length")  // Faster EMA to align with aggressive trends
+supportLookback = input.int(10, title="Support Lookback Period")  // Short-term support zones
+atrLength = input.int(14, title="ATR Length")
+atrMultiplierSL = input.float(1.0, title="ATR Multiplier for Stop-Loss")
+atrMultiplierTP1 = input.float(5.0, title="ATR Multiplier for TP1")
+atrMultiplierTP2 = input.float(10.0, title="ATR Multiplier for TP2")
+riskPercent = input.float(3.0, title="Risk per Trade (%)", step=0.1)
+
+// Calculate Indicators
+emaTrend = ta.ema(close, emaTrendLength)  // Trend EMA
+supportLevel = ta.lowest(low, supportLookback)  // Support Level
+atr = ta.atr(atrLength)  // ATR
+
+// Entry Conditions
+isTrendingUp = close > emaTrend  // Price above Trend EMA
+nearSupport = close <= supportLevel + (atr * 0.5)  // Price near support zone
+longCondition = isTrendingUp and nearSupport
+
+// Dynamic Stop-Loss and Take-Profit Levels
+longStopLoss = supportLevel - (atr * atrMultiplierSL)
+takeProfit1 = close + (atr * atrMultiplierTP1)  // Partial Take-Profit at 5x ATR
+takeProfit2 = close + (atr * atrMultiplierTP2)  // Full Take-Profit at 10x ATR
+
+// Position Sizing
+capital = strategy.equity
+tradeRisk = riskPercent / 100 * capital
+positionSize = tradeRisk / (close - longStopLoss)
+
+// Execute Long Trades
+if (longCondition)
+    strategy.entry("Ultra Long", strategy.long, qty=positionSize)
+
+// Exit Conditions
+// OPT-3422-01：第一档50%无止损却预留仓位，第二档止损只能保护剩余部分；给首档补同一止损。
+// OPT-3422-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-3422-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit("Partial Exit", from_entry="Ultra Long", limit=takeProfit1, stop=longStopLoss, qty_percent=50)  // Exit 50% at TP1
+strategy.exit("Full Exit", from_entry="Ultra Long", limit=takeProfit2, qty_percent=100, stop=longStopLoss)  // Exit the rest at TP2
+
+// Plot Indicators
+plot(emaTrend, color=color.blue, title="Trend EMA")
+plot(supportLevel, color=color.green, title="Support Level", linewidth=2)

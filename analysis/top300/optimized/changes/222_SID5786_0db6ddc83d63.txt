@@ -1,0 +1,34 @@
+{
+  "rank": 222,
+  "sid": 5786,
+  "source_sha256": "8d7b9e7099a5843d30cfb0f51ec70636f5ceee2d83a08905a99374bfae0a3fd9",
+  "base_kind": "original",
+  "base_sha256": "d19f260afdf952fa05cc01d40ca8f3773bb2ab41b522824869466e813148793c",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA10/30交叉开多空，但死叉同时触发close_all。 均线双向反转与死叉全平同时发生，方向意图不唯一；不是单纯均线交叉可直接判定。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线双向反转与死叉全平同时发生，方向意图不唯一；不是单纯均线交叉可直接判定。 后续验证：空仓死叉、持多死叉和持空金叉在原生订单队列中逐笔对照。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "空仓死叉、持多死叉和持空金叉在原生订单队列中逐笔对照。"
+  ],
+  "id": "0db6ddc83d63",
+  "title": "黄金交叉均线突破策略Crude-Oil-Moving-Average-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/222_SID5786_0db6ddc83d63_original.pine",
+  "original": "originals/222_SID5786_0db6ddc83d63.pine",
+  "baseline": "baselines/222_SID5786_0db6ddc83d63.pine",
+  "changes": "changes/222_SID5786_0db6ddc83d63.txt",
+  "card": "cards/0db6ddc83d63.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d19f260afdf952fa05cc01d40ca8f3773bb2ab41b522824869466e813148793c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

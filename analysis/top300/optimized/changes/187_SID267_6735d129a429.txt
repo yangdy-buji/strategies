@@ -1,0 +1,96 @@
+{
+  "rank": 187,
+  "sid": 267,
+  "source_sha256": "6bb6283befab41be260ae0222b20e75980dba9e6a33defd11355264df97d781b",
+  "base_kind": "original",
+  "base_sha256": "fe927f4e4e8915bd6dd25ba7cc6494aa2b74b544be8189e80dfffd1b2f944f4e",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "入场要求真实空仓及正风险距离。；保护管理依实际成交而非发单即置位。；删除提前持仓标记。；同柱双触价只提交一次退出，保留止损优先顺序。；退出提交后等待真实成交再结束管理。",
+  "patches": [
+    {
+      "old": "if longCondition and not inTrade",
+      "new": "if longCondition and strategy.position_size == 0 and close > low[1]",
+      "reason": "入场要求真实空仓及正风险距离。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "close<=low[1]跳过；风险正时保留原10R。"
+      ]
+    },
+    {
+      "old": "var bool inTrade = false",
+      "new": "inTrade = strategy.position_size > 0",
+      "reason": "保护管理依实际成交而非发单即置位。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "信号柱尚无仓位时不执行high/low退出。"
+      ]
+    },
+    {
+      "old": "    inTrade := true\n",
+      "new": "",
+      "reason": "删除提前持仓标记。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "发单不等于成交。"
+      ]
+    },
+    {
+      "old": "        inTrade := false\n    if high >= takeProfit",
+      "new": "    else if high >= takeProfit",
+      "reason": "同柱双触价只提交一次退出，保留止损优先顺序。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "同柱触SL/TP只执行SL市价关闭。"
+      ]
+    },
+    {
+      "old": "        inTrade := false\n",
+      "new": "",
+      "reason": "退出提交后等待真实成交再结束管理。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "待退出保持真实仓位状态。"
+      ]
+    }
+  ],
+  "resolved": [
+    "入场要求真实空仓及正风险距离。",
+    "保护管理依实际成交而非发单即置位。",
+    "删除提前持仓标记。",
+    "同柱双触价只提交一次退出，保留止损优先顺序。",
+    "退出提交后等待真实成交再结束管理。"
+  ],
+  "remaining": [
+    "保留信号价初始R与收盘后市价退出，不承诺盘中stop成交；跳空风险需验证。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+    "达到3R当柱先升保本再检查整柱low，可能引用升保本之前的低点；需原生时序回放或独立保护模型设计。"
+  ],
+  "validation_plan": [
+    "信号柱先低后高、次柱跳空、risk<=0、保本触发后同柱回落案例，逐笔确认有仓必有管理状态。"
+  ],
+  "id": "6735d129a429",
+  "title": "EMA-34-动态止损交叉策略趋势跟踪与风险管理的智能结合-EMA-34-Dynamic-Stop-Loss-Crossover-Strategy-Intelligent-Combination-of-Trend-Following-and-Risk-Management",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/187_SID267_6735d129a429_candidate.pine",
+  "original": "originals/187_SID267_6735d129a429.pine",
+  "baseline": "baselines/187_SID267_6735d129a429.pine",
+  "changes": "changes/187_SID267_6735d129a429.txt",
+  "card": "cards/6735d129a429.html",
+  "diff": "changes/187_SID267_6735d129a429.patch",
+  "original_diff": "changes/187_SID267_6735d129a429.original.patch",
+  "script_sha256": "8e97f343c8827585bd376c937e682d0c19214c448a68254d763723c1ad4f1536",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "70fd8f42c3896a509b8e2e2e9844339ffe4e063c203a359e6471e72fa932d822",
+    "review": "v5真实position_size管理取代虚拟inTrade，空仓且close>low[1]才构建正R；首笔信号柱不假装持仓触发退出。平仓提交后仍管理，确认空仓的新entry重新设锚且无尾部清理。止损/止盈用else if保留止损优先。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保留信号价初始R与收盘后市价退出，不承诺盘中stop成交；跳空风险需验证。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+      "达到3R当柱先升保本再检查整柱low，可能引用升保本之前的低点；需原生时序回放或独立保护模型设计。"
+    ]
+  }
+}

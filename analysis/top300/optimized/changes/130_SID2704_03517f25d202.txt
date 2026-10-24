@@ -1,0 +1,34 @@
+{
+  "rank": 130,
+  "sid": 2704,
+  "source_sha256": "9968fe961e4fbe7ed2c063306214b28e7db5bae1103ba713daf2dee6c974711c",
+  "base_kind": "original",
+  "base_sha256": "a24aa89870d8481c4f9cdebca4b80d8aa4c8919d731fc7ce67e53241951ef701",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：G通道多头状态下在EMA50下买回调，空头状态反弹到EMA上退出，属于带趋势状态的均值回归而非双向切换。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "只有多头入口；趋势已经转弱但价格一直在EMA下时，卖出条件可能长期不满足。初始barssince和递归通道需要预热。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "比较持续单边跌与反弹失败路径，统计空头状态仍持多的持续时间与最大亏损。"
+  ],
+  "id": "03517f25d202",
+  "title": "基于G通道和指数移动平均的量化多空转换策略-Quantitative-Long-Short-Switching-Strategy-Based-on-G-Channel-and-EMA",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/130_SID2704_03517f25d202_original.pine",
+  "original": "originals/130_SID2704_03517f25d202.pine",
+  "baseline": "baselines/130_SID2704_03517f25d202.pine",
+  "changes": "changes/130_SID2704_03517f25d202.txt",
+  "card": "cards/03517f25d202.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a24aa89870d8481c4f9cdebca4b80d8aa4c8919d731fc7ce67e53241951ef701",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

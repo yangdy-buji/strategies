@@ -1,0 +1,34 @@
+{
+  "rank": 76,
+  "sid": 3505,
+  "source_sha256": "7e4be3ed053978f076be3d2c6ee224f89365bb07e7c2cf54006d4c34a10a6c56",
+  "base_kind": "original",
+  "base_sha256": "065e904d66cf3f6b5d49435b2f6edc7bef5b33fc174986b95a0f77b31cad03ce",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：BearPower价差区间映射持久多空状态，规则可复算但绝对阈值限制通用性。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "10/1价差阈值对不同价格和拆股后的股票含义不同，处于中间区间时长期沿用旧仓。 暂缓原因：两项改动都会改变方向及交易频率。"
+  ],
+  "validation_plan": [
+    "同序列价格乘10、长时间处于中间区间和拆股前后检查信号与持仓。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "88851838289b",
+  "title": "基于熊力量指标的量化交易策略Bear-Power-Strategy",
+  "category": "波动率",
+  "priority": "P1",
+  "script": "scripts/076_SID3505_88851838289b_original.pine",
+  "original": "originals/076_SID3505_88851838289b.pine",
+  "baseline": "baselines/076_SID3505_88851838289b.pine",
+  "changes": "changes/076_SID3505_88851838289b.txt",
+  "card": "cards/88851838289b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "065e904d66cf3f6b5d49435b2f6edc7bef5b33fc174986b95a0f77b31cad03ce",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,76 @@
+{
+  "rank": 83,
+  "sid": 5389,
+  "source_sha256": "bf2661adf8c9750fd1c582b7f5d0769c737a5c9d4cb37b3a0ddc68af3309ed87",
+  "base_kind": "original",
+  "base_sha256": "61271b5dd9f0d79f3829a5dba6e261db0cf52b4ecd46b5bb3926d7d402f3c878",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "仅修复自算DI/DX平价和零方向边界；保留ADX与随机指标共同退出，取消同步过滤须独立研究。",
+  "patches": [
+    {
+      "old": "plusDI   = 100 * ta.rma(plusDM, adxPeriod) / atrValue",
+      "new": "smoothedPlusDM = ta.rma(plusDM, adxPeriod)\nsmoothedMinusDM = ta.rma(minusDM, adxPeriod)\nplusDI   = atrValue == 0 ? 0.0 : 100 * smoothedPlusDM / atrValue",
+      "reason": "平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。",
+      "preserved": "波幅非零仍采用原Wilder平滑；暖机NA保持未定义。",
+      "validation_cases": [
+        "TR=0、DM=0时DI=0；TR=4、DM=2时DI=50；TR缺失仍NA。"
+      ]
+    },
+    {
+      "old": "minusDI  = 100 * ta.rma(minusDM, adxPeriod) / atrValue",
+      "new": "minusDI  = atrValue == 0 ? 0.0 : 100 * smoothedMinusDM / atrValue",
+      "reason": "平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。",
+      "preserved": "波幅非零仍采用原Wilder平滑；暖机NA保持未定义。",
+      "validation_cases": [
+        "TR=0、DM=0时DI=0；TR=4、DM=2时DI=50；TR缺失仍NA。"
+      ]
+    },
+    {
+      "old": "dx       = 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)",
+      "new": "dx       = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)",
+      "reason": "双DI为0表示无方向强度，DX回退0避免再次零除。",
+      "preserved": "非零DI比例、ADX平滑及原买卖过滤不变。",
+      "validation_cases": [
+        "双DI零时DX=0；DI50/25时DX=100/3；任一NA仍NA。"
+      ]
+    }
+  ],
+  "resolved": [
+    "平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。",
+    "平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。",
+    "双DI为0表示无方向强度，DX回退0避免再次零除。"
+  ],
+  "remaining": [
+    "退出仍要求ADX高于阈值且随机指标在超买区死叉；弱趋势失效退出是否解耦属于独立经济规则选择。",
+    "原生Pine编译、完整逐根信号及成交回放未执行。"
+  ],
+  "validation_plan": [
+    "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+    "平价K线、ADX跌破25后价格持续下行、随机指标不同步三类路径核验。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "2cf338ff954d",
+  "title": "趋势确认随机震荡策略ADX与随机指标结合的动态市场识别系统-Trend-Confirmation-Stochastic-Oscillation-Strategy-Dynamic-Market-Identification-System-Combining-ADX-and-Stochastic-Indicators",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/083_SID5389_2cf338ff954d_candidate.pine",
+  "original": "originals/083_SID5389_2cf338ff954d.pine",
+  "baseline": "baselines/083_SID5389_2cf338ff954d.pine",
+  "changes": "changes/083_SID5389_2cf338ff954d.txt",
+  "card": "cards/2cf338ff954d.html",
+  "diff": "changes/083_SID5389_2cf338ff954d.patch",
+  "original_diff": "changes/083_SID5389_2cf338ff954d.original.patch",
+  "script_sha256": "604ecf91f65cc413835173472a6688408037c2d9b9f4ac1f5525d9e6693a7b29",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "038a7dc74e268f1233ffb6fd1d58e0bc88acfbc6770344953aab94e7d4b3b4c8",
+    "review": "复审v5最新代码：两个DM的RMA顶层逐根计算，ATR和DX的guard只用标量；随机指标和订单逻辑保持。历史函数条件调用风险消除，局部算术及调用位置验证通过，生成注释完整。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "退出仍要求ADX高于阈值且随机指标在超买区死叉；弱趋势失效退出是否解耦属于独立经济规则选择。"
+    ]
+  }
+}

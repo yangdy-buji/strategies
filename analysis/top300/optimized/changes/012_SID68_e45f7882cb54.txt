@@ -1,0 +1,34 @@
+{
+  "rank": 12,
+  "sid": 68,
+  "source_sha256": "49bb20d47504c8f33eb734f965bd4cd734908f588bfb58832396d11655a21e54",
+  "base_kind": "original",
+  "base_sha256": "80199a78df3ef46ce667aaf5330a48f2736fe0557e3c30ea931a007eacd64f98",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：两条ATR趋势线与T3一致才入场，T3百分比带退出，具有趋势与波动双重依据。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "信号使用三线共识但退出由固定5%T3带控制；启用做空时反向entry与显式close可能同时出现，风险模型并非单一ATR止损。 暂缓原因：替换退出尺度会改变持仓风格，不宜直接优化到旧样本最优。"
+  ],
+  "validation_plan": [
+    "枚举多空翻转同根、单边跳空、5%带不同波动股票的实际损失及交易成本。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "e45f7882cb54",
+  "title": "ATR和T3均线策略ATR-and-T3-Moving-Average-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/012_SID68_e45f7882cb54_original.pine",
+  "original": "originals/012_SID68_e45f7882cb54.pine",
+  "baseline": "baselines/012_SID68_e45f7882cb54.pine",
+  "changes": "changes/012_SID68_e45f7882cb54.txt",
+  "card": "cards/e45f7882cb54.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "80199a78df3ef46ce667aaf5330a48f2736fe0557e3c30ea931a007eacd64f98",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

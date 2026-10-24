@@ -1,0 +1,80 @@
+// OPT-T300 SID 5389：本轮新候选·未回测
+// 原文件SHA256：bf2661adf8c9750fd1c582b7f5d0769c737a5c9d4cb37b3a0ddc68af3309ed87
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-03-05 00:00:00
+end: 2025-03-03 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"SOL_USDT"}]
+*/
+
+//@version=5
+strategy("MY3 ADX+Stokastik", overlay=true, initial_capital=10000, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+
+// ADX Parametreleri
+adxPeriod    = input.int(14, title="ADX Periyodu", minval=1)
+adxThreshold = input.float(25.0, title="Trend Gücü Eşiği", step=0.1)
+
+// Stokastik Parametreleri
+stochKPeriod    = input.int(14, title="Stokastik %K Periyodu", minval=1)
+stochSmoothK    = input.int(3, title="Stokastik Smooth", minval=1)
+stochDPeriod    = input.int(3, title="Stokastik %D Periyodu", minval=1)
+stochOverbought = input.int(80, title="Aşırı Alım Seviyesi", minval=50)
+stochOversold   = input.int(20, title="Aşırı Satım Seviyesi", maxval=50)
+
+// ADX Hesaplaması (Manuel)
+// Hesaplamada kullanılan temel unsurlar
+upMove   = high - high[1]
+downMove = low[1] - low
+plusDM  = (upMove > downMove and upMove > 0) ? upMove : 0.0
+minusDM = (downMove > upMove and downMove > 0) ? downMove : 0.0
+
+// True Range hesaplaması
+tr0 = high - low
+tr1 = math.abs(high - close[1])
+tr2 = math.abs(low - close[1])
+trueRange = math.max(math.max(tr0, tr1), tr2)
+
+// ATR hesaplaması: Wilder'in Yumuşak Ortalaması
+atrValue = ta.rma(trueRange, adxPeriod)
+// OPT-T300-01 修改原因：平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。
+// OPT-T300-01 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
+smoothedPlusDM = ta.rma(plusDM, adxPeriod)
+smoothedMinusDM = ta.rma(minusDM, adxPeriod)
+plusDI   = atrValue == 0 ? 0.0 : 100 * smoothedPlusDM / atrValue
+// OPT-T300-02 修改原因：平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。
+// OPT-T300-02 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
+minusDI  = atrValue == 0 ? 0.0 : 100 * smoothedMinusDM / atrValue
+// OPT-T300-03 修改原因：双DI为0表示无方向强度，DX回退0避免再次零除。
+// OPT-T300-03 保持行为：非零DI比例、ADX平滑及原买卖过滤不变。
+dx       = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)
+adxValue = ta.rma(dx, adxPeriod)
+
+// Stokastik Hesaplaması
+k = ta.sma(ta.stoch(close, high, low, stochKPeriod), stochSmoothK)
+d = ta.sma(k, stochDPeriod)
+
+// Alım ve Satım Koşulları:
+// Alım: ADX belirlenen eşik üzerinde ve Stokastik, aşırı satım bölgesinde (k < stochOversold) iken %K, %D kesişimi yukarı doğru.
+buySignal = (adxValue > adxThreshold) and ta.crossover(k, d) and (k < stochOversold)
+// Satım: ADX belirlenen eşik üzerinde ve Stokastik, aşırı alım bölgesinde (k > stochOverbought) iken %K, %D kesişimi aşağı doğru.
+sellSignal = (adxValue > adxThreshold) and ta.crossunder(k, d) and (k > stochOverbought)
+
+// İşlem Emirleri
+if (buySignal)
+    strategy.entry("Long", strategy.long)
+if (sellSignal)
+    strategy.close("Long")
+
+// Göstergelerin Grafik Üzerinde Gösterimi
+plot(adxValue, color=color.blue, title="ADX")
+hline(adxThreshold, color=color.gray, linestyle=hline.style_dotted, title="ADX Eşiği")
+plot(k, color=color.green, title="Stokastik %K")
+plot(d, color=color.orange, title="Stokastik %D")
+hline(stochOverbought, color=color.red, linestyle=hline.style_dotted, title="Aşırı Alım")
+hline(stochOversold, color=color.green, linestyle=hline.style_dotted, title="Aşırı Satım")
+
+// 3Commas için Uyarı Koşulları (Webhook entegrasyonu için kullanılacak)
+alertcondition(buySignal, title="Alım Uyarısı", message="BUY_SIGNAL")
+alertcondition(sellSignal, title="Satım Uyarısı", message="SELL_SIGNAL")

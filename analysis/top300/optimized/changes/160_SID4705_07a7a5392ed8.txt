@@ -1,0 +1,55 @@
+{
+  "rank": 160,
+  "sid": 4705,
+  "source_sha256": "4d24800b441b063df4a1aedbc8357f3e3c7a9f2c63fce02cf1322f6abe32d0b0",
+  "base_kind": "prior_candidate",
+  "base_sha256": "061bb0891b1b15a142e3479be46135f60a93e259de5cc3d9506027cb37c35dbb",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "仅有效空仓入场形态更新信号价，持仓重复形态不改写保护基准。",
+  "patches": [
+    {
+      "old": "if (swingLow1 or Bullish3LineStrike)\n",
+      "new": "if (entryCondition1 and strategy.position_size == 0 and (swingLow1 or Bullish3LineStrike))\n",
+      "reason": "仅有效空仓入场形态更新信号价，持仓重复形态不改写保护基准。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "持仓100后90形态不把入场价改90；关闭开关不更新。"
+      ]
+    }
+  ],
+  "resolved": [
+    "策略启用开关没有接入订单条件。",
+    "仅有效空仓入场形态更新信号价，持仓重复形态不改写保护基准。"
+  ],
+  "remaining": [
+    "ATR仍每柱变化；固定初始ATR或单向追踪需独立design_experiment。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "关闭开关应零新仓；持仓中重复形态、ATR扩张和跳空时对照锚点/目标/止损及实际成交。"
+  ],
+  "id": "07a7a5392ed8",
+  "title": "日内多头突破策略-Intraday-Bullish-Breakout-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/160_SID4705_07a7a5392ed8_candidate.pine",
+  "original": "originals/160_SID4705_07a7a5392ed8.pine",
+  "baseline": "baselines/160_SID4705_07a7a5392ed8.pine",
+  "changes": "changes/160_SID4705_07a7a5392ed8.txt",
+  "card": "cards/07a7a5392ed8.html",
+  "diff": "changes/160_SID4705_07a7a5392ed8.patch",
+  "original_diff": "changes/160_SID4705_07a7a5392ed8.original.patch",
+  "script_sha256": "e18ac33ddbd2227691b38e7f17fc03ae8a46fe4ea5c3e518a512fd4b7fa70e23",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "12be112594c88bb97447456b2ae5fcc978e84a2fbd856523d7212c9a293b90aa",
+    "review": "v5既有候选启用开关与空仓状态共同控制信号价赋值；有效首次信号仍在entry判断之前设置tradeDirection1，禁用或持仓重复形态不重锚。订单Long - Strategy 1及两类close匹配，目标继续使用每柱ATR。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "ATR仍每柱变化；固定初始ATR或单向追踪需独立design_experiment。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

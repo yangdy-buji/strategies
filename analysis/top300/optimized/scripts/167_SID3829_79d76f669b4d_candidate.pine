@@ -1,0 +1,142 @@
+// OPT-T300 SID 3829：本轮新候选·未回测
+// 原文件SHA256：8269511298a0b9b5bc9e5adfe5f482d9251591f97f47563f212b86e4217ec8b4
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-01-05 00:00:00
+end: 2024-01-11 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// © Julien_Eche
+
+//@version=5
+strategy("Ultimate Balance Oscillator Strategy", overlay=true)
+
+// Indicator Weights
+weightROC = input.float(2, "Rate of Change (ROC) Weight", group="Weightings")
+weightRSI = input.float(0.5, "Relative Strength Index (RSI) Weight", group="Weightings")
+weightCCI = input.float(2, "Commodity Channel Index (CCI) Weight", group="Weightings")
+weightWilliamsR = input.float(0.5, "Williams %R Weight", group="Weightings")
+weightADX = input.float(0.5, "Average Directional Index (ADX) Weight", group="Weightings")
+
+// ROC Settings
+rocLength = input.int(20, "Length", minval=1, group="ROC")
+
+// RSI Settings
+rsiLength = input.int(14, "Length", minval=1, group="RSI")
+
+// CCI Settings
+cciLength = input.int(20, "Length", minval=1, group="CCI")
+
+// Williams %R Settings
+williamsRLength = input.int(14, "Length", minval=1, group="Williams %R")
+
+// ADX Settings
+adxLength = input.int(14, "ADX Length", minval=1, group="ADX")
+adxDiLength = input.int(14, "DI Length", minval=1, group="ADX")
+
+// Source
+source_options = input.string("hlc3", "Source", options=["open", "high", "low", "close", "hl2", "hlc3", "ohlc4"])
+
+price_open = request.security(syminfo.tickerid, "D", open)
+price_high = request.security(syminfo.tickerid, "D", high)
+price_low = request.security(syminfo.tickerid, "D", low)
+price_close = request.security(syminfo.tickerid, "D", close)
+price_hl2 = request.security(syminfo.tickerid, "D", hl2)
+price_hlc3 = request.security(syminfo.tickerid, "D", hlc3)
+price_ohlc4 = request.security(syminfo.tickerid, "D", ohlc4)
+
+get_source(source_option) =>
+    price = price_close
+    if source_option == "open"
+        price := price_open
+    else if source_option == "high"
+        price := price_high
+    else if source_option == "low"
+        price := price_low
+    else if source_option == "close"
+        price := price_close
+    else if source_option == "hl2"
+        price := price_hl2
+    else if source_option == "hlc3"
+        price := price_hlc3
+    else
+        price := price_ohlc4
+    price
+
+src = get_source(source_options)
+
+// Overbought/Oversold Levels
+obLevel = input.float(0.75, "Overbought Level")
+osLevel = input.float(0.25, "Oversold Level")
+
+// Calculating the indicators
+rocValue = ta.change(close, rocLength)
+rsiValue = ta.rsi(close, rsiLength)
+// OPT-T300-03 修改原因：CCI历史均值与偏差先逐柱计算；零偏差或暖机为NA。
+// OPT-T300-03 保持行为：有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。
+cciMean = ta.sma(src, cciLength)
+cciDeviation = ta.dev(src, cciLength)
+cciValue = not na(cciDeviation) and cciDeviation > 0 ? (src - cciMean) / (0.015 * cciDeviation) : na
+// OPT-T300-04 修改原因：Williams窗口极差预计算；平价不构造中性振荡值。
+// OPT-T300-04 保持行为：有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。
+williamsHigh = ta.highest(high, williamsRLength)
+williamsLow = ta.lowest(low, williamsRLength)
+williamsRValue = not na(williamsHigh - williamsLow) and williamsHigh > williamsLow ? -100 * (williamsHigh - close) / (williamsHigh - williamsLow) : na
+
+dirmov(len) =>
+    up = ta.change(high)
+    down = -ta.change(low)
+    plusDM = na(up) ? na : (up > down and up > 0 ? up : 0)
+    minusDM = na(down) ? na : (down > up and down > 0 ? down : 0)
+    truerange = ta.rma(ta.tr, len)
+    // OPT-T300-05 修改原因：DI平滑先逐柱计算，零TR明确NA而不由fixnan沿用旧方向。
+    // OPT-T300-05 保持行为：有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。
+    smoothedPlus = ta.rma(plusDM, len)
+    smoothedMinus = ta.rma(minusDM, len)
+    plus = not na(truerange) and truerange > 0 ? 100 * smoothedPlus / truerange : na
+    minus = not na(truerange) and truerange > 0 ? 100 * smoothedMinus / truerange : na
+    [plus, minus]
+
+adx(dilen, adxlen) =>
+    [plus, minus] = dirmov(dilen)
+    sum = plus + minus
+    adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), adxlen)
+
+adxValue = adx(adxDiLength, adxLength)
+
+// Normalizing the values
+normalize(value, min, max) =>
+    // OPT-T300-02 修改原因：归一化极差为零时显式NA，不擅自填0.5；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
+    // OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+    not na(max - min) and max > min ? (value - min) / (max - min) : na
+
+normalizedROC = normalize(rocValue, ta.lowest(rocValue, rocLength), ta.highest(rocValue, rocLength))
+normalizedRSI = normalize(rsiValue, 0, 100)
+normalizedCCI = normalize(cciValue, ta.lowest(cciValue, cciLength), ta.highest(cciValue, cciLength))
+normalizedWilliamsR = normalize(williamsRValue, ta.lowest(williamsRValue, williamsRLength), ta.highest(williamsRValue, williamsRLength))
+normalizedADX = normalize(adxValue, 0, 50)
+
+// Calculating the combined oscillator line
+// OPT-T300-01 修改原因：总权重为零或正负抵消时返回NA，保留原允许负权重的有效配置。
+// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+totalWeight = weightROC + weightRSI + weightCCI + weightWilliamsR + weightADX
+oscillatorLine = not na(totalWeight) and totalWeight != 0 ? (normalizedROC * weightROC + normalizedRSI * weightRSI + normalizedCCI * weightCCI + normalizedWilliamsR * weightWilliamsR + normalizedADX * weightADX) / totalWeight : na
+
+// Strategy conditions
+enterLong = ta.crossover(oscillatorLine, obLevel)
+exitLong = ta.crossunder(oscillatorLine, osLevel)
+
+// Strategy orders
+if (enterLong)
+    strategy.entry("Buy", strategy.long)
+if (exitLong)
+    strategy.close("Buy")
+
+// Alert conditions
+if (enterLong)
+    alert("Buy signal")
+if (exitLong)
+    alert("Exit signal")

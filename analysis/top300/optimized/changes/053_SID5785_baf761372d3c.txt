@@ -1,0 +1,34 @@
+{
+  "rank": 53,
+  "sid": 5785,
+  "source_sha256": "3657a827f1c723b9f0d723b2d5e50794dfb3b92ac37bc2589d07043db32ff5e5",
+  "base_kind": "original",
+  "base_sha256": "00c52ad8275fc6f48fe0140495d6e7e7f87213af8857f2264ee8c45fdeb9e7f3",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：SMA50/200黄金交叉是低复杂度长趋势基线，源码也明确不含额外止损。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "低频且退出缓慢，可能依赖美股长期上涨；仓位和费用未明确不能据总收益判定优势。 暂缓原因：加硬止损可能破坏长趋势容忍度，需单独验证。"
+  ],
+  "validation_plan": [
+    "按熊市/横盘/牛市分层，检查交易样本量、持仓暴露与基准超额来源。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "baf761372d3c",
+  "title": "黄金交叉均线交易策略Golden-Cross-Moving-Average-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/053_SID5785_baf761372d3c_original.pine",
+  "original": "originals/053_SID5785_baf761372d3c.pine",
+  "baseline": "baselines/053_SID5785_baf761372d3c.pine",
+  "changes": "changes/053_SID5785_baf761372d3c.txt",
+  "card": "cards/baf761372d3c.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "00c52ad8275fc6f48fe0140495d6e7e7f87213af8857f2264ee8c45fdeb9e7f3",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

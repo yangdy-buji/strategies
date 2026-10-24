@@ -1,0 +1,47 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 4000：本轮新候选·未回测
++// 原文件SHA256：63a47b0b9dea4edb7270d45c41d22e5e2e435a8e31f695c09a0171bd0b35a32f
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ strategy("Parabolic SAR + SuperTrend + Volume Oscillator Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+ 
+ // --- Parabolic SAR Parameters ---
+@@ -11,11 +14,11 @@
+ // --- SuperTrend Parameters ---
+ st_length = 10
+ st_multiplier = 3
+-[st_upper, st_lower] = ta.supertrend(st_length, st_multiplier)
+-st_color = close > st_upper ? color.green : color.red
+-plot(st_upper, color=color.new(st_color, 0), title="SuperTrend Upper")
+-plot(st_lower, color=color.new(st_color, 0), title="SuperTrend Lower")
+-fill(plot(st_upper), plot(st_lower), color=color.new(st_color, 90), title="SuperTrend Cloud")
++// OPT-T300-01 修改原因：修正Supertrend参数顺序及价格/方向返回值，不把±1方向绘为价格云。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++[st_line, st_direction] = ta.supertrend(st_multiplier, st_length)
++st_color = st_direction < 0 ? color.green : color.red
++plot(st_line, color=st_color, title="SuperTrend")
+ 
+ // --- Volume Oscillator Parameters ---
+ vo_short_length = 14
+@@ -28,13 +31,17 @@
+ // - Price is above Parabolic SAR
+ // - SuperTrend is bullish (price above SuperTrend lower line)
+ // - Volume Oscillator is positive (indicating increasing volume)
+-buyCondition = close > sar and close > st_lower and vo > 0
++// OPT-T300-02 修改原因：看多条件按Supertrend负方向判定。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++buyCondition = close > sar and st_direction < 0 and vo > 0
+ 
+ // Sell Condition:
+ // - Price is below Parabolic SAR
+ // - SuperTrend is bearish (price below SuperTrend upper line)
+ // - Volume Oscillator is negative (indicating decreasing volume)
+-sellCondition = close < sar and close < st_upper and vo < 0
++// OPT-T300-03 修改原因：看空退出按Supertrend正方向判定。
++// OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++sellCondition = close < sar and st_direction > 0 and vo < 0
+ 
+ // Plot Buy/Sell Signals
+ plotshape(series=buyCondition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")

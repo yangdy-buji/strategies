@@ -1,0 +1,34 @@
+{
+  "rank": 84,
+  "sid": 4817,
+  "source_sha256": "36ef4e404531b24507d812b507538787d8edbf125ae828eaa97cddabfffb19bd",
+  "base_kind": "original",
+  "base_sha256": "eb81fa5a068ac20f572eadde304b162b040e1c9e76b0671d177d65e2fc4504ca",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：布林带突破后递推ATR趋势线，方向切换交易，主体逻辑自洽。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "趋势线初始NA传递和第一轮方向建立需核验；绘制线并非挂真实止损单。 暂缓原因：调整初始化可能改变最早几笔交易，不宜计入稳定优势。"
+  ],
+  "validation_plan": [
+    "不同数据起点、首个上下突破、连续中性区及快速反转的逐根状态检查。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "b4e111191c4a",
+  "title": "波动率趋势跟踪策略-Volatility-Trend-Following-Strategy",
+  "category": "待分类",
+  "priority": "P2",
+  "script": "scripts/084_SID4817_b4e111191c4a_original.pine",
+  "original": "originals/084_SID4817_b4e111191c4a.pine",
+  "baseline": "baselines/084_SID4817_b4e111191c4a.pine",
+  "changes": "changes/084_SID4817_b4e111191c4a.txt",
+  "card": "cards/b4e111191c4a.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "eb81fa5a068ac20f572eadde304b162b040e1c9e76b0671d177d65e2fc4504ca",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

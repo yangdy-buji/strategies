@@ -1,0 +1,34 @@
+{
+  "rank": 272,
+  "sid": 509,
+  "source_sha256": "eeb266e7c2a904af8f2f347d8cd3e628ea06a0a9e35e12a09d983d9348bc30c8",
+  "base_kind": "original",
+  "base_sha256": "12768025f8c476510401154f3f8eed2358ca17bd8f73e7ffe655e3d3d2ef4ebc",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；MACD柱上穿零且RSI上穿70时做多，下穿零且RSI下穿30时反手空，无独立退出。 MACD动量和RSI极端同根突破为双向追势模型，只有反向复合信号平仓，可能长期无退出。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "MACD动量和RSI极端同根突破为双向追势模型，只有反向复合信号平仓，可能长期无退出。 后续验证：单边趋势转震荡但RSI未穿另一极值、相邻阈值与借券成本测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "单边趋势转震荡但RSI未穿另一极值、相邻阈值与借券成本测试。"
+  ],
+  "id": "91253ccbf793",
+  "title": "MACD-RSI-组合趋势策略MACD-RSI-Combo-Trend-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/272_SID509_91253ccbf793_original.pine",
+  "original": "originals/272_SID509_91253ccbf793.pine",
+  "baseline": "baselines/272_SID509_91253ccbf793.pine",
+  "changes": "changes/272_SID509_91253ccbf793.txt",
+  "card": "cards/91253ccbf793.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "12768025f8c476510401154f3f8eed2358ca17bd8f73e7ffe655e3d3d2ef4ebc",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

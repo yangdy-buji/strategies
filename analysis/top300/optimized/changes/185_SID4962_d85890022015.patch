@@ -1,0 +1,20 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 4962：本轮新候选·未回测
++// 原文件SHA256：3ba7d5723339cc877764a28586dfb0f4c89cc3c27dabc792ad0813ca0c230b00
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：相对量价策略Relative-Volume-Price-Strategy.md
+ // 原文件SHA256：3ba7d5723339cc877764a28586dfb0f4c89cc3c27dabc792ad0813ca0c230b00
+@@ -88,6 +91,6 @@
+ 		entry_msg = strategy.position_size > 0 ? "adding" : "initial"
+ 		strategy.entry(ENUM_LONG, strategy.long, comment=entry_msg)
+ 
+-// CLEAN UP:
+-if strategy.position_size == 0
+-	stop_loss_price := float(0)
++// OPT-T300-01 修改原因：保留空仓信号柱初始化止损，防止发单后清0。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++// Preserve the signal-bar stop until the first fill; flat bars initialize above.

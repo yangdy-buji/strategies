@@ -1,0 +1,140 @@
+{
+  "rank": 152,
+  "sid": 4510,
+  "source_sha256": "9064931f9961e6bdc8ba0cbf8054daea4348559d55b49e13c7bb819e734a03d8",
+  "base_kind": "original",
+  "base_sha256": "9fb7d74c65d590ccc2444ecaab7a458c6911e5b20a92937fd5b30f0d4c2c2214",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "区分限价待成交与实际持仓，固定入场R。；限制一张有效待成交入口并拒绝非正风险。；提交限价只进入待成交状态，锁定风险比例。；止损沿用提交限价时风险。；目标沿用提交限价时4R。；双触价维持止损优先，避免同柱重复关闭。；平仓提交后不提前清除真实持仓。；平仓提交后不提前清除真实持仓。；定仓向下取整，避免四舍五入突破预算。；零数量不发单且不进入永久待成交状态。",
+  "patches": [
+    {
+      "old": "var bool inPosition = false",
+      "new": "inPosition = strategy.position_size > 0\nvar bool pendingEntry = false\nvar float entryR = na\nif inPosition\n    pendingEntry := false",
+      "reason": "区分限价待成交与实际持仓，固定入场R。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "限价未成交不使用信号柱高低退出；成交后才管理。"
+      ]
+    },
+    {
+      "old": "if (bullishEngulfing and not inPosition)",
+      "new": "if (bullishEngulfing and not inPosition and not pendingEntry and R > 0 and close > 0 and strategy.equity > 0)",
+      "reason": "限制一张有效待成交入口并拒绝非正风险。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "连续形态不覆盖挂单锚；R=0跳过。"
+      ]
+    },
+    {
+      "old": "    strategy.entry(\"Long\", strategy.long, limit = entryPrice, qty=positionSize)\n    inPosition := true\n",
+      "new": "    if positionSize > 0\n        strategy.entry(\"Long\", strategy.long, limit = entryPrice, qty=positionSize)\n        pendingEntry := true\n        entryR := R\n",
+      "reason": "提交限价只进入待成交状态，锁定风险比例。；零数量不发单且不进入永久待成交状态。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "入口R=.02后波动扩大至.05仍使用.02。",
+        "0股时pending保持false。"
+      ]
+    },
+    {
+      "old": "entryPrice * (1 - R)",
+      "new": "entryPrice * (1 - entryR)",
+      "reason": "止损沿用提交限价时风险。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "R每柱变化不移动原固定风险。"
+      ]
+    },
+    {
+      "old": "entryPrice * (1 + 4 * R)",
+      "new": "entryPrice * (1 + 4 * entryR)",
+      "reason": "目标沿用提交限价时4R。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "100限价、R=.02，目标108不随波动更改。"
+      ]
+    },
+    {
+      "old": "    if (high >= takeProfitLevel)",
+      "new": "    if (high >= takeProfitLevel and low > stopLossLevel)",
+      "reason": "双触价维持止损优先，避免同柱重复关闭。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "低点触止损且高点触目标，仅一次市价退出。"
+      ]
+    },
+    {
+      "old": "        inPosition := false\n        exitBar := bar_index\n        exitPrice := close\n    ",
+      "new": "        exitBar := bar_index\n        exitPrice := close\n    ",
+      "reason": "平仓提交后不提前清除真实持仓。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "退出订单未成交时保持管理。"
+      ]
+    },
+    {
+      "old": "        inPosition := false\n        exitBar := bar_index\n        exitPrice := close\n\n",
+      "new": "        exitBar := bar_index\n        exitPrice := close\n\n",
+      "reason": "平仓提交后不提前清除真实持仓。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "退出订单未成交时保持管理。"
+      ]
+    },
+    {
+      "old": "positionSize := math.round(positionSize)",
+      "new": "positionSize := math.floor(positionSize)",
+      "reason": "定仓向下取整，避免四舍五入突破预算。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "预算只能支持0.6股时不强制买1股。"
+      ]
+    }
+  ],
+  "resolved": [
+    "区分限价待成交与实际持仓，固定入场R。",
+    "限制一张有效待成交入口并拒绝非正风险。",
+    "提交限价只进入待成交状态，锁定风险比例。",
+    "止损沿用提交限价时风险。",
+    "目标沿用提交限价时4R。",
+    "双触价维持止损优先，避免同柱重复关闭。",
+    "平仓提交后不提前清除真实持仓。",
+    "平仓提交后不提前清除真实持仓。",
+    "定仓向下取整，避免四舍五入突破预算。",
+    "零数量不发单且不进入永久待成交状态。"
+  ],
+  "remaining": [
+    "限价单保持原GTC语义；挂单超时/撤销政策需独立design_experiment。",
+    "保留信号限价锚、柱结束后市价退出；未实现撮合级0.75%风险上限。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+    "限价成交柱的high/low可能含成交前路径，收盘触价市价退出不能证明先成交后触价；拒单后的pending清理也待原生验证。"
+  ],
+  "validation_plan": [
+    "构造信号柱高低双触及但限价次柱才成交、入口一直未成交及R收缩案例，检查无孤儿挂单。"
+  ],
+  "id": "a03c4bb31864",
+  "title": "布林带风险管理的看涨吞没策略量化交易系统-Bullish-Engulfing-Quantitative-Trading-System-with-Bollinger-Bands-Risk-Management",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/152_SID4510_a03c4bb31864_candidate.pine",
+  "original": "originals/152_SID4510_a03c4bb31864.pine",
+  "baseline": "baselines/152_SID4510_a03c4bb31864.pine",
+  "changes": "changes/152_SID4510_a03c4bb31864.txt",
+  "card": "cards/a03c4bb31864.html",
+  "diff": "changes/152_SID4510_a03c4bb31864.patch",
+  "original_diff": "changes/152_SID4510_a03c4bb31864.original.patch",
+  "script_sha256": "26dfa547c435e37e5480cfdddc2533c522ecee2fdabc9c0696f737cc9fc49c8b",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "c88e17ad24a927fb6a14769f979e93b706a7bb85e109e0c647fc5e146dca1a68",
+    "review": "v5区分pendingEntry和真实inPosition：正风险/价格/权益且空仓无挂单才算份数，floor后为0不发单也不置pending；非零挂单锁定entryPrice和entryR，成交后清pending。保护只针对实际仓位，双触只走止损，平仓发单不提前清持仓；平仓确认可新入。GTC及信号限价锚是明确保留的限制。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "限价单保持原GTC语义；挂单超时/撤销政策需独立design_experiment。",
+      "保留信号限价锚、柱结束后市价退出；未实现撮合级0.75%风险上限。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+      "限价成交柱的high/low可能含成交前路径，收盘触价市价退出不能证明先成交后触价；拒单后的pending清理也待原生验证。"
+    ]
+  }
+}

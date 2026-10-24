@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=3
++// OPT-T300 SID 5791：沿用旧候选·未回测
++// 原文件SHA256：aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：黄金交叉策略Golden-Cross-Strategy.md
+ // 原文件SHA256：aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35

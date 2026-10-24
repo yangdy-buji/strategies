@@ -1,0 +1,52 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 3518：本轮新候选·未回测
++// 原文件SHA256：aca0c3cac096e1c79ca403c38f887938291c56c78cd2c4df3f55c49f1fb87818
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-02-21 00:00:00
+ end: 2025-02-18 08:00:00
+@@ -27,20 +30,22 @@
+ takeProfitATR = 3                        // Take profit: 3 ATR
+ 
+ // === Position Management ===
+-var float avgEntryPrice = na             // Average entry price
+-var int entryCount = 0                   // Number of buys
++// OPT-T300-01 修改原因：均价与入场数读取实际成交，拒单不虚增次数或改写均价。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++avgEntryPrice = strategy.position_avg_price  // Filled weighted average
++entryCount = strategy.opentrades  // Filled entries only
+ var line takeProfitLine = na             // Take profit line
+ var line avgPriceLine = na               // Average entry price line
+ 
+ // === Buy and Sell Conditions ===
+ buyCondition = rsi < 30 and entryCount < maxEntries  // Buy when oversold
+-if (buyCondition)
++// OPT-T300-02 修改原因：保留默认不加仓配置，仅空仓提交有效正数量。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if (buyCondition and strategy.position_size == 0 and atrRisk > 0 and positionSize > 0)
+     strategy.entry("DCA Buy", strategy.long, qty=positionSize)
+     
+-    // Update the average entry price
+-    avgEntryPrice := na(avgEntryPrice) ? close : (avgEntryPrice * entryCount + close) / (entryCount + 1)
+-    entryCount += 1
+-
++    // OPT-T300-03 修改原因：删除发单即虚拟平均价格和次数更新。
++    // OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+     // Display "BUY" signal on the chart
+     label.new(bar_index, low, "BUY", style=label.style_label_up, color=color.green, textcolor=color.white, size=size.normal)
+ 
+@@ -57,9 +62,9 @@
+ if (close >= takeProfitPrice and entryCount > 0)
+     strategy.close("DCA Buy")
+     
+-    // Reset parameters after closing
+-    avgEntryPrice := na
+-    entryCount := 0
++    // OPT-T300-04 修改原因：市价平仓提交后不提前抹掉持仓状态。
++    // OPT-T300-04 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    // Filled position state resets only after the close fills.
+ 
+     // Remove lines after selling
+     if (not na(takeProfitLine))

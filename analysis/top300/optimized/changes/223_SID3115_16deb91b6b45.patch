@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 3115：沿用旧候选·未回测
++// 原文件SHA256：01041d963cc1f8c127c544a1ee2c54ea19d84d9fb19776549f63d80e73654b97
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于历史新高突破的买入策略Buying-Strategy-Based-on-Historical-High-Breakout.md
+ // 原文件SHA256：01041d963cc1f8c127c544a1ee2c54ea19d84d9fb19776549f63d80e73654b97

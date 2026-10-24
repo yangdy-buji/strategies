@@ -1,0 +1,34 @@
+{
+  "rank": 16,
+  "sid": 1395,
+  "source_sha256": "37447f7008060000439315d41daad14175ac2916d596b91ef013a2834b0da290",
+  "base_kind": "original",
+  "base_sha256": "3f944acfd8a349c4ef536c72abf93fd947ecf32e4688a45d03c79a8e71f0ea56",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：前柱唐奇安上下轨状态突破与回撤退出，入场和退出周期可分别控制，是清楚的趋势模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "offset_bar输入没有进入交易条件，固定1份仓位也不等同统一资金组合；图形偏移不代表订单延迟。 暂缓原因：接入offset参数会改变策略，应单独评估而非默默修正。"
+  ],
+  "validation_plan": [
+    "改变offset输入确认原信号不变；核对1股仓位，比较不同通道长度与成本。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "cc5db530f20c",
+  "title": "分离通道唐奇安突破策略Dual-Channel-Donchian-Breakout-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/016_SID1395_cc5db530f20c_original.pine",
+  "original": "originals/016_SID1395_cc5db530f20c.pine",
+  "baseline": "baselines/016_SID1395_cc5db530f20c.pine",
+  "changes": "changes/016_SID1395_cc5db530f20c.txt",
+  "card": "cards/cc5db530f20c.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "3f944acfd8a349c4ef536c72abf93fd947ecf32e4688a45d03c79a8e71f0ea56",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

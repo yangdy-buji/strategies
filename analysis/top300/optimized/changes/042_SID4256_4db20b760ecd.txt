@@ -1,0 +1,34 @@
+{
+  "rank": 42,
+  "sid": 4256,
+  "source_sha256": "f8ba2d459f68b845883cf237f94cec582f94a21e4a5106637b4a608552694f8f",
+  "base_kind": "original",
+  "base_sha256": "fef0526a4a7a208e4c9c7e8d54ea14d79c370d9f820c22b073dfd6eb666de94f",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：三条短EMA都在长EMA上时进入，完全转为空头时退出，属于状态切换趋势模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "退出要求三线全到长线下，失效早期仍持仓；long+3/short-3只画标记不代表止损。 暂缓原因：更快退出可能增多震荡损失。"
+  ],
+  "validation_plan": [
+    "逐项均线穿越顺序回放，统计中性持仓期、最差浮亏及费用。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "4db20b760ecd",
+  "title": "多重指数移动平均线交易策略Multiple-Exponential-Moving-Average-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/042_SID4256_4db20b760ecd_original.pine",
+  "original": "originals/042_SID4256_4db20b760ecd.pine",
+  "baseline": "baselines/042_SID4256_4db20b760ecd.pine",
+  "changes": "changes/042_SID4256_4db20b760ecd.txt",
+  "card": "cards/4db20b760ecd.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "fef0526a4a7a208e4c9c7e8d54ea14d79c370d9f820c22b073dfd6eb666de94f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

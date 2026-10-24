@@ -1,0 +1,89 @@
+{
+  "rank": 22,
+  "sid": 4228,
+  "source_sha256": "ac66d510a20b6ec59abf314d57ec7781f3c759f74db7c8c0c4309491a01c78b7",
+  "base_kind": "original",
+  "base_sha256": "a59bf7d2736f779c24db7ceda6619a54140dd041ac6b8f461382be514835f3b3",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "修复AD平价柱累计中断、CMF零均量与MFI单边资金流边界；保留close方向归类、七指标投票门槛。",
+  "patches": [
+    {
+      "old": "ad := na(ad[1]) ? 0 : ad[1] + ((close - low) - (high - close)) / (high - low) * volume",
+      "new": "adIncrement = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low) * volume\nad := na(ad[1]) ? 0 : ad[1] + adIncrement",
+      "reason": "零振幅K线的AD增量为0，避免0/0污染累计值并在下一根重置为0。",
+      "preserved": "首根AD仍初始化0，正常振幅下计算及七项投票不变。",
+      "validation_cases": [
+        "历史AD=75，平价K线后仍75；下一根正资金流继续累计；首根仍0。"
+      ]
+    },
+    {
+      "old": "moneyFlowMultiplier = ((close - low) - (high - close)) / (high - low)",
+      "new": "moneyFlowMultiplier = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low)",
+      "reason": "平价K线没有可分配的收盘区间方向，资金流乘数置0。",
+      "preserved": "正常K线仍使用原收盘区间比率；不变更MFI方向归类。",
+      "validation_cases": [
+        "H=L=C时乘数0；H=12 L=8 C=11时0.5。"
+      ]
+    },
+    {
+      "old": "cmf = ta.sma(moneyFlowVolume, lengthCMF) / ta.sma(volume, lengthCMF)",
+      "new": "avgMoneyFlowVolume = ta.sma(moneyFlowVolume, lengthCMF)\navgVolume = ta.sma(volume, lengthCMF)\ncmf = avgVolume == 0 ? 0.0 : avgMoneyFlowVolume / avgVolume",
+      "reason": "完整窗口均量为0时CMF给中性0，避免无交易窗口的0/0；只对精确零回退。 两个SMA每根无条件求值，guard仅使用缓存标量，避免跳过历史样本。",
+      "preserved": "暖机NA不强行补零；正常成交量比率与投票阈值保持。",
+      "validation_cases": [
+        "零均量CMF=0，不增加买卖票；5/10=0.5；缺失均量仍NA。",
+        "连续零量窗口再恢复：资金流和成交量SMA每根各采样一次；恢复比例0.5。"
+      ]
+    },
+    {
+      "old": "mfi = 100 - (100 / (1 + (positiveFlow / negativeFlow)))",
+      "new": "mfi = negativeFlow == 0 ? positiveFlow > 0 ? 100.0 : na : 100 - (100 / (1 + (positiveFlow / negativeFlow)))",
+      "reason": "有正资金流且负流为0时MFI取单边极限100；双零保持NA而不虚构超买超卖。",
+      "preserved": "按close方向归类及有负流的原MFI公式保持；双零不产生MFI投票。",
+      "validation_cases": [
+        "正10负0得到100；正0负10得到0；正30负10得到75；双零为NA。"
+      ]
+    }
+  ],
+  "resolved": [
+    "零振幅K线的AD增量为0，避免0/0污染累计值并在下一根重置为0。",
+    "平价K线没有可分配的收盘区间方向，资金流乘数置0。",
+    "完整窗口均量为0时CMF给中性0，避免无交易窗口的0/0；只对精确零回退。",
+    "有正资金流且负流为0时MFI取单边极限100；双零保持NA而不虚构超买超卖。"
+  ],
+  "remaining": [
+    "MFI仍按close而非typicalPrice方向分类；改分类会改变交易集合，需要独立对照。",
+    "缺失成交量并非零成交量，当前不填补缺失数据；需原生验证长期NA后的恢复。",
+    "原生Pine编译、完整逐根信号及成交回放未执行。"
+  ],
+  "validation_plan": [
+    "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+    "输入平价K线、零成交量、连续14根上涨/下跌，核对每项指标有限性、AD连续性及最终票数。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "a26bdabc201c",
+  "title": "多重成交量动量组合交易策略-Multi-Volume-Momentum-Combined-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/022_SID4228_a26bdabc201c_candidate.pine",
+  "original": "originals/022_SID4228_a26bdabc201c.pine",
+  "baseline": "baselines/022_SID4228_a26bdabc201c.pine",
+  "changes": "changes/022_SID4228_a26bdabc201c.txt",
+  "card": "cards/a26bdabc201c.html",
+  "diff": "changes/022_SID4228_a26bdabc201c.patch",
+  "original_diff": "changes/022_SID4228_a26bdabc201c.original.patch",
+  "script_sha256": "99153c56fc4870a36b0654c5a25938c166b5837fb6837a03b00b9feabeeaa781",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "0d9cb94576c11bb7800567f3a35d4b75b3d37e133d4d7101e4caf20cab9440ce",
+    "review": "复审最新diff：AD平价连续、MFI单边极限与NA保持。CMF两个SMA已顶层逐根预计算，guard只用标量。新增测试运行实际SMA表达式，零量窗口恢复得到0.5并确认9根全部采样，历史调用风险消除。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "MFI仍按close而非typicalPrice方向分类；改分类会改变交易集合，需要独立对照。",
+      "缺失成交量并非零成交量，当前不填补缺失数据；需原生验证长期NA后的恢复。"
+    ]
+  }
+}

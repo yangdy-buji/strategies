@@ -1,0 +1,70 @@
+//@version=3
+// OPT-T300 SID 5791：沿用旧候选·未回测
+// 原文件SHA256：aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：黄金交叉策略Golden-Cross-Strategy.md
+// 原文件SHA256：aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35
+// SID：5791；原研究名单序号：208
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-08-27 00:00:00
+end: 2023-09-26 00:00:00
+period: 2h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Dumb strategy 2 - Golden Cross", shorttitle="Golden Cross", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+lShort = input(50, title="short length")
+lLong = input(200, title="long length")
+src = input(close, title="Source")
+
+smaShort = sma(src, lShort)
+smaLong = sma(src, lLong)
+
+plot(smaShort, title="SMA Short", style=line, linewidth=3, color=lime)
+plot(smaLong, title="SMA Long", style=line, linewidth=3, color=red)
+
+
+//
+//Backtest Time Inputs
+//
+
+testStartYear = input(2009, "Backtest Start Year")
+testStartMonth = input(1, "Backtest Start Month")
+testStartDay = input(1, "Backtest Start Day")
+testPeriodStart = timestamp(testStartYear,testStartMonth,testStartDay,0,0)
+
+testStopYear = input(2019, "Backtest Stop Year")
+testStopMonth = input(1, "Backtest Stop Month")
+testStopDay = input(01, "Backtest Stop Day")
+testPeriodStop = timestamp(testStopYear,testStopMonth,testStopDay,0,0)
+
+testPeriodBackground = input(title="Color Background?", type=bool, defval=true)
+testPeriodBackgroundColor = testPeriodBackground and (time >= testPeriodStart) and (time <= testPeriodStop) ? blue : na
+bgcolor(testPeriodBackgroundColor, transp=80)
+
+
+// OPT-5791-01：恢复入场日期。
+// OPT-5791-01 保持：日期参数保持。
+// OPT-5791-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+
+	
+
+if testPeriod()
+	longCondition = crossover(smaShort, smaLong)
+	if (longCondition)
+		strategy.entry("Long Entry", strategy.long)
+
+	// OPT-5791-02：死叉退出移出日期。
+	// OPT-5791-02 保持：原平全部行为保持。
+	// OPT-5791-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+shortCondition = crossunder(smaShort, smaLong)
+if (shortCondition)
+	strategy.close_all(true)
+	

@@ -1,0 +1,42 @@
+/*backtest
+start: 2023-12-08 00:00:00
+end: 2024-01-07 00:00:00
+period: 5m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Crude Oil Moving Average Crossover", overlay=true)
+
+// Define inputs
+fastLength = input(10, "Fast Length")
+slowLength = input(30, "Slow Length")
+
+// Calculate moving averages
+fastMA = ta.sma(close, fastLength)
+slowMA = ta.sma(close, slowLength)
+
+// Plot moving averages
+plot(fastMA, color=color.blue, title="Fast MA")
+plot(slowMA, color=color.red, title="Slow MA")
+
+// Entry conditions
+longCondition = ta.crossover(fastMA, slowMA)
+shortCondition = ta.crossunder(fastMA, slowMA)
+
+// Exit conditions
+exitCondition = ta.crossover(slowMA, fastMA)
+
+// Execute strategy
+if longCondition
+    strategy.entry("Buy", strategy.long)
+if shortCondition
+    strategy.entry("Sell", strategy.short)
+if exitCondition
+    strategy.close_all()
+
+// Plot buy and sell signals
+plotshape(longCondition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small)
+plotshape(shortCondition, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small)
+

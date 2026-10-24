@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 3524：沿用旧候选·未回测
++// 原文件SHA256：781a5390eac0d386576256d87fe959e19adc449fc5b814c1666fdacd80bf57b0
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于相对成交量和趋势的交易策略Relative-Volume-Trend-Following-Trading-Strategy.md
+ // 原文件SHA256：781a5390eac0d386576256d87fe959e19adc449fc5b814c1666fdacd80bf57b0

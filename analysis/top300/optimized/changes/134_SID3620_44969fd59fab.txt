@@ -1,0 +1,79 @@
+{
+  "rank": 134,
+  "sid": 3620,
+  "source_sha256": "fc781f47bdc018e4674b23c833a200b65f41ec3981581a678397053dbb0792fa",
+  "base_kind": "original",
+  "base_sha256": "7880fb56735ebfb8b3c4be13d1d55e53badc31f5a806e62ad0761d2e5b9febab",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。；DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。；DX方向和为零时显式NA，不构造虚假趋势强度。",
+  "patches": [
+    {
+      "old": "DIPlus = SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100",
+      "new": "DIPlus = not na(SmoothedTrueRange) and SmoothedTrueRange > 0 ? SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100 : na",
+      "reason": "DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    },
+    {
+      "old": "DIMinus = SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100",
+      "new": "DIMinus = not na(SmoothedTrueRange) and SmoothedTrueRange > 0 ? SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100 : na",
+      "reason": "DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    },
+    {
+      "old": "DX = abs(DIPlus-DIMinus) / (DIPlus+DIMinus)*100",
+      "new": "DX = not na(DIPlus + DIMinus) and DIPlus + DIMinus > 0 ? abs(DIPlus-DIMinus) / (DIPlus+DIMinus)*100 : na",
+      "reason": "DX方向和为零时显式NA，不构造虚假趋势强度。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    }
+  ],
+  "resolved": [
+    "DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+    "DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+    "DX方向和为零时显式NA，不构造虚假趋势强度。"
+  ],
+  "remaining": [
+    "strategy.order卖出默认份数未保证等于实际多仓；改close或精确反向份数需独立定义。枢轴确认延迟保留。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+    "后续ADX sma可能跳过NA，不能将DI/DX guard解释为所有后续柱一律禁入。"
+  ],
+  "validation_plan": [
+    "改变初始仓位/数量配置后确认卖单后仓位为预期；平价OHLC与首个枢轴前不得产生无效订单。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "44969fd59fab",
+  "title": "基于超趋势支撑阻力与ADX指标的高频交易策ADX-Filtered-SuperTrend-Pivot-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/134_SID3620_44969fd59fab_candidate.pine",
+  "original": "originals/134_SID3620_44969fd59fab.pine",
+  "baseline": "baselines/134_SID3620_44969fd59fab.pine",
+  "changes": "changes/134_SID3620_44969fd59fab.txt",
+  "card": "cards/44969fd59fab.html",
+  "diff": "changes/134_SID3620_44969fd59fab.patch",
+  "original_diff": "changes/134_SID3620_44969fd59fab.original.patch",
+  "script_sha256": "d572a52ddf1a4aa6e0828fa53447bfc4672482b7ff9aef701782908305449358",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "e8be2036b591ade0da6c1ca6231bc73ebe3a70404fdc0113afd7c49471749458",
+    "review": "v4三处guard分别约束TR及DI和，原递推平滑和ADX sma仍每柱执行；未用0或fixnan伪造DI，正分母时原公式不变。Buy和Sell订单结构未改，Sell默认份数不能保证全平的遗留问题已披露。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "strategy.order卖出默认份数未保证等于实际多仓；改close或精确反向份数需独立定义。枢轴确认延迟保留。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+      "后续ADX sma可能跳过NA，不能将DI/DX guard解释为所有后续柱一律禁入。"
+    ]
+  }
+}

@@ -1,0 +1,61 @@
+/*backtest
+start: 2023-07-23 00:00:00
+end: 2024-07-28 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © chinmay.hundekari
+
+//@version=5
+//@version=5
+strategy("test", overlay = true)
+
+// Calculate two moving averages with different lengths.
+SLMA = input.int(50,"SMA",minval=10,step=1)
+FSMA = input.int(5,"SMA",minval=1,step=1)
+fancy_tests = input.bool(true,"Enable Fancy Changes")
+longLossPerc = input.float(2, title="Trailing Stop Loss (%)",
+     minval=0.0, step=0.1) * 0.01
+stdMult = input.float(2.0, title="Standard Deviation Multiplier",
+     minval=0.0, step=0.01)
+
+float fastMA = ta.sma(close, FSMA)
+float slowMA = ta.sma(close, SLMA)
+float closMA = ta.sma(close, 25)
+
+confidence = 1.0
+if (fancy_tests)
+    longLossPerc := stdMult * ta.stdev(ohlc4, 20)/close
+balance = strategy.initial_capital + strategy.netprofit
+balanceInContracts = balance* confidence/close
+
+// Enter a long position when `fastMA` crosses over `slowMA`.
+if ta.crossover(fastMA, slowMA)
+    strategy.entry("BUY", strategy.long, qty=balanceInContracts)
+//longStopPrice  = strategy.position_avg_price * (1 - longLossPerc)
+//Trailing Stop loss Code
+longStopPrice = 0.0
+percLoss = longLossPerc
+longStopPrice := if strategy.position_size > 0
+    //if (strategy.openprofit_percent/100.0 > longLossPerc)
+    //    percLoss := math.min(strategy.openprofit_percent/200.0, longLossPerc)
+    stopValue = close * (1 - percLoss)
+    math.max(stopValue, longStopPrice[1])
+else
+    0
+if strategy.position_size > 0
+    strategy.exit("STP", stop=longStopPrice)
+plot(strategy.position_size > 0 ? longStopPrice : na,
+     color=color.red, style=plot.style_cross,
+     linewidth=2, title="Long Stop Loss")
+// Enter a short position when `fastMA` crosses under `slowMA`.
+//if ta.crossunder(fastMA, closMA)
+//    strategy.close_all("SEL")//strategy.entry("sell", strategy.short)
+
+// Plot the moving averages.
+plot(fastMA, "Fast MA", color.aqua)
+plot(slowMA, "Slow MA", color.orange)
+plot((confidence)*(close), "Confidence", color=color.green, linewidth=2)

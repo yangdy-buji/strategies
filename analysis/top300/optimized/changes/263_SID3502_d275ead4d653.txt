@@ -1,0 +1,34 @@
+{
+  "rank": 263,
+  "sid": 3502,
+  "source_sha256": "c1c4f2632c6b165714fa0615d80439f17358b265ff080aa3d973e2fbc00212bb",
+  "base_kind": "original",
+  "base_sha256": "c09eb5b1bab403ee775c90094c0a0d8457dfb5334fb5a181a83aa6c2da29e4bf",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；选定多或空方向，20柱通道突破买/卖1份，反向10柱通道或前收盘加减ATR阈值退出。 前柱唐奇安突破逻辑明确，但ATR倍数输入未使用，实际上一收盘±1ATR退出而非声明2ATR。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "前柱唐奇安突破逻辑明确，但ATR倍数输入未使用，实际上一收盘±1ATR退出而非声明2ATR。 后续验证：倍数1/2变化是否真正作用、连续下跌时保护是否下移、短向对称测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "倍数1/2变化是否真正作用、连续下跌时保护是否下移、短向对称测试。"
+  ],
+  "id": "d275ead4d653",
+  "title": "基于海龟交易法的突破策略Breakout-Strategy-Based-on-Turtle-Trading",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/263_SID3502_d275ead4d653_original.pine",
+  "original": "originals/263_SID3502_d275ead4d653.pine",
+  "baseline": "baselines/263_SID3502_d275ead4d653.pine",
+  "changes": "changes/263_SID3502_d275ead4d653.txt",
+  "card": "cards/d275ead4d653.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c09eb5b1bab403ee775c90094c0a0d8457dfb5334fb5a181a83aa6c2da29e4bf",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

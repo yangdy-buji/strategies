@@ -1,0 +1,34 @@
+{
+  "rank": 289,
+  "sid": 895,
+  "source_sha256": "2479d7bedae2c72dfad6213a486878b5e5dba475eba392ebf9b13919bd4a03bc",
+  "base_kind": "original",
+  "base_sha256": "968c226e4892835f23891db737a68f4f7ec4e51a9ac81459ae6e8c0ae4df0d32",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；快SMA上升慢SMA下降及参考线偏移买入，权益96%；盈利且连续上涨条件成立才提交单调收紧止损。 均线偏移回归与利润激活跟踪是可解释但复杂设计；未盈利前无止损，版本注解也非标准格式。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线偏移回归与利润激活跟踪是可解释但复杂设计；未盈利前无止损，版本注解也非标准格式。 后续验证：入场后长期亏损、首次满足盈利条件、1.35%跟踪和96%资金占用测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "入场后长期亏损、首次满足盈利条件、1.35%跟踪和96%资金占用测试。"
+  ],
+  "id": "0884c5f9a698",
+  "title": "SMA波动偏移交易策略SMA-Offset-Fluctuation-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/289_SID895_0884c5f9a698_original.pine",
+  "original": "originals/289_SID895_0884c5f9a698.pine",
+  "baseline": "baselines/289_SID895_0884c5f9a698.pine",
+  "changes": "changes/289_SID895_0884c5f9a698.txt",
+  "card": "cards/0884c5f9a698.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "968c226e4892835f23891db737a68f4f7ec4e51a9ac81459ae6e8c0ae4df0d32",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

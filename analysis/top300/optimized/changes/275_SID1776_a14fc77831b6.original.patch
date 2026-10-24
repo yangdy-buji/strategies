@@ -1,0 +1,92 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,15 @@
++//@version=6
++// OPT-T300 SID 1776：本轮新候选·未回测
++// 原文件SHA256：97aeb38dab11c43d2fd5e39c0745cb9954f4c6be136351421008c3dd82ea2910
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：动量突破旗形模式交易策略基于量价确认的日内高频交易系统-Momentum-Breakout-Flag-Pattern-Trading-Strategy-Volume-Price-Confirmed-Intraday-High-Frequency-Trading-System.md
++// 原文件SHA256：97aeb38dab11c43d2fd5e39c0745cb9954f4c6be136351421008c3dd82ea2910
++// SID：1776；原研究名单序号：127
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2024-03-26 00:00:00
+ end: 2025-03-25 00:00:00
+@@ -5,25 +17,44 @@
+ basePeriod: 1d
+ exchanges: [{"eid":"Futures_Binance","currency":"ETH_USDT"}]
+ */
+-
+-//@version=6
+ strategy(title="Small Cap Bull Flag Pattern Trader v2", shorttitle="BullFlag_1L", overlay=true)
+ // (1) INPUTS & VARIABLES
+ impulseATRMultiplier=input.float(2.0,"Impulse:Min Candle Range in ATR"),impulseVolumeMultiplier=input.float(1.5,"Impulse:Vol vs. Avg"),avgVolLen=input.int(20,"Vol SMA Len"),atrLen=input.int(14,"ATR Len"),maxPullbackPct=input.float(50.0,"Max Pullback(%)"),maxPullbackBars=input.int(5,"Max Pullback Bars"),breakoutVolumeMult=input.float(1.0,"Breakout Vol vs. Avg"),rrRatio=input.float(2.0,"R:R Target")
+ bool sessActive=not na(time(timeframe.period,"0930-1200"))
+-var bool inFlag=false,var bool partialExitUsed=false,var float flagImpulseHigh=0.0,flagImpulseLow=0.0,pullbackLow=0.0,var float maxVolSinceEntry=0.0
++// OPT-T300-01 修改原因：所有旗形锚点显式var跨柱保存；独立记录冲击柱编号。
++// OPT-T300-01 保持行为：原冲击信号、会话、RR与分批平仓ID修复。
++var bool inFlag=false
++var bool partialExitUsed=false
++var float flagImpulseHigh=na
++var float flagImpulseLow=na
++var float pullbackLow=na
++var float maxVolSinceEntry=0.0
+ var int pullbackBars=0
++var int impulseBarIndex=na
+ // (2) INDICATORS
+ volAvg=ta.sma(volume,avgVolLen),atrVal=ta.atr(atrLen),candleRange=high-low,isImpulseBar=close>open and candleRange>=impulseATRMultiplier*atrVal and volume>=impulseVolumeMultiplier*volAvg
+ // (3) IMPULSE DETECTION
+-if barstate.isnew and isImpulseBar and sessActive
+-    inFlag:=true,flagImpulseHigh:=high,flagImpulseLow:=low,pullbackLow:=low,pullbackBars:=0
++// OPT-T300-04 修改原因：默认收盘策略以确认柱识别冲击，使历史柱与实时收盘一致；仅空仓建立旗形，不让持仓信号重建交易前状态。
++// OPT-T300-04 保持行为：原冲击条件、会话、回撤状态机与RR；持仓中正常最高量红柱分批退出继续运行。
++if barstate.isconfirmed and isImpulseBar and sessActive and strategy.position_size==0
++    // OPT-T300-02 修改原因：回撤低点不包含冲击柱最低价，等待后续柱初始化。
++    // OPT-T300-02 保持行为：新冲击沿用原替换旧旗形规则。
++    inFlag:=true,flagImpulseHigh:=high,flagImpulseLow:=low,pullbackLow:=na,pullbackBars:=0,impulseBarIndex:=bar_index
+ // (4) FLAG,PULLBACK,BREAKOUT
+-if inFlag and sessActive
+-    pullbackBars+=1,pullbackLow:=math.min(pullbackLow,low),retracementPct=(flagImpulseHigh-pullbackLow)/(flagImpulseHigh-flagImpulseLow)*100
++// OPT-T300-03 修改原因：冲击同柱不回撤也不突破；后续柱才累计回撤根数并计算比例。
++// OPT-T300-03 保持行为：保留newHigh定义、突破量阈值、失效后禁止入场、原RR与partial exit。
++if inFlag and sessActive and bar_index>impulseBarIndex
++    pullbackBars+=1
++    pullbackLow:=na(pullbackLow)?low:math.min(pullbackLow,low)
++    retracementPct=(flagImpulseHigh-pullbackLow)/(flagImpulseHigh-flagImpulseLow)*100
+     inFlag:=retracementPct>maxPullbackPct or pullbackBars>maxPullbackBars?false:inFlag
+     newHigh=high>high[1],breakoutVolOk=volume>=breakoutVolumeMult*volAvg and volume>100000
+-    if newHigh and breakoutVolOk
++    // OPT-1776-03：旗形在本块因回撤或超时失效后，入场须重新确认inFlag，不能继续突破下单。
++    // OPT-1776-03 保持：保留原默认参数、方向、信号和仓位；不新增盘中执行模式。
++    // OPT-1776-03 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    // OPT-T300-05 修改原因：突破入口限定实际空仓，避免持仓时被pyramiding拒绝的新entry仍改写保护单、分批退出标记和成交后量峰值。
++    // OPT-T300-05 保持行为：原冲击条件、会话、回撤状态机与RR；持仓中正常最高量红柱分批退出继续运行。
++    if inFlag and newHigh and breakoutVolOk and strategy.position_size==0
+         strategy.entry("Long Flag Breakout",strategy.long)
+         stopLevel=pullbackLow,approxEntry=close,risk=approxEntry-stopLevel,target=approxEntry+rrRatio*risk
+         strategy.exit("StopTargetExit","Long Flag Breakout",stop=stopLevel,limit=target)
+@@ -40,12 +71,18 @@
+     if newMaxVol
+         if not partialExitUsed
+             // First big red candle => exit 50%
+-            strategy.close("PartialVolExit","Long Flag Breakout",qty_percent=50)
++            // OPT-1776-01：strategy.close首参必须是入场ID，现与实际入场不匹配。
++            // OPT-1776-01 保持：原参数、信号与仓位
++            // OPT-1776-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++            strategy.close("Long Flag Breakout",comment="PartialVolExit",qty_percent=50)
+             partialExitUsed:=true
+         else
+             // Second big red candle => exit remainder
+-            strategy.close("FullVolExit","Long Flag Breakout",qty_percent=100)
++            // OPT-1776-02：strategy.close首参必须是入场ID，现与实际入场不匹配。
++            // OPT-1776-02 保持：原参数、信号与仓位
++            // OPT-1776-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++            strategy.close("Long Flag Breakout",comment="FullVolExit",qty_percent=100)
+ // (6) PLOTS
+ plotshape(isImpulseBar,style=shape.triangleup,color=color.new(color.lime,0),size=size.tiny,title="Impulse Bar")
+ plot(inFlag?flagImpulseHigh:na,color=color.yellow,style=plot.style_line,linewidth=2,title="Impulse High")
+-plot(inFlag?pullbackLow:na,color=color.teal,style=plot.style_line,linewidth=2,title="Pullback Low")+plot(inFlag?pullbackLow:na,color=color.teal,style=plot.style_line,linewidth=2,title="Pullback Low")

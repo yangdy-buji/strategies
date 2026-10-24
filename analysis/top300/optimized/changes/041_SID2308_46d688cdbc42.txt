@@ -1,0 +1,34 @@
+{
+  "rank": 41,
+  "sid": 2308,
+  "source_sha256": "c059cba298a670db3e8ffea3e81b416197e94b38f04b753b0ba1b9300fe037c4",
+  "base_kind": "original",
+  "base_sha256": "3e9f31617beb96935932557049361bb22a49828a41cc2e6954011bdb8e7dd06d",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：双重平滑HA方向翻转为信号，平滑可降低噪声但增加滞后；使用真实K线计算而非直接以HA价格成交更易核验。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "图形信号offset=1与实际信号时点不同；在HA图上运行可能又引入合成价格成交差异。 暂缓原因：降低平滑可能提高响应但增加换手。"
+  ],
+  "validation_plan": [
+    "核对普通图/HA图差异、前100根预热、翻色根与下一根成交，避免图形偏移误判。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "46d688cdbc42",
+  "title": "双重平滑海肯阿希趋势跟随策略Double-Smoothed-Heiken-Ashi-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/041_SID2308_46d688cdbc42_original.pine",
+  "original": "originals/041_SID2308_46d688cdbc42.pine",
+  "baseline": "baselines/041_SID2308_46d688cdbc42.pine",
+  "changes": "changes/041_SID2308_46d688cdbc42.txt",
+  "card": "cards/46d688cdbc42.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "3e9f31617beb96935932557049361bb22a49828a41cc2e6954011bdb8e7dd06d",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

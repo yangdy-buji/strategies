@@ -1,0 +1,35 @@
+{
+  "rank": 128,
+  "sid": 3162,
+  "source_sha256": "20946f48493b2e48090dcb70b2dfb54273724f2e6aa4eac3b21efcc290f3c72d",
+  "base_kind": "original",
+  "base_sha256": "a04cfc5f009b4c0c2cfb0f1b2b5cd0bff850819a76bd32ed0bc8ee0b9ee88fe3",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：1.5%距MA是数量分母而2.5%是风险预算，二者可合法不同；按注释改预算或新增stop均会改变经济模型，需明确收盘退出还是盘中止损及预算口径。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "1.5%距MA是数量分母而2.5%是风险预算，二者可合法不同；按注释改预算或新增stop均会改变经济模型，需明确收盘退出还是盘中止损及预算口径。",
+    "1.5% below MA止损价只用于定仓，没有提交stop订单；实际风险系数0.025为2.5%，与1.5%注释冲突。跳空或收盘才退出可超过预算。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "检查金叉日close接近stopLoss、次日向下跳空，分别报告计划风险与实际亏损，不宣称风险上限被保证。"
+  ],
+  "id": "91da03ca0460",
+  "title": "基于双均线的黄金交叉自适应风险管理策略-Adaptive-Risk-Management-Strategy-Based-on-Dual-Moving-Average-Golden-Cross",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/128_SID3162_91da03ca0460_original.pine",
+  "original": "originals/128_SID3162_91da03ca0460.pine",
+  "baseline": "baselines/128_SID3162_91da03ca0460.pine",
+  "changes": "changes/128_SID3162_91da03ca0460.txt",
+  "card": "cards/91da03ca0460.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a04cfc5f009b4c0c2cfb0f1b2b5cd0bff850819a76bd32ed0bc8ee0b9ee88fe3",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

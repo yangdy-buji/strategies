@@ -1,0 +1,35 @@
+{
+  "rank": 123,
+  "sid": 1628,
+  "source_sha256": "4d566007c266791e5d3bb8461d50cc0f4b671f24c86545cf657a4005a73a7fe9",
+  "base_kind": "original",
+  "base_sha256": "0e21bc0bef30a0464e6294ea3142e72694a009cf67ab410c258976099e4753c1",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：原收盘确认25%回撤与盘中stop成交模型不同；峰值用成交柱high还是从下一柱起亦影响首柱退出，需明确撮合粒度。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "原收盘确认25%回撤与盘中stop成交模型不同；峰值用成交柱high还是从下一柱起亦影响首柱退出，需明确撮合粒度。",
+    "25%回撤用low触发后调用市价close，实际不保证在25%价格成交；最高价初始化为信号柱high而非成交之后最高价，可能计入入场前波动。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测试信号柱冲高回落、次日跳空及同柱先高后低；逐笔比较峰值和实际退出价格。"
+  ],
+  "id": "05fd2597e8b4",
+  "title": "动态趋势跟踪型双均线通道策略与风险管理系统-Dynamic-Trend-Following-Dual-Moving-Average-Channel-Strategy-with-Risk-Management-System",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/123_SID1628_05fd2597e8b4_original.pine",
+  "original": "originals/123_SID1628_05fd2597e8b4.pine",
+  "baseline": "baselines/123_SID1628_05fd2597e8b4.pine",
+  "changes": "changes/123_SID1628_05fd2597e8b4.txt",
+  "card": "cards/05fd2597e8b4.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "0e21bc0bef30a0464e6294ea3142e72694a009cf67ab410c258976099e4753c1",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

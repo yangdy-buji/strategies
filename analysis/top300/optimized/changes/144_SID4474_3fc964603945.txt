@@ -1,0 +1,34 @@
+{
+  "rank": 144,
+  "sid": 4474,
+  "source_sha256": "df2ea8f03c30fdf2378ff67bde61f32b9bb86c1c528984610a481d0efb2273fd",
+  "base_kind": "original",
+  "base_sha256": "d99786f47613baef5250090a4008c937639be836328fe87a3db6d1e977f30a0a",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：布林下轨回升与StochRSI金叉同柱入场，回归与动量结合可解释；订单是stop触发入场而非保护止损。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "stop=close的买单应在发出后下一可用价格撮合，不是回填当根收盘；日期参数闲置，RSI6与阈值也不参与订单。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "检查下一根跳空高开/低开以及信号消失后撤单，逐笔对照原生与外部引擎。"
+  ],
+  "id": "3fc964603945",
+  "title": "布林带和Stoch-RSI交易策略Bollinger-Band-and-Stoch-RSI-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/144_SID4474_3fc964603945_original.pine",
+  "original": "originals/144_SID4474_3fc964603945.pine",
+  "baseline": "baselines/144_SID4474_3fc964603945.pine",
+  "changes": "changes/144_SID4474_3fc964603945.txt",
+  "card": "cards/3fc964603945.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d99786f47613baef5250090a4008c937639be836328fe87a3db6d1e977f30a0a",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

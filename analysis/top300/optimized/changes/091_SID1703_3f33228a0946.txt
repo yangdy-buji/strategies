@@ -1,0 +1,34 @@
+{
+  "rank": 91,
+  "sid": 1703,
+  "source_sha256": "3e6a6eb2c4e2567d3ff1628492acf83a84f73fbabf72dc86e1b28b1b1878d0ff",
+  "base_kind": "original",
+  "base_sha256": "04a6bdd6a08fc92a1a4c4ef6d390b23aba6637c85c7680ee6e8784fcdbf40578",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：EMA10/20交叉叠加走势持续时间过滤，意图是避免过早转向，但状态变量复杂且易误解。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "barssince在事件未出现前为NA，可能禁止早期交易；实际用反向entry翻仓而无独立退出或止损。 暂缓原因：简化若不等价会改变信号，须逐根对照。"
+  ],
+  "validation_plan": [
+    "首次MaxAscent/Descent前后、持续单边和快速反手的状态、订单及借券成本检查。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "3f33228a0946",
+  "title": "动量均线交叉策略A-Momentum-Crossover-Strategy-Based-on-Exponential-Moving-Average",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/091_SID1703_3f33228a0946_original.pine",
+  "original": "originals/091_SID1703_3f33228a0946.pine",
+  "baseline": "baselines/091_SID1703_3f33228a0946.pine",
+  "changes": "changes/091_SID1703_3f33228a0946.txt",
+  "card": "cards/3f33228a0946.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "04a6bdd6a08fc92a1a4c4ef6d390b23aba6637c85c7680ee6e8784fcdbf40578",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

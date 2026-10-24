@@ -1,0 +1,20 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 4863：本轮新候选·未回测
++// 原文件SHA256：910b74e39e8526ac7a5a3e9de45b557e027afc036162ef51cfab171b2f9283d8
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2023-05-22 00:00:00
+ end: 2024-05-27 00:00:00
+@@ -34,7 +37,9 @@
+ desvio_padrao_retornos = ta.stdev(retornos, lookback_period)
+ 
+ // Indicador de Regime: Z-Score
+-z_score = (retornos - media_retornos) / desvio_padrao_retornos
++// OPT-T300-01 修改原因：收益零方差不计算Z分数；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
++// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++z_score = not na(desvio_padrao_retornos) and desvio_padrao_retornos > 0 ? (retornos - media_retornos) / desvio_padrao_retornos : na
+ 
+ // Sinal de Compra e Venda
+ sinal_compra = z_score < threshold_low and close < lower_band

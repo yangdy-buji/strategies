@@ -1,0 +1,34 @@
+{
+  "rank": 17,
+  "sid": 5222,
+  "source_sha256": "839d56622e58e8a719b4f125d3e72de86f980049c98c7543c20088849b194f23",
+  "base_kind": "original",
+  "base_sha256": "3c0f25795d292a899f230010b71453a58db92d2c353522e2c03e8b53681dbb60",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：ROC跌后回穿下统计带入场、从上带回落退出，属于明确均值回归假设。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "源码只在ROC从上带回落时退出，没有实现注释中的再次跌破下带退出；若反弹从未到上带，可长期持有亏损。 暂缓原因：更早退出会减少长期反弹收益，并增加亏损实现频率。"
+  ],
+  "validation_plan": [
+    "构造入场后ROC持续走弱且从未触上带路径；统计极长持仓、最大不利波动和费用敏感度。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "b63844954366",
+  "title": "自适应动量均值回归交叉策略Adaptive-Momentum-Mean-Reversion-Crossover-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/017_SID5222_b63844954366_original.pine",
+  "original": "originals/017_SID5222_b63844954366.pine",
+  "baseline": "baselines/017_SID5222_b63844954366.pine",
+  "changes": "changes/017_SID5222_b63844954366.txt",
+  "card": "cards/b63844954366.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "3c0f25795d292a899f230010b71453a58db92d2c353522e2c03e8b53681dbb60",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

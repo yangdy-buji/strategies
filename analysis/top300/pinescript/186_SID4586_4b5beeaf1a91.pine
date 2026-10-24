@@ -1,0 +1,39 @@
+/*backtest
+start: 2022-12-20 00:00:00
+end: 2023-12-26 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © umerhafeez37733
+
+//@version=5
+strategy("EMA Crossover Strategy", overlay=true)
+
+// Input for EMA lengths
+fastEmaLength = input(37, title="Fast EMA Length")
+slowEmaLength = input(370, title="Slow EMA Length")
+
+// Calculate EMAs
+fastEma = ta.ema(close, fastEmaLength)
+slowEma = ta.ema(close, slowEmaLength)
+
+// Plot EMAs on the chart
+plot(fastEma, title="Fast EMA", color=color.blue)
+plot(slowEma, title="Slow EMA", color=color.red)
+
+// Buy condition: Fast EMA crosses above Slow EMA
+buyCondition = ta.crossover(fastEma, slowEma)
+
+// Sell condition: Fast EMA crosses below Slow EMA
+sellCondition = ta.crossunder(fastEma, slowEma)
+
+// Plot Buy and Sell signals on the chart
+plotshape(series=buyCondition, title="Buy Signal", color=color.green, style=shape.triangleup, location=location.belowbar)
+plotshape(series=sellCondition, title="Sell Signal", color=color.red, style=shape.triangledown, location=location.abovebar)
+
+// Execute strategy
+strategy.entry("Buy", strategy.long, when=buyCondition)
+strategy.close("Buy", when=sellCondition)

@@ -1,0 +1,23 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 2867：本轮新候选·未回测
++// 原文件SHA256：edbcfd9f400a09e23fb4a677c001fb7e40c730a12fe487cff7644ba7b969f808
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ strategy("Simple RSI Strategy with Low as Source", overlay=true)
+ 
+ // Input parameters
+@@ -17,8 +20,10 @@
+ 
+ // Recording the entry price
+ var float entryPrice = na
+-if (longCondition)
+-    entryPrice := low
++// OPT-T300-01 修改原因：只在实际新成交时记录入场均价，连续超卖不刷新亏损基准。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if strategy.position_size > 0 and strategy.position_size[1] <= 0
++    entryPrice := strategy.position_avg_price
+ 
+ // Exit conditions
+ percentFromEntry = 100 * (close - entryPrice) / entryPrice

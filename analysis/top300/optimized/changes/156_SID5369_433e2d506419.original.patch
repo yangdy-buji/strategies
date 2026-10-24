@@ -1,0 +1,44 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,15 @@
++//@version=4
++// OPT-T300 SID 5369：沿用旧候选·未回测
++// 原文件SHA256：96452178fd848ba9d71492ab33871aa3cde502ed5bae4bcbbc25ed6fb864ed40
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：趋势价格简单移动平均量化策略Simple-Moving-Average-Trend-Price-Quantitative-Strategy.md
++// 原文件SHA256：96452178fd848ba9d71492ab33871aa3cde502ed5bae4bcbbc25ed6fb864ed40
++// SID：5369；原研究名单序号：28
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-02-21 00:00:00
+ end: 2024-02-27 00:00:00
+@@ -5,8 +17,6 @@
+ basePeriod: 1h
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ strategy("Trend, Momentum ve Volatilite Stratejisi", overlay=true)
+ 
+ // Kullanıcı tarafından ayarlanabilir girdilerin panelde görüntülenmesi
+@@ -22,7 +32,10 @@
+ momentumIndicator = vwma(close, momentumPeriod)
+ 
+ // Volatilite göstergesi (Bollinger Bantları)
+-[upperBB, middleBB, lowerBB] = bb(close, bbPeriod, bbDeviation)
++// OPT-5369-01：原上轨误接中轨；按bb返回中、上、下轨顺序接收。
++// OPT-5369-01 保持：原指标参数、穿越条件及双向交易规则。
++// OPT-5369-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++[middleBB, upperBB, lowerBB] = bb(close, bbPeriod, bbDeviation)
+ 
+ // Alım ve satım sinyallerinin belirlenmesi
+ buySignal = crossover(close, trendIndicator) and close > upperBB
+@@ -37,4 +50,4 @@
+ if (sellSignal)
+     strategy.entry("Sell", strategy.short)
+ if (buySignal)
+-    strategy.close("Sell")+    strategy.close("Sell")

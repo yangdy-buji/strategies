@@ -1,0 +1,56 @@
+{
+  "rank": 227,
+  "sid": 3878,
+  "source_sha256": "509c59c531cd182d7bbaae8e34fc811264adb3ef22839583d2ccdbb55d8d0e64",
+  "base_kind": "original",
+  "base_sha256": "a6aad81c271a1a1b0ce9dd962c45e8e2058d326422e6293c0273aae46c2c18dd",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "新增候选：采用四档各25%的独立设计候选；每档自带止损且多空ID不同，消除全量目标占满保护预留。",
+  "patches": [
+    {
+      "old": "// Exit conditions based on Take Profit levels\nstrategy.exit(\"Take Profit 1\", \"Buy\", limit=takeProfit1)\nstrategy.exit(\"Take Profit 2\", \"Buy\", limit=takeProfit2)\nstrategy.exit(\"Take Profit 3\", \"Buy\", limit=takeProfit3)\nstrategy.exit(\"Take Profit 4\", \"Buy\", limit=takeProfit4)\n\nstrategy.exit(\"Take Profit 1\", \"Sell\", limit=takeProfit1)\nstrategy.exit(\"Take Profit 2\", \"Sell\", limit=takeProfit2)\nstrategy.exit(\"Take Profit 3\", \"Sell\", limit=takeProfit3)\nstrategy.exit(\"Take Profit 4\", \"Sell\", limit=takeProfit4)\n\n// Optionally, add a stop loss\nstopLoss = 0.03  // Example: 3% stop loss\nstrategy.exit(\"Stop Loss\", \"Buy\", stop=close * (1 - stopLoss))\nstrategy.exit(\"Stop Loss\", \"Sell\", stop=close * (1 + stopLoss))\n",
+      "new": "// Four equal reserved brackets; each slice carries its own stop.\nstopLoss = 0.03\nstrategy.exit(\"Buy TP1\", \"Buy\", qty_percent=25, limit=takeProfit1, stop=close * (1 - stopLoss))\nstrategy.exit(\"Buy TP2\", \"Buy\", qty_percent=25, limit=takeProfit2, stop=close * (1 - stopLoss))\nstrategy.exit(\"Buy TP3\", \"Buy\", qty_percent=25, limit=takeProfit3, stop=close * (1 - stopLoss))\nstrategy.exit(\"Buy TP4\", \"Buy\", qty_percent=25, limit=takeProfit4, stop=close * (1 - stopLoss))\nstrategy.exit(\"Sell TP1\", \"Sell\", qty_percent=25, limit=takeProfit1, stop=close * (1 + stopLoss))\nstrategy.exit(\"Sell TP2\", \"Sell\", qty_percent=25, limit=takeProfit2, stop=close * (1 + stopLoss))\nstrategy.exit(\"Sell TP3\", \"Sell\", qty_percent=25, limit=takeProfit3, stop=close * (1 + stopLoss))\nstrategy.exit(\"Sell TP4\", \"Sell\", qty_percent=25, limit=takeProfit4, stop=close * (1 + stopLoss))\n",
+      "reason": "采用四档各25%的独立设计候选；每档自带止损且多空ID不同，消除全量目标占满保护预留。",
+      "preserved": "原四档价格、方向、3%止损计算与交叉入场。",
+      "validation_cases": [
+        "每方向合计100%；八个唯一ID；每个25%目标均含止损。"
+      ]
+    }
+  ],
+  "resolved": [
+    "采用四档各25%的独立设计候选；每档自带止损且多空ID不同，消除全量目标占满保护预留。"
+  ],
+  "remaining": [
+    "25%等分是新增设计假设，未证明优于原第一档全平。",
+    "止损仍随close变化，目标反向信号重算和分批后重挂数量必须原生撮合核验。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "四档数量之和、部分成交后剩余保护、反手时旧目标清除原生验证。"
+  ],
+  "id": "2b5db1b11822",
+  "title": "多层级多周期指数均线交叉动态盈利优化策略-Multi-Level-Multi-Period-EMA-Crossover-Dynamic-Take-Profit-Optimization-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/227_SID3878_2b5db1b11822_candidate.pine",
+  "original": "originals/227_SID3878_2b5db1b11822.pine",
+  "baseline": "baselines/227_SID3878_2b5db1b11822.pine",
+  "changes": "changes/227_SID3878_2b5db1b11822.txt",
+  "card": "cards/2b5db1b11822.html",
+  "diff": "changes/227_SID3878_2b5db1b11822.patch",
+  "original_diff": "changes/227_SID3878_2b5db1b11822.original.patch",
+  "script_sha256": "e38eb092432c03a4fd750bb6b91a1c1aa7b82aaaf11e4bb852e19d71a86cba36",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "80d15e86c2f460cc4bae8f53fdbb07c64dcb8fded7fa57777fb0d9905f6ad723",
+    "review": "核对四档价格生成、双向entry及全部8个exit。每方向四个独立ID分别预留25%，每份同时带止损，取消原第一档全量预留挤掉其余目标和独立止损的问题；entry同柱提交保留。四档均分属于显式设计改变，分批撮合后重挂不能由静态份额相加证明。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "25%等分是新增设计假设，未证明优于原第一档全平。",
+      "止损仍随close变化，目标反向信号重算和分批后重挂数量必须原生撮合核验。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

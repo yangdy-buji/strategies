@@ -1,0 +1,37 @@
+{
+  "rank": 207,
+  "sid": 373,
+  "source_sha256": "f0e4e066be0e1ba014303fa69cb23444e6649d7c81e0565e47cd0d4a8da0344e",
+  "base_kind": "prior_candidate",
+  "base_sha256": "0157d129f9044fd1e693b1ef6ca937be0ee6eecf71bb089e00ee33901908beb2",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；布林下轨以下且RSI高于42做多；DCA按小时选择订单ID，RSI高于70且越上轨才挂均价百分比保护单。 下轨回落且RSI>42是有限回撤买入；DCA开关不等于真实加仓，pyramiding=0且卖信号出现前未提交保护。",
+  "patches": [],
+  "resolved": [
+    "保护退出覆盖两个做多入口ID。"
+  ],
+  "remaining": [
+    "下轨回落且RSI>42是有限回撤买入；DCA开关不等于真实加仓，pyramiding=0且卖信号出现前未提交保护。 后续验证：分别开关DCA并核对Long/DCA Long首笔成交到首次退出单的空窗。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；sell_condition限制保护提交及pyramiding=0仍保留；dca_interval未限制正数。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "分别开关DCA并核对Long/DCA Long首笔成交到首次退出单的空窗。"
+  ],
+  "id": "979624b1af03",
+  "title": "Flawless-Victory-DCA-动量与波动率策略Flawless-Victory-DCA-Momentum-and-Volatility-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/207_SID373_979624b1af03_candidate.pine",
+  "original": "originals/207_SID373_979624b1af03.pine",
+  "baseline": "baselines/207_SID373_979624b1af03.pine",
+  "changes": "changes/207_SID373_979624b1af03.txt",
+  "card": "cards/979624b1af03.html",
+  "diff": "changes/207_SID373_979624b1af03.patch",
+  "original_diff": "changes/207_SID373_979624b1af03.original.patch",
+  "script_sha256": "dfee68840ecb3e42cade768b76443651d26da803a759fb78216438cf8ae1ee2b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

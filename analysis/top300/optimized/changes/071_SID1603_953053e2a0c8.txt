@@ -1,0 +1,60 @@
+{
+  "rank": 71,
+  "sid": 1603,
+  "source_sha256": "d809ee1366f2902c077a49154d183890e9164aee21c706a7b374f0b1e6211343",
+  "base_kind": "original",
+  "base_sha256": "cc1ae9f85ca65d5b2a90f792f7ca0e7c907b4ae845f12f6ab68f8d912f8630cb",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "为MACD零振幅窗口添加显式NA分支，避免执行0/0；保留KD独立信号、正常归一化及动态ATR保护规则。",
+  "patches": [
+    {
+      "old": "normalizedMacd = (macdLine - ta.lowest(macdLine, lengthRSI)) / (ta.highest(macdLine, lengthRSI) - ta.lowest(macdLine, lengthRSI)) * (highestK - lowestK) + lowestK",
+      "new": "macdLow = ta.lowest(macdLine, lengthRSI)\nmacdHigh = ta.highest(macdLine, lengthRSI)\nmacdRange = macdHigh - macdLow\nnormalizedMacd = macdRange == 0 ? na : (macdLine - macdLow) / macdRange * (highestK - lowestK) + lowestK",
+      "reason": "MACD最高值与最低值相等时不存在唯一归一化坐标，显式返回NA并跳过除法；避免任意补0、中点或k改变交易集合。 极值先逐根无条件计算，零分母判断只处理缓存标量。",
+      "preserved": "正常振幅映射、暖机NA、differenceKD独立买卖分支及动态ATR保护保持；不宣称原版NA行为已造成错误成交。",
+      "validation_cases": [
+        "MACD窗口固定5时返回NA且不执行除零。",
+        "窗口0至10、MACD5、K范围20至80时映射50；MACD10映射80。",
+        "缺失极值仍NA；平价后恢复振幅时恢复原映射。"
+      ]
+    }
+  ],
+  "resolved": [
+    "零振幅归一化显式跳过0/0；保留未定义坐标而不虚构中性交易信号。"
+  ],
+  "remaining": [
+    "动态ATR每根重算stop和target，ATR变大仍可放宽止损、推远目标；固定入场ATR或单向收紧是不同风险模型，须独立实验。",
+    "MACD归一化缺失时differenceTotal仍NA，KD独立分支按原逻辑继续；若要求整条信号无效则属于额外设计变更。",
+    "原生Pine编译、完整逐根信号及成交回放未执行。"
+  ],
+  "validation_plan": [
+    "运行test_top300_batch_a.py：严格除零反例原版失败，补丁应返回NA；验证正常范围及缺失极值。",
+    "原生Pine v6编译，逐根核对平价、恢复与KD分支信号；新增防护应不改变既有有效数据交易集合。",
+    "另设固定ATR/单向收紧实验，按跳空及波动放大路径比较退出、成本和尾部亏损，不继承旧收益。"
+  ],
+  "id": "953053e2a0c8",
+  "title": "动态自适应多指标交叉策略结合SRSI和MACD的智能风控系统-Dynamic-Adaptive-Multi-Indicator-Crossing-Strategy-with-SRSI-MACD-Smart-Risk-Control-System",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/071_SID1603_953053e2a0c8_candidate.pine",
+  "original": "originals/071_SID1603_953053e2a0c8.pine",
+  "baseline": "baselines/071_SID1603_953053e2a0c8.pine",
+  "changes": "changes/071_SID1603_953053e2a0c8.txt",
+  "card": "cards/953053e2a0c8.html",
+  "diff": "changes/071_SID1603_953053e2a0c8.patch",
+  "original_diff": "changes/071_SID1603_953053e2a0c8.original.patch",
+  "script_sha256": "e61d0283ae680acb9cbc65e3ed35fd5d4679b39c7c84835ae917c87ada9b0268",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "9727c1c0dfeca58cbd53ff0ba9a4ac9d28b33b95cc7751fdf7a0e551f5d270ac",
+    "review": "复审v6最新归一化：macdLow/macdHigh顶层逐根计算，范围和映射复用缓存标量；零范围NA且不执行除零，正常及缺失值验证通过。历史函数不再在guard分支，KD与动态ATR保持，注释完整。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "动态ATR每根重算stop和target，ATR变大仍可放宽止损、推远目标；固定入场ATR或单向收紧是不同风险模型，须独立实验。",
+      "MACD归一化缺失时differenceTotal仍NA，KD独立分支按原逻辑继续；若要求整条信号无效则属于额外设计变更。"
+    ]
+  }
+}

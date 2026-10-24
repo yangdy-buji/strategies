@@ -1,0 +1,34 @@
+{
+  "rank": 229,
+  "sid": 5306,
+  "source_sha256": "80dc68537c6ad41a432c1e3ba8fafdb0c0afc91c407e16835096b59cc098e98c",
+  "base_kind": "original",
+  "base_sha256": "ce52fc847c65f1928aee106f52dd8c7e436b8e0cba0a447a1877dccf14b43c67",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；RSI14偏离50后WMA5再双曲变换，上穿-0.8在close挂stop做多，无信号撤单；下穿动态0/1阈值退出。 逆Fisher RSI反转可解释，但上阈值是随RVS变化的0/1而非固定0.8，退出定义需明确。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "逆Fisher RSI反转可解释，但上阈值是随RVS变化的0/1而非固定0.8，退出定义需明确。 后续验证：RVS从0.9到0.7、从0.7到0.9及挂单未成交次根撤销手算。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "RVS从0.9到0.7、从0.7到0.9及挂单未成交次根撤销手算。"
+  ],
+  "id": "e2fa04d2af1b",
+  "title": "计算RSI指标和平滑移动平均线反转策略RSI-Reversal-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/229_SID5306_e2fa04d2af1b_original.pine",
+  "original": "originals/229_SID5306_e2fa04d2af1b.pine",
+  "baseline": "baselines/229_SID5306_e2fa04d2af1b.pine",
+  "changes": "changes/229_SID5306_e2fa04d2af1b.txt",
+  "card": "cards/e2fa04d2af1b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ce52fc847c65f1928aee106f52dd8c7e436b8e0cba0a447a1877dccf14b43c67",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

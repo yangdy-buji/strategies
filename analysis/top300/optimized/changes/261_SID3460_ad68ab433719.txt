@@ -1,0 +1,37 @@
+{
+  "rank": 261,
+  "sid": 3460,
+  "source_sha256": "90b70e59d2e49a64ed246def2cd6d93452ff7d22648bb12ea33080affe074b91",
+  "base_kind": "prior_candidate",
+  "base_sha256": "27d76047e6935ed5f0a0fb243d21cb96cbc63084f7817c7acefd31c16a764c47",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；SMA20大于60且距10根高点回撤不到10%做多30%权益，趋势反转、高点回撤或均价亏10%退出。 20/60均线趋势加10%回撤退出结构明确；10根最高点会滚落，所谓滑价7%注释不符10%代码。",
+  "patches": [],
+  "resolved": [
+    "开始日期被if true绕过，直接门控入场且退出保持不变。"
+  ],
+  "remaining": [
+    "20/60均线趋势加10%回撤退出结构明确；10根最高点会滚落，所谓滑价7%注释不符10%代码。 后续验证：持仓超过10根后峰值滚出、10%成本损失与次开盘跳空核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "持仓超过10根后峰值滚出、10%成本损失与次开盘跳空核验。"
+  ],
+  "id": "ad68ab433719",
+  "title": "基于月季线均线操作的量化交易策略Quant-Trading-Strategy-Based-on-Monthly-and-Quarterly-Moving-Average-Operation",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/261_SID3460_ad68ab433719_candidate.pine",
+  "original": "originals/261_SID3460_ad68ab433719.pine",
+  "baseline": "baselines/261_SID3460_ad68ab433719.pine",
+  "changes": "changes/261_SID3460_ad68ab433719.txt",
+  "card": "cards/ad68ab433719.html",
+  "diff": "changes/261_SID3460_ad68ab433719.patch",
+  "original_diff": "changes/261_SID3460_ad68ab433719.original.patch",
+  "script_sha256": "609af7ccce74ee7bd6d8dcf85aa11364369b264f0d407bc8ada34b6b516dc5ba",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

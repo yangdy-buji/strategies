@@ -1,0 +1,21 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 4705：本轮新候选·未回测
++// 原文件SHA256：4d24800b441b063df4a1aedbc8357f3e3c7a9f2c63fce02cf1322f6abe32d0b0
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：日内多头突破策略-Intraday-Bullish-Breakout-Strategy.md
+ // 原文件SHA256：4d24800b441b063df4a1aedbc8357f3e3c7a9f2c63fce02cf1322f6abe32d0b0
+@@ -71,7 +74,9 @@
+ 
+ 
+ // Calculate entry prices for long positions - Strategy 1
+-if (swingLow1 or Bullish3LineStrike)
++// OPT-T300-01 修改原因：仅有效空仓入场形态更新信号价，持仓重复形态不改写保护基准。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if (entryCondition1 and strategy.position_size == 0 and (swingLow1 or Bullish3LineStrike))
+     entryLongPrice1 := close
+     tradeDirection1 := 1
+ 

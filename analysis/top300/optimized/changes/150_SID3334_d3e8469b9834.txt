@@ -1,0 +1,35 @@
+{
+  "rank": 150,
+  "sid": 3334,
+  "source_sha256": "d65ac412737b9d8fbd7ef921fc8d95430085052ede2edb0527c46711bd7f141f",
+  "base_kind": "original",
+  "base_sha256": "10630894a96ba200c1cf96e588dd0125655a671c3b145e04fab6edba2e0d2fa9",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：首个成交柱保护是否生效取决于原生计算/成交时序，未回放前不能把尚未确认的空窗改为calc_on_order_fills；10%/25%及RSI阈值无唯一更优值。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "首个成交柱保护是否生效取决于原生计算/成交时序，未回放前不能把尚未确认的空窗改为calc_on_order_fills；10%/25%及RSI阈值无唯一更优值。",
+    "默认止盈10%、止损25%，需要较高获胜概率才能覆盖单次亏损；35.58精细阈值需要稳健性检验。均价在首笔成交前不可用，保护首覆盖时机须核验。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "核对首根成交柱、同柱TP/SL双触及及跳空；统计亏损尾部与35-36阈值区间结果。"
+  ],
+  "id": "d3e8469b9834",
+  "title": "基于布林带和RSI的多头摆动交易策略Bullish-Swing-Trading-Strategy-Based-on-Bollinger-Bands-and-RSI",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/150_SID3334_d3e8469b9834_original.pine",
+  "original": "originals/150_SID3334_d3e8469b9834.pine",
+  "baseline": "baselines/150_SID3334_d3e8469b9834.pine",
+  "changes": "changes/150_SID3334_d3e8469b9834.txt",
+  "card": "cards/d3e8469b9834.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "10630894a96ba200c1cf96e588dd0125655a671c3b145e04fab6edba2e0d2fa9",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

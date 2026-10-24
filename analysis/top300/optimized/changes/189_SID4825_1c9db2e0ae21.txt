@@ -1,0 +1,35 @@
+{
+  "rank": 189,
+  "sid": 4825,
+  "source_sha256": "b35cb6ee5838ac6e83bb60b283111ed451a4293da7c15a9db7727df271de73ca",
+  "base_kind": "original",
+  "base_sha256": "c04f372f194d7025aa5f9d9968d3bd1dbc529678db4b9349e1e4252b4de89cff",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：过滤急涨还是双向波动、单柱还是连续两柱均未明确；修改abs/change1会改变事件集合，需独立研究。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "过滤急涨还是双向波动、单柱还是连续两柱均未明确；修改abs/change1会改变事件集合，需独立研究。",
+    "highVolatility只看当根正涨幅>0.5%，急跌不受限制；注释称两根且change1未用于条件。5.5%损失到收盘后市价退出，不能保证该最大回撤。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "单柱涨1%、跌1%、连续两柱0.3%及跳空越过5.5%分别验证过滤与实际成交损失。"
+  ],
+  "id": "1c9db2e0ae21",
+  "title": "波林格带突破与波动率过滤策略Bollinger-Bands-Breakout-with-Volatility-Filter-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/189_SID4825_1c9db2e0ae21_original.pine",
+  "original": "originals/189_SID4825_1c9db2e0ae21.pine",
+  "baseline": "baselines/189_SID4825_1c9db2e0ae21.pine",
+  "changes": "changes/189_SID4825_1c9db2e0ae21.txt",
+  "card": "cards/1c9db2e0ae21.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c04f372f194d7025aa5f9d9968d3bd1dbc529678db4b9349e1e4252b4de89cff",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

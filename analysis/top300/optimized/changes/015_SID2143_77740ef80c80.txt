@@ -1,0 +1,34 @@
+{
+  "rank": 15,
+  "sid": 2143,
+  "source_sha256": "7e79b63d5890b5bc9e1f39d529c32c532ed420c78042593b04cd7b7ca3c2f385",
+  "base_kind": "original",
+  "base_sha256": "ca957232764f35671c630b95eb9db63e13b1f36663e7c4d145ae53072936d9b2",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：EMA9/21交叉由RSI30过滤，退出又允许反向交叉或RSI失效，风险失效不必等入场全部条件反转。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "RSI阈值30使多空触发不对称；同根反手entry与旧仓close的数量及顺序需要原生核对。 暂缓原因：强行对称可能损害原策略；简化反手也会改变交易时机。"
+  ],
+  "validation_plan": [
+    "分别统计多空交易、借券成本及交叉和RSI同时失效时的订单ID、净仓位。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "77740ef80c80",
+  "title": "双指数移动平均线交叉与RSI趋势确认策略-Dual-EMA-Crossover-with-RSI-Trend-Confirmation-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/015_SID2143_77740ef80c80_original.pine",
+  "original": "originals/015_SID2143_77740ef80c80.pine",
+  "baseline": "baselines/015_SID2143_77740ef80c80.pine",
+  "changes": "changes/015_SID2143_77740ef80c80.txt",
+  "card": "cards/77740ef80c80.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ca957232764f35671c630b95eb9db63e13b1f36663e7c4d145ae53072936d9b2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

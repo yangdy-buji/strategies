@@ -1,0 +1,5440 @@
+[
+  {
+    "rank": 201,
+    "sid": 5579,
+    "source_sha256": "02fd5612c6546547b0a0bc7bcaf78f4bc75a36c56ef94eeb0bafb18c8f74a4a3",
+    "pine_sha256": "95e7c8ce7e5e157f71495e36422affa83049f13d67cb2d64577efc27e4836b74",
+    "review_scope": "full_source_static",
+    "assessment": "收盘或HA收盘穿越递归ATR止线做多100%权益，反向穿越平多。 ATR线反转做多可以解释，但所谓动态止损只是反向信号市价平仓，不是盘中止损单；标题多空而实际只多。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 26,
+            "code": "src = h ? heikinAshiClose : close"
+          },
+          {
+            "line": 52,
+            "code": "buy  = src > xATRTrailingStop and above"
+          },
+          {
+            "line": 67,
+            "code": "if (buy)"
+          },
+          {
+            "line": 71,
+            "code": "    strategy.close(\"long\")"
+          }
+        ],
+        "detail": "ATR线反转做多可以解释，但所谓动态止损只是反向信号市价平仓，不是盘中止损单；标题多空而实际只多。",
+        "suggestion": "明确仅多策略定位；另建ATR保护挂单对照版。",
+        "tradeoff": "真实止损会改变成交时间并增加震荡止损。",
+        "validation": "用触线后收回及隔夜跳空路径比较信号平仓与挂单。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 202,
+    "sid": 2990,
+    "source_sha256": "b5c9552b72411beb713258064a635f390ba2b5a553b593dc048c817f9b77ab02",
+    "pine_sha256": "08d83c1abb142b9cb03d69a06172b152a3bd704034626c64744bdfa350fc6957",
+    "review_scope": "full_source_static",
+    "assessment": "EMA13/48金叉10%权益做多、死叉平仓，持仓均价除1.08止损；空头及跟踪设置未接入执行。 13/48 EMA交叉简单可核验；slPoints、跟踪开关和偏移输入不驱动订单，实际固定均价/1.08止损。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "tradeInvert = input(defval = false, title = \"Invert Trade Direction?\")"
+          },
+          {
+            "line": 28,
+            "code": "slPoints    = input(defval = 25, title = \"Initial Stop Loss Points\", minval = 1)"
+          },
+          {
+            "line": 29,
+            "code": "useTS       = input(defval = true, title = \"Use Trailing Stop?\")"
+          },
+          {
+            "line": 30,
+            "code": "tslPoints   = input(defval = 120, title = \"Trail Points\", minval = 1)"
+          },
+          {
+            "line": 32,
+            "code": "tslOffset   = input(defval = 20, title = \"Trail Offset Points\", minval = 1)"
+          },
+          {
+            "line": 53,
+            "code": "    strategy.exit(\"XLS\", from_entry =\"Buy\", stop = strategy.position_avg_price / 1.08 )"
+          }
+        ],
+        "detail": "13/48 EMA交叉简单可核验；slPoints、跟踪开关和偏移输入不驱动订单，实际固定均价/1.08止损。",
+        "suggestion": "移除无效参数或明确单位后接入独立实验版，不把界面设置当有效风控。",
+        "tradeoff": "启用跟踪会改变原策略而非只是清理代码。",
+        "validation": "逐个改变slPoints/useTS/tslPoints，核对原成交不变并验证新实现响应。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 203,
+    "sid": 5514,
+    "source_sha256": "69e0b3e34220dc92fda553288c2e8d2e4d41eff913b12e12a41e8f667f45052f",
+    "pine_sha256": "d7615a3fb881e006e29d81609ca00053c78d3522ab93d2a78289aa76e988a4aa",
+    "review_scope": "full_source_static",
+    "assessment": "SMA14上穿28做多，初始3%止损，涨过3%后单调抬至保本；死叉或保护退出。 该规则是3%初始止损、浮盈超过3%后保本，之后不随峰值继续抬升；并非通常的百分比跟踪。",
+    "priority": "P2",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 23,
+            "code": "longStopPrice := if (strategy.position_size > 0 and close > (lastEntryPrice * (1 + longTrailPerc)))"
+          },
+          {
+            "line": 24,
+            "code": "    stopValue = lastEntryPrice"
+          },
+          {
+            "line": 28,
+            "code": "        stopValue = lastEntryPrice * (1 - longTrailPerc)"
+          },
+          {
+            "line": 52,
+            "code": "    strategy.exit(id=\"Stop Loss\", stop=longStopPrice)"
+          }
+        ],
+        "detail": "该规则是3%初始止损、浮盈超过3%后保本，之后不随峰值继续抬升；并非通常的百分比跟踪。",
+        "suggestion": "更名为保本止损；比较固定保本与持仓最高价跟踪两种明确模型。",
+        "tradeoff": "跟踪更紧会截断趋势利润。",
+        "validation": "检查入场后首柱保护、盈利3%上下边界及回撤到成本的成交。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 204,
+    "sid": 2462,
+    "source_sha256": "68070f67d4671a4eb3d9ca3c76e454d7fbcf632b274dc1d3c04a38f905d67677",
+    "pine_sha256": "94916d749ad8b0203835bd17e12fd57cb10e16d539479f11b434b76bcdb8eab9",
+    "review_scope": "full_source_static",
+    "assessment": "ATR偏离自身均值标准差且对数收益漂移向上做多，低价减2 ATR单调跟踪市价退出，原日期条件恒真。 ATR偏离叠加漂移向上更像波动择时做多，非价格均值回归；以low触线后市价平仓并不按止损价成交。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "within_timeframe = true"
+          },
+          {
+            "line": 28,
+            "code": "if strategy.position_size == 0 or not within_timeframe"
+          },
+          {
+            "line": 59,
+            "code": "if within_timeframe"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期恒真绕过输入。；窗外不应重置已有持仓止损。；恢复日期只门控入场；已有持仓需继续处理退出。；已有持仓窗外不能加仓。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "within_timeframe = true"
+          },
+          {
+            "line": 32,
+            "code": "    stop_loss_price := max(stop_loss_price, TSL_source - ATR_X2_TSL)"
+          },
+          {
+            "line": 65,
+            "code": "\tif strategy.position_size > 0 and TSL_source <= stop_loss_price"
+          },
+          {
+            "line": 67,
+            "code": "        strategy.close(ENUM_LONG, comment=exit_msg)"
+          },
+          {
+            "line": 74,
+            "code": "    stop_loss_price := float(0)"
+          }
+        ],
+        "detail": "ATR偏离叠加漂移向上更像波动择时做多，非价格均值回归；以low触线后市价平仓并不按止损价成交。",
+        "suggestion": "先复测已有日期修复，再明确真实止损单与手动收盘退出的差异。",
+        "tradeoff": "改挂单会改变盘中成交与旧回测可比性。",
+        "validation": "跟踪线不下降、低点触线收回、窗外持仓继续保护三个场景逐笔比对。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 205,
+    "sid": 2213,
+    "source_sha256": "081aa85507ac20e4aa555c71470350d78f93515543812e1af429200aae0560d0",
+    "pine_sha256": "381d83331471287e157c48c285551fb5d8020029f4e0112ce5d3f1bf274a2205",
+    "review_scope": "full_source_static",
+    "assessment": "长均线上短均线下回调或52柱高点回撤14%时空仓10%权益买多；短均线上转弱或自计跌幅/均线条件退出。 长期趋势回调与逆势抄底并列，两类风险不同；止损距离用当前close作分母，15%不是相对买价的15%。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 53,
+            "code": "f_dateFilter = true //make sure date entries are within acceptable range"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复仅入口日期。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；stopDistance按当前close作分母，与按买价止损比例不完全等价；原设计未改。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 61,
+            "code": "buyCondition  = (close > ma1 and close < ma2 and strategy.position_size == 0 and f_dateFilter) or (strategy.position_size == 0 and i_contrarianBuyTheDip==true and overall_change > i_contrarianTrigger and f_dateFilter) // higher than 200sma, lower than short term ma (pullback) + avoid pyramiding positions"
+          },
+          {
+            "line": 65,
+            "code": "stopDistance  = strategy.position_size > 0 ? ((buyPrice - close)/close) : na // check if in trade > calc % drop dist from entry, if not na"
+          },
+          {
+            "line": 66,
+            "code": "stopPrice     = strategy.position_size > 0 ? (buyPrice - (buyPrice * i_stopPercent)) : na // calc SL price if in trade, if not, na"
+          },
+          {
+            "line": 67,
+            "code": "stopCondition = (strategy.position_size > 0 and stopDistance > i_stopPercent) or (strategy.position_size > 0 and (i_stopByCrossover_MA2_3==true and ma3 < ma1))"
+          },
+          {
+            "line": 76,
+            "code": "    buyPrice := open // entry price = current bar opening price"
+          }
+        ],
+        "detail": "长期趋势回调与逆势抄底并列，两类风险不同；止损距离用当前close作分母，15%不是相对买价的15%。",
+        "suggestion": "拆分两类入场贡献，明确损失比例分母与实际成交锚。",
+        "tradeoff": "统一止损口径会改变触发价，抄底关闭可能减少收益。",
+        "validation": "买价100时close=85/87分别核验触发，并测试低开时buyPrice与成交价。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 206,
+    "sid": 4851,
+    "source_sha256": "55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691",
+    "pine_sha256": "14e5b38f18f9e127522ef8adfc1b1ac74de75d74df7454bddf82ca0944bafcf9",
+    "review_scope": "full_source_static",
+    "assessment": "收盘在EMA200上EMA5下且连续三柱高低下降全权益收盘买多，上穿退出EMA平仓，窗外原有强平。 200EMA上三根下移后回归EMA5是清楚的回调假设；版本注解格式及同收盘成交需要原生核验。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "InDateRange = true"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复日期及原窗外强平。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；原版本行// @version = 5需目标编译确认识别；未改写版本。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 10,
+            "code": "// @version = 5"
+          },
+          {
+            "line": 20,
+            "code": "InDateRange = true"
+          },
+          {
+            "line": 26,
+            "code": "Rule3 = high<high[1] and low<low[1] and high[1]<high[2] and low[1]<low[2] and high[2]<high[3] and low[2]<low[3]"
+          },
+          {
+            "line": 33,
+            "code": "    strategy.entry(\"Long\", strategy.long, when = Rule1 and Rule2 and Rule3)"
+          },
+          {
+            "line": 35,
+            "code": "    strategy.close(\"Long\", when = ta.crossover(close, ExitEMA))"
+          }
+        ],
+        "detail": "200EMA上三根下移后回归EMA5是清楚的回调假设；版本注解格式及同收盘成交需要原生核验。",
+        "suggestion": "先规范版本和日期候选的编译，再比较下一开盘成交及滑点。",
+        "tradeoff": "下一开盘价格可能显著降低短期反转优势。",
+        "validation": "逐根列出三日形态、收盘订单和下一开盘成交差价。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 207,
+    "sid": 373,
+    "source_sha256": "f0e4e066be0e1ba014303fa69cb23444e6649d7c81e0565e47cd0d4a8da0344e",
+    "pine_sha256": "68acb9fe4ab73de3e161e4f71b1e730908965c8a62126eb1e0e40e01a93108fb",
+    "review_scope": "full_source_static",
+    "assessment": "布林下轨以下且RSI高于42做多；DCA按小时选择订单ID，RSI高于70且越上轨才挂均价百分比保护单。 下轨回落且RSI>42是有限回撤买入；DCA开关不等于真实加仓，pyramiding=0且卖信号出现前未提交保护。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 68,
+            "code": "strategy.exit(\"Stoploss/TP\", \"Long\", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = \"Sell Signal!\")"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：保护退出覆盖两个做多入口ID。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；sell_condition限制保护提交及pyramiding=0仍保留；dca_interval未限制正数。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 14,
+            "code": "strategy(overlay=true, shorttitle=\" DCA Strategy\", default_qty_type = strategy.percent_of_equity, initial_capital = 100000, default_qty_value = 100, pyramiding = 0, title=\"Flawless Victory DCA Strategy\", currency = 'USD')"
+          },
+          {
+            "line": 61,
+            "code": "if dca_enabled and (hour % dca_interval == 0)"
+          },
+          {
+            "line": 62,
+            "code": "    strategy.entry(\"DCA Long\", strategy.long, when = buy_condition, alert_message = \"DCA - Buy Signal!\")"
+          },
+          {
+            "line": 64,
+            "code": "    strategy.entry(\"Long\", strategy.long, when = buy_condition, alert_message = \"Buy Signal!\")"
+          },
+          {
+            "line": 68,
+            "code": "strategy.exit(\"Stoploss/TP\", \"Long\", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = \"Sell Signal!\")"
+          }
+        ],
+        "detail": "下轨回落且RSI>42是有限回撤买入；DCA开关不等于真实加仓，pyramiding=0且卖信号出现前未提交保护。",
+        "suggestion": "已有双入口保护修复之外，单独确认是否全程挂保护及是否允许DCA。",
+        "tradeoff": "扩大加仓会提高尾部风险，提前保护改变胜率。",
+        "validation": "分别开关DCA并核对Long/DCA Long首笔成交到首次退出单的空窗。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 208,
+    "sid": 3322,
+    "source_sha256": "8637e9238b926156759354b8d49f1b3cbeff4a7e9e6ef7fe0aeee08dd75207bf",
+    "pine_sha256": "caa922bf8431b8c5248f98738e1af95fe457c16503c2fe9d7a7541be6e8fd6f3",
+    "review_scope": "full_source_static",
+    "assessment": "布林%B低位做多，均价百分比止盈止损。 %B低于0的逆势买入可解释，但100%止损为零价且日期参数未使用；已有持续保护补丁不是风险控制完成。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 39,
+            "code": "    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=takeProfit, stop=stopLoss)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：原保护单仅在入场信号为真时提交；改为确认持多仓时持续提交，空仓不提交。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；默认100%止损产生零止损价；首次成交到后续计算之间保护覆盖未验证。；start_date/end_date仍未接入，本轮未扩大范围。；未原生Pine编译/回测；静态及小范围模型不等于订单成交模拟，旧版收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 17,
+            "code": "zarar_durumu = input(100, title=\"Stop Loss\")"
+          },
+          {
+            "line": 27,
+            "code": "percentB = (src - lowerBand) / (upperBand - lowerBand)"
+          },
+          {
+            "line": 34,
+            "code": "stopLoss = strategy.position_avg_price * (1 - zarar_durumu / 100)"
+          },
+          {
+            "line": 37,
+            "code": "if (longCondition )"
+          },
+          {
+            "line": 39,
+            "code": "    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=takeProfit, stop=stopLoss)"
+          }
+        ],
+        "detail": "%B低于0的逆势买入可解释，但100%止损为零价且日期参数未使用；已有持续保护补丁不是风险控制完成。",
+        "suggestion": "确认可接受损失预算后设有界止损参数，并接入日期和零带宽防护。",
+        "tradeoff": "改变100%止损将彻底改变旧绩效分布。",
+        "validation": "验证默认零止损、零带宽、首笔成交后保护以及日期截止后的持仓。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 209,
+    "sid": 2486,
+    "source_sha256": "897516abaf09ff804f046c6f914742063fa6766a2667031529e346522eada76c",
+    "pine_sha256": "5fa64f9bd60330ee02933ceaad66ef09b8dff15418b0ac9f915ee31a280489fb",
+    "review_scope": "full_source_static",
+    "assessment": "阴线跌破前低时按EMA20/50/100/200所在区间选四级数量做多；均线多头排列后转弱且盈利1%才平所有入口。退出另需近期RSI高于65。 分均线区间买跌，退出必须盈利且满足多重条件，存在长期套牢；pyramiding输入仅乘数量。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 32,
+            "code": "in_date_range = true"
+          },
+          {
+            "line": 48,
+            "code": "exit_condition_1 = in_date_range and ((close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_two_days_ago) and profit_condition and close < low[1] and close < low[2]"
+          },
+          {
+            "line": 49,
+            "code": "exit_condition_2 = in_date_range and ((close < ema10 and close[1] > ema10 and close < close[1] and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_yesterday) and profit_condition and close < low[1] and close < low[2]"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复入场日期。；退出移出日期限制。；退出移出日期限制。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；pyramiding变量只是数量乘数，未设置平台加仓参数。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 38,
+            "code": "pyramiding = input.int(1, title=\"Pyramiding\", minval=1, maxval=10)"
+          },
+          {
+            "line": 44,
+            "code": "buy_condition_4 = in_date_range and close < ema200 and close < open and close < low[1]"
+          },
+          {
+            "line": 47,
+            "code": "profit_condition = strategy.position_avg_price * (1 + profit_percentage / 100) <= close"
+          },
+          {
+            "line": 48,
+            "code": "exit_condition_1 = in_date_range and ((close > ema10 and ema10 > ema20 and ema10 > ema50 and ema10 > ema100 and ema10 > ema200 and close < open) and rsi_crossed_above_70_two_days_ago) and profit_condition and close < low[1] and close < low[2]"
+          },
+          {
+            "line": 52,
+            "code": "strategy.entry(\"Buy1\", strategy.long, qty=qt1 * pyramiding, when=buy_condition_1)"
+          },
+          {
+            "line": 55,
+            "code": "strategy.entry(\"Buy4\", strategy.long, qty=qt4 * pyramiding, when=buy_condition_4)"
+          }
+        ],
+        "detail": "分均线区间买跌，退出必须盈利且满足多重条件，存在长期套牢；pyramiding输入仅乘数量。",
+        "suggestion": "先确认真实加仓层数和总金额上限，再独立测试亏损退出/持仓期限。",
+        "tradeoff": "增加退出会实现原本未实现亏损，可能降低报告胜率。",
+        "validation": "连续跌穿EMA200后持续亏损、四入口数量和亏损年持仓时长压力测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 210,
+    "sid": 3662,
+    "source_sha256": "d43e777391c8e438ba093dd1d9e66a4c8468e298ea9f62fd153ef340989f836a",
+    "pine_sha256": "9d075fb6de1e0f35c7d7ed5039dde483e153adbbfdc03304287ba6de988df8ba",
+    "review_scope": "full_source_static",
+    "assessment": "成交量流指数下穿其波动下轨买入、上穿上轨卖出；同向strategy.order加1单位，反向先平仓，空仓再入场。 VFI带内回归规则清楚，但信号为数值vfima、when使用中间价格隐式布尔，且order可不断增仓。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 39,
+            "code": "buysignal = cross(vfi, lower) and crossunder(vfi, lower) == 1 ? vfima : na"
+          },
+          {
+            "line": 41,
+            "code": "sellsignal = cross(vfi, upper) and crossover(vfi, upper) == 1 ? vfima : na"
+          },
+          {
+            "line": 51,
+            "code": "        strategy.order(\"LONG\", true, 1, when = (low+high)/2)"
+          },
+          {
+            "line": 54,
+            "code": "        strategy.entry(\"LONG\", strategy.long, when = (low+high)/2)"
+          },
+          {
+            "line": 62,
+            "code": "        strategy.order(\"SHORT\", false, 1, when = (low+high)/2)"
+          }
+        ],
+        "detail": "VFI带内回归规则清楚，但信号为数值vfima、when使用中间价格隐式布尔，且order可不断增仓。",
+        "suggestion": "用明确布尔信号表达并给累计持仓限额；先核验是否希望持续加仓。",
+        "tradeoff": "限仓减少极端反转收益也减少风险。",
+        "validation": "vfima=0、连续同向信号、零成交量时验证信号及累计数量。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 211,
+    "sid": 2849,
+    "source_sha256": "ad575d81b1f8cf7df489ed842ddf0958913add339736ba541814c0332c2c4856",
+    "pine_sha256": "736a1db7302096f9cd7ea3da62b15bf2ff08cb8b3209b5725247f91b09e5c5a7",
+    "review_scope": "full_source_static",
+    "assessment": "RSI14低于40且RSI10更低空仓做多，固定入场ATR缓冲单调跟踪；可选风险收益目标及RSI超买且达目标退出。 双RSI回落入场有均值回归解释，但RSI退出仍要求动态ATR利润目标，可能在过热回落时不退出。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 27,
+            "code": "take_profit_long = low > entry_price + risk_reward_buffer"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：开始日期输入未用于入场。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；RSI退出额外要求take_profit_long，是否应无条件RSI退出属于设计选择。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 27,
+            "code": "take_profit_long = low > entry_price + risk_reward_buffer"
+          },
+          {
+            "line": 32,
+            "code": "stop_loss_price := max(stop_loss_price, close - trailing_SL_buffer)"
+          },
+          {
+            "line": 62,
+            "code": "    if TSL_ON and strategy.position_size > 0 and close <= stop_loss_price"
+          },
+          {
+            "line": 71,
+            "code": "    if strategy.position_size > 0 and TARGET_PROFIT_MODE"
+          },
+          {
+            "line": 77,
+            "code": "    if strategy.position_size > 0 and exit_condition"
+          },
+          {
+            "line": 78,
+            "code": "        if take_profit_long"
+          }
+        ],
+        "detail": "双RSI回落入场有均值回归解释，但RSI退出仍要求动态ATR利润目标，可能在过热回落时不退出。",
+        "suggestion": "确认RSI退出是否应独立于目标；冻结初始风险或明确动态目标。",
+        "tradeoff": "独立RSI退出可能提前结束趋势，冻结ATR减少波动自适应。",
+        "validation": "超买但未达目标、波动骤升导致目标远移、尾部计数重置分别验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 212,
+    "sid": 1993,
+    "source_sha256": "1ce10d7f0ffef7185cf938235a47adc74d2096cd159a954c77e4cd66c4e2a4e5",
+    "pine_sha256": "5f5b08582f26d4499a121b6b29706793601216c4c756cacb870450e20bb90aca",
+    "review_scope": "full_source_static",
+    "assessment": "SMA21>SMA55时随机RSI在20下金叉买多；在80上死叉平仓，平台默认数量。 均线上行时随机RSI超卖交叉买入、超买死叉退出，信号链自洽；趋势破坏后未必再到超买。",
+    "priority": "P2",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 32,
+            "code": "smaCondition = sma21 > sma55"
+          },
+          {
+            "line": 33,
+            "code": "stochRsiCondition = ta.crossover(stochRsiKLine, stochRsiDLine) and stochRsiKLine < 20"
+          },
+          {
+            "line": 39,
+            "code": "exitCondition = ta.crossunder(stochRsiKLine, stochRsiDLine) and stochRsiKLine > 80"
+          },
+          {
+            "line": 47,
+            "code": "    strategy.close(\"Buy\")"
+          }
+        ],
+        "detail": "均线上行时随机RSI超卖交叉买入、超买死叉退出，信号链自洽；趋势破坏后未必再到超买。",
+        "suggestion": "比较趋势失效退出与仅振荡器退出，添加最长持仓作为实验而非默认修复。",
+        "tradeoff": "更早退出可能减少完整反弹收益。",
+        "validation": "持仓后SMA21跌破55且K长期低于80的熊市分段测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 213,
+    "sid": 1738,
+    "source_sha256": "5fb8af3ecaa344b2064039b06e39c91581efc55f664e7bf9b2e90c8eb02b8313",
+    "pine_sha256": "45fe8ebdca95b811cdf2f156c06b15b834a05ede79eabdb51cb7991da06b1629",
+    "review_scope": "full_source_static",
+    "assessment": "RSI3减其SMA21再SMA13，上穿阈值并可选EMA200过滤做多，下穿平多，开始日期原被忽略。 RSI相对自身均值偏离的平滑零轴交叉可解释，默认关闭长趋势过滤；首先恢复已有日期门禁。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "_testPeriod() => true"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期函数恒真绕过开始日期。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "_testPeriod() => true"
+          },
+          {
+            "line": 27,
+            "code": "delta = RSI-SMA_RSI"
+          },
+          {
+            "line": 28,
+            "code": "SMA_RSI2 = sma(delta, length3)"
+          },
+          {
+            "line": 37,
+            "code": "long_condition =  Long and (filter ? close > ema(close, 200) : true) and _testPeriod()"
+          },
+          {
+            "line": 41,
+            "code": "strategy.close('BUY', when=short_condition)"
+          }
+        ],
+        "detail": "RSI相对自身均值偏离的平滑零轴交叉可解释，默认关闭长趋势过滤；首先恢复已有日期门禁。",
+        "suggestion": "比较EMA200过滤开关及参数邻域，分清13根平滑延迟。",
+        "tradeoff": "过滤降低交易频率并可能错过早期反弹。",
+        "validation": "日期前后信号、震荡成本、RSI3/4及平滑邻域做固定样本外对照。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 214,
+    "sid": 3958,
+    "source_sha256": "8696c43f637b04ac929ef74536873ba80b404d43449702031c6c053bfac1eb50",
+    "pine_sha256": "8630c487f6dbc28b820531e11dbf6be239ec03891a2d6d18641a44a8d2af592f",
+    "review_scope": "full_source_static",
+    "assessment": "价格进入位移云、RSI未超买且MACD/KST偏多以10%权益买入，逐笔货币利润达到入价30%退出。 用股票/图表标的订单命名为Call并不构成期权策略；总货币利润与单价30%比较量纲不一致。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 42,
+            "code": "priceEnteredCloudFromBelow = close[1] < senkouSpanA[displacement] and close > senkouSpanA[displacement] and senkouSpanA > senkouSpanB"
+          },
+          {
+            "line": 50,
+            "code": "    strategy.entry(\"Long Call Option\", strategy.long)"
+          },
+          {
+            "line": 54,
+            "code": "    if strategy.opentrades.profit(trade_num) >= strategy.opentrades.entry_price(trade_num) * 0.30"
+          }
+        ],
+        "detail": "用股票/图表标的订单命名为Call并不构成期权策略；总货币利润与单价30%比较量纲不一致。",
+        "suggestion": "明确收益目标是标的价格还是资金收益；若研究期权需另建合约与波动率模型。",
+        "tradeoff": "改量纲后退出频率随正确仓位口径变化，不能继承旧绩效。",
+        "validation": "相同价格路径用1股、10股、100股检查价格收益阈值是否一致。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 215,
+    "sid": 4573,
+    "source_sha256": "9f67d1c7add16774126c0333cc20665e6dae0bec70161237ab21027ba00f5185",
+    "pine_sha256": "0db62a6eb9502249ec2b685ad36c6cf00101be4b83b6108c218b8edad83fb188",
+    "review_scope": "full_source_static",
+    "assessment": "确认pinbar且空仓按方向开100%权益，以成交bar振幅计算止盈止损，可选跟踪及反向信号平仓。 Pinbar反转可以核验，但保护用成交柱而非信号柱高低，追踪分支缺距离；动态历史索引另有运行边界。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 33,
+            "code": "inTradeWindow = true"
+          },
+          {
+            "line": 74,
+            "code": "longSignal = isBullishPinbar(currentCandle) and inTradeWindow"
+          },
+          {
+            "line": 75,
+            "code": "shortSignal = isBearishPinbar(currentCandle) and inTradeWindow"
+          },
+          {
+            "line": 78,
+            "code": "if longSignal and isLongEligible"
+          },
+          {
+            "line": 102,
+            "code": "        strategy.exit(id=\"exit\", from_entry=\"sell\", trail_price = short_take_limit, stop=short_stop_limit)"
+          },
+          {
+            "line": 105,
+            "code": "        strategy.exit(id=\"exit\", from_entry=\"sell\", limit = short_take_limit, stop=short_stop_limit)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复开始日期开关。；保留原始多头形态供窗外退出使用。；保留原始空头形态供窗外退出使用。；日期仅限制多头入场。；日期仅限制空头入场。；独立空头退出ID避免修改多头保护。；独立空头退出ID避免修改多头保护。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；追踪分支缺trail_offset，当前仅stop可用，追踪距离设计仍未给出；barsSinceEntry动态历史引用需原生验证。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 86,
+            "code": "candleFromEntry = calcCandle(barsSinceEntry)"
+          },
+          {
+            "line": 91,
+            "code": "long_stop_limit = low[barsSinceEntry] * (1 - long_target_percent_loss)"
+          },
+          {
+            "line": 101,
+            "code": "        strategy.exit(id=\"exit\", from_entry=\"buy\", trail_price = long_take_limit, stop=long_stop_limit)"
+          },
+          {
+            "line": 102,
+            "code": "        strategy.exit(id=\"exit\", from_entry=\"sell\", trail_price = short_take_limit, stop=short_stop_limit)"
+          }
+        ],
+        "detail": "Pinbar反转可以核验，但保护用成交柱而非信号柱高低，追踪分支缺距离；动态历史索引另有运行边界。",
+        "suggestion": "在已有日期/ID修复后锁定形态柱锚，定义追踪激活价和tick距离。",
+        "tradeoff": "采用信号柱或成交柱会得到不同风险收益比。",
+        "validation": "跳空成交、长期持仓历史引用、追踪激活后回撤逐笔测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 216,
+    "sid": 5429,
+    "source_sha256": "ae51429d65571b20dbfbd24b5b02cbfce544f490669d1f8e2d76ffdeed9cad9c",
+    "pine_sha256": "bffa92202ec77cbf26477cb4fb6ebe21c681434d2d3577eabff525e4b0f63fbf",
+    "review_scope": "full_source_static",
+    "assessment": "SMA200下低量低波动做多，5%信号止损、价格乘2.5目标，RSI超买限价退出或等待3根后挂保护。 趋势退出同时要求close<sma和close>sma不可达；持续入场信号还重置等待根数，保护可能长期不提交。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 28,
+            "code": "uptrend = close > sma"
+          },
+          {
+            "line": 29,
+            "code": "downtrend = close < sma"
+          },
+          {
+            "line": 39,
+            "code": "warunek_wyjscia = downtrend and close > sma and ta.crossover(close, sma)"
+          },
+          {
+            "line": 47,
+            "code": "if (warunek_wejscia)"
+          },
+          {
+            "line": 49,
+            "code": "    take_profit := close * (1 + tp_multiplier)"
+          },
+          {
+            "line": 50,
+            "code": "    indeks_wejscia := bar_index"
+          },
+          {
+            "line": 58,
+            "code": "    if (rsi > 70)"
+          },
+          {
+            "line": 60,
+            "code": "    else if (bar_index - indeks_wejscia == wait_bars)"
+          }
+        ],
+        "detail": "趋势退出同时要求close<sma和close>sma不可达；持续入场信号还重置等待根数，保护可能长期不提交。",
+        "suggestion": "重建空仓/待成交/持仓状态，明确1.5为150%目标还是1.5倍风险，再统一维护保护。",
+        "tradeoff": "需要策略设计决定，机械删条件不能保证符合原意。",
+        "validation": "连续十根入场条件、RSI>70、等待根数到达和趋势上穿均应有明确退出路径。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 217,
+    "sid": 2992,
+    "source_sha256": "b8c00bb41b15c2de77b8de8645d45603f995a83968c05788f4b51818372b0b9e",
+    "pine_sha256": "5bc257eebc61d595497414c6dbd24eb37f1eb48085b2e7f0c4900993b73aba6d",
+    "review_scope": "full_source_static",
+    "assessment": "公历年份模12划分牛熊横盘，牛年做多熊年做空反转，横盘年平全部，仓位默认。 规则机械清楚，但仅以公历年对12取模决定整年多空，并非农历计算；缺乏可验证经济机制。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "yearDigit = year % 12"
+          },
+          {
+            "line": 16,
+            "code": "isBullYear = yearDigit == 0 or yearDigit == 1 or yearDigit == 4 or yearDigit == 5 or yearDigit == 8 or yearDigit == 9"
+          },
+          {
+            "line": 17,
+            "code": "isBearYear = yearDigit == 2 or yearDigit == 6 or yearDigit == 10"
+          },
+          {
+            "line": 18,
+            "code": "isFlatYear = yearDigit == 3 or yearDigit == 7 or yearDigit == 11"
+          }
+        ],
+        "detail": "规则机械清楚，但仅以公历年对12取模决定整年多空，并非农历计算；缺乏可验证经济机制。",
+        "suggestion": "先检验跨完整12年周期和随机年份置换，未通过前不做参数微调。",
+        "tradeoff": "更长样本可能证明所谓优势只是少数年份偶然。",
+        "validation": "用独立完整周期、年份标签置换与持有基准比较，并计入做空借券。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 218,
+    "sid": 3050,
+    "source_sha256": "ed0c9d1c2445aaf954a86bf649acad891231bd6c100b5533e435f58ea8df3972",
+    "pine_sha256": "5c8b156683442c237fa952c884ec4aefd38d904ee36fb6060fad493019caccd2",
+    "review_scope": "full_source_static",
+    "assessment": "Keltner外轨突破后在极值外1tick挂多空stop，价格回到中线取消；单向模式反轨挂stop平仓，双向依赖反转。 凯特纳突破挂单及反向退出有趋势解释，但单向模式回到中线可取消唯一退出单。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 64,
+            "code": "cancelBcond = crossBcond and (src < ma or high >= bprice)"
+          },
+          {
+            "line": 65,
+            "code": "cancelScond = crossScond and (src > ma or low <= sprice)"
+          },
+          {
+            "line": 84,
+            "code": "        if cancelScond"
+          },
+          {
+            "line": 85,
+            "code": "            strategy.cancel(\"KltChLX\")"
+          },
+          {
+            "line": 89,
+            "code": "            strategy.exit(\"KltChLX\", from_entry=\"KltChLE\", stop=sprice, comment=\"Long Exit\")"
+          }
+        ],
+        "detail": "凯特纳突破挂单及反向退出有趋势解释，但单向模式回到中线可取消唯一退出单。",
+        "suggestion": "区分入场挂单取消和持仓风险保护取消，确定保护是否应持续。",
+        "tradeoff": "持续保留退出会增加被回调扫出的交易。",
+        "validation": "退出挂出后回中线、再次下跌、双向反手与未成交单共存测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 219,
+    "sid": 5252,
+    "source_sha256": "72fe216b79a46915eeca69ef3e20f202ab750d21fa2e353875f81f20f78d3e2f",
+    "pine_sha256": "87d30fcd5be6e7f08b09f597982b7cf7afee8b37e9079036a804dd6964e83ecb",
+    "review_scope": "full_source_static",
+    "assessment": "SMA5/50金叉用余额除价格全仓做多，2%或标准差比例止损单调抬升，无其他退出。 均线金叉加波动自适应单向跟踪是可解释结构；全额已实现余额仓位和信号价估数量造成成本及跳空差异。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 31,
+            "code": "    longLossPerc := stdMult * ta.stdev(ohlc4, 20)/close"
+          },
+          {
+            "line": 32,
+            "code": "balance = strategy.initial_capital + strategy.netprofit"
+          },
+          {
+            "line": 33,
+            "code": "balanceInContracts = balance* confidence/close"
+          },
+          {
+            "line": 37,
+            "code": "    strategy.entry(\"BUY\", strategy.long, qty=balanceInContracts)"
+          },
+          {
+            "line": 45,
+            "code": "    stopValue = close * (1 - percLoss)"
+          },
+          {
+            "line": 46,
+            "code": "    math.max(stopValue, longStopPrice[1])"
+          }
+        ],
+        "detail": "均线金叉加波动自适应单向跟踪是可解释结构；全额已实现余额仓位和信号价估数量造成成本及跳空差异。",
+        "suggestion": "对仓位留成本缓冲，原生确认首根保护和零波动时距离；去重复版本仅作维护。",
+        "tradeoff": "缓冲减少名义收益，保护边界会改变成交。",
+        "validation": "高开入场、stddev=0、第二笔交易新低价验证订单金额及止损不继承旧值。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 220,
+    "sid": 1990,
+    "source_sha256": "34abbec1ee8d464637d268b290af97354f789ba875dc5f76b6d56d91a0f43961",
+    "pine_sha256": "d9052530cb74ec91846689a6319d5b597e697a59434207ede88d41d38caca20a",
+    "review_scope": "full_source_static",
+    "assessment": "9/21 SMA趋势与RSI反向极值空仓多空，ATR风险倍数目标；独立目标订单使180根等待分支失效。 空头目标的负号错误已有候选修复；180是K线根数且尾部TP无等待门禁，所谓最短3小时并未成立。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 47,
+            "code": "    takeProfit := entryPrice - (entryPrice - (entryPrice + (atr * atrMultiplier))) * riskRewardRatio"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：空头目标减去负价差导致目标在入场价上方。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；180按bar计数而非时钟小时，尾部TP调用绕过最短持仓；未擅自选择时长语义。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 47,
+            "code": "    takeProfit := entryPrice - (entryPrice - (entryPrice + (atr * atrMultiplier))) * riskRewardRatio"
+          },
+          {
+            "line": 55,
+            "code": "    if (bar_index - entryBarIndex >= 180) // 3 hours in 1-minute bars"
+          },
+          {
+            "line": 75,
+            "code": "    strategy.exit(\"TP Long\", limit=takeProfit)"
+          },
+          {
+            "line": 79,
+            "code": "    strategy.exit(\"TP Short\", limit=takeProfit)"
+          }
+        ],
+        "detail": "空头目标的负号错误已有候选修复；180是K线根数且尾部TP无等待门禁，所谓最短3小时并未成立。",
+        "suggestion": "先明确是否限制最短持仓，统一时间单位与全部退出入口，并另设真正止损。",
+        "tradeoff": "最短持有与风控冲突，止损应否豁免需设计决定。",
+        "validation": "在1分钟/1小时/日线核对180根含义；等待期内触目标和大亏分别验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 221,
+    "sid": 4662,
+    "source_sha256": "f04e89d9f8dc455cc8ebd8354597626640ff249767228b163bf667b94f2fe215",
+    "pine_sha256": "5903b9b275deebf2fd82688f88459c47cbcaeaf2d41f66c0670f5778ed4ca6c3",
+    "review_scope": "full_source_static",
+    "assessment": "前根所谓枢轴上下触及时按ATR风险金额多空，2 ATR加价差止损、3 ATR目标。 支撑与阻力完全同式，close单独除3使水平严重偏高；名义金额上限除ATR不是按价格限制名义敞口。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 21,
+            "code": "pivotHigh = high[1] + low[1] + close[1] / 3"
+          },
+          {
+            "line": 22,
+            "code": "pivotLow = high[1] + low[1] + close[1] / 3"
+          },
+          {
+            "line": 33,
+            "code": "positionSize = math.min(maxAmountPerTrade * leverage / (atrValue * 2), riskAmount / (atrValue * 2))  // Taille de la position en lots limitée par le montant maximum par trade et le risque autorisé"
+          },
+          {
+            "line": 36,
+            "code": "if low <= pivotLow"
+          },
+          {
+            "line": 44,
+            "code": "if high >= pivotHigh"
+          }
+        ],
+        "detail": "支撑与阻力完全同式，close单独除3使水平严重偏高；名义金额上限除ATR不是按价格限制名义敞口。",
+        "suggestion": "先确认枢轴定义及资金/止损/名义上限三套单位，不能仅补括号就称策略合理。",
+        "tradeoff": "重设枢轴会改变几乎全部信号，旧成绩不再可比。",
+        "validation": "OHLC=100附近手算枢轴，验证long/short覆盖和20倍杠杆上限实际金额。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 222,
+    "sid": 5786,
+    "source_sha256": "8d7b9e7099a5843d30cfb0f51ec70636f5ceee2d83a08905a99374bfae0a3fd9",
+    "pine_sha256": "d19f260afdf952fa05cc01d40ca8f3773bb2ab41b522824869466e813148793c",
+    "review_scope": "full_source_static",
+    "assessment": "SMA10/30交叉开多空，但死叉同时触发close_all。 均线双向反转与死叉全平同时发生，方向意图不唯一；不是单纯均线交叉可直接判定。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "longCondition = ta.crossover(fastMA, slowMA)"
+          },
+          {
+            "line": 26,
+            "code": "shortCondition = ta.crossunder(fastMA, slowMA)"
+          },
+          {
+            "line": 29,
+            "code": "exitCondition = ta.crossover(slowMA, fastMA)"
+          },
+          {
+            "line": 35,
+            "code": "    strategy.entry(\"Sell\", strategy.short)"
+          },
+          {
+            "line": 37,
+            "code": "    strategy.close_all()"
+          }
+        ],
+        "detail": "均线双向反转与死叉全平同时发生，方向意图不唯一；不是单纯均线交叉可直接判定。",
+        "suggestion": "明确仅多还是双向，令同根入场/平仓只遵循一套目标仓位。",
+        "tradeoff": "删去任一订单会改变空头暴露。",
+        "validation": "空仓死叉、持多死叉和持空金叉在原生订单队列中逐笔对照。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 223,
+    "sid": 3115,
+    "source_sha256": "01041d963cc1f8c127c544a1ee2c54ea19d84d9fb19776549f63d80e73654b97",
+    "pine_sha256": "7d307a32ee75ee4bf50a28c489a2b7e3d811ea4fbc5c8a037ad9e8aef2e1189e",
+    "review_scope": "full_source_static",
+    "assessment": "突破前200柱最高价买1份，跌破EMA90退出。 突破前200根高点再按EMA退出是清楚趋势逻辑；已有默认90低于min100的输入修复仍需编译。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 17,
+            "code": "range_ema = input.int(90,\"ema line\",minval=100,maxval=400,step=1)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：让既定默认90合法。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；strategy overlay=1的旧隐式类型兼容性仍需原生检查。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 17,
+            "code": "range_ema = input.int(90,\"ema line\",minval=100,maxval=400,step=1)"
+          },
+          {
+            "line": 19,
+            "code": "ath_price = ta.highest(bars)[1]"
+          },
+          {
+            "line": 27,
+            "code": "strategy.entry(\"Buy\", strategy.long, 1, when = close > ath_price) // enter long by market if current open great then previous high"
+          },
+          {
+            "line": 29,
+            "code": "strategy.close(\"Buy\",when = exit_condition )"
+          }
+        ],
+        "detail": "突破前200根高点再按EMA退出是清楚趋势逻辑；已有默认90低于min100的输入修复仍需编译。",
+        "suggestion": "先验证输入与overlay类型，再比较跨行业突破宽度及回撤退出。",
+        "tradeoff": "更紧退出可能牺牲趋势收益。",
+        "validation": "默认参数原生编译、90/100 EMA邻域、次日跳空与复权前高验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 224,
+    "sid": 3405,
+    "source_sha256": "d24e89fe877202bb18c21cd8f6fa241ea7ef8d083794beddc547dba5e874d32d",
+    "pine_sha256": "836a5ae1a42bf75bff5056b3ff397fbdce0c3ad5e28e8d7b8a0297faea5cfad6",
+    "review_scope": "full_source_static",
+    "assessment": "平滑OHLC4的EMA12/26状态转换，支持只多、只空或双向，单向反信号平仓。 双重平滑EMA转向有清晰因果性；日期候选恢复后需分别衡量仅多、仅空和双向的收益来源。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 64,
+            "code": "if LSB == \"Long only\" and Sell and window()"
+          },
+          {
+            "line": 72,
+            "code": "if LSB == \"Short only\" and Buy and window()"
+          },
+          {
+            "line": 73,
+            "code": "    strategy.close(\"S\",qty_percent=100,comment=\"TP Short\")"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复模式入场时间范围。；单向多仓退出独立。；单向空仓退出独立。；双向模式窗外只平原仓，禁止反向新开。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "AP = ema(src,2)"
+          },
+          {
+            "line": 20,
+            "code": "Fast = ema(AP,prd1)"
+          },
+          {
+            "line": 21,
+            "code": "Slow = ema(AP,prd2)"
+          },
+          {
+            "line": 32,
+            "code": "Buy = Bullish and Bearish[1]"
+          },
+          {
+            "line": 33,
+            "code": "Sell = Bearish and Bullish[1]"
+          },
+          {
+            "line": 59,
+            "code": "window()  => true // create function \"within window of time\""
+          }
+        ],
+        "detail": "双重平滑EMA转向有清晰因果性；日期候选恢复后需分别衡量仅多、仅空和双向的收益来源。",
+        "suggestion": "以固定模式先重测，避免在同一回测上挑最优方向。",
+        "tradeoff": "模式选择影响市场beta和借券成本。",
+        "validation": "三模式逐笔一致性、窗外仅平不反手、横盘成本敏感度测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 225,
+    "sid": 1515,
+    "source_sha256": "9c9eb376455ca33a261661070f45860a944194229e8396a1899c822a1eacfe8c",
+    "pine_sha256": "e42702090e24f1344eb84886e02be90e43bff002e7bea6f5f8a261542c53cbf2",
+    "review_scope": "full_source_static",
+    "assessment": "EMA20/50金叉、RSI>55、MACD及EMA200一致时10%权益做多；信号价1.5ATR止损、2R止盈，卖信号仅绘图。 多指标趋势共振可解释，但sell_condition仅绘图；真实策略只多并靠信号价ATR括号退出。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 34,
+            "code": "buy_condition = ta.crossover(ema_fast, ema_slow) and rsi > 55 and macd_line > signal_line and is_uptrend"
+          },
+          {
+            "line": 35,
+            "code": "sell_condition = ta.crossunder(ema_fast, ema_slow) and rsi < 45 and macd_line < signal_line and is_downtrend"
+          },
+          {
+            "line": 38,
+            "code": "stop_loss = close - (atr * atr_multiplier)"
+          },
+          {
+            "line": 44,
+            "code": "    strategy.exit(\"TP/SL\", from_entry=\"BUY\", stop=stop_loss, limit=take_profit)"
+          }
+        ],
+        "detail": "多指标趋势共振可解释，但sell_condition仅绘图；真实策略只多并靠信号价ATR括号退出。",
+        "suggestion": "标清只多，验证同根多重指标是否带来独立增益；决定反向信号是否平仓。",
+        "tradeoff": "减少过滤可能增加噪声，增加反向退出改变收益分布。",
+        "validation": "逐个去掉RSI/MACD/EMA200做消融，并检查重复买信号是否重锚保护。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 226,
+    "sid": 3524,
+    "source_sha256": "781a5390eac0d386576256d87fe959e19adc449fc5b814c1666fdacd80bf57b0",
+    "pine_sha256": "f20c223934cc5bf7d7fb0ab9f107ac8688fb053bcf50652db934b5de1fe63831",
+    "review_scope": "full_source_static",
+    "assessment": "阳线放量且ATR大于布林标准差做多，低点触及跟踪止损或高波动阴吞没平多。 低波动放量阳线买入假设清楚；末尾空仓清零会在下单尚未成交时抹去入场锚。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "within_timeframe = true"
+          },
+          {
+            "line": 47,
+            "code": "if strategy.position_size == 0 or not within_timeframe"
+          },
+          {
+            "line": 67,
+            "code": "if within_timeframe"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复可选结束时间的入场窗口。；不得因日期越界重置已有持仓跟踪止损。；将日期门槛下移至入场，退出控制流始终可达。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；空仓尾部会清零原entry_price/stop_loss_price，原统计与追踪初始化仍有语义疑点。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "within_timeframe = true"
+          },
+          {
+            "line": 71,
+            "code": "\tif close > open and volume > relative_vol and is_low_volat"
+          },
+          {
+            "line": 79,
+            "code": "\t\t\tstop_loss_price := TSL_source - ATR_x2"
+          },
+          {
+            "line": 88,
+            "code": "\t\tif TSL_source <= stop_loss_price"
+          },
+          {
+            "line": 95,
+            "code": "        strategy.close(ENUM_LONG, when=bExit, comment=exit_msg)"
+          },
+          {
+            "line": 98,
+            "code": "if strategy.position_size == 0"
+          },
+          {
+            "line": 100,
+            "code": "\tstop_loss_price := float(0)"
+          }
+        ],
+        "detail": "低波动放量阳线买入假设清楚；末尾空仓清零会在下单尚未成交时抹去入场锚。",
+        "suggestion": "日期候选之后用实际成交状态初始化风险，区分待成交和真正空仓。",
+        "tradeoff": "改变初始化可能改变第一根保护行为。",
+        "validation": "信号柱仍空仓、次柱成交、止损与新入场同柱分别逐根跟踪变量。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 227,
+    "sid": 3878,
+    "source_sha256": "509c59c531cd182d7bbaae8e34fc811264adb3ef22839583d2ccdbb55d8d0e64",
+    "pine_sha256": "a6aad81c271a1a1b0ce9dd962c45e8e2058d326422e6293c0273aae46c2c18dd",
+    "review_scope": "full_source_static",
+    "assessment": "EMA20/50交叉做多空，信号柱振幅形成四档目标；另以当前close±3%尝试保护。 四个全量退出不等于四档分批；预留数量及多空同ID使止损和后档目标的实际覆盖不可信。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 73,
+            "code": "strategy.exit(\"Take Profit 1\", \"Buy\", limit=takeProfit1)"
+          },
+          {
+            "line": 74,
+            "code": "strategy.exit(\"Take Profit 2\", \"Buy\", limit=takeProfit2)"
+          },
+          {
+            "line": 75,
+            "code": "strategy.exit(\"Take Profit 3\", \"Buy\", limit=takeProfit3)"
+          },
+          {
+            "line": 76,
+            "code": "strategy.exit(\"Take Profit 4\", \"Buy\", limit=takeProfit4)"
+          },
+          {
+            "line": 78,
+            "code": "strategy.exit(\"Take Profit 1\", \"Sell\", limit=takeProfit1)"
+          },
+          {
+            "line": 85,
+            "code": "strategy.exit(\"Stop Loss\", \"Buy\", stop=close * (1 - stopLoss))"
+          },
+          {
+            "line": 86,
+            "code": "strategy.exit(\"Stop Loss\", \"Sell\", stop=close * (1 + stopLoss))"
+          }
+        ],
+        "detail": "四个全量退出不等于四档分批；预留数量及多空同ID使止损和后档目标的实际覆盖不可信。",
+        "suggestion": "为每档分配明确数量、独立方向ID，并确保每份剩余仓位带止损。",
+        "tradeoff": "分批比例和目标锚需设计，收益曲线会改变。",
+        "validation": "四档数量之和、部分成交后剩余保护、反手时旧目标清除原生验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 228,
+    "sid": 2868,
+    "source_sha256": "df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169",
+    "pine_sha256": "97a7abbbb4b01393ec392f4c9bbf61876de2ba68a474f42d367786c9d33c9aa3",
+    "review_scope": "full_source_static",
+    "assessment": "RSI14低于25做多，均价+7%/-3.5%保护只在超卖分支提交。 RSI低于25买入是超卖均值回归，但画出的上穿入场与真实低于阈值入场不同。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 39,
+            "code": "        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=long_take_level, stop=long_stop_level)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：保护单独立于入场信号，在有效持仓均价存在时每根维护。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；首次保护依赖成交后的下一次计算，未添加成交重算。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 18,
+            "code": "plotshape(series=strategy.position_avg_price > 0 and vrsi[1] <= overSold and vrsi > overSold,"
+          },
+          {
+            "line": 25,
+            "code": "long_tp_inp = input(0.07, title='Long Take Profit %')"
+          },
+          {
+            "line": 26,
+            "code": "long_sl_inp = input(0.035, title='Long Stop Loss %')"
+          },
+          {
+            "line": 35,
+            "code": "    if vrsi < overSold"
+          },
+          {
+            "line": 39,
+            "code": "        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=long_take_level, stop=long_stop_level)"
+          }
+        ],
+        "detail": "RSI低于25买入是超卖均值回归，但画出的上穿入场与真实低于阈值入场不同。",
+        "suggestion": "已有保护补丁后统一图示与真实信号，明确0.07代表7%而非0.07%。",
+        "tradeoff": "统一显示不改信号；若改成上穿则为新策略。",
+        "validation": "首笔成交后RSI立即恢复、7%/3.5%目标及图示对应订单检查。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 229,
+    "sid": 5306,
+    "source_sha256": "80dc68537c6ad41a432c1e3ba8fafdb0c0afc91c407e16835096b59cc098e98c",
+    "pine_sha256": "ce52fc847c65f1928aee106f52dd8c7e436b8e0cba0a447a1877dccf14b43c67",
+    "review_scope": "full_source_static",
+    "assessment": "RSI14偏离50后WMA5再双曲变换，上穿-0.8在close挂stop做多，无信号撤单；下穿动态0/1阈值退出。 逆Fisher RSI反转可解释，但上阈值是随RVS变化的0/1而非固定0.8，退出定义需明确。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "threshold1 = RVS_RSI < 0.8? 1 : 0"
+          },
+          {
+            "line": 33,
+            "code": "buycon = crossover(RVS_RSI,threshold2)"
+          },
+          {
+            "line": 34,
+            "code": "sellcon = crossunder(RVS_RSI , threshold1)"
+          },
+          {
+            "line": 43,
+            "code": "    strategy.entry(\"BUY\", strategy.long, stop=close, oca_name=\"TREND\", comment=\"BUY\")"
+          },
+          {
+            "line": 46,
+            "code": "    strategy.cancel(id=\"BUY\")"
+          }
+        ],
+        "detail": "逆Fisher RSI反转可解释，但上阈值是随RVS变化的0/1而非固定0.8，退出定义需明确。",
+        "suggestion": "固定并命名预期阈值，比较当前跳变阈值与标准阈值，管理次根撤销止价入口。",
+        "tradeoff": "改阈值会改变大部分退出，不属于无风险修复。",
+        "validation": "RVS从0.9到0.7、从0.7到0.9及挂单未成交次根撤销手算。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 230,
+    "sid": 2002,
+    "source_sha256": "031d78a7d881b268a835c06152917dad3d83e1e169b7f55d50645aa6d45fd9a5",
+    "pine_sha256": "d6146a49764ddfbedfe82ab41709c279e68365d965863e2f359fdb5694c6df1b",
+    "review_scope": "full_source_static",
+    "assessment": "EMA20/50金叉做多，死叉或收盘达到信号价-2.5%/+4%时市价平多。 EMA交叉加百分比退出逻辑可读，但所谓止损是收盘判断市价平仓，且锚定信号收盘而非实际成交。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 31,
+            "code": "if (long_condition)"
+          },
+          {
+            "line": 32,
+            "code": "    entry_price := close"
+          },
+          {
+            "line": 37,
+            "code": "exit_condition = (close <= stop_loss_level) or (close >= take_profit_level)"
+          },
+          {
+            "line": 43,
+            "code": "if (short_condition or exit_condition)"
+          },
+          {
+            "line": 44,
+            "code": "    strategy.close(\"Compra\")"
+          }
+        ],
+        "detail": "EMA交叉加百分比退出逻辑可读，但所谓止损是收盘判断市价平仓，且锚定信号收盘而非实际成交。",
+        "suggestion": "明确收盘风控定位；对照成交均价挂单版并检查重复交叉重锚。",
+        "tradeoff": "真实挂单能减少盘中风险但会改变回测成交模型。",
+        "validation": "盘中跌破2.5%后收回、跳空低开和连续金叉重设锚点测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 231,
+    "sid": 5084,
+    "source_sha256": "0ee7eb419b44cf843a3b3d42563fef0ccc1d314a7c6bd9e5de982f6a00feb688",
+    "pine_sha256": "044da6b37d256fab18e160b4bf5afd0f01cdbfad5341cddf052c2f8751dc6d07",
+    "review_scope": "full_source_static",
+    "assessment": "SMA5/20金叉做多、死叉退出；布林、RSI、均价云和ROC仅作展示。 实际交易只有SMA5/20交叉，布林/RSI/云/Momentum只是展示；已有BB元组修复只影响显示。",
+    "priority": "P2",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 31,
+            "code": "[bbUpper, bbMiddle, bbLower] = ta.bb(close, bbLength, bbMult)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：修复展示返回值。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 31,
+            "code": "[bbUpper, bbMiddle, bbLower] = ta.bb(close, bbLength, bbMult)"
+          },
+          {
+            "line": 55,
+            "code": "crossAbove = ta.crossover(ma1, ma2)"
+          },
+          {
+            "line": 56,
+            "code": "crossBelow = ta.crossunder(ma1, ma2)"
+          },
+          {
+            "line": 64,
+            "code": "if (crossAbove)"
+          },
+          {
+            "line": 67,
+            "code": "    strategy.close(\"Buy\")"
+          }
+        ],
+        "detail": "实际交易只有SMA5/20交叉，布林/RSI/云/Momentum只是展示；已有BB元组修复只影响显示。",
+        "suggestion": "精简无交易作用展示，别给多指标共振加逻辑分；测试均线参数稳健性。",
+        "tradeoff": "界面简化不应改变任何订单；后加过滤是新实验。",
+        "validation": "清理前后订单完全一致，BB标签正确，均线邻域与成本压力测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 232,
+    "sid": 799,
+    "source_sha256": "5244f67bbbfd825ef266e0e011b9fc88be589ccc5b2897ebacac26a98037e313",
+    "pine_sha256": "300b4a9c08c56e9648e92ca0e75a1eb9876013e3b176515679c848b07867aa05",
+    "review_scope": "full_source_static",
+    "assessment": "RSI16的EMA12高于SMA29且价格高于EMA8做多100%权益，RSI均线反向时平多。 RSI均线状态加价格EMA过滤可解释；重复条件下重新买入需核对退出后的再入频率。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 48,
+            "code": "    strategy.close(id=\"long\", when=(emavalue < smavalue))"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复日期窗。；退出移出日期入场门禁。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 35,
+            "code": "emavalue=ema(rsi,RSIemaLen)"
+          },
+          {
+            "line": 36,
+            "code": "smavalue=sma(rsi,RSIsmaLen2)"
+          },
+          {
+            "line": 47,
+            "code": "    strategy.entry(\"long\",strategy.long, comment=\"RSIEMA\", when=(emavalue > smavalue and close>ema))"
+          },
+          {
+            "line": 48,
+            "code": "    strategy.close(id=\"long\", when=(emavalue < smavalue))"
+          }
+        ],
+        "detail": "RSI均线状态加价格EMA过滤可解释；重复条件下重新买入需核对退出后的再入频率。",
+        "suggestion": "日期修复后比较状态入场与首次交叉入场，固定成本口径。",
+        "tradeoff": "首次交叉会漏掉趋势中途重新入场。",
+        "validation": "连续emavalue>smavalue、价格反复穿EMA8时记录完整交易序列。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 233,
+    "sid": 1546,
+    "source_sha256": "30b0477884adc30fd7285451d12f733659115d33dd7f283c46f9fc21a6b64f32",
+    "pine_sha256": "4464495fa99d009454ba810f9497e50dd9fdc558e7fab2956e22c16b46da81f6",
+    "review_scope": "full_source_static",
+    "assessment": "在SMA50/200上且回落三个区间中点均值时做多，以动态78.6%水平止损和2R止盈。 均线之上回调买入有趋势回撤逻辑，但78.6%距离对三段总和取值而基准取平均，尺度混用。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 42,
+            "code": "    fib_50_level := (retrace_21_mid + retrace_50_mid + retrace_9_mid) / 3"
+          },
+          {
+            "line": 43,
+            "code": "    fib_786_level := (retrace_21_high + retrace_50_high + retrace_9_high) / 3 - ((retrace_21_high + retrace_50_high + retrace_9_high - (retrace_21_low + retrace_50_low + retrace_9_low)) * 0.786)"
+          },
+          {
+            "line": 52,
+            "code": "takeProfitLevel = strategy.position_avg_price + (strategy.position_avg_price - fib_786_level) * risk_reward_ratio"
+          },
+          {
+            "line": 53,
+            "code": "stopLossLevel = fib_786_level"
+          }
+        ],
+        "detail": "均线之上回调买入有趋势回撤逻辑，但78.6%距离对三段总和取值而基准取平均，尺度混用。",
+        "suggestion": "确认平均区间回撤公式，冻结或单向调整持仓风险，不直接改常数追求成绩。",
+        "tradeoff": "公式规范化会显著缩短止损距离。",
+        "validation": "三个相同区间高110低100时手算目标应否为102.14，并检查负止损。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 234,
+    "sid": 381,
+    "source_sha256": "ec26c8644aa57fb6107d93f1eda32f99fdc6bc8585e6402ed90a218c278326cb",
+    "pine_sha256": "a52eee92bd2ffe0dd5a1aabbe1ca5e0dadbe0e41f94a2a71cda8635664ccb2fb",
+    "review_scope": "full_source_static",
+    "assessment": "确认前一根局部高点后向上突破做多，确认局部低点后向下突破平多；负位移只用于标记。 枢轴确认后突破是合理可解释规则，但要求open在水平内会漏过直接跳空穿越，图形回移易误读。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 15,
+            "code": "entryCondition = high < high[1] and high[1] > high[2]"
+          },
+          {
+            "line": 21,
+            "code": "buyCondition = not na(entryHigh) and high > entryHigh and open < entryHigh"
+          },
+          {
+            "line": 26,
+            "code": "exitCondition = low > low[1] and low[1] < low[2]"
+          },
+          {
+            "line": 32,
+            "code": "sellCondition = not na(exitLow) and low < exitLow and open > exitLow"
+          },
+          {
+            "line": 39,
+            "code": "plotshape(series=entryCondition, title=\"Entry Dot\", color=color.rgb(3, 99, 5), style=shape.circle, size=size.tiny, location=location.abovebar, offset=-1)"
+          }
+        ],
+        "detail": "枢轴确认后突破是合理可解释规则，但要求open在水平内会漏过直接跳空穿越，图形回移易误读。",
+        "suggestion": "区分跳空突破是否参与；让确认柱而非回移图标承担信号时间。",
+        "tradeoff": "纳入跳空可能增加高价追入和回撤。",
+        "validation": "开盘越过entryHigh/exitLow、同根双向穿越和确认延迟验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 235,
+    "sid": 2604,
+    "source_sha256": "63cc75b16f279c76c13ae8fdb16e8f2ada342fca822abfb02d7e643a58e31628",
+    "pine_sha256": "684364b515df79dc492307666322c0f98192c5507d93fe718878a63497c9e713",
+    "review_scope": "full_source_static",
+    "assessment": "价格偏离SMA超过ATR资格且位于HMA同侧开多空，历史低点限定；可选1/2/3目标。 突破基线加HMA方向可解释，但空头qty直接乘负仓位、三目标缺空头退出，分批价格直接折半不是风险距离。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 60,
+            "code": "pbcqValid = not pbcqEnabled or low[pbcqBarsAgo] > baseline"
+          },
+          {
+            "line": 72,
+            "code": "    strategy.exit(\"TP/SL\", \"Long\", limit=rangeHigh, stop=rangeLow)"
+          },
+          {
+            "line": 73,
+            "code": "    strategy.exit(\"TP/SL\", \"Short\", limit=rangeLow, stop=rangeHigh)"
+          },
+          {
+            "line": 75,
+            "code": "    strategy.exit(\"TP1\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh / 2)"
+          },
+          {
+            "line": 77,
+            "code": "    strategy.exit(\"TP1\", \"Short\", qty=strategy.position_size * 0.5, limit=rangeLow / 2)"
+          },
+          {
+            "line": 79,
+            "code": "else if (takeProfitType == \"3 Take Profits\")"
+          },
+          {
+            "line": 82,
+            "code": "    strategy.exit(\"TP3\", \"Long\", qty=strategy.position_size * 0.25, limit=rangeHigh * 1.5)"
+          }
+        ],
+        "detail": "突破基线加HMA方向可解释，但空头qty直接乘负仓位、三目标缺空头退出，分批价格直接折半不是风险距离。",
+        "suggestion": "先定义各方向分批数量和风险距离，所有模式都覆盖全仓止损。",
+        "tradeoff": "修正会改变数量与成交路径，需废弃旧版收益推断。",
+        "validation": "逐一运行1/2/3目标×多/空六种组合，验证qty正值及剩余保护。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 236,
+    "sid": 2687,
+    "source_sha256": "2bc4ac72d2bd702f1bd450c7d23900c0e403b4341af5d4530a5262663f59468a",
+    "pine_sha256": "c8675e31847ad2da61dc7af02e2eca7ac9c72cd53c5d6d42c0ac717cd651ffc6",
+    "review_scope": "full_source_static",
+    "assessment": "EMA5/20金叉做多100%权益，死叉平仓；起止时间输入未生效。 EMA5/20仅多交叉是适合基准的简单模型，优化应优先成本稳健性而非堆叠指标。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "in_range = true"
+          },
+          {
+            "line": 48,
+            "code": "if in_range and sell_signal"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复时间输入。；解除平仓的日期限制。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "in_range = true"
+          },
+          {
+            "line": 39,
+            "code": "buy_signal = crossover(fast_ema, slow_ema)"
+          },
+          {
+            "line": 40,
+            "code": "sell_signal = crossunder(fast_ema, slow_ema)"
+          },
+          {
+            "line": 44,
+            "code": "if in_range and buy_signal"
+          },
+          {
+            "line": 48,
+            "code": "if in_range and sell_signal"
+          }
+        ],
+        "detail": "EMA5/20仅多交叉是适合基准的简单模型，优化应优先成本稳健性而非堆叠指标。",
+        "suggestion": "先应用日期候选复测，再做相邻均线长度与横盘样本评估。",
+        "tradeoff": "增加过滤可能降低交易量但增加样本选择偏差。",
+        "validation": "恢复日期前后仅窗内新增交易、窗外退出，费用翻倍与邻域参数对照。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 237,
+    "sid": 2497,
+    "source_sha256": "1000e9ffd1d4cb0053ce6d9fe1513d393159cd10be064fc17b2de02831b6f070",
+    "pine_sha256": "76cc2b30730ecb9a0689be876e27dbe77c3904033bd9a291ae6b398839e11929",
+    "review_scope": "full_source_static",
+    "assessment": "新13根支撑低点做多最多10笔，新阻力高点平多；另有5%收盘止损条件。 真正入场是创新低买入、创新高平仓，均线与鳄鱼指标不参与交易；原止损不可达已有候选。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 97,
+            "code": "longStopLossPrice = close * 0.95"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：正价格不可能小于自身95%，止损永不触发。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；仍为收盘触发市价退出，不是盘中95止损单；加仓后按新均价计算。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 14,
+            "code": "strategy('Estrategia EMA Resistencia Soporte', shorttitle='Estrategia EMA RESISTENCIA Y SOPORTE', overlay=true, margin_long=100, margin_short=100, pyramiding = 10 )"
+          },
+          {
+            "line": 87,
+            "code": "longCondition = low == lowRS"
+          },
+          {
+            "line": 89,
+            "code": "    strategy.entry(\"Long\", strategy.long)"
+          },
+          {
+            "line": 97,
+            "code": "longStopLossPrice = close * 0.95"
+          },
+          {
+            "line": 98,
+            "code": "if strategy.position_size > 0 and close <= longStopLossPrice"
+          }
+        ],
+        "detail": "真正入场是创新低买入、创新高平仓，均线与鳄鱼指标不参与交易；原止损不可达已有候选。",
+        "suggestion": "在修复止损后明确最多10层的总风险，按真实成交均价验证累加敞口。",
+        "tradeoff": "限仓/止损可能显著降低旧回测表观胜率。",
+        "validation": "连续创新低十次、加仓均价变化及低开穿越95%阈值测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 238,
+    "sid": 2168,
+    "source_sha256": "c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97",
+    "pine_sha256": "e05c4cb547bb49b32c864ad8f4637514443eda52774c70ca7b0dca95b13f81fc",
+    "review_scope": "full_source_static",
+    "assessment": "两组EMA差RSI及EMA RSI上穿零分别开多，按启用组数均分权益；下穿零或超过终日分别平仓。 所谓双时间轴实际是同周期两种RSI趋势长度；两开关皆关时count=0，默认不加仓可能令两腿不能独立持有。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 48,
+            "code": "window()  => true"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复入场窗口。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；两个Trade开关皆false时count=0导致Amount无效，未修。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 24,
+            "code": "count = TradeShortTerm == true ? 1 : 0"
+          },
+          {
+            "line": 25,
+            "code": "count := TradeLongTerm == true ? count + 1 : count"
+          },
+          {
+            "line": 27,
+            "code": "Amount = strategy.equity / (close * count)"
+          },
+          {
+            "line": 50,
+            "code": "strategy.entry(\"ShortTerm\", strategy.long, qty = Amount, when = window() and crossover(shortTermXtrender,0) and TradeShortTerm)"
+          },
+          {
+            "line": 51,
+            "code": "strategy.entry(\"LongTerm\", strategy.long, qty = Amount, when = window() and crossover(longTermXtrender,0) and TradeLongTerm)"
+          }
+        ],
+        "detail": "所谓双时间轴实际是同周期两种RSI趋势长度；两开关皆关时count=0，默认不加仓可能令两腿不能独立持有。",
+        "suggestion": "保护count=0并明确两腿合并还是独立额度；不擅自启用加仓。",
+        "tradeoff": "启用双腿会改变总风险及旧仓位口径。",
+        "validation": "四种开关组合、同根双信号、单腿退出另一腿仍持有验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 239,
+    "sid": 1441,
+    "source_sha256": "aa050d9c9c335070eea478a28d4f65da6039fdcd553a50ebdf98b34908991285",
+    "pine_sha256": "180a71128ffbe15e7f894d54537628369150926d1ea4279e07fa4167670b1bd7",
+    "review_scope": "full_source_static",
+    "assessment": "价格上穿PSAR且RSI超卖时以10%权益做多，信号价5%目标与3%止损；反向PSAR且RSI超买平仓。 PSAR转多同时RSI超卖是窄窗口反转条件；TP/SL按信号close并可能被后续买信号重锚。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 30,
+            "code": "buy_signal = ta.crossover(close, psar) and rsi < rsi_oversold"
+          },
+          {
+            "line": 31,
+            "code": "sell_signal = ta.crossunder(close, psar) and rsi > rsi_overbought"
+          },
+          {
+            "line": 53,
+            "code": "    strategy.exit(\"Take Profit / Stop Loss\", from_entry=\"Buy\", limit=close * (1 + tp_percent), stop=close * (1 - sl_percent))"
+          },
+          {
+            "line": 56,
+            "code": "    strategy.close(\"Buy\")"
+          }
+        ],
+        "detail": "PSAR转多同时RSI超卖是窄窗口反转条件；TP/SL按信号close并可能被后续买信号重锚。",
+        "suggestion": "检验该同根组合相对单一信号的增益，并明确风险锚是否只随新成交改变。",
+        "tradeoff": "放宽组合提升样本但增加噪声；冻结锚可能提前退出。",
+        "validation": "信号后跳空、持仓中再次PSAR翻多及稀疏交易分布验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 240,
+    "sid": 4127,
+    "source_sha256": "e9b78cbf92b9e517377a74354a969957afde377fb456d50c8d7a213bc955fcc7",
+    "pine_sha256": "56c6fefc42cb42142e8ac1212e4127fc337eafe453add82735cd77ea2f14586c",
+    "review_scope": "full_source_static",
+    "assessment": "EMA20、SMA100/200与MACD持续向上且价格结构满足时固定1000现金做多，5%收盘止损或前根均线死叉平仓。 多均线上行+MACD确认可解释，但手工持仓状态假设下单即成交，反向EMA判断还延迟一柱。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 126,
+            "code": "    if (bPositionOpened == false and bSMASlowIsRising == true and bMACDIsRising == true and bEMAIsRising == true and bSMAIsRising == true and ema[0] > sma[0] and sma[0] < currentPrice)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：窗口函数恒真。；保持窗外持仓退出。；只允许窗口内新入场。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；手工持仓标志仍假设订单成交；不改变历史撮合行为。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 126,
+            "code": "    if (bPositionOpened == false and bSMASlowIsRising == true and bMACDIsRising == true and bEMAIsRising == true and bSMAIsRising == true and ema[0] > sma[0] and sma[0] < currentPrice)"
+          },
+          {
+            "line": 131,
+            "code": "        stopLossPrice := currentPrice*(1-stopLoss/100) "
+          },
+          {
+            "line": 132,
+            "code": "        strategy.entry(\"myPosition\", strategy.long, qty=stockPositionSize, comment=\"BUY at \" + tostring(currentPrice))"
+          },
+          {
+            "line": 134,
+            "code": "        bPositionOpened := true  "
+          },
+          {
+            "line": 137,
+            "code": "    if (bPositionOpened == true and (currentPrice <= stopLossPrice or crossunder(ema[1], sma[1])))"
+          },
+          {
+            "line": 142,
+            "code": "        bPositionOpened := false "
+          }
+        ],
+        "detail": "多均线上行+MACD确认可解释，但手工持仓状态假设下单即成交，反向EMA判断还延迟一柱。",
+        "suggestion": "用实际成交驱动状态，先核对ema[1]/sma[1]延迟是否有意。",
+        "tradeoff": "去掉延迟和改状态可改变入退时点。",
+        "validation": "资金不足未成交、开仓与退出同根及死叉前后两柱逐步复核。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 241,
+    "sid": 2352,
+    "source_sha256": "7bad3c1d0a47611bd69d57fad2c7bd5a30013b063695381faad8ea401b3e4eeb",
+    "pine_sha256": "c17a95222b4125500f113f19853a1edd2a68f5615325b2d20b65df8500741c9c",
+    "review_scope": "full_source_static",
+    "assessment": "SSL翻转且价格在EMA200对应侧时全权益开多空；以信号SSL线挂止损，获利且SSL反转时市价退出。 SSL+EMA200双向信号有因果逻辑，但止损输入未用，盈利过滤混合10%价格界限与0.1货币利润。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 17,
+            "code": "stop_loss = input.float(2.00, title='Stop Loss', step=0.10)"
+          },
+          {
+            "line": 49,
+            "code": "UTmpdefineL = (UTmpconvertL > close and strategy.openprofit > 0.1)"
+          },
+          {
+            "line": 57,
+            "code": "UTmpdefineLS = (UTmpconvertLS > close and strategy.openprofit > 0.1)"
+          },
+          {
+            "line": 70,
+            "code": "if comprado and not vendido and por_cruce and SPL"
+          },
+          {
+            "line": 74,
+            "code": "if comprado and not vendido and Stop"
+          },
+          {
+            "line": 75,
+            "code": "    strategy.exit('Compra', stop=Stop, comment=\"SL\")"
+          },
+          {
+            "line": 83,
+            "code": "    SL := sslDown"
+          },
+          {
+            "line": 89,
+            "code": "if not comprado and vendido and Stop"
+          }
+        ],
+        "detail": "SSL+EMA200双向信号有因果逻辑，但止损输入未用，盈利过滤混合10%价格界限与0.1货币利润。",
+        "suggestion": "明确止损取SSL还是输入比例，盈利门槛统一为单一单位并保留初始保护。",
+        "tradeoff": "移除盈利门槛会实现更多亏损，不能仅追求更高胜率。",
+        "validation": "不同股数下退出门槛、止损首次提交后SL清零而订单存续、空头盈利区间验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 242,
+    "sid": 5240,
+    "source_sha256": "5455817804f192caf44f009646677dfc932adc1633b7e147e3b563790af1e651",
+    "pine_sha256": "32fadcb0f535aef2b10e7b05b87fe08b53f8cb57966a86bd2d683e1c67b1b628",
+    "review_scope": "full_source_static",
+    "assessment": "EMA25/100金叉开多，以最近EMA100下阴线低点止损、信号收盘3R目标；尝试盈利2%保本。 保本代码仅在金叉时运行，且原全量退出已预留仓位，新增保本ID不能可靠覆盖原仓。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 31,
+            "code": "if (bullishCross)"
+          },
+          {
+            "line": 33,
+            "code": "    strategy.exit(\"Exit Buy\", \"Buy\", stop=longSL, limit=longTP)  // SL va TP qo'yish"
+          },
+          {
+            "line": 36,
+            "code": "    if (strategy.position_size > 0)"
+          },
+          {
+            "line": 38,
+            "code": "        if (profitPercentage >= 2)"
+          },
+          {
+            "line": 39,
+            "code": "            strategy.exit(\"Exit Buy BE\", \"Buy\", stop=strategy.position_avg_price) // SLni break-even ga o'zgartirish"
+          }
+        ],
+        "detail": "保本代码仅在金叉时运行，且原全量退出已预留仓位，新增保本ID不能可靠覆盖原仓。",
+        "suggestion": "持仓期独立更新同一保护单，保存初始目标，明确保本激活状态。",
+        "tradeoff": "更早保本可能提高小亏小赢频率。",
+        "validation": "金叉次日成交、非金叉柱浮盈2%、部分成交及跳空回成本验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 243,
+    "sid": 5698,
+    "source_sha256": "02f52146c43c3f5344398edb65b6ef06c1cff21cc4b6bc4aca3852049364653a",
+    "pine_sha256": "95b18e1b44d47624b73e7229525274778ddd1461987ae73d67b1b3c6b6bc2fd4",
+    "review_scope": "full_source_static",
+    "assessment": "一目转换/基准金叉且价格高于位移云上方开多；死叉或跌破位移云下方即平多，另外严格双条件退出重复但无增仓。 云层历史偏移配合转折线交叉是清楚仅多趋势模型，未见当前数据被当未来信息使用；显示云填充对象不对应span。",
+    "priority": "P2",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 28,
+            "code": "p3 = plot(senkouSpanA, color=color.green, title=\"Senkou Span A\", offset=displacement)"
+          },
+          {
+            "line": 29,
+            "code": "p4 = plot(senkouSpanB, color=color.orange, title=\"Senkou Span B\", offset=displacement)"
+          },
+          {
+            "line": 30,
+            "code": "fill(p1, p2, color=color.purple, transp=80, title=\"Cloud\")"
+          },
+          {
+            "line": 33,
+            "code": "buyCondition = crossover(tenkanSen, kijunSen) and close > max(senkouSpanA, senkouSpanB)[displacement]"
+          },
+          {
+            "line": 44,
+            "code": "strategy.close(\"Buy\", when = crossunder(tenkanSen, kijunSen) or close < min(senkouSpanA, senkouSpanB)[displacement])"
+          }
+        ],
+        "detail": "云层历史偏移配合转折线交叉是清楚仅多趋势模型，未见当前数据被当未来信息使用；显示云填充对象不对应span。",
+        "suggestion": "修正展示并做退出OR条件的消融，避免把图形偏移误作信号提前。",
+        "tradeoff": "更严格退出可能增加震荡损失。",
+        "validation": "逐根对齐26柱前span、实际信号与绘图，核验退出OR与AND两模型。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 244,
+    "sid": 3647,
+    "source_sha256": "e92225f7311f03c8564d5ee712f8af753f9acd920c8c0fe630ae3351231c7a45",
+    "pine_sha256": "3d758c086744df2b42e8cbfa5824c42380909a7f77b2fa67767a7fe16e8b699a",
+    "review_scope": "full_source_static",
+    "assessment": "高价上穿六期RMA收盘上浮1.9%开多，低价下穿RMA下浮1.5%市价退出，均线会双向移动。 上下RMA百分比通道突破是趋势规则，但止损线会随均线下降，并非持仓只升不降的跟踪。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "tsl = rma(srcts, sumbars)*(1-(offset/100))// = (sum(srcts,sumbars)/sumbars)*(1-(offset/100))"
+          },
+          {
+            "line": 21,
+            "code": "tbuy = rma(srctb, sumbars)*(1+(buyoffset/100))"
+          },
+          {
+            "line": 29,
+            "code": "longCondition =  crossover(srctriggerbuy,tbuy)"
+          },
+          {
+            "line": 32,
+            "code": "closeCondition = crossunder(srctrigger,tsl)"
+          },
+          {
+            "line": 34,
+            "code": "    strategy.close(\"Long\")"
+          }
+        ],
+        "detail": "上下RMA百分比通道突破是趋势规则，但止损线会随均线下降，并非持仓只升不降的跟踪。",
+        "suggestion": "明确是通道退出还是单向跟踪；需要跟踪时用持仓峰值状态另做对照。",
+        "tradeoff": "只升不降更容易被震荡扫出。",
+        "validation": "均线持续下降时止损是否放宽、同根高低穿双轨和次开盘成交验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 245,
+    "sid": 4501,
+    "source_sha256": "44bd6dcbb577ed07892fa033fbc89a1baecafa31bdd061208c242aa8fbeb829b",
+    "pine_sha256": "fc304317ec6929e507f91240d23c59e34eeea71885842495b1019598798d75ce",
+    "review_scope": "full_source_static",
+    "assessment": "SMA200上方且布林%b连续三根<0.2做多，%b>0.8平多。 长期均线上连续三根%B低位后回归高位是自洽均值回归；无明确最长持有或趋势失效退出。",
+    "priority": "P2",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 26,
+            "code": "percentB = (close - lowerBand) / (upperBand - lowerBand)"
+          },
+          {
+            "line": 29,
+            "code": "condition1 = close > sma200  // Condition 1: Close is above the 200-day moving average"
+          },
+          {
+            "line": 32,
+            "code": "condition2 = percentB[2] < 0.2 and percentB[1] < 0.2 and percentB < 0.2"
+          },
+          {
+            "line": 38,
+            "code": "sellCondition = percentB > 0.8"
+          },
+          {
+            "line": 46,
+            "code": "    strategy.close(\"Buy\")"
+          }
+        ],
+        "detail": "长期均线上连续三根%B低位后回归高位是自洽均值回归；无明确最长持有或趋势失效退出。",
+        "suggestion": "以熊市和零波动样本验证，并对照时间退出而非先改入场阈值。",
+        "tradeoff": "时间退出可能截断慢速修复收益。",
+        "validation": "三根低位后长期不达0.8、带宽为零及费用翻倍的策略路径。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 246,
+    "sid": 3552,
+    "source_sha256": "5d52c84c20f80928990d437199a9169f7e6eace40c07752ef9f22bd9dd9da856",
+    "pine_sha256": "774c66455af92c5509b54a96736a6b6a460207fb4ec56855d56b52459826208a",
+    "review_scope": "full_source_static",
+    "assessment": "SMA2下穿SMA5的97%做多，SMA2上穿SMA5平多。 SMA2偏离SMA5达3%后均值回归，逻辑简单；原版本注解错误已有候选，固定3%跨波动差异大。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 9,
+            "code": "// @version=4"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：版本注解格式错误。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 9,
+            "code": "// @version=4"
+          },
+          {
+            "line": 26,
+            "code": "smallMAPeriod = input(title = \"Small Moving Average\", defval = 2)"
+          },
+          {
+            "line": 27,
+            "code": "bigMAPeriod = input(title = \"Big Moving Average\", defval = 5)"
+          },
+          {
+            "line": 28,
+            "code": "percentBelowToBuy = input(title = \"Percent below to buy %\", defval = 3)"
+          },
+          {
+            "line": 34,
+            "code": "buyMA = ((100 - percentBelowToBuy) / 100) * sma(source, bigMAPeriod)[0]"
+          },
+          {
+            "line": 36,
+            "code": "if(crossunder(smallMA, buyMA))"
+          },
+          {
+            "line": 39,
+            "code": "if(crossover(smallMA, bigMA))"
+          }
+        ],
+        "detail": "SMA2偏离SMA5达3%后均值回归，逻辑简单；原版本注解错误已有候选，固定3%跨波动差异大。",
+        "suggestion": "先编译候选，再比较百分比偏离与波动标准化偏离，不把最优阈值回填历史。",
+        "tradeoff": "标准化可能增加低波动品种交易。",
+        "validation": "小/大波动股票分层、阈值2/3/4%与成本敏感度及版本编译。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 247,
+    "sid": 2541,
+    "source_sha256": "b7c272a3c3c9ad299e4dd1185fa3f472e8c8fd07655bca27e2325f075628c17d",
+    "pine_sha256": "3810a843723d5ea7a8855fb458ca0deba927fa91ea81957daf21d6501d4cdc84",
+    "review_scope": "full_source_static",
+    "assessment": "EMA80>EMA200且价格在EMA50上，历史价下穿EMA并连续上涨时买多；成交时ATR固定3.5倍止损目标。 趋势中回撤恢复的意图可解释，但止损要先收盘跌破成本才挂出，止盈又须同时跌到MA1下。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 34,
+            "code": "    if close[i] < close[i + 1] or close[i] < MA1"
+          },
+          {
+            "line": 39,
+            "code": "long = MA2 > MA3 and price > MA1 and ta.crossunder(prev_price, MA1) and allPositive"
+          },
+          {
+            "line": 56,
+            "code": "if price >= tpPrice and price < MA1"
+          },
+          {
+            "line": 59,
+            "code": "if price < strategy.position_avg_price"
+          },
+          {
+            "line": 60,
+            "code": "    strategy.exit('Stop Loss', 'Long', stop=slPrice)"
+          }
+        ],
+        "detail": "趋势中回撤恢复的意图可解释，但止损要先收盘跌破成本才挂出，止盈又须同时跌到MA1下。",
+        "suggestion": "确认始终保护与延迟激活的设计，历史循环比较均线应否使用MA1[i]。",
+        "tradeoff": "提前保护或历史对齐会改变交易集合。",
+        "validation": "持仓盈利柱盘中触止损后收回、达目标但在均线上、numberOfCandles>1验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 248,
+    "sid": 2719,
+    "source_sha256": "13a71b4dcd4adba123261f80058be2250a81ff683ab319b51f99845b94b5e1df",
+    "pine_sha256": "8d72f0deef8ae3888225bd18d716dc97d419b582ed989188c859364ddbac05ad",
+    "review_scope": "full_source_static",
+    "assessment": "KAMA50上穿并MACD26/52多头买10%权益，反向条件平仓，收盘动态3ATR括号保护。 KAMA+慢MACD趋势逻辑可解释；零波动分母为0，止损止盈每柱随close平移而可放宽风险。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 26,
+            "code": "efficiency_ratio = price_change / volatility_sum"
+          },
+          {
+            "line": 28,
+            "code": "kama := na(kama[1]) ? close : kama[1] + smoothing_constant * (close - kama[1])"
+          },
+          {
+            "line": 33,
+            "code": "stop_loss = close - atr * atr_mult"
+          },
+          {
+            "line": 34,
+            "code": "take_profit = close + atr * atr_mult"
+          },
+          {
+            "line": 48,
+            "code": "strategy.exit(\"Exit\", \"Buy\", stop=stop_loss, limit=take_profit)"
+          }
+        ],
+        "detail": "KAMA+慢MACD趋势逻辑可解释；零波动分母为0，止损止盈每柱随close平移而可放宽风险。",
+        "suggestion": "规定零波动效率比并比较固定入场ATR与单向跟踪风险模型。",
+        "tradeoff": "固定风险失去部分自适应性。",
+        "validation": "连续50根同价、跳空和ATR扩张、下跌时止损不应无意下移的测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 249,
+    "sid": 3250,
+    "source_sha256": "5c27f153c7b7532186456f3a20e911698e61cca89f1371265015393c5b19a97a",
+    "pine_sha256": "b41cfe13e26d892b82b3fa4fb38533de033f59ae7eb4808dc1b9a490bb6dfb5e",
+    "review_scope": "full_source_static",
+    "assessment": "成交量加权快慢先行线同时上升、TSV正增强及价格上布林轨做多100%权益；双线下降退出。 量加权快慢中线+TSV+布林突破是多重趋势筛选，但同类价格过滤复杂且无硬止损；版本注解仍需核验。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 45,
+            "code": "inDateRange =  true"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：起止日期没有生效；仅恢复入场日期过滤。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 9,
+            "code": "// @version=4"
+          },
+          {
+            "line": 45,
+            "code": "inDateRange =  true"
+          },
+          {
+            "line": 53,
+            "code": "slowtenkansenvwapValue = cumulativeTypicalPriceVolumeTS / cumulativeVolumeTS"
+          },
+          {
+            "line": 61,
+            "code": "slowkijunsenvwapValue = cumulativeTypicalPriceVolumeKS / cumulativeVolumeKS"
+          },
+          {
+            "line": 121,
+            "code": "if(fastleadLine > fastleadLine[1] and slowleadLine > slowleadLine[1] and tsv > 0 and tsv > tsvema and close > upper and inDateRange)"
+          },
+          {
+            "line": 124,
+            "code": "if(fastleadLine < fastleadLine[1] and slowleadLine < slowleadLine[1])"
+          }
+        ],
+        "detail": "量加权快慢中线+TSV+布林突破是多重趋势筛选，但同类价格过滤复杂且无硬止损；版本注解仍需核验。",
+        "suggestion": "日期候选后优先规范版本、做逐过滤消融与零成交量防护。",
+        "tradeoff": "删过滤提升样本量但可能增加噪声。",
+        "validation": "原生v4编译、零成交量分母、各过滤独立贡献及历史未选择窗口。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 250,
+    "sid": 1687,
+    "source_sha256": "2c206a6ae46cefd1854f291ca64cd8d2e79b4a3dfcd4c53e5db15cac9a246bdb",
+    "pine_sha256": "078198b56889a698e975246638495fa2605b1f60b73acf896f36007b307f5662",
+    "review_scope": "full_source_static",
+    "assessment": "20期相对动量累积比低于40维持多头、高于70维持空头，可整体反转方向。 RMI阈值双向反转有明确状态逻辑，但涨跌累计只在对应方向衰减，和标准平滑实现不等价。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 37,
+            "code": "xMU = iff(xMom >= 0, nz(xMU[1], 1) - (nz(xMU[1],1) / Length) + xMom, nz(xMU[1], 1))"
+          },
+          {
+            "line": 38,
+            "code": "xMD = iff(xMom <= 0, nz(xMD[1], 1) - (nz(xMD[1],1) / Length) + abs(xMom), nz(xMD[1], 0))"
+          },
+          {
+            "line": 39,
+            "code": "RM = xMU / xMD"
+          },
+          {
+            "line": 41,
+            "code": "pos = iff(nRes < BuyZone, 1,"
+          },
+          {
+            "line": 42,
+            "code": "\t   iff(nRes > SellZone, -1, nz(pos[1], 0))) "
+          },
+          {
+            "line": 46,
+            "code": "    strategy.entry(\"Long\", strategy.long)"
+          },
+          {
+            "line": 48,
+            "code": "    strategy.entry(\"Short\", strategy.short)\t   \t    "
+          }
+        ],
+        "detail": "RMI阈值双向反转有明确状态逻辑，但涨跌累计只在对应方向衰减，和标准平滑实现不等价。",
+        "suggestion": "先确认保留自定义RMI还是规范算法，并限制常驻多空风险。",
+        "tradeoff": "规范算法会改变阈值分布和全部信号。",
+        "validation": "单边上涨/下跌与交替涨跌序列手算xMU/xMD及除零边界。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 251,
+    "sid": 3181,
+    "source_sha256": "5a090196f5fd6b34b6e5d075ca7cde86ba06e05ca7fc0be16628992e00ac308b",
+    "pine_sha256": "5d117e35410c62221e9d172c1844f19fee0d12f215b03d296ecb545918d4330b",
+    "review_scope": "full_source_static",
+    "assessment": "RSI2低于15做多，持仓收盘高于前根高点退出；非日线时所谓昨日对应前根。 RSI2<15买超卖、突破前高退出是简单反转；注释声称收盘成交但声明未配置收盘撮合。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 12,
+            "code": "// If RSI(2) is less than 15, then enter at the close."
+          },
+          {
+            "line": 16,
+            "code": "strategy(\"Hobbiecode - RSI + Close previous day\", overlay=true)"
+          },
+          {
+            "line": 26,
+            "code": "if (rsi_val < rsi_lower)"
+          },
+          {
+            "line": 27,
+            "code": "    strategy.entry(\"Buy\", strategy.long)"
+          },
+          {
+            "line": 30,
+            "code": "if (strategy.position_size > 0 and close > ta.highest(high[1], 1))"
+          },
+          {
+            "line": 31,
+            "code": "    strategy.close(\"Buy\")"
+          }
+        ],
+        "detail": "RSI2<15买超卖、突破前高退出是简单反转；注释声称收盘成交但声明未配置收盘撮合。",
+        "suggestion": "明确次开盘成交版本，评估隔夜跳空与最长持仓，不复制注释中的执行假设。",
+        "tradeoff": "真实成交延迟可能消耗短期反转收益。",
+        "validation": "信号收盘到次开盘收益贡献、连续跌势无前高突破、交易成本对照。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 252,
+    "sid": 71,
+    "source_sha256": "d93a7f991540c18901ba9c8e94b554e0700d4eeaafa2f687465c05b64fda146a",
+    "pine_sha256": "26c581ba0b858ecea480675620fcc0ada375cc79efcba245fcec57dbe72ddff3",
+    "review_scope": "full_source_static",
+    "assessment": "ATR过滤锤头与流星反转形态，2%权益多空入场，按当前高低收盘价动态设置ATR止盈止损。 锤头/流星形态加ATR过滤可解释；close与open交叉还要求前根方向变化，保护价格每根重算。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "hammerSignal = isHammer and ta.crossover(close, open)  // Confirmation"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；退出价格仍随每根low/high/close/ATR变化，未固定到成交价；属于原动态设计。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "hammerSignal = isHammer and ta.crossover(close, open)  // Confirmation"
+          },
+          {
+            "line": 29,
+            "code": "shootingStarSignal = isShootingStar and ta.crossunder(close, open)  // Confirmation"
+          },
+          {
+            "line": 40,
+            "code": "longStopLoss = low - slMultiplier * atrValue"
+          },
+          {
+            "line": 41,
+            "code": "longTakeProfit = close + tlMultiplier * atrValue"
+          },
+          {
+            "line": 45,
+            "code": "strategy.exit(\"Take Profit / Stop Loss\", from_entry=\"Hammer Buy\", stop=longStopLoss, limit=longTakeProfit)"
+          },
+          {
+            "line": 46,
+            "code": "strategy.exit(\"Take Profit / Stop Loss\", from_entry=\"ShootingStar Sell\", stop=shortStopLoss, limit=shortTakeProfit)"
+          }
+        ],
+        "detail": "锤头/流星形态加ATR过滤可解释；close与open交叉还要求前根方向变化，保护价格每根重算。",
+        "suggestion": "已有ID候选之外明确蜡烛确认是当根实体还是跨根交叉，冻结或单向维护风险。",
+        "tradeoff": "调整确认条件会改变形态样本，冻结风险改变退出。",
+        "validation": "连续两根同色锤头、持仓下跌时止损下移及多空反转保护核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 253,
+    "sid": 2013,
+    "source_sha256": "b92196eabc1ea2d9398d104d6fbdfbd35eeec6a444180e2dfeb15c5940e61cc5",
+    "pine_sha256": "51a71462dbec687eb9edf1be2122a611f1dae3d64c1f0bf77b5dd542c0a05013",
+    "review_scope": "full_source_static",
+    "assessment": "开盘高于SMA5或低于SMA5足够距离分别做多，第一类收盘不亏退出、第二类亏0.1%退出。 低于均线却要求open-ma5为正的分支不可达已有候选；两个场景分别仅盈利/仅亏损退出，不形成完整风控。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "distance_from_ma5 = open - ma5"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：低于均线时open-ma5为负，不可能大于正阈值。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；场景1仅盈利退出、场景2仅亏损退出属于原有不对称设计，未扩写。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 16,
+            "code": "buy_condition_scenario1 = open > ma5"
+          },
+          {
+            "line": 19,
+            "code": "distance_from_ma5 = open - ma5"
+          },
+          {
+            "line": 20,
+            "code": "buy_condition_scenario2 = open < ma5 and distance_from_ma5 > 0.002 // Define distance in points here"
+          },
+          {
+            "line": 23,
+            "code": "sell_condition_scenario1 = close > strategy.position_avg_price or close == strategy.position_avg_price"
+          },
+          {
+            "line": 24,
+            "code": "sell_condition_scenario2 = close <= strategy.position_avg_price * 0.999 // Close if price drops more than 0.1% from entry price"
+          },
+          {
+            "line": 33,
+            "code": "if (sell_condition_scenario1)"
+          },
+          {
+            "line": 36,
+            "code": "if (sell_condition_scenario2)"
+          }
+        ],
+        "detail": "低于均线却要求open-ma5为正的分支不可达已有候选；两个场景分别仅盈利/仅亏损退出，不形成完整风控。",
+        "suggestion": "先定义两个入口共同的亏损和盈利退出，并明确开盘信号是否允许依赖当根收盘均线。",
+        "tradeoff": "补全退出改变策略整体而非仅修负号。",
+        "validation": "场景1持续亏损、场景2持续盈利、开盘到收盘均线变化逐笔检查。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 254,
+    "sid": 5791,
+    "source_sha256": "aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35",
+    "pine_sha256": "42fdb56880f823c394bb503b1da49049f103c0266b2cd866fcdd07bc325f79d0",
+    "review_scope": "full_source_static",
+    "assessment": "SMA50/200金叉全权益做多，死叉平全部，提供日期背景显示。 50/200黄金交叉可作透明基准，既有日期修复是先决条件；不要因历史排名低就堆参数。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 42,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 51,
+            "code": "\tshortCondition = crossunder(smaShort, smaLong)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复入场日期。；死叉退出移出日期。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 10,
+            "code": "strategy(\"Dumb strategy 2 - Golden Cross\", shorttitle=\"Golden Cross\", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100)"
+          },
+          {
+            "line": 16,
+            "code": "smaShort = sma(src, lShort)"
+          },
+          {
+            "line": 17,
+            "code": "smaLong = sma(src, lLong)"
+          },
+          {
+            "line": 42,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 49,
+            "code": "\t\tstrategy.entry(\"Long Entry\", strategy.long)"
+          },
+          {
+            "line": 53,
+            "code": "\t\tstrategy.close_all(true)"
+          }
+        ],
+        "detail": "50/200黄金交叉可作透明基准，既有日期修复是先决条件；不要因历史排名低就堆参数。",
+        "suggestion": "按市场阶段评估趋势收益与持有基准的风险差，检查100%仓位成本。",
+        "tradeoff": "加入过滤会牺牲简单可解释性并可能过拟合。",
+        "validation": "窗外死叉、横盘多次交叉、不同复权处理和持有基准同成本比较。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 255,
+    "sid": 4883,
+    "source_sha256": "129daeb9484005bc807daa9538f948e1ab2a3e8e6b7f31238d11833c882a343e",
+    "pine_sha256": "7381e460ee34cb8af635b731ea22fc00419250efda05d228da4e7a7cdd149daf",
+    "review_scope": "full_source_static",
+    "assessment": "SMA20/30金叉且RSI>25买入，死叉且RSI<75平仓；可选信号价2%全部或一次半仓止盈。 均线交叉RSI过滤加可选半仓获利结构清楚，但用信号状态替代实际仓位、目标从信号close开始计。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 45,
+            "code": "    entryPrice := close  // Store entry price at buy signal"
+          },
+          {
+            "line": 46,
+            "code": "    halfPositionTaken := false  // Reset half position take profit state when opening a new trade"
+          },
+          {
+            "line": 60,
+            "code": "if (inBuyState and enableTakeProfit and halfPositionTakeProfit and close >= takeProfitLevel and not halfPositionTaken)"
+          },
+          {
+            "line": 61,
+            "code": "    strategy.close(\"Buy\", qty_percent=50, comment=\"partialClose\")  // Close half position"
+          },
+          {
+            "line": 62,
+            "code": "    halfPositionTaken := true  // Update state to prevent re-execution"
+          },
+          {
+            "line": 65,
+            "code": "if (inBuyState and enableTakeProfit and not halfPositionTakeProfit and close >= takeProfitLevel)"
+          }
+        ],
+        "detail": "均线交叉RSI过滤加可选半仓获利结构清楚，但用信号状态替代实际仓位、目标从信号close开始计。",
+        "suggestion": "以实际成交确认锚与半仓状态，检查重复买信号是否重置已执行半仓标志。",
+        "tradeoff": "改变锚和确认时点可能降低表观2%获利。",
+        "validation": "部分退出后新金叉、被拒买单、卖出后状态复位及剩余仓位核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 256,
+    "sid": 1557,
+    "source_sha256": "8114479dcbe6ce860ef8b7ec5680e800767857f5b53b9e6803a618e2466db930",
+    "pine_sha256": "cababcc1f5d847baade38297dd4cee2e3454cf80e93aed7aa45e7625215ec7de",
+    "review_scope": "full_source_static",
+    "assessment": "每根发多头入场并重置最高价，持仓低点触及最高价下5%时市价平；日期输入未约束。 无条件每根入场将highestPrice反复重置为当根高，默认跟踪峰值失效且指定日期未用。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "enterTrade = true"
+          },
+          {
+            "line": 33,
+            "code": "    highestPrice := math.max(highestPrice, high)"
+          },
+          {
+            "line": 37,
+            "code": "if enterTrade"
+          },
+          {
+            "line": 39,
+            "code": "    highestPrice := high"
+          },
+          {
+            "line": 40,
+            "code": "    stopLoss := highestPrice * (1 - trailStopPercent / 100)"
+          }
+        ],
+        "detail": "无条件每根入场将highestPrice反复重置为当根高，默认跟踪峰值失效且指定日期未用。",
+        "suggestion": "先明确单次指定日期买入还是窗内再入，以成交后状态维护最高价且空仓复位。",
+        "tradeoff": "交易次数和整个风险路径将改变。",
+        "validation": "最高价100后回落90仍保留峰值、指定日期前禁止入场、出场后是否再入三个测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 257,
+    "sid": 266,
+    "source_sha256": "e37380c99f5db73f2be5b247596f5e38d5f47d2d8dd3ace66cc58ee6b378f77e",
+    "pine_sha256": "33b58845143a499ab28934c225bb37b1fafb757ad8607f4f4b737d8fabfb28a0",
+    "review_scope": "full_source_static",
+    "assessment": "21/55 EMA交叉并同向位于200 EMA两侧固定100单位多空，RSI从超买或超卖返回退出。 均线顺势进场、RSI反向极值退出是动量到反转的混合模型；固定100份跨股票敞口不可比。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 32,
+            "code": "emacrossover = crossover(ema5, ema20) and ema5 > ema50 and ema20 > ema50 and close > ema50"
+          },
+          {
+            "line": 33,
+            "code": "emacrossunder = crossunder(ema5, ema20) and ema5 < ema50 and ema20 < ema50 and close < ema50"
+          },
+          {
+            "line": 39,
+            "code": "strategy.entry(\"Long\", strategy.long, 100, when=longCondition)"
+          },
+          {
+            "line": 40,
+            "code": "strategy.close(\"Long\", when=closelongCondition)"
+          },
+          {
+            "line": 46,
+            "code": "strategy.entry(\"Short\", strategy.short, 100, when=shortCondition)"
+          },
+          {
+            "line": 47,
+            "code": "strategy.close(\"Short\", when=closeshortCondition)"
+          }
+        ],
+        "detail": "均线顺势进场、RSI反向极值退出是动量到反转的混合模型；固定100份跨股票敞口不可比。",
+        "suggestion": "统一风险或名义额度做独立回测，核验趋势破坏但RSI不触阈值的尾部。",
+        "tradeoff": "按风险缩放会改变原高低价股票贡献。",
+        "validation": "价格10/1000同信号敞口对比、长期不触RSI退出及借券费用压力。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 258,
+    "sid": 4876,
+    "source_sha256": "a8f0fef5bf0dd0d061d59e959ea7297cee063666ad944c0943c3c9ac0b6108ad",
+    "pine_sha256": "a53680c1300472db076236dcda3bca1d257fd587012f7ea2a1276e7fc3f1bbfa",
+    "review_scope": "full_source_static",
+    "assessment": "SMA14上穿28做多，7根最低点逐级超过入场价5%台阶后抬保护至对应价。 按七根最低点跨越利润台阶抬止损有解释性，但台阶逐根重算会退回较低档。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 34,
+            "code": "move_trigger = lowest(low,7)"
+          },
+          {
+            "line": 37,
+            "code": "first_check := move_trigger > second_stop ? second_stop : first_stop"
+          },
+          {
+            "line": 55,
+            "code": "stop_level := move_trigger > eighth_stop ? eighth_stop : sixth_check"
+          },
+          {
+            "line": 57,
+            "code": "strategy.exit(\"Stop Loss\",\"My Long Entry Id\", stop=stop_level)"
+          }
+        ],
+        "detail": "按七根最低点跨越利润台阶抬止损有解释性，但台阶逐根重算会退回较低档。",
+        "suggestion": "若设计为只升不降，应持仓内保存已达到最高台阶并在新仓重置。",
+        "tradeoff": "止损锁定会增加短暂回撤出场。",
+        "validation": "先升至+15%档后七根最低点回落，确认是否允许降档。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 259,
+    "sid": 3755,
+    "source_sha256": "ac96502c40214248bcd9b8c5e65170cae90dc157a4a9201998b069733d5b389e",
+    "pine_sha256": "6f8f0a5c7e0d3dfc5309b1290cfa812106c341782e87169c2a6bc80ea227c331",
+    "review_scope": "full_source_static",
+    "assessment": "EMA10>100>200且空仓时以权益/收盘四舍五入买入，排列破坏或日期窗外平仓。 三EMA多头排列为状态入场而非注释交叉；round(equity/close)可能超买预算或数量为0。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 33,
+            "code": "FechaValida() => true"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期函数恒真使用户范围及窗外平仓无效；恢复用户日期即可，已有窗外平仓分支。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 33,
+            "code": "FechaValida() => true"
+          },
+          {
+            "line": 39,
+            "code": "alcista = (ema1 > ema2) and (ema2 > ema3)"
+          },
+          {
+            "line": 47,
+            "code": "if (not comprado and alcista and FechaValida())"
+          },
+          {
+            "line": 49,
+            "code": "    cantidad = math.round(strategy.equity/ close)"
+          },
+          {
+            "line": 52,
+            "code": "if (comprado and not alcista and FechaValida())"
+          },
+          {
+            "line": 56,
+            "code": "if (comprado and not FechaValida())"
+          }
+        ],
+        "detail": "三EMA多头排列为状态入场而非注释交叉；round(equity/close)可能超买预算或数量为0。",
+        "suggestion": "日期修复后定义可负担整数数量及资金缓冲，保留状态入场语义。",
+        "tradeoff": "向下取整降低投入，不能把未投入现金当损失。",
+        "validation": "低资金高股价、费用后余额不足、日期截止全平及重复状态条件检查。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 260,
+    "sid": 316,
+    "source_sha256": "e178ed0321e8bd3cbdbb850b5d72e1a60656a2257b69a9b5bcd3dd4a170b083e",
+    "pine_sha256": "a6e7c4b7d12b1cc48fdb0b800fd1ad3bf312949c3b6f3e39561c52a3016204a5",
+    "review_scope": "full_source_static",
+    "assessment": "历史高低中轴EMA加减ATR形成通道；下轨穿过低点且低于中轴做多，上轨下穿高点或触及卖线做空并反转。 ATR通道相对历史极值交叉是均值回归反手模型，SELL实际开空而非仅平多；无独立保护。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 21,
+            "code": "f = 2.382"
+          },
+          {
+            "line": 22,
+            "code": "f2 = 5.618"
+          },
+          {
+            "line": 38,
+            "code": "buy_cond = ta.crossover(ema_lowest, lowest) and close < ema_mid"
+          },
+          {
+            "line": 39,
+            "code": "sell_cond = (ta.crossunder(ema_highest, highest) and close > ema_mid) or high >= sell_line"
+          },
+          {
+            "line": 45,
+            "code": "    strategy.entry('SELL', strategy.short)"
+          }
+        ],
+        "detail": "ATR通道相对历史极值交叉是均值回归反手模型，SELL实际开空而非仅平多；无独立保护。",
+        "suggestion": "明确双向风险与常数2.382/5.618依据，先做参数邻域与只多对照。",
+        "tradeoff": "只多模式会改变收益来源并降低借券暴露。",
+        "validation": "下跌趋势长空持有、极值跳变、常数邻域和高成本样本验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 261,
+    "sid": 3460,
+    "source_sha256": "90b70e59d2e49a64ed246def2cd6d93452ff7d22648bb12ea33080affe074b91",
+    "pine_sha256": "ee26424a87ced61d48bc7de6ee82c338f4cd4131a2f1b99fd3a7ca16b5fb8a9a",
+    "review_scope": "full_source_static",
+    "assessment": "SMA20大于60且距10根高点回撤不到10%做多30%权益，趋势反转、高点回撤或均价亏10%退出。 20/60均线趋势加10%回撤退出结构明确；10根最高点会滚落，所谓滑价7%注释不符10%代码。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "to_long = sma20 > sma60  and close > highest(10)*0.9 // 黃金交叉"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：开始日期被if true绕过，直接门控入场且退出保持不变。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "to_long = sma20 > sma60  and close > highest(10)*0.9 // 黃金交叉"
+          },
+          {
+            "line": 24,
+            "code": "to_exit = close < highest(10)*0.9 //股價嚴重回檔"
+          },
+          {
+            "line": 25,
+            "code": "to_stop = close < 0.9*strategy.position_avg_price "
+          },
+          {
+            "line": 33,
+            "code": "if true"
+          },
+          {
+            "line": 35,
+            "code": "    strategy.close(\"golden\",  when=to_exit,comment=\"多單滑價7%出場\")"
+          },
+          {
+            "line": 37,
+            "code": "    strategy.close(\"golden\",  when=to_stop,comment=\"虧損10%強迫停損\")"
+          }
+        ],
+        "detail": "20/60均线趋势加10%回撤退出结构明确；10根最高点会滚落，所谓滑价7%注释不符10%代码。",
+        "suggestion": "先修日期并统一名称/比例，区分滚动回撤与持仓峰值回撤。",
+        "tradeoff": "峰值回撤可能更紧且改变长期持仓收益。",
+        "validation": "持仓超过10根后峰值滚出、10%成本损失与次开盘跳空核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 262,
+    "sid": 4393,
+    "source_sha256": "6e61d5038f49be40c030039d58b6b73504f4e6e5442c0b2b4eef5d36293e50d0",
+    "pine_sha256": "0ba63e554f5256fe8e4b2586880b2fb545d12e8b46b97033a217fcaf0f30e265",
+    "review_scope": "full_source_static",
+    "assessment": "2 ATR大于布林两倍标准差且平均波动下降做多，固定入场ATR缓冲跟随前收盘单调上移，低点触线平仓。 波动收缩入场、冻结ATR宽度跟踪是可解释实验，跟踪基准用上一收盘且low触发后市价退出。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "within_timeframe = true"
+          },
+          {
+            "line": 59,
+            "code": "if within_timeframe"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期输入未生效。；窗外已有持仓不能重置跟踪线。；窗外仍处理持仓退出。；窗外不能继续入场加仓。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 44,
+            "code": "UPDATE_ATR_TSL = false"
+          },
+          {
+            "line": 51,
+            "code": "    stop_loss_price := max(stop_loss_price, close[1] - trailing_SL_buffer)"
+          },
+          {
+            "line": 61,
+            "code": "    if (ATR_x2 > BOLL_sDEV_x2 or IGNORE_BOLL_SHAPE) and (avg_volat < avg_volat[1] or IGNORE_VOLATILITY)"
+          },
+          {
+            "line": 64,
+            "code": "            trailing_SL_buffer := ATR_x2"
+          },
+          {
+            "line": 72,
+            "code": "        if low <= stop_loss_price"
+          },
+          {
+            "line": 74,
+            "code": "                strategy.close(\"Long\", comment=\"take profit\")"
+          }
+        ],
+        "detail": "波动收缩入场、冻结ATR宽度跟踪是可解释实验，跟踪基准用上一收盘且low触发后市价退出。",
+        "suggestion": "日期候选后将触线与实际成交价分开记录，验证固定宽度与自适应宽度。",
+        "tradeoff": "盘中止损改单会改变成交与利润。",
+        "validation": "价格先升后跳空、波动突然扩张、窗口外保护连续性验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 263,
+    "sid": 3502,
+    "source_sha256": "c1c4f2632c6b165714fa0615d80439f17358b265ff080aa3d973e2fbc00212bb",
+    "pine_sha256": "c09eb5b1bab403ee775c90094c0a0d8457dfb5334fb5a181a83aa6c2da29e4bf",
+    "review_scope": "full_source_static",
+    "assessment": "选定多或空方向，20柱通道突破买/卖1份，反向10柱通道或前收盘加减ATR阈值退出。 前柱唐奇安突破逻辑明确，但ATR倍数输入未使用，实际上一收盘±1ATR退出而非声明2ATR。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "atrmult = input(2,title=\"ATR multiplier (Stop Loss)\")"
+          },
+          {
+            "line": 27,
+            "code": "atr = atr(atrperiod)"
+          },
+          {
+            "line": 30,
+            "code": "atrupper = close + atr"
+          },
+          {
+            "line": 31,
+            "code": "atrlower = close - atr"
+          },
+          {
+            "line": 44,
+            "code": "stop_loss = dir_long ? (close<=plotted_atr[1]) : (close>=plotted_atr[1])"
+          }
+        ],
+        "detail": "前柱唐奇安突破逻辑明确，但ATR倍数输入未使用，实际上一收盘±1ATR退出而非声明2ATR。",
+        "suggestion": "明确用输入倍数并定义固定/滚动/单向跟踪；原生验证后再比较海龟基准。",
+        "tradeoff": "改倍数与跟踪会改变风险和持仓期。",
+        "validation": "倍数1/2变化是否真正作用、连续下跌时保护是否下移、短向对称测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 264,
+    "sid": 4671,
+    "source_sha256": "287e6b6ddabc9a362f69d2e9b034938a97a45b79de5df9639c38ad8b575244a0",
+    "pine_sha256": "37352d1dc85306099e8068e570dd8994478dd456ddeca17e38d34366b7c3e68b",
+    "review_scope": "full_source_static",
+    "assessment": "布林窄于2ATR且ATR不升、RSI10/14同升时空仓开多；低价触单向抬升的2ATR线或RSI超买退出。 布林收缩+双RSI上升入场有择时解释，止损仍为bar结束时读取low后close市价请求。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "within_timeframe = true"
+          },
+          {
+            "line": 45,
+            "code": "if strategy.position_size == 0 or not within_timeframe"
+          },
+          {
+            "line": 80,
+            "code": "if within_timeframe"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复可选截止日期。；窗外持仓继续单向跟踪。；允许持仓窗外执行原退出块。；入口仍严格窗内。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；源码混合tab与空格缩进，未原生编译确认；stop_loss_price为手动收盘判定非真实止损挂单。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 45,
+            "code": "if strategy.position_size == 0 or not within_timeframe"
+          },
+          {
+            "line": 49,
+            "code": "    stop_loss_price := max(stop_loss_price, TSL_source - ATR_x2)"
+          },
+          {
+            "line": 89,
+            "code": "\tif volat_decr and rsi_upslope and is_squeezing and strategy.position_size == 0"
+          },
+          {
+            "line": 98,
+            "code": "\t\tif close <= entry_price and TSL_source <= stop_loss_price"
+          },
+          {
+            "line": 101,
+            "code": "        else if close > entry_price and TSL_source <= stop_loss_price"
+          },
+          {
+            "line": 108,
+            "code": "        strategy.close(\"Long\", when=bExit, comment=exit_msg)"
+          }
+        ],
+        "detail": "布林收缩+双RSI上升入场有择时解释，止损仍为bar结束时读取low后close市价请求。",
+        "suggestion": "日期候选后先处理缩进编译和成交时序，比较真正风险挂单。",
+        "tradeoff": "挂单模式会与现有解释器收益不同。",
+        "validation": "混合缩进原生编译、触线收回、成交首柱及窗外退出验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 265,
+    "sid": 2209,
+    "source_sha256": "f4919da828cadb078c7b6613d818a2d09c8f1bb78a9796e999716f391fa84172",
+    "pine_sha256": "7606237cdb50236316a547662574f61eceb8e7551f061f2e4c5b2d9e22e32983",
+    "review_scope": "full_source_static",
+    "assessment": "MACD在零上且高于信号线做多、零下低于信号线做空；可选单向或双向反转。 MACD零轴与信号线同向是趋势确认，退出只在两者同时转弱，可能放回大量浮盈。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 65,
+            "code": "window()  => true // create function \"within window of time\""
+          },
+          {
+            "line": 67,
+            "code": "if LSB == \"Long only\" and Green"
+          },
+          {
+            "line": 71,
+            "code": "if LSB == \"Both\" and Green"
+          },
+          {
+            "line": 73,
+            "code": "if LSB == \"Both\" and Red"
+          },
+          {
+            "line": 75,
+            "code": "if LSB == \"Short only\" and Red"
+          },
+          {
+            "line": 77,
+            "code": "if LSB == \"Short only\" and Green"
+          },
+          {
+            "line": 69,
+            "code": "if LSB == \"Long only\" and Red"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复日期函数。；接入入口日期门禁。；接入入口日期门禁。；接入入口日期门禁。；接入入口日期门禁。；双向窗外保留反向平空。；双向窗外保留反向平多。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 42,
+            "code": "Bull= macd > signal"
+          },
+          {
+            "line": 43,
+            "code": "Bear= macd < signal"
+          },
+          {
+            "line": 44,
+            "code": "ConBull=macd>0"
+          },
+          {
+            "line": 45,
+            "code": "ConBear=macd<0"
+          },
+          {
+            "line": 67,
+            "code": "if LSB == \"Long only\" and Green"
+          },
+          {
+            "line": 69,
+            "code": "if LSB == \"Long only\" and Red"
+          }
+        ],
+        "detail": "MACD零轴与信号线同向是趋势确认，退出只在两者同时转弱，可能放回大量浮盈。",
+        "suggestion": "日期候选后对照更早的信号线退出，不同时调快慢周期。",
+        "tradeoff": "提早退出可能增加来回交易成本。",
+        "validation": "零轴上死叉持续数十根、Long/Short/Both模式及费用压力验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 266,
+    "sid": 4342,
+    "source_sha256": "036f106a99c74eaac951cd6d7f23ee44560e44ff82903bd691ce5a6b17e9c2e9",
+    "pine_sha256": "31015ff811d68faff65253f110a1917ae6561b7e4ae1bc4fe21cdd0161720d73",
+    "review_scope": "full_source_static",
+    "assessment": "排除窄实体K后连跌8根做多或连涨8根做空，持有7根后全平并重置连胜负计数。 连续八次下跌后持七根是清晰均值回归假设，但手工持仓计时从信号而非成交开始，极窄doji阈值易误解。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "is_doji = math.abs(close - open) / (high - low) < doji_threshold"
+          },
+          {
+            "line": 30,
+            "code": "if not in_position"
+          },
+          {
+            "line": 42,
+            "code": "if in_position"
+          },
+          {
+            "line": 45,
+            "code": "        strategy.close_all() // Close all positions"
+          },
+          {
+            "line": 53,
+            "code": "        strategy.entry(\"Long\", strategy.long) // Open a long position"
+          },
+          {
+            "line": 54,
+            "code": "        in_position := true"
+          }
+        ],
+        "detail": "连续八次下跌后持七根是清晰均值回归假设，但手工持仓计时从信号而非成交开始，极窄doji阈值易误解。",
+        "suggestion": "计时绑定真实成交，并检验连跌长度与持有期的稳定区域。",
+        "tradeoff": "修正计时可能移动一根退出，改变隔夜收益。",
+        "validation": "8连跌、doji打断、零振幅、下单未成交及七根持仓日历差异验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 267,
+    "sid": 5078,
+    "source_sha256": "ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68",
+    "pine_sha256": "159076076182f239f44282130e4ecdd319e56d7766f2d2a84f3475c5d235fcb2",
+    "review_scope": "full_source_static",
+    "assessment": "可选均线13/48金叉做多，价下穿可选均线30平仓，窗外全平；日期常量真，若选择未实现均线则无输出。 默认EMA交叉可解释，但其他选项不完整；SMMA分支使用src[1]而非前一平滑结果，定义不等价。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 30,
+            "code": "time_cond = true"
+          },
+          {
+            "line": 94,
+            "code": "strategy.close(\"long\",when=exit and time_cond)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期条件恒真。；信号退出不受日期门禁。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；DEMA/TEMA/LSMA在选项中但ma函数未实现，选择后返回na；不应宣称全部选项可用。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 37,
+            "code": "smoothingShort = input(title=\"Choose Smoothing Type for Short Moving Average\", defval=\"EMA\", options=[\"RMA\", \"SMA\", \"EMA\", \"WMA\", \"VWMA\", \"SMMA\", \"DEMA\", \"TEMA\", \"HullMA\", \"LSMA\"])"
+          },
+          {
+            "line": 40,
+            "code": "smoothingLong = input(title=\"Choose Smoothing Type for Long Moving Average\", defval=\"EMA\", options=[\"RMA\", \"SMA\", \"EMA\", \"WMA\", \"VWMA\", \"SMMA\", \"DEMA\", \"TEMA\", \"HullMA\", \"LSMA\"])"
+          },
+          {
+            "line": 43,
+            "code": "smoothingExit = input(title=\"Choose Smoothing Type for Exit Moving Average\", defval=\"EMA\", options=[\"RMA\", \"SMA\", \"EMA\", \"WMA\", \"VWMA\", \"SMMA\", \"DEMA\", \"TEMA\", \"HullMA\", \"LSMA\"])"
+          },
+          {
+            "line": 66,
+            "code": "\t\t\t\t\t\tif smoothing == \"SMMA\""
+          },
+          {
+            "line": 67,
+            "code": "\t\t\t\t\t\t\tna(src[1]) ? sma(src, length) : (src[1] * (length - 1) + src) / length"
+          },
+          {
+            "line": 70,
+            "code": "\t\t\t\t\t\t\tif smoothing == \"HullMA\""
+          },
+          {
+            "line": 71,
+            "code": "\t\t\t\t\t\t\t\twma(2 * wma(src, length / 2) - wma(src, length), round(sqrt(length)))"
+          }
+        ],
+        "detail": "默认EMA交叉可解释，但其他选项不完整；SMMA分支使用src[1]而非前一平滑结果，定义不等价。",
+        "suggestion": "在已有日期候选之外移除未实现选项或逐个实现并用手算序列验证；默认EMA保持。",
+        "tradeoff": "规范SMMA会改变选择该模式时全部信号，不代表默认策略变差。",
+        "validation": "常量与阶跃序列检验SMMA递归；遍历全部10种选项，不得静默返回na。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 268,
+    "sid": 4067,
+    "source_sha256": "2c53e9318e462ebe88038dd1def349ddbdffa4e2c4c1e90f72d801a002aa89de",
+    "pine_sha256": "ce0a242c233b22ec1ebb3c6285944fc7de5911bc07225edd81e626d5ea4985b9",
+    "review_scope": "full_source_static",
+    "assessment": "六类底部形态与超卖指标计分达到3、可选SMA下过滤及RSI14低于35做多，RSI下穿70退出。 六个底部模块计分再用RSI过滤有反转解释，但高度相关且退出须先超买后回落；颜色命名空间需编译修复。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 30,
+            "code": "colsma = showsma == true ? red : na"
+          },
+          {
+            "line": 69,
+            "code": "cb= cvi <= bull ? green : cvi >=bear ? red : cvi > bull ? blue : cvi < bear ? blue : na"
+          },
+          {
+            "line": 105,
+            "code": "score = vixfixbot + locobot + cvibot + ucsbot + rsibot + pinbot"
+          },
+          {
+            "line": 108,
+            "code": "bottom = usered == false ? usesma == false ? score >= botsens ? 1 : 0 : high < sma and score >= botsens ? 1 : 0 : usesma == false ? score >= botsens and close < open ? 1 : 0 : high < sma and score >= botsens and close < open ? 1 : 0"
+          },
+          {
+            "line": 115,
+            "code": "strategy.entry(\"BUY!\", strategy.long, when =(bottom == 1) and(rsi(close,14)<overSold))"
+          },
+          {
+            "line": 116,
+            "code": "strategy.close(\"BUY!\", when = (crossunder(rsi(close,14), overBought)))"
+          }
+        ],
+        "detail": "六个底部模块计分再用RSI过滤有反转解释，但高度相关且退出须先超买后回落；颜色命名空间需编译修复。",
+        "suggestion": "先验证v4命名空间，再做逐模块消融和评分阈值稳定性。",
+        "tradeoff": "去掉冗余模块可能提高样本量但改变信号权重。",
+        "validation": "所有开关组合抽样、长期熊市无法超买退出、编译与成本敏感度测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 269,
+    "sid": 5493,
+    "source_sha256": "40fc6d17fc04dcc98c2b5bf89d7b8ba548a4df526ba7303788580ec288cd5afb",
+    "pine_sha256": "022e1d903e7484ab6d335238d99a795a8c53b6623f6901657f5dd2c837893f64",
+    "review_scope": "full_source_static",
+    "assessment": "价格同时上穿EMA12/24/72或价格跨72且EMA8跨12/24分别开两个多头ID；回调入口尝试目标与跟踪，初始入口死叉stop退出。 同根多重交叉可能稀疏，且全量目标单预留仓位后独立止损未可靠覆盖；trail_points也无offset。",
+    "priority": "P0",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 28,
+            "code": "pullbackEntry = ta.crossover(close, ema12) and ta.crossover(close, ema24) and ta.crossover(close, ema72)"
+          },
+          {
+            "line": 29,
+            "code": "initialEntry = ta.crossover(close, ema72) and ta.crossover(ema8, ema12) and ta.crossover(ema8, ema24)"
+          },
+          {
+            "line": 43,
+            "code": "    strategy.exit(\"Profit Target\", \"Pullback Entry\", limit=close + (profitTarget * syminfo.mintick))"
+          },
+          {
+            "line": 44,
+            "code": "    strategy.exit(\"Trailing Stop\", \"Pullback Entry\", stop=close - (trailingStop * syminfo.mintick), trail_points=trailingStop)"
+          },
+          {
+            "line": 45,
+            "code": "    strategy.exit(\"Exit Condition\", \"Initial Entry\", stop=close, when=exitCondition)"
+          }
+        ],
+        "detail": "同根多重交叉可能稀疏，且全量目标单预留仓位后独立止损未可靠覆盖；trail_points也无offset。",
+        "suggestion": "按入口分别建立完整括号退出，定义固定tick与ATR风险，先核验订单预留。",
+        "tradeoff": "补完整保护会改变既有高胜率和回撤。",
+        "validation": "Pullback与Initial两入口逐项测试第一目标预留、止损覆盖和稀疏信号数量。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 270,
+    "sid": 5221,
+    "source_sha256": "1ba290b9ad48dbc4ed28e064a92cdcd0cce31b19933d361d022a45eae9009e31",
+    "pine_sha256": "2e8ee06861520f1b6984c27df786184a2ce47f3b41ad0054b754b6fa565a442e",
+    "review_scope": "full_source_static",
+    "assessment": "SMA50趋势、ATR阈值下在确认分形外ATR网格挂多空限价，分形加减ATR退出。 分形回归挂限价有机制，但分形只在确认柱存在，目标常na且多头入场价与默认止损同值。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 21,
+            "code": "fractalHigh = ta.pivothigh(high, 2, 2)"
+          },
+          {
+            "line": 22,
+            "code": "fractalLow = ta.pivotlow(low, 2, 2)"
+          },
+          {
+            "line": 33,
+            "code": "gridLevelHigh = fractalHigh + atrValue * gridMultiplierHigh"
+          },
+          {
+            "line": 34,
+            "code": "gridLevelLow = fractalLow - atrValue * gridMultiplierLow"
+          },
+          {
+            "line": 45,
+            "code": "        strategy.entry(\"Buy\", strategy.long, limit=gridLevelLow)"
+          },
+          {
+            "line": 50,
+            "code": "strategy.exit(\"Take Profit/Stop Loss\", \"Buy\", limit=gridLevelHigh, stop=fractalLow - atrValue * trailStopMultiplier)"
+          },
+          {
+            "line": 51,
+            "code": "strategy.exit(\"Take Profit/Stop Loss\", \"Sell\", limit=gridLevelLow, stop=fractalHigh + atrValue * trailStopMultiplier)"
+          }
+        ],
+        "detail": "分形回归挂限价有机制，但分形只在确认柱存在，目标常na且多头入场价与默认止损同值。",
+        "suggestion": "持久化已确认水平，明确挂单寿命、独立正风险距离与方向ID。",
+        "tradeoff": "持久水平和取消规则将改变成交集合，不能视作微调。",
+        "validation": "分形确认后多根无新分形、等价入场止损、隔夜越价及同根双分形核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 271,
+    "sid": 2597,
+    "source_sha256": "ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044",
+    "pine_sha256": "a55e9b816dee402e93851b1ad072c9b3ec462b7dc5bd18dca2544a5f83b46a8e",
+    "review_scope": "full_source_static",
+    "assessment": "高低突破按连续信号编号入场，默认只做多一次、每次100%权益；ATR初始止损和通道跟踪市价退出。 唐奇安突破加ATR保护有清晰逻辑，但计数统计信号而非成交，固定枚举退出不足以覆盖所有实际层。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 100,
+            "code": "    strategy.close(\"Long\" + tostring(count_open_longs-4, \"#\"))"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：多头枚举遗漏count-3，导致该层未被跟踪退出；连续信号计数也可能超过已成交编号，后者需进一步设计。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；计数可超过十个，当前退出仅最近十个且计数含被拒信号，超过范围的覆盖需另行设计。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "strategy(\"ETF tradedr\", overlay=true, pyramiding=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100)"
+          },
+          {
+            "line": 35,
+            "code": "if (long_condition) "
+          },
+          {
+            "line": 36,
+            "code": "    count_open_longs := count_open_longs +1"
+          },
+          {
+            "line": 84,
+            "code": "if (long_condition) and (count_open_longs <= max_sequel_trades) and (trade_long == true)"
+          },
+          {
+            "line": 97,
+            "code": "    strategy.close(\"Long\" + tostring(count_open_longs, \"#\"))"
+          },
+          {
+            "line": 99,
+            "code": "    strategy.close(\"Long\" + tostring(count_open_longs-2, \"#\"))"
+          },
+          {
+            "line": 100,
+            "code": "    strategy.close(\"Long\" + tostring(count_open_longs-4, \"#\"))"
+          }
+        ],
+        "detail": "唐奇安突破加ATR保护有清晰逻辑，但计数统计信号而非成交，固定枚举退出不足以覆盖所有实际层。",
+        "suggestion": "已有漏层补丁后用真实未平交易ID管理退出，并明确100层与每层100%风险上限。",
+        "tradeoff": "限层和按成交计数会改变总体敞口与策略收益。",
+        "validation": "超过10次信号、被拒订单、部分平仓、Long count-3及所有实际层覆盖测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 272,
+    "sid": 509,
+    "source_sha256": "eeb266e7c2a904af8f2f347d8cd3e628ea06a0a9e35e12a09d983d9348bc30c8",
+    "pine_sha256": "12768025f8c476510401154f3f8eed2358ca17bd8f73e7ffe655e3d3d2ef4ebc",
+    "review_scope": "full_source_static",
+    "assessment": "MACD柱上穿零且RSI上穿70时做多，下穿零且RSI下穿30时反手空，无独立退出。 MACD动量和RSI极端同根突破为双向追势模型，只有反向复合信号平仓，可能长期无退出。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 34,
+            "code": "    if (crossover(delta, 0) and crossover(vrsi, overBought ))"
+          },
+          {
+            "line": 35,
+            "code": "        strategy.entry(\"MacdLE\", strategy.long, comment=\"LE\")"
+          },
+          {
+            "line": 36,
+            "code": "    if (crossunder(delta, 0) and crossunder(vrsi, overSold))"
+          },
+          {
+            "line": 37,
+            "code": "        strategy.entry(\"MacdSE\", strategy.short, comment=\"SE\")"
+          }
+        ],
+        "detail": "MACD动量和RSI极端同根突破为双向追势模型，只有反向复合信号平仓，可能长期无退出。",
+        "suggestion": "先量化复合信号稀疏度与最大持有期，再比较独立趋势退出。",
+        "tradeoff": "退出放宽可能减少趋势利润并增加交易成本。",
+        "validation": "单边趋势转震荡但RSI未穿另一极值、相邻阈值与借券成本测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 273,
+    "sid": 4563,
+    "source_sha256": "ab034cdbb6cd80c0ab1123726ed510b2f197c29446bca24a09c14c2f6dcfc495",
+    "pine_sha256": "e890aa51684b6743d0f391f138ac10bab12bada51cbe02e241f16a89d2cc22e9",
+    "review_scope": "full_source_static",
+    "assessment": "英国时区四段开盘15分钟内，极端开收及5根区间扩张做多空各2份；距信号超3根挂收盘限价退出。 开盘扩张柱逻辑仅适合指定日内时段，GB时区受夏令时影响；计算的bs/ss从未挂保护。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "eu_sev = time(timeframe.period, \"0700-0715\", \"GB\")"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：多空共用exit ID，分开命名避免相互修改；限价定时退出和未使用bs/ss保护仍需设计确认。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；bs/ss计算未实际用于止损；实际退出为三根后close限价，原意图未改。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 20,
+            "code": "eu_sev = time(timeframe.period, \"0700-0715\", \"GB\")"
+          },
+          {
+            "line": 21,
+            "code": "eu_eig = time(timeframe.period, \"0800-0815\", \"GB\")"
+          },
+          {
+            "line": 22,
+            "code": "us_one = time(timeframe.period, \"1300-1315\", \"GB\")"
+          },
+          {
+            "line": 23,
+            "code": "us_two = time(timeframe.period, \"1430-1445\", \"GB\")"
+          },
+          {
+            "line": 138,
+            "code": "if OD_Up"
+          },
+          {
+            "line": 139,
+            "code": "    bs := low[1]"
+          },
+          {
+            "line": 158,
+            "code": "if ta.barssince(OD_Up)> 3 "
+          },
+          {
+            "line": 159,
+            "code": "    strategy.exit(id = \"ex\" , from_entry = \"el\", limit = close)"
+          }
+        ],
+        "detail": "开盘扩张柱逻辑仅适合指定日内时段，GB时区受夏令时影响；计算的bs/ss从未挂保护。",
+        "suggestion": "统一目标市场时区并限制日内周期，明确三根后市价退出还是限价退出。",
+        "tradeoff": "固定时区和执行方式会改变哪些交易可发生。",
+        "validation": "美英夏令时切换周、日线误用、3根后未成交限价持续及风险保护测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 274,
+    "sid": 2529,
+    "source_sha256": "583711766c4cd6e7a9ed7dc703be188fd53ceacb0d8f1d56d7d3e7fdaa76a592",
+    "pine_sha256": "094f1654fa122decb75621c8b03bfc1d6c2ffaf115cfa450db277c2ba775e152",
+    "review_scope": "full_source_static",
+    "assessment": "收盘高于可选EMA/SMA200全权益做多，低于均线平多，逐tick计算。 价格相对200EMA持有规则清楚，但calc_on_every_tick使实时柱内反复进出与历史收盘不同。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 23,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 46,
+            "code": "if (testPeriod() and close < movingAverage)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复日期。；保留窗外退出。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 10,
+            "code": "strategy(\"HODLBot\", default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, overlay=true)"
+          },
+          {
+            "line": 23,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 42,
+            "code": "if (testPeriod() and close > movingAverage)"
+          },
+          {
+            "line": 46,
+            "code": "if (testPeriod() and close < movingAverage)"
+          }
+        ],
+        "detail": "价格相对200EMA持有规则清楚，但calc_on_every_tick使实时柱内反复进出与历史收盘不同。",
+        "suggestion": "日期候选后选择收盘确认版或明确逐tick研究，不把两种结果混用。",
+        "tradeoff": "收盘确认减少噪声也会延迟转向。",
+        "validation": "同一根反复跨均线、重载后信号、手续费累计与窗外退出验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 275,
+    "sid": 1776,
+    "source_sha256": "97aeb38dab11c43d2fd5e39c0745cb9954f4c6be136351421008c3dd82ea2910",
+    "pine_sha256": "72c76c8dc2d44514c449e1447fd5f200e79ed406f4f8f398289900b90fcef74e",
+    "review_scope": "full_source_static",
+    "assessment": "早盘高量ATR冲击后旗形回撤突破做多，回撤低点止损与2R目标；新高量阴线计划先半仓后全退。 旗形状态初始化存在确定缺陷：冲击柱将pullbackLow设为自身low，随即计算回撤100%，默认阈值50使inFlag立即失效。即使跳过同柱，后续min仍包含冲击低点，回撤仍至少100%。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 26,
+            "code": "    if newHigh and breakoutVolOk"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：strategy.close首参必须是入场ID，现与实际入场不匹配。；strategy.close首参必须是入场ID，现与实际入场不匹配。；旗形在本块因回撤或超时失效后，入场须重新确认inFlag，不能继续突破下单。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "confirmed_defect",
+        "severity": "high",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "if barstate.isnew and isImpulseBar and sessActive"
+          },
+          {
+            "line": 20,
+            "code": "    inFlag:=true,flagImpulseHigh:=high,flagImpulseLow:=low,pullbackLow:=low,pullbackBars:=0"
+          },
+          {
+            "line": 22,
+            "code": "if inFlag and sessActive"
+          },
+          {
+            "line": 23,
+            "code": "    pullbackBars+=1,pullbackLow:=math.min(pullbackLow,low),retracementPct=(flagImpulseHigh-pullbackLow)/(flagImpulseHigh-flagImpulseLow)*100"
+          },
+          {
+            "line": 24,
+            "code": "    inFlag:=retracementPct>maxPullbackPct or pullbackBars>maxPullbackBars?false:inFlag"
+          },
+          {
+            "line": 26,
+            "code": "    if newHigh and breakoutVolOk"
+          }
+        ],
+        "detail": "旗形状态初始化存在确定缺陷：冲击柱将pullbackLow设为自身low，随即计算回撤100%，默认阈值50使inFlag立即失效。即使跳过同柱，后续min仍包含冲击低点，回撤仍至少100%。",
+        "suggestion": "将冲击识别与冲击后回撤分阶段；回撤低点只从后续K线初始化。已有候选新增inFlag检查后默认交易路径可能全部阻断，不能当完整修复。",
+        "tradeoff": "修正会改变全部旗形样本，应重新回测而非继承原结果。",
+        "validation": "手算冲击high110/low100：原式100%失败；次柱low107应为30%，不得沿用100。测试超时、回撤50%边界、突破有效/无效、现有候选默认交易数。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 276,
+    "sid": 3422,
+    "source_sha256": "fd7a3fda84536ac031b14b09b47a4fb186b441eff946a2b0445296fc4ad44555",
+    "pine_sha256": "8582e8776363035fe83e7579ceeb322e874522eae4781f19ec8079c8ac10d2f4",
+    "review_scope": "full_source_static",
+    "assessment": "EMA100上且贴近支撑做多，按3%风险距离计算数量；50%在5ATR退出，余仓10ATR目标与支撑下止损。 上升趋势近支撑买入有解释性，但动态目标随价格上涨逃离、止损随支撑下降放宽；3%风险数量未加名义上限。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 32,
+            "code": "longStopLoss = supportLevel - (atr * atrMultiplierSL)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：第一档50%无止损却预留仓位，第二档止损只能保护剩余部分；给首档补同一止损。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；动态目标和止损随每根指标变化，未锁定入场。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 32,
+            "code": "longStopLoss = supportLevel - (atr * atrMultiplierSL)"
+          },
+          {
+            "line": 33,
+            "code": "takeProfit1 = close + (atr * atrMultiplierTP1)  // Partial Take-Profit at 5x ATR"
+          },
+          {
+            "line": 34,
+            "code": "takeProfit2 = close + (atr * atrMultiplierTP2)  // Full Take-Profit at 10x ATR"
+          },
+          {
+            "line": 39,
+            "code": "positionSize = tradeRisk / (close - longStopLoss)"
+          },
+          {
+            "line": 46,
+            "code": "strategy.exit(\"Partial Exit\", from_entry=\"Ultra Long\", limit=takeProfit1, qty_percent=50)  // Exit 50% at TP1"
+          },
+          {
+            "line": 47,
+            "code": "strategy.exit(\"Full Exit\", from_entry=\"Ultra Long\", limit=takeProfit2, qty_percent=100, stop=longStopLoss)  // Exit the rest at TP2"
+          }
+        ],
+        "detail": "上升趋势近支撑买入有解释性，但动态目标随价格上涨逃离、止损随支撑下降放宽；3%风险数量未加名义上限。",
+        "suggestion": "在已有首档保护补丁后锁定初始风险、限制名义敞口，并对照动态与固定目标。",
+        "tradeoff": "固定目标可能更早获利退出，限仓降低名义收益。",
+        "validation": "支撑下降、ATR扩张、目标随价逃离、50%退出后全部剩余保护核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 277,
+    "sid": 2324,
+    "source_sha256": "cf90d23c8016f22639dc270e04246034d6600ba2562ce42a1b3b7eaf8e153622",
+    "pine_sha256": "28834e3a4f4b9236bf30f79215582035d59ad59696997ef1765789a0686da4b2",
+    "review_scope": "full_source_static",
+    "assessment": "Aroon上线上穿下线且价高于LSMA20全权益做多，反向且价低于LSMA退出，原日期条件恒真。 实际为Aroon新高新低时间差加LSMA过滤，不是双均线；仅多趋势状态清楚。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 28,
+            "code": "time_cond = true"
+          },
+          {
+            "line": 47,
+            "code": "    strategy.close(\"long\",when=longexit)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期恒真绕过输入。；退出必须在日期窗外继续。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 33,
+            "code": "upper = 100 * (highestbars(high, length+1) + length)/length"
+          },
+          {
+            "line": 34,
+            "code": "lower = 100 * (lowestbars(low, length+1) + length)/length"
+          },
+          {
+            "line": 39,
+            "code": "lsma = linreg(src, lengthx, offset)"
+          },
+          {
+            "line": 42,
+            "code": "long = crossover(upper,lower) and close > lsma"
+          },
+          {
+            "line": 43,
+            "code": "longexit = crossunder(upper,lower) and close < lsma"
+          }
+        ],
+        "detail": "实际为Aroon新高新低时间差加LSMA过滤，不是双均线；仅多趋势状态清楚。",
+        "suggestion": "先修日期并改准确分类，比较LSMA退出过滤是否造成亏损延迟。",
+        "tradeoff": "去掉过滤会增加假退出，需独立样本比较。",
+        "validation": "Aroon死叉但close仍高于LSMA、窗口外退出和趋势/横盘分组评估。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 278,
+    "sid": 5171,
+    "source_sha256": "873c2df6cab88074ed01edd197260e02c0f2a02dff99c4586168d1977973da12",
+    "pine_sha256": "ab67689be38e7c54dfe32ee4b7fd1b8b95cebe8a80e71d29c1f168464820cfba",
+    "review_scope": "full_source_static",
+    "assessment": "SMA5上穿双重SMA10买多，下穿平仓，图示及警报另含多空文本但实际仅多。 SMA与双重SMA交叉为简单仅多模型，但报警文字含做空/不同数量，和实际订单不一致。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 51,
+            "code": "testPeriod() => true"
+          },
+          {
+            "line": 58,
+            "code": "    if sell_signal"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复日期入口。；退出移出日期。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 18,
+            "code": "trima = sma(sma(x,n), n)"
+          },
+          {
+            "line": 27,
+            "code": "buy_signal = crossover(sma,trima)"
+          },
+          {
+            "line": 28,
+            "code": "sell_signal = crossunder(sma,trima)"
+          },
+          {
+            "line": 35,
+            "code": "alertcondition(sell_signal, title = 'Short', message = 'e= s= c=position b=long t=market l= | delay=30 | e= s= b=short l= t=market q=0.01')"
+          },
+          {
+            "line": 36,
+            "code": "alertcondition(buy_signal, title = 'Long', message =  'e= s= c=position b=short t=market l= | delay=30 | e= s= b=long l= t=market q=0.01')"
+          },
+          {
+            "line": 55,
+            "code": "        strategy.entry(\"Long\", true)"
+          },
+          {
+            "line": 59,
+            "code": "        strategy.close(\"Long\")"
+          }
+        ],
+        "detail": "SMA与双重SMA交叉为简单仅多模型，但报警文字含做空/不同数量，和实际订单不一致。",
+        "suggestion": "在日期修复后统一报警说明为实际仅多动作，不将现有消息直接用于自动交易。",
+        "tradeoff": "修改报警不改变回测，但会改变外部自动化解释。",
+        "validation": "逐个多头入场/平仓事件对照报警payload方向与数量；保持订单回测不变。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 279,
+    "sid": 3100,
+    "source_sha256": "1e4ed9752080d24e43b00f7b801d6375d18126c2e9677362e48bbe02d4fa0a1c",
+    "pine_sha256": "253044d10e204f84edc828f54ce1ec056204dcd2c7e0f240b517fab85143a54f",
+    "review_scope": "full_source_static",
+    "assessment": "CMO9低于-50开多，高于50或距最近一次超卖条件五柱平仓，自记持仓状态。 CMO超卖反弹可解释，但五根退出从最近超卖条件计时，持续超卖会无限推迟而非固定持有五根。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 27,
+            "code": "cmo = 100 * (sumUp - sumDown) / (sumUp + sumDown)"
+          },
+          {
+            "line": 30,
+            "code": "buyCondition = cmo < -50"
+          },
+          {
+            "line": 32,
+            "code": "sellCondition2 = ta.barssince(buyCondition) >= 5"
+          },
+          {
+            "line": 38,
+            "code": "    strategy.entry(\"Long\", strategy.long)"
+          },
+          {
+            "line": 39,
+            "code": "    inTrade := true"
+          }
+        ],
+        "detail": "CMO超卖反弹可解释，但五根退出从最近超卖条件计时，持续超卖会无限推迟而非固定持有五根。",
+        "suggestion": "明确持有期从成交还是最后信号开始，并规定零振幅分母。",
+        "tradeoff": "真正限时退出会更快实现亏损。",
+        "validation": "十根连续CMO<-50、信号后五根、零波动及被拒订单状态测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 280,
+    "sid": 3594,
+    "source_sha256": "77ed5a9370c1ee9ec6d0088e1f93d6d74749a56709e6ab12321377fb4de1eada",
+    "pine_sha256": "a9dbfede18688142816dd707f42e4149ea2cbc0f775f64450022daf627622713",
+    "review_scope": "full_source_static",
+    "assessment": "高低SMMA34与双EMA去滞后价格形成Impulse MACD，主值上穿SMA9做多、下穿平多。 Impulse MACD反转链条可以解释，但孤立函数残块导致源码执行基础不成立，已有删除候选需原生编译。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "\tta.sma(src, len)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：孤立缩进块缺失函数定义且引用未定义len，SMA实际调用内置ta.sma。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；未运行TradingView原生编译。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 18,
+            "code": "// Function to calculate SMA"
+          },
+          {
+            "line": 19,
+            "code": "\tta.sma(src, len)"
+          },
+          {
+            "line": 20,
+            "code": "    sum = 0.0"
+          },
+          {
+            "line": 21,
+            "code": "    for i = 0 to len - 1"
+          },
+          {
+            "line": 23,
+            "code": "    sum / len"
+          },
+          {
+            "line": 51,
+            "code": "md = mi > hi ? (mi - hi) : mi < lo ? (mi - lo) : 0"
+          },
+          {
+            "line": 63,
+            "code": "if (ta.crossover(md, sb))"
+          },
+          {
+            "line": 66,
+            "code": "    strategy.close(\"Buy\")"
+          }
+        ],
+        "detail": "Impulse MACD反转链条可以解释，但孤立函数残块导致源码执行基础不成立，已有删除候选需原生编译。",
+        "suggestion": "先验证候选完整编译和SMMA/ZLEMA手算，再做参数稳定性。",
+        "tradeoff": "删除无效残块不应改正确计算链，但必须先证明可执行。",
+        "validation": "对阶跃价格计算SMMA、ZLEMA、md与sb，并在目标版本编译。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 281,
+    "sid": 5110,
+    "source_sha256": "ff49c0c09bd3ec19b72cc682977714710d9214f8bf1b5d2bf3ec469c6dede5a6",
+    "pine_sha256": "2ca10f92b7ae585ffc72ea7a0c58b4423923f772e9ba06cecda08c8d2db5d25d",
+    "review_scope": "full_source_static",
+    "assessment": "确认枢轴时收盘作为水平，突破阻力全权益做多；反向支撑取消挂单，信号消失后才设置均价止盈2%止损1.75%。 枢轴突破逻辑可解释，但实际取确认柱close而非枢轴值，保护只在入场条件不成立时挂出。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "l1 = ta.pivothigh(close, inp1, inp2)"
+          },
+          {
+            "line": 26,
+            "code": "S1 = ta.pivotlow(close, inp1, inp2)"
+          },
+          {
+            "line": 31,
+            "code": "l1V = ta.valuewhen(l1, close, 0)"
+          },
+          {
+            "line": 32,
+            "code": "S1V = ta.valuewhen(S1, close, 0)"
+          },
+          {
+            "line": 79,
+            "code": "if strategy.openprofit >= 0 and sL"
+          },
+          {
+            "line": 101,
+            "code": "if strategy.position_size > 0 and not (Lc1)"
+          },
+          {
+            "line": 102,
+            "code": "    strategy.exit(\"Close Long\", stop = Stop_L, limit = Take_L)"
+          }
+        ],
+        "detail": "枢轴突破逻辑可解释，但实际取确认柱close而非枢轴值，保护只在入场条件不成立时挂出。",
+        "suggestion": "明确支撑阻力锚并将必要保护独立于持续入场条件，区分取消与平仓。",
+        "tradeoff": "锚点和保护作用域改变全部信号与退出。",
+        "validation": "32柱确认延迟、持续Lc1真期间大亏、仅取消未成交订单与真实持仓退出测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 282,
+    "sid": 2162,
+    "source_sha256": "c656866040490d741d6e330cd2e41351897d5a788e456a71fff2bf0e35fbf297",
+    "pine_sha256": "a4722407010a723af279529793005dfc4cd6623eae08d732df8425bd85190b28",
+    "review_scope": "full_source_static",
+    "assessment": "请求高周期价格在本周期计算均线与枢轴；上升趋势低点确认时挂open限价多单，下降趋势高点确认平仓。 高周期数据合并后在低周期计算SMA与枢轴，并非高周期20根MA或低周期枢轴，名称与实现不一致。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 56,
+            "code": "    strategy.close(id=\"Long\", comment=\"Close Long\", alert_message=exit_long_alert)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：反向失效时取消未成交同ID入口。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；高周期指标计算与实时重绘特性未改。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 27,
+            "code": "high_src = request.security(syminfo.tickerid, high_tf, src)"
+          },
+          {
+            "line": 30,
+            "code": "high_tf_ma = ta.sma(high_src, n)"
+          },
+          {
+            "line": 35,
+            "code": "low_tf_pl = ta.pivotlow(high_src, pivot_l, pivot_r)"
+          },
+          {
+            "line": 38,
+            "code": "low_tf_ph = ta.pivothigh(high_src, pivot_l, pivot_r)"
+          },
+          {
+            "line": 53,
+            "code": "    strategy.entry(id=\"Long\", direction=strategy.long, limit=open, alert_message=enter_long_alert)"
+          },
+          {
+            "line": 56,
+            "code": "    strategy.close(id=\"Long\", comment=\"Close Long\", alert_message=exit_long_alert)"
+          }
+        ],
+        "detail": "高周期数据合并后在低周期计算SMA与枢轴，并非高周期20根MA或低周期枢轴，名称与实现不一致。",
+        "suggestion": "明确计算上下文，将高周期指标放入其上下文并使用已确认数据；已有撤单候选只是局部修复。",
+        "tradeoff": "真正双周期算法会改变信号，可能降低旧成绩。",
+        "validation": "1h图配4h源和日线图配4h源分别对齐指标；实时/重载一致性及挂单寿命测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 283,
+    "sid": 4159,
+    "source_sha256": "f7ecf68d57f802d874006734ad08ba5f6eecc014a267869571da9f6079df6320",
+    "pine_sha256": "2d3a2ae949f18971dfb8b129fe05d7b6058a2011ce0200ebe6fe95bf5f5f941d",
+    "review_scope": "full_source_static",
+    "assessment": "超级趋势多头、RSI<65且价格>SMA50做多；超级趋势转空平多，收盘减1.5ATR单调收紧保护。 Supertrend、RSI、MA确认加只升不降ATR线结构较清楚；首次保护与信号价/实际成交的风险差仍需验证。",
+    "priority": "P2",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 38,
+            "code": "buyCondition = direction < 0 and rsi < 65 and close > ma"
+          },
+          {
+            "line": 44,
+            "code": "stopPrice = close - (atr * trailOffset)"
+          },
+          {
+            "line": 46,
+            "code": "if buyCondition and strategy.position_size == 0"
+          },
+          {
+            "line": 49,
+            "code": "    trail := math.max(stopPrice, nz(trail[1]))"
+          },
+          {
+            "line": 52,
+            "code": "strategy.entry(\"Long\", strategy.long, when=buyCondition)"
+          },
+          {
+            "line": 54,
+            "code": "strategy.exit(\"Trail Exit\", \"Long\", stop=trail)"
+          }
+        ],
+        "detail": "Supertrend、RSI、MA确认加只升不降ATR线结构较清楚；首次保护与信号价/实际成交的风险差仍需验证。",
+        "suggestion": "保持简洁并做过滤消融，检查每笔新仓止损重置和高开风险。",
+        "tradeoff": "少过滤可能更早入场也更多噪声。",
+        "validation": "第二笔交易较低价格、跳空入场、短暂翻空再翻多及保护单时序核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 284,
+    "sid": 1977,
+    "source_sha256": "8d47af2d26a0c55eb4cafbf995da3857d6caf746a58a6454c5693d731bce62da",
+    "pine_sha256": "4a13e51691e5aef5ffd800bf8abd134a90f42977cef0049bb413cb0cfa7bb224",
+    "review_scope": "full_source_static",
+    "assessment": "EMA50>100且RSI>70做多，均线转空平多；交叉时EMA100应作为止损。 EMA多头排列追RSI强势有动量解释，但注释第二根确认未实现，入场清空止损已有修复。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 56,
+            "code": "    stopLoss := na  // Reset stop loss after entry"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：入场分支把刚记录的止损设为na，持仓保护分支不执行；删除这次清空。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；同一绿带内止损后再入会继续用该绿带交叉价，这是原状态锚点，未改为每笔成交价。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 35,
+            "code": "if (isGreenCrossover and not isGreenCrossover[1])  // First green crossover"
+          },
+          {
+            "line": 42,
+            "code": "entryCondition = isGreenConfirmed and rsi > rsi_overbought and isGreenCrossover"
+          },
+          {
+            "line": 50,
+            "code": "if (isGreenCrossover and not isGreenCrossover[1])"
+          },
+          {
+            "line": 51,
+            "code": "    stopLoss := emaB  // Set stop loss to EMA Big (crossover point)"
+          },
+          {
+            "line": 54,
+            "code": "if (entryCondition)"
+          },
+          {
+            "line": 56,
+            "code": "    stopLoss := na  // Reset stop loss after entry"
+          }
+        ],
+        "detail": "EMA多头排列追RSI强势有动量解释，但注释第二根确认未实现，入场清空止损已有修复。",
+        "suggestion": "先验证止损候选，再明确绿带第一次/第二次信号及止损后同带再入规则。",
+        "tradeoff": "限制再入可能减少趋势利润也减少连续止损。",
+        "validation": "绿带首柱RSI>70、止损后同带再入、跨带重置与初始保护测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 285,
+    "sid": 4224,
+    "source_sha256": "67dcdf7b16b4e8bced24c76853fca11c05e3aa1c3cb336e8bde3ff401457267c",
+    "pine_sha256": "f66cadcd2034c5960db1da5b97c5b8a2e5a64eee94c5257d3366064484e8a8f3",
+    "review_scope": "full_source_static",
+    "assessment": "EMA25>50>100时价格上穿25买两个0.5份ID，分别1R/1.5R目标；跌破EMA100退出。 三EMA趋势回调分两档止盈可解释；qty=.5是半份而非权益50%，默认加仓与重复信号重锚都需确认。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 56,
+            "code": "if (exit_condition1 or cross_below_ema100)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：Buy1未覆盖stop_loss条件，只有Buy2有止损；给Buy1增加同一止损触发，保留份额与默认加仓配置。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；默认pyramiding可能只允许Buy1，两个半份订单是否同时成交需原生验证；入场条件会重写持仓锚点。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 19,
+            "code": "pip_buffer = input.float(0.0003, title=\"Stop-loss buffer (pips)\")  // Fixed default pip value (e.g., 3 pips for 5-digit pairs)"
+          },
+          {
+            "line": 42,
+            "code": "if (entry_condition)"
+          },
+          {
+            "line": 44,
+            "code": "    stop_loss := lowest_low - pip_buffer"
+          },
+          {
+            "line": 47,
+            "code": "    strategy.entry(\"Buy1\", strategy.long, qty=0.5)  // First 50%"
+          },
+          {
+            "line": 48,
+            "code": "    strategy.entry(\"Buy2\", strategy.long, qty=0.5)  // Second 50%"
+          },
+          {
+            "line": 56,
+            "code": "if (exit_condition1 or cross_below_ema100)"
+          },
+          {
+            "line": 58,
+            "code": "if (exit_condition2 or cross_below_ema100 or exit_condition_sl)"
+          }
+        ],
+        "detail": "三EMA趋势回调分两档止盈可解释；qty=.5是半份而非权益50%，默认加仓与重复信号重锚都需确认。",
+        "suggestion": "已有Buy1止损修复后明确两份持仓总数量和重复信号处理，缓冲按tick/ATR表达。",
+        "tradeoff": "规范数量及风险锚将改变分档是否真的执行。",
+        "validation": "低价/高价股、两笔同根入场、重复信号、两档均止损和tick对齐验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 286,
+    "sid": 3392,
+    "source_sha256": "baccf4a728e2dc06086b40974a23e900543cdf3b5d7906e39317430a8e4c1fac",
+    "pine_sha256": "e02b8b8bfa6dfcfebc51d5147ad5ceb064a2802f326346578bdcb24b45369fc8",
+    "review_scope": "full_source_static",
+    "assessment": "低波动统计显著且价格在确认分形支撑之上空仓买权益5%整份，ATR跟踪止损及1R/2R/3R各平初始三分之一。 分形支撑+低波动入场有机制，但ATR相关序列构造的test_stat不能直接宣称95%统计置信；整除分档可能余仓。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 85,
+            "code": "std_error   = ta.stdev(ta.tr, len_fast) / math.pow(len_fast, 0.5)"
+          },
+          {
+            "line": 86,
+            "code": "test_stat = (atr_fast - atr_slow) / std_error"
+          },
+          {
+            "line": 90,
+            "code": "conf_interval = input.string(title=\"Confidence Interval\", defval=\"95%\", options=[\"90%\",\"95%\",\"99%\"], tooltip=\"Critical values of 1.645, 1.96, 2.58, for CI=90%/95%/99%, respectively; Under 2-tailed test to compare atr_fast vs atr_slow. Null hypothesis (H0) is that both should equal. Based on the computed test statistic value, if absolute value of it is +/- critical value, then H0 will be rejected.\")"
+          },
+          {
+            "line": 98,
+            "code": "entry_signal_long = close >= fractal_support and reject_H0_lefttail"
+          },
+          {
+            "line": 109,
+            "code": "    initial_order_size := math.floor(pcnt_alloc * strategy.equity / close)"
+          },
+          {
+            "line": 115,
+            "code": "        strategy.close(ENUM_LONG, comment=\"TP Lvl3\", qty=math.floor(initial_order_size / 3))"
+          },
+          {
+            "line": 118,
+            "code": "        strategy.close(ENUM_LONG, comment=\"TP Lvl2\", qty=math.floor(initial_order_size / 3))"
+          },
+          {
+            "line": 121,
+            "code": "        strategy.close(ENUM_LONG, comment=\"TP Lvl1\", qty=math.floor(initial_order_size / 3))"
+          }
+        ],
+        "detail": "分形支撑+低波动入场有机制，但ATR相关序列构造的test_stat不能直接宣称95%统计置信；整除分档可能余仓。",
+        "suggestion": "将置信标签改为经验阈值或用依赖结构校准，确认最后档清仓与小仓位规则。",
+        "tradeoff": "校准后阈值可能失去现有优势，清余仓影响持仓尾部。",
+        "validation": "自相关重采样检验误报率，数量1/2/4/5份及跨多目标跳空验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 287,
+    "sid": 1719,
+    "source_sha256": "f6eb15949f97481cc834834124371bcad3fb07fe94d35c84d6a73b392a6638ed",
+    "pine_sha256": "d6f61087d66d22c8c152b2a68216e5624e2da31b195f7e7f563e181b126a6580",
+    "review_scope": "full_source_static",
+    "assessment": "布林下轨上穿开多、下轨下穿开空，可选均线位置过滤；按中轨或边轨交叉平全部。 多头是下轨回归，空头实际下轨突破而非定义的上轨反转；同下轨穿越又触发全平，意图冲突。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 39,
+            "code": "buyEntry = crossover(source, lower)"
+          },
+          {
+            "line": 40,
+            "code": "sellEntry = crossunder(source, upper) "
+          },
+          {
+            "line": 47,
+            "code": "if (nflb?(crossunder(source,lower) and noisefilter>upper): crossunder(source, lower))"
+          },
+          {
+            "line": 48,
+            "code": "\tstrategy.entry(\"BBandSE\", strategy.short, oca_name=\"BollingerBands\",  comment=\"BBandSE\") "
+          },
+          {
+            "line": 52,
+            "code": "strategy.close_all(when=bl?crossover(source,basis) or crossunder(source,basis):crossover(source,upper) or crossunder(source,lower))"
+          }
+        ],
+        "detail": "多头是下轨回归，空头实际下轨突破而非定义的上轨反转；同下轨穿越又触发全平，意图冲突。",
+        "suggestion": "先选对称均值回归还是混合突破，再统一同根目标仓位和OCA规则。",
+        "tradeoff": "修正方向改变策略性质，不能靠收益选定义。",
+        "validation": "下穿上轨/下轨、同根开空与close_all及过滤开关组合测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 288,
+    "sid": 1449,
+    "source_sha256": "0830884314d77aede1e489b85043496aedb061960250d0b3dfa6ce04d5bad537",
+    "pine_sha256": "13757935be8545d445815d86e96109f3886e9f409838ebc80f35b7a9fbee90c7",
+    "review_scope": "full_source_static",
+    "assessment": "RSI8低于28买2份最多2层，每次信号按收盘重设5%止损，收盘超过前高全平。 RSI低位买入并突破前高退出可解释，但持续超卖会反复下移止损，即使加仓被平台拒绝也改保护。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 12,
+            "code": "         initial_capital=10000, pyramiding=2, "
+          },
+          {
+            "line": 27,
+            "code": "buyCondition = rsi < rsi_threshold"
+          },
+          {
+            "line": 35,
+            "code": "if (buyCondition)"
+          },
+          {
+            "line": 36,
+            "code": "    stop_loss_level := close * (1 - stop_loss_percent / 100)"
+          },
+          {
+            "line": 37,
+            "code": "    strategy.entry(\"Long\", strategy.long)"
+          },
+          {
+            "line": 39,
+            "code": "    strategy.exit(\"Stop-Loss\", from_entry=\"Long\", stop=stop_loss_level)"
+          }
+        ],
+        "detail": "RSI低位买入并突破前高退出可解释，但持续超卖会反复下移止损，即使加仓被平台拒绝也改保护。",
+        "suggestion": "只在真实新成交时更新风险锚，明确两层各自止损还是总均价止损。",
+        "tradeoff": "不再下移止损会增加已实现亏损但限制尾部。",
+        "validation": "超过两次超卖信号、价格持续下跌、两层成交后第三信号仍重锚测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 289,
+    "sid": 895,
+    "source_sha256": "2479d7bedae2c72dfad6213a486878b5e5dba475eba392ebf9b13919bd4a03bc",
+    "pine_sha256": "968c226e4892835f23891db737a68f4f7ec4e51a9ac81459ae6e8c0ae4df0d32",
+    "review_scope": "full_source_static",
+    "assessment": "快SMA上升慢SMA下降及参考线偏移买入，权益96%；盈利且连续上涨条件成立才提交单调收紧止损。 均线偏移回归与利润激活跟踪是可解释但复杂设计；未盈利前无止损，版本注解也非标准格式。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 9,
+            "code": "// @version=4"
+          },
+          {
+            "line": 40,
+            "code": "enterLong = (low < smaRef) and (distanceLow > lowOffset) and (rising(smaFast,1)) and (falling(smaSlow, 1)) "
+          },
+          {
+            "line": 49,
+            "code": "enterShort = (close > smaRef) and (distanceHigh > highOffset) and (rising(close,3)) and (strategy.openprofit > 0) and (smaFast > smaSlow)"
+          },
+          {
+            "line": 63,
+            "code": "orderSize = (strategy.equity * orderStake) / close"
+          },
+          {
+            "line": 72,
+            "code": "longStopPrice := if (strategy.position_size > 0)"
+          },
+          {
+            "line": 81,
+            "code": "if (enterShort)"
+          },
+          {
+            "line": 82,
+            "code": "    strategy.exit(id=\"Close Long Position\", stop=longStopPrice)"
+          }
+        ],
+        "detail": "均线偏移回归与利润激活跟踪是可解释但复杂设计；未盈利前无止损，版本注解也非标准格式。",
+        "suggestion": "先原生编译并确认跟踪应否利润激活，另设灾难保护作风险对照。",
+        "tradeoff": "始终保护与原利润激活模型不同，收益可能下降。",
+        "validation": "入场后长期亏损、首次满足盈利条件、1.35%跟踪和96%资金占用测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 290,
+    "sid": 379,
+    "source_sha256": "018f1de11ff1981b34306924918efed8f7cda007401605e5913955469029d757",
+    "pine_sha256": "b913693edec60dea2c677ee91a98859b8b1782d00875d0f38db43f4b6ea5f07b",
+    "review_scope": "full_source_static",
+    "assessment": "G通道两侧穿越先后决定趋势转向，多空入场；每根收盘重设百分比止盈止损。 G通道状态翻转有趋势解释，但showcross显示开关直接控制订单，信号图标回移一根易误读。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 24,
+            "code": "crossup = ta.crossunder(b, close)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：多空保护使用不同ID，避免同ID修改。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；止盈止损随每根close移动，是否固定锚点属于设计选择。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 24,
+            "code": "crossup = ta.crossunder(b, close)"
+          },
+          {
+            "line": 25,
+            "code": "crossdn = ta.crossunder(a, close)"
+          },
+          {
+            "line": 35,
+            "code": "buy_signal = showcross and bullish and not bullish[1]"
+          },
+          {
+            "line": 36,
+            "code": "sell_signal = showcross and not bullish and bullish[1]"
+          },
+          {
+            "line": 39,
+            "code": "plotshape(buy_signal ? avg : na, location=location.belowbar, style=shape.labeldown, color=color.new(color.lime, 0), size=size.tiny, text=\"Buy\", textcolor=color.white, offset=-1)"
+          },
+          {
+            "line": 47,
+            "code": "take_profit_level = close * (1 + take_profit_percent / 100)"
+          },
+          {
+            "line": 48,
+            "code": "stop_loss_level = close * (1 - stop_loss_percent / 100)"
+          }
+        ],
+        "detail": "G通道状态翻转有趋势解释，但showcross显示开关直接控制订单，信号图标回移一根易误读。",
+        "suggestion": "先验证已有ID修复，分离显示开关与交易启用，并明确动态价格目标是否有意。",
+        "tradeoff": "分离开关不应影响默认行为；固定风险会改变成交。",
+        "validation": "关showcross是否原先停止交易、图标与订单实际时间、涨跌时保护移动验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 291,
+    "sid": 3112,
+    "source_sha256": "fcb5743b5dd45cbec25bafd30b662923b85be4243f348c04cedfb736dfeb457a",
+    "pine_sha256": "217d110cdf4bf1df843705322958a5b9268ea5bfb07851e35e2359cfa34fedd9",
+    "review_scope": "full_source_static",
+    "assessment": "阳阴线成交量差SMA14在365柱极低区域标记后上穿零买多；曾超高阈值后回落平仓。 阴阳柱成交量差只是成交方向代理，365根不等于美股一年；先复位标志会跳过深跌卖出。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 14,
+            "code": "lookback_days = 365  // Lookback period fixed to 1 year"
+          },
+          {
+            "line": 17,
+            "code": "buy_volume = close > open ? volume : na"
+          },
+          {
+            "line": 18,
+            "code": "sell_volume = close < open ? volume : na"
+          },
+          {
+            "line": 45,
+            "code": "if ta.crossover(delta_sma, 10000)"
+          },
+          {
+            "line": 52,
+            "code": "if delta_sma < below_60_threshold*0.5 and crossed_above_70"
+          },
+          {
+            "line": 53,
+            "code": "    crossed_above_70 := false  // Reset after triggering sell"
+          },
+          {
+            "line": 56,
+            "code": "buy_condition = was_very_low and ta.crossover(delta_sma, 0)"
+          },
+          {
+            "line": 59,
+            "code": "sell_condition = crossed_above_70 and delta_sma < below_60_threshold"
+          }
+        ],
+        "detail": "阴阳柱成交量差只是成交方向代理，365根不等于美股一年；先复位标志会跳过深跌卖出。",
+        "suggestion": "明确交易年长度、归一化量能与先计算退出后重置状态的顺序。",
+        "tradeoff": "归一化及状态修正会改变跨股票信号，不可直接继承排名。",
+        "validation": "从高量直接跳到低于25%峰值、跨0与10000同根跳变、2h/日线窗口对照。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 292,
+    "sid": 1656,
+    "source_sha256": "04cbbc1d6b01aaac029c8cb47d57f4609078e0ea669f7e136dce9eaec715f2dd",
+    "pine_sha256": "c0429f7d10da02523091860e6b50e33410db022df0b7add2d244a700bbace1cf",
+    "review_scope": "full_source_static",
+    "assessment": "突破前20根高点且SMA8在32上做多，3ATR初始止损，均线死叉退出。 唐奇安突破加SMA趋势可解释；trail_offset写入绝对价格且缺激活参数，实际不能按注释理解为跟踪。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 38,
+            "code": "if (close > h1 and entrycondition2)"
+          },
+          {
+            "line": 40,
+            "code": "    stoploss = close - atr * 3"
+          },
+          {
+            "line": 41,
+            "code": "    trail = close - atr * 3"
+          },
+          {
+            "line": 42,
+            "code": "    strategy.exit(\"exit\", \"long\", stop=stoploss, trail_offset=trail)"
+          }
+        ],
+        "detail": "唐奇安突破加SMA趋势可解释；trail_offset写入绝对价格且缺激活参数，实际不能按注释理解为跟踪。",
+        "suggestion": "保留固定ATR止损为基线，单独定义跟踪激活与tick距离，再比较。",
+        "tradeoff": "有效追踪改变利润截断位置。",
+        "validation": "ATR3倍距离与不同mintick转换、未激活/已激活回撤及重复突破重锚测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 293,
+    "sid": 2764,
+    "source_sha256": "98621cd6272d3d3636749fb8263d8dca136a00bdb2e2065a046f152a140fb72a",
+    "pine_sha256": "d60b7b964292a9d3773abf430060ef7a9063b26863fb8ce2aa9889bdf79cc456",
+    "review_scope": "full_source_static",
+    "assessment": "MACD12/26对SMA9信号线上穿买入、下穿平多，日期函数恒真。 MACD使用SMA信号线的仅多交叉模型结构简单，已有日期修复后宜作为基准而非复杂化。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "signal=sma(MACD,signallength)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：恢复用户起止时间。；死叉平仓窗外仍生效。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 22,
+            "code": "signal=sma(MACD,signallength)"
+          },
+          {
+            "line": 26,
+            "code": "buy=crossover(MACD, signal)"
+          },
+          {
+            "line": 27,
+            "code": "sell=crossunder(MACD, signal)"
+          },
+          {
+            "line": 43,
+            "code": "window()  => true       // create function \"within window of time\""
+          },
+          {
+            "line": 46,
+            "code": "strategy.entry(\"L\", strategy.long, when = window() and buy)    // enter long when \"within window of time\" AND crossover"
+          },
+          {
+            "line": 47,
+            "code": "strategy.close(\"L\", when = window() and sell)                   // exit long when \"within window of time\" AND crossunder      "
+          }
+        ],
+        "detail": "MACD使用SMA信号线的仅多交叉模型结构简单，已有日期修复后宜作为基准而非复杂化。",
+        "suggestion": "固定SMA信号线定义，做12/26/9邻域与成本分层。",
+        "tradeoff": "改成常见EMA信号线属于新模型。",
+        "validation": "SMA与EMA差异、日期窗外退出、横盘高换手和相邻参数验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 294,
+    "sid": 3210,
+    "source_sha256": "0041722f92819a457bb5a0593c8b9ce1a305164384e15d4de12bd3dc8f71f224",
+    "pine_sha256": "cce657660f870647e893d3ddafdda9e09ee2f2972f7382d0a5b0c47a22ba64c8",
+    "review_scope": "full_source_static",
+    "assessment": "9/21 SMA金叉做多，均价上1.5%下1%止盈止损仅随金叉提交。 SMA9/21金叉配1.5%/1%括号清楚，但原entry信号时均价尚不可用，已有持续保护候选必须验证首根空窗。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 25,
+            "code": "if (longCondition)"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：初始金叉时均价为na，成交后若无新金叉便没有退出订单。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；默认只收盘计算，首笔成交bar在下一次计算前尚无有效保护；原源码已有此缺陷。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 24,
+            "code": "longCondition = ta.crossover(shortMa, longMa)"
+          },
+          {
+            "line": 26,
+            "code": "    strategy.entry(\"Long\", strategy.long)"
+          },
+          {
+            "line": 34,
+            "code": "takeProfitLevel = strategy.position_avg_price * (1 + takeProfitPerc)"
+          },
+          {
+            "line": 35,
+            "code": "stopLossLevel = strategy.position_avg_price * (1 - stopLossPerc)"
+          },
+          {
+            "line": 38,
+            "code": "if (longCondition)"
+          },
+          {
+            "line": 39,
+            "code": "    strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=takeProfitLevel, stop=stopLossLevel)"
+          }
+        ],
+        "detail": "SMA9/21金叉配1.5%/1%括号清楚，但原entry信号时均价尚不可用，已有持续保护候选必须验证首根空窗。",
+        "suggestion": "先测成交后首个可计算时点和保护有效性，保持原信号参数不调优。",
+        "tradeoff": "添加成交重算可能改变撮合假设和历史可比性。",
+        "validation": "金叉后下一根同时触止损/止盈、成交后不再金叉、隔夜跳空三类原生测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 295,
+    "sid": 4206,
+    "source_sha256": "2a7836ec5cce56639624abb73e071c0a406882432296cd8a24bbbcb390ffa46b",
+    "pine_sha256": "b6df79a43ee7ec6aadc8244eb7a37b8a656cb30a5e32f98baae2a4ff2f4fb3b1",
+    "review_scope": "full_source_static",
+    "assessment": "EMA20/250趋势及EMA2位于100/300之间、MACD交叉确认全权益多空，信号时5 ATR止损和1.5R目标。 长期趋势内短线回调配MACD反转可解释，但隐藏均线导致实际逻辑难审计，100%资金配5ATR止损风险随波动放大。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 24,
+            "code": "ema3Length = 2    // Fast EMA (Hidden)"
+          },
+          {
+            "line": 25,
+            "code": "ema4Length = 100  // Medium EMA (Hidden)"
+          },
+          {
+            "line": 26,
+            "code": "ema5Length = 300  // Long EMA (Hidden)"
+          },
+          {
+            "line": 45,
+            "code": "bullishCondition2 = ema3 > ema5 and ema3 < ema4"
+          },
+          {
+            "line": 50,
+            "code": "bearishCondition2 = ema3 < ema5 and ema3 > ema4"
+          },
+          {
+            "line": 54,
+            "code": "longStopLoss = close - atrValue * atrMultiplier"
+          },
+          {
+            "line": 63,
+            "code": "    strategy.exit(\"TP Long\", \"Buy\", limit=longTargetPrice, stop=longStopLoss, comment=\"SL/TP Long\")"
+          },
+          {
+            "line": 67,
+            "code": "    strategy.exit(\"TP Short\", \"Sell\", limit=shortTargetPrice, stop=shortStopLoss, comment=\"SL/TP Short\")"
+          }
+        ],
+        "detail": "长期趋势内短线回调配MACD反转可解释，但隐藏均线导致实际逻辑难审计，100%资金配5ATR止损风险随波动放大。",
+        "suggestion": "公开全部交易参数并比较风险缩放仓位，检查多重均线条件独立贡献。",
+        "tradeoff": "风险缩放改变高波动股票权重。",
+        "validation": "EMA100/250/300邻域、信号跳空、5ATR占价格比例和多空借券成本验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 296,
+    "sid": 1672,
+    "source_sha256": "8f6e6c26bca32746398388feac4e3a43dc1d5c686d3bebd18d374fad4f67b5af",
+    "pine_sha256": "139e274833c29298782007dcd9b569427a2fd2b3cba8be18bac91b144686fa1d",
+    "review_scope": "full_source_static",
+    "assessment": "价格相对60柱高低中点上穿0且突破两柱前高、Vortex金叉做多；反向动量退出，另以当前价格换算tick止盈止损。 区间位置与Vortex同根交叉是动量确认；0.1直接乘close代表10%而非0.1%，距离每根随close重算。",
+    "priority": "P1",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 39,
+            "code": "long= crossover(plotg,center) and close > high[2] and crossover(VIP,VIM)"
+          },
+          {
+            "line": 40,
+            "code": "short= crossunder(plotg,center) and crossunder(VIP,VIM)"
+          },
+          {
+            "line": 42,
+            "code": "tplong=input(0.1, title=\"TP Long\", step=0.01)"
+          },
+          {
+            "line": 43,
+            "code": "sllong=input(0.1, title=\"SL Long\", step=0.01)"
+          },
+          {
+            "line": 46,
+            "code": "strategy.exit(\"closelong\", \"long\" , profit = close * tplong / syminfo.mintick, loss = close * sllong / syminfo.mintick, alert_message = \"closelong\")"
+          }
+        ],
+        "detail": "区间位置与Vortex同根交叉是动量确认；0.1直接乘close代表10%而非0.1%，距离每根随close重算。",
+        "suggestion": "明确参数单位并冻结风险距离或采用单向更新，避免界面误解。",
+        "tradeoff": "固定锚点改变保护价且可能降低原回测收益。",
+        "validation": "输入0.1/10的百分比预期、mintick换算、持仓涨跌时目标/损失距离变化测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 297,
+    "sid": 2859,
+    "source_sha256": "9568440e157e43c47ba6313ae654d52f9ddb51041a73f54c2d46c4f4e22912a8",
+    "pine_sha256": "60928d9b2e1f82c0358f2debc8536c6003a83c51d4522166f831307bf56b0a0b",
+    "review_scope": "full_source_static",
+    "assessment": "RSI5低于25依次计划7层多单，各ID按收盘百分比换算tick止盈止损。 RSI超卖分层有均值回归意图，但默认不允许七层，当前结果不能支持七层金字塔；退出tick距离随close变化。",
+    "priority": "P1",
+    "existing_audit_status": "needs_design",
+    "findings": [
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "strategy(title='Simple RSI strategy', overlay=false)"
+          },
+          {
+            "line": 73,
+            "code": "Profit_Ticks = close * (ProfitTarget_Percent / 100) / syminfo.mintick"
+          },
+          {
+            "line": 78,
+            "code": "Loss_Ticks = close * (LossTarget_Percent / 100) / syminfo.mintick"
+          },
+          {
+            "line": 83,
+            "code": "strategy.entry(\"Entry 1\", strategy.long, when=strategy.opentrades == 0 and longsignal)"
+          },
+          {
+            "line": 85,
+            "code": "strategy.entry(\"Entry 2\", strategy.long, when=strategy.opentrades == 1 and longsignal)"
+          },
+          {
+            "line": 99,
+            "code": "if strategy.position_size > 0"
+          },
+          {
+            "line": 100,
+            "code": "    strategy.exit(id=\"Exit 1\", from_entry=\"Entry 1\", profit=Profit_Ticks, loss=Loss_Ticks)"
+          }
+        ],
+        "detail": "RSI超卖分层有均值回归意图，但默认不允许七层，当前结果不能支持七层金字塔；退出tick距离随close变化。",
+        "suggestion": "先明确总资金/层数，再设置有界真实加仓并冻结每笔风险，不能直接打开七层。",
+        "tradeoff": "启用七层会显著增加尾部敞口与流动性压力。",
+        "validation": "Entry1到7可达性、连续下跌、每层成交均价与真实总风险核验。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 298,
+    "sid": 925,
+    "source_sha256": "98f2d75469450648c1262e597442e20430bf8db3ecb862b4c1046a9219e873e1",
+    "pine_sha256": "2a09b1edfec37d04e8ee19d0ff32a0e8f6c20f8689c592232720af0f667d4603",
+    "review_scope": "full_source_static",
+    "assessment": "九月逐柱发出多头入场，五月平多；没有显式仓位或止损，采用平台默认订单配置。 九月买五月卖是透明季节性基准，信号极少且收益可能主要来自市场长期上涨。",
+    "priority": "P2",
+    "existing_audit_status": "reviewed",
+    "findings": [
+      {
+        "kind": "validation_gap",
+        "severity": "low",
+        "evidence": [
+          {
+            "line": 15,
+            "code": "longCondition = month==9"
+          },
+          {
+            "line": 16,
+            "code": "closecondition = month==5"
+          },
+          {
+            "line": 18,
+            "code": "if longCondition"
+          },
+          {
+            "line": 21,
+            "code": "if closecondition"
+          }
+        ],
+        "detail": "九月买五月卖是透明季节性基准，信号极少且收益可能主要来自市场长期上涨。",
+        "suggestion": "用多年完整周期、等风险持有基准和月份置换检验，而非挑最佳月份。",
+        "tradeoff": "严格独立样本可能消除季节性优势。",
+        "validation": "首个交易日、跨年、上市不足一年、不同年代与复权分红处理验证。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 299,
+    "sid": 5519,
+    "source_sha256": "f15e83093392f33f5b96dfe4c1ddce9b55e1384bd1ab07d062b4ee9360d666c7",
+    "pine_sha256": "2bdca15bfff7df5dc84d64d4f751f9a0b5a895ed0f60ce2911c6e750ee09a879",
+    "review_scope": "full_source_static",
+    "assessment": "长期RSI200>51及EMA差柱正、连续2根收盘不升做多100%权益；均价加2或减3个动态BHD单位市价平仓。 长周期趋势中两根下跌买入有回调解释；逐tick/成交重算/放大器与动态BHD退出使历史执行保真要求高。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 39,
+            "code": "is_back_test_time() => true"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：日期输入失效；只恢复入场时间过滤，退出独立。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 12,
+            "code": "// @version=5"
+          },
+          {
+            "line": 17,
+            "code": " calc_on_every_tick    = true,"
+          },
+          {
+            "line": 18,
+            "code": " calc_on_order_fills   = true,"
+          },
+          {
+            "line": 19,
+            "code": " use_bar_magnifier     = true,"
+          },
+          {
+            "line": 39,
+            "code": "is_back_test_time() => true"
+          },
+          {
+            "line": 56,
+            "code": "bhd_unit = ta.rma(high - low, 200) * 2"
+          },
+          {
+            "line": 90,
+            "code": "take_profit = close > strategy.position_avg_price + bhd_unit * 2"
+          },
+          {
+            "line": 93,
+            "code": "stop_loss = close < strategy.position_avg_price - bhd_unit * 3"
+          }
+        ],
+        "detail": "长周期趋势中两根下跌买入有回调解释；逐tick/成交重算/放大器与动态BHD退出使历史执行保真要求高。",
+        "suggestion": "日期候选之外先规范版本并单独验证各撮合开关，固定初始BHD风险作对照。",
+        "tradeoff": "关闭逐tick或冻结风险会改变成交频率。",
+        "validation": "同柱开平再入、实时重载、波动扩大止损放宽及放大器数据缺失测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  },
+  {
+    "rank": 300,
+    "sid": 2,
+    "source_sha256": "58a34de7648ae6ca4abb5c795d4e52e9b1188da5004def801fb5bc97116ce745",
+    "pine_sha256": "a80b4048278f2966afea36d9b32ea9052eb06bb8306875ac0214333e0e2b8174",
+    "review_scope": "full_source_static",
+    "assessment": "10/50 EMA交叉后五根内结合200 EMA筛选回撤K线，以突破确认挂多空止损限价入场，1.62倍风险目标及跟踪退出。 EMA回撤突破有可解释条件，但stop-limit入口不是止损保护，trail_points=low是价格冒充tick；已有负号/ID候选只修局部。",
+    "priority": "P0",
+    "existing_audit_status": "candidate",
+    "findings": [
+      {
+        "kind": "confirmed_defect",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "t1 = time(timeframe.period,\"0930-1500\") //last hour of market is not ideal for trading"
+          }
+        ],
+        "detail": "已有修复候选的变更范围（含保护性调整，非每条都是独立缺陷）：空头风险距离第二比较使用反向差值，距离大于10.40仍通过。；多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。",
+        "suggestion": "核验现有独立修复候选，不直接覆盖原版；本次额外建议见下一条。",
+        "tradeoff": "现有补丁未原生编译或重测，原版历史收益不能当作候选收益。",
+        "validation": "逐项核验已有changes.patch，原生编译后对比订单序列；trail_points=low仍混合价格与tick；stop-limit入场意图需原生订单验证。；修复候选未原生编译/回测；旧排名收益不适用。"
+      },
+      {
+        "kind": "design_risk",
+        "severity": "medium",
+        "evidence": [
+          {
+            "line": 13,
+            "code": "t1 = time(timeframe.period,\"0930-1500\") //last hour of market is not ideal for trading"
+          },
+          {
+            "line": 42,
+            "code": "bullstop = (bullentryh - bullentrylow) <= 1.00 ? bullentryh - 1.00 : (bullentryh - bullentrylow) <= 10.40 ? bullentrylow : na"
+          },
+          {
+            "line": 55,
+            "code": "bearstop = (bearentryhigh - bearentryh) <= 1.00 ? bearentryh + 1.00 : (bearentryh - bearentryhigh) <= 10.40 ? bearentryhigh : na"
+          },
+          {
+            "line": 107,
+            "code": "    strategy.entry(\"buy\", strategy.long, limit=bullentryh, stop=bullstop, comment=\"buy\")"
+          },
+          {
+            "line": 108,
+            "code": "strategy.exit(\"exit\",\"buy\", trail_points = low, trail_offset = 5, qty_percent=100, limit=bulltarget, stop=bullstop)"
+          },
+          {
+            "line": 112,
+            "code": "    strategy.entry(\"sell\", strategy.short, limit=bearentryh, stop=bearstop, comment=\"sell\")"
+          },
+          {
+            "line": 113,
+            "code": "strategy.exit(\"exit\",\"sell\", trail_points = low, trail_offset = 5, qty_percent=100, limit=beartarget, stop=bearstop)"
+          }
+        ],
+        "detail": "EMA回撤突破有可解释条件，但stop-limit入口不是止损保护，trail_points=low是价格冒充tick；已有负号/ID候选只修局部。",
+        "suggestion": "明确stop-limit触发顺序、用tick或ATR定义跟踪，并验证美股时区与固定美元阈值。",
+        "tradeoff": "正确撮合与单位可能大幅改变原策略收益。",
+        "validation": "不同价格/mintick、停止触发后限价未成交、风险>10.40拒绝、多空保护与时区测试。"
+      }
+    ],
+    "native_compile": false,
+    "backtest": false
+  }
+]

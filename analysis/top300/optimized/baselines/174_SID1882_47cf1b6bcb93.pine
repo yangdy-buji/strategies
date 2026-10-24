@@ -1,0 +1,68 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：双EMA金叉死叉跟踪策略Dual-EMA-Crossover-Strategy.md
+// 原文件SHA256：fa646007d3c44fcc0a2491940976bdc2fb5f2c60771f621f79466d71dee68eef
+// SID：1882；原研究名单序号：65
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-11-06 00:00:00
+end: 2023-11-12 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("MollyETF_EMA_Crossover", overlay = true, initial_capital = 100000, default_qty_value=100, default_qty_type=strategy.percent_of_equity)
+
+fastInput = input( 10, "Fast EMA")
+slowInput = input( 21, "Slow EMA")
+
+// Calculate two moving averages with different lengths.
+float fastMA = ta.ema(close, fastInput)
+float slowMA = ta.ema(close, slowInput)
+
+
+// STEP 1. Create inputs that configure the backtest's date range
+useDateFilter = input.bool(true, title="Filter Date Range of Backtest",
+     group="Backtest Time Period")
+backtestStartDate = input(timestamp("1 Jan 2018"), 
+     title="Start Date", group="Backtest Time Period",
+     tooltip="This start date is in the time zone of the exchange " +  
+     "where the chart's instrument trades. It doesn't use the time " + 
+     "zone of the chart or of your computer.")
+backtestEndDate = input(timestamp("7 Sep 2023"),
+     title="End Date", group="Backtest Time Period",
+     tooltip="This end date is in the time zone of the exchange " + 
+     "where the chart's instrument trades. It doesn't use the time " + 
+     "zone of the chart or of your computer.")
+
+// STEP 2. See if current bar falls inside the date range
+// OPT-1882-01：恢复可关闭的日期过滤。
+// OPT-1882-01 保持：保留结束窗已有撤单强平。
+// OPT-1882-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+inTradeWindow = not useDateFilter or (time >= backtestStartDate and time <= backtestEndDate)
+
+// STEP 3. Include the date filter with the entry order conditions
+
+// Enter a long position when `fastMA` crosses over `slowMA`.
+if inTradeWindow and ta.crossover(fastMA, slowMA)
+    strategy.entry("buy", strategy.long)
+
+// Enter a short position when `fastMA` crosses under `slowMA`.
+// OPT-1882-02：退出不依赖入场日期窗。
+// OPT-1882-02 保持：保留EMA死叉退出。
+// OPT-1882-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if ta.crossunder(fastMA, slowMA)
+    strategy.close_all(comment="sell")
+
+// STEP 4. With the backtest date range over, exit all open
+// trades and cancel all unfilled pending orders
+if not inTradeWindow and inTradeWindow[1]
+    strategy.cancel_all()
+    strategy.close_all(comment="Date Range Exit")
+
+// Plot the moving averages.
+plot(fastMA, "Fast MA", color.aqua)
+plot(slowMA, "Slow MA", color.orange)

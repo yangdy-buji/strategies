@@ -1,0 +1,34 @@
+{
+  "rank": 191,
+  "sid": 4277,
+  "source_sha256": "83a4a136dcf5c07e3daa13b7f68e0470f739a49ebf4247d94bb500fd16d1bc62",
+  "base_kind": "original",
+  "base_sha256": "fca1681685ef6799a97ac12e4d5fa3dda00c38532da089f1e3c3d83ea38fc43a",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：ADX强、+DI弱且CCI/AO负值时买入，是强下跌中的反转假设而非顺势多头，机制可明确检验。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "多个弱势条件并不能保证下跌结束；全权益整股定仓且仅+DI恢复退出，极端熊市风险高。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "统计强跌段持仓时长/最大不利波动、去掉最大反弹交易后的表现及整股资金约束。"
+  ],
+  "id": "ab549b8e9223",
+  "title": "多重指标组合交易策略Multi-indicator-Combination-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/191_SID4277_ab549b8e9223_original.pine",
+  "original": "originals/191_SID4277_ab549b8e9223.pine",
+  "baseline": "baselines/191_SID4277_ab549b8e9223.pine",
+  "changes": "changes/191_SID4277_ab549b8e9223.txt",
+  "card": "cards/ab549b8e9223.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "fca1681685ef6799a97ac12e4d5fa3dda00c38532da089f1e3c3d83ea38fc43a",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,131 @@
+//@version=4
+// OPT-T300 SID 2597：沿用旧候选·未回测
+// 原文件SHA256：ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于ATR和突破的ETF交易策略An-ATR-and-Breakout-based-ETF-Trading-Strategy.md
+// 原文件SHA256：ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044
+// SID：2597；原研究名单序号：141
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-12-18 00:00:00
+end: 2023-12-21 03:00:00
+period: 1m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © FX_minds
+strategy("ETF tradedr", overlay=true, pyramiding=100, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+//------------------------------ get user input
+lookback                   = input(title="HH LL lookback", type=input.integer, defval=20)
+ATR_periode                = input(title="ATR period", type=input.integer, defval=14)
+ATR_SL_multiplier          = input(title="ATR SL multiplier", type=input.float, defval=2)
+ATR_TP_multiplier          = input(title="ATR TP multiplier", type=input.float, defval=1)
+trailing_SL_ATR_multiplier = input(title="ATR trailing SL multiplier", type=input.float, defval=3.5)
+lookback_trailing_SL       = input(title="trailing SL lookback", type=input.integer, defval=4)
+max_sequel_trades          = input(title="max sequel trades", type=input.float, defval=1)
+trade_long                 = input(title= "trade long ?", type=input.bool, defval=true)
+trade_short                = input(title= "trade short ?", type=input.bool, defval=false)
+
+//------------------------------ determine entry conditions
+long_condition   = barstate.isconfirmed and crossover(high, highest(high, lookback)[1])
+short_condition  = barstate.isconfirmed and crossunder(low, lowest(low, lookback)[1])
+
+
+//------------------------------ count open long trades
+count_open_longs = 0
+count_open_longs := nz(count_open_longs[1])
+
+if (long_condition) 
+    count_open_longs := count_open_longs +1
+    //label.new(bar_index, low, tostring(count_open_longs, "#"), xloc.bar_index, yloc.belowbar, color.green, label.style_none, color.green, size.large)
+
+if (short_condition)
+    count_open_longs := 0
+
+
+//------------------------------ count open short trades
+count_open_shorts = 0
+count_open_shorts := nz(count_open_shorts[1])
+
+if (short_condition)
+    count_open_shorts := count_open_shorts +1
+    //label.new(bar_index, low, tostring(count_open_shorts, "#"), xloc.bar_index, yloc.belowbar, color.red, label.style_none, color.red, size.large)
+
+if (long_condition)
+    count_open_shorts := 0
+
+
+//------------------------------ calculate entryprice
+entryprice_long = long_condition ? close : na
+entryprice_short = short_condition ? close : na
+
+
+//------------------------------ calculate SL & TP
+SL_distance = atr(ATR_periode) * ATR_SL_multiplier
+TP_distance  = atr(ATR_periode) * ATR_TP_multiplier
+trailing_SL_distance = atr(ATR_periode) * trailing_SL_ATR_multiplier
+
+SL_long = entryprice_long - SL_distance
+SL_short = entryprice_short + SL_distance
+
+trailing_SL_short = lowest(close, lookback_trailing_SL) + trailing_SL_distance
+trailing_SL_long  = highest(close, lookback_trailing_SL) - trailing_SL_distance
+
+trailing_SL_short_signal = crossover(high, trailing_SL_short[1])
+trailing_SL_long_signal = crossunder(low, trailing_SL_long[1])
+
+
+//------------------------------ plot entry price & SL  
+plot(entryprice_long, style=plot.style_linebr, color=color.white)
+plot(SL_long, style=plot.style_linebr, color=color.red)
+plot(SL_short, style=plot.style_linebr, color=color.green)
+plot(trailing_SL_short, style=plot.style_linebr, color=color.red)
+plot(trailing_SL_long, style=plot.style_linebr, color=color.green)
+
+
+//------------------------------ submit entry orders
+if (long_condition) and (count_open_longs <= max_sequel_trades) and (trade_long == true)
+    strategy.entry("Long" + tostring(count_open_longs, "#"), strategy.long)
+    strategy.exit("SL Long"+ tostring(count_open_longs, "#"), 
+     from_entry="Long" + tostring(count_open_longs, "#"), stop=SL_long)
+
+if (short_condition) and (count_open_shorts <= max_sequel_trades) and (trade_short == true)
+    strategy.entry("Short" + tostring(count_open_shorts, "#"), strategy.short)
+    strategy.exit("SL Short" + tostring(count_open_shorts, "#"), 
+     from_entry="Short" + tostring(count_open_shorts, "#"), stop=SL_short)
+    
+
+//------------------------------ submit exit conditions
+if (trailing_SL_long_signal)
+    strategy.close("Long" + tostring(count_open_longs, "#"))
+    strategy.close("Long" + tostring(count_open_longs-1, "#"))
+    strategy.close("Long" + tostring(count_open_longs-2, "#"))
+    // OPT-2597-01：多头枚举遗漏count-3，导致该层未被跟踪退出；连续信号计数也可能超过已成交编号，后者需进一步设计。
+    // OPT-2597-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+    // OPT-2597-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.close("Long" + tostring(count_open_longs-3, "#"))
+    strategy.close("Long" + tostring(count_open_longs-4, "#"))
+    strategy.close("Long" + tostring(count_open_longs-5, "#"))
+    strategy.close("Long" + tostring(count_open_longs-6, "#"))
+    strategy.close("Long" + tostring(count_open_longs-7, "#"))
+    strategy.close("Long" + tostring(count_open_longs-8, "#"))
+    strategy.close("Long" + tostring(count_open_longs-9, "#"))
+    
+if (trailing_SL_short_signal)
+    strategy.close("Short" + tostring(count_open_shorts, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-1, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-2, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-3, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-4, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-5, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-6, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-7, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-8, "#"))
+    strategy.close("Short" + tostring(count_open_shorts-9, "#"))

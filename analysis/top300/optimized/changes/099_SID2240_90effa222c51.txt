@@ -1,0 +1,34 @@
+{
+  "rank": 99,
+  "sid": 2240,
+  "source_sha256": "c8e32067582be5859ff534fbccac7c35478cc50bf10955d6cd376ca9e9143521",
+  "base_kind": "original",
+  "base_sha256": "7e9000d4a6b7c3d71e004f474134de7a5e54daf7da2cab875af57f840977aeae",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：以两条ATR带界定方向，但当前定义不是互斥Supertrend状态机；带内偏多是实际行为。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "close处于上下带之间时uptrend与downtrend可同时为真，if/else总选多。此前已标待设计，不能按标准双Supertrend解释。 暂缓原因：改成标准Supertrend会改变方向及绝大多数交易。"
+  ],
+  "validation_plan": [
+    "在下带下/带内/上带上制作真值表，核对趋势持久化和每次反手。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "90effa222c51",
+  "title": "双超趋势策略Dual-SuperTrend-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/099_SID2240_90effa222c51_original.pine",
+  "original": "originals/099_SID2240_90effa222c51.pine",
+  "baseline": "baselines/099_SID2240_90effa222c51.pine",
+  "changes": "changes/099_SID2240_90effa222c51.txt",
+  "card": "cards/90effa222c51.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "7e9000d4a6b7c3d71e004f474134de7a5e54daf7da2cab875af57f840977aeae",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

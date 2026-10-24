@@ -1,0 +1,35 @@
+{
+  "rank": 146,
+  "sid": 2274,
+  "source_sha256": "f368a6a3ebd60a259c3a6210010d91dea9f99da000817a9b1c0ba2694ce21cfb",
+  "base_kind": "original",
+  "base_sha256": "46b02310abbcb7cc6c9ec25113bfe141f7a8e7db255c6373e32162240877a816",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：价格Stoch和StochRSI为不同指标；周线内计算平滑与图表对周线重复值平滑也不同，须先选指标定义及周线确认模式，不能同时替换。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "价格Stoch和StochRSI为不同指标；周线内计算平滑与图表对周线重复值平滑也不同，须先选指标定义及周线确认模式，不能同时替换。",
+    "ta.stoch输入close/high/low而非RSI；请求周线后在图表周期做SMA，且周线未确认数据可更新。不同图表周期对应不同平滑意义。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "比较日线/小时图上的同一周线参数结果，实时周内重载后信号应按所定义模型一致。"
+  ],
+  "id": "b482597c5403",
+  "title": "双重动量振荡器智能择时交易策略-Dual-Momentum-Oscillator-Smart-Timing-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/146_SID2274_b482597c5403_original.pine",
+  "original": "originals/146_SID2274_b482597c5403.pine",
+  "baseline": "baselines/146_SID2274_b482597c5403.pine",
+  "changes": "changes/146_SID2274_b482597c5403.txt",
+  "card": "cards/b482597c5403.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "46b02310abbcb7cc6c9ec25113bfe141f7a8e7db255c6373e32162240877a816",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

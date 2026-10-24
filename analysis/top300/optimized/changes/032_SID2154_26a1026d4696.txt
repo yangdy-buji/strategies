@@ -1,0 +1,34 @@
+{
+  "rank": 32,
+  "sid": 2154,
+  "source_sha256": "f0742a9d856435697dee449b9ba44b5dc32767b3732df205597c31b5e7f51a7a",
+  "base_kind": "original",
+  "base_sha256": "e712a80dab5bc33a0c8d2eec1a2c6925383956ad156afb5a6f23cdf30ebd7123",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：超卖随机指标回升入场，EMA失效或亏损阈值退出，可解释但止损是收盘市场指令。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "lossp乘leverage会随杠杆增大而放宽价格亏损阈值，可能与控制权益风险的目的相反；参数大时止损价可到零以下。 暂缓原因：纠正风险定义会改变止损频率，不能沿用旧绩效。"
+  ],
+  "validation_plan": [
+    "测试leverage=1/2/10与lossp边界，检查止损价正值、权益损失和跳空成交。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "26a1026d4696",
+  "title": "双指标滤波交易策略Stochastic-Moving-Average-Strategy-with-Double-Filters",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/032_SID2154_26a1026d4696_original.pine",
+  "original": "originals/032_SID2154_26a1026d4696.pine",
+  "baseline": "baselines/032_SID2154_26a1026d4696.pine",
+  "changes": "changes/032_SID2154_26a1026d4696.txt",
+  "card": "cards/26a1026d4696.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e712a80dab5bc33a0c8d2eec1a2c6925383956ad156afb5a6f23cdf30ebd7123",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

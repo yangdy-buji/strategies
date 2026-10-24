@@ -1,0 +1,34 @@
+{
+  "rank": 78,
+  "sid": 3625,
+  "source_sha256": "73d832f10e26771d52b3c613593de63c813f416e045c675ed3e1972842311252",
+  "base_kind": "original",
+  "base_sha256": "83a850c7cbb286866928120380ebf929acec252a05af4fa9587640761418f524",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：TAI使用均线局部振幅/价格衡量趋势强度，但振幅本身不包含方向。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "强振幅直接做多、弱振幅直接做空，可能把下跌趋势也分类成多头，逻辑合理性低于纯价格方向模型。 暂缓原因：新增斜率不是小修复，需重新排名。"
+  ],
+  "validation_plan": [
+    "镜像涨跌但相同振幅序列、震荡低波动区间及多空贡献检验。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "1cb80d25dc23",
+  "title": "基于趋势分析指数的量化交易策略Quantitative-Trading-Strategy-Based-on-Trend-Analysis-Index",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/078_SID3625_1cb80d25dc23_original.pine",
+  "original": "originals/078_SID3625_1cb80d25dc23.pine",
+  "baseline": "baselines/078_SID3625_1cb80d25dc23.pine",
+  "changes": "changes/078_SID3625_1cb80d25dc23.txt",
+  "card": "cards/1cb80d25dc23.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "83a850c7cbb286866928120380ebf929acec252a05af4fa9587640761418f524",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

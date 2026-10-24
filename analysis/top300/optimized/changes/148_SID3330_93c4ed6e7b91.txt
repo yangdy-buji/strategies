@@ -1,0 +1,37 @@
+{
+  "rank": 148,
+  "sid": 3330,
+  "source_sha256": "1b9f9c478c4596263b90f899492771a015cd0a44b3866c392f9a421dc68fb3d1",
+  "base_kind": "prior_candidate",
+  "base_sha256": "bb6b9f59cf74d243ce6de62fcb88e1480f373992dfbca210e21955e2ecabbf78",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原AND/OR依赖优先级；加括号明确两条原入场路径而不改变逻辑。；原起始时间闲置；只在开仓分支增加包含起始时刻门禁。",
+  "patches": [],
+  "resolved": [
+    "原AND/OR依赖优先级；加括号明确两条原入场路径而不改变逻辑。",
+    "原起始时间闲置；只在开仓分支增加包含起始时刻门禁。"
+  ],
+  "remaining": [
+    "expected_rebound仍可绕过下轨；ATR buffer动态变化，退出为条件市价。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "检查起始日前信号、入场后ATR骤变、MACD回升但未触下轨，以及启用TARGET_PROFIT_MODE的计数边界。"
+  ],
+  "id": "93c4ed6e7b91",
+  "title": "基于布林带和MACD的量化交易策略Trading-Strategy-Based-on-Bollinger-Bands-and-MACD",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/148_SID3330_93c4ed6e7b91_candidate.pine",
+  "original": "originals/148_SID3330_93c4ed6e7b91.pine",
+  "baseline": "baselines/148_SID3330_93c4ed6e7b91.pine",
+  "changes": "changes/148_SID3330_93c4ed6e7b91.txt",
+  "card": "cards/93c4ed6e7b91.html",
+  "diff": "changes/148_SID3330_93c4ed6e7b91.patch",
+  "original_diff": "changes/148_SID3330_93c4ed6e7b91.original.patch",
+  "script_sha256": "b8d16134a5eae93f29adf9d785aaaa4a4c80905f1f260c20bd2e249c6152f453",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

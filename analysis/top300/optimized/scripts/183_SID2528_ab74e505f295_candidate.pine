@@ -1,0 +1,56 @@
+//@version=4
+// OPT-T300 SID 2528：沿用旧候选·未回测
+// 原文件SHA256：33305c9934051da23cd272e815819defc0afc12491b17a56ad4e941f2c37ce03
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：均线震荡AO指标交易策略Moving-Average-AO-Indicator-Trading-Strategy.md
+// 原文件SHA256：33305c9934051da23cd272e815819defc0afc12491b17a56ad4e941f2c37ce03
+// SID：2528；原研究名单序号：44
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-09-04 00:00:00
+end: 2023-09-11 00:00:00
+period: 30m
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("MA&AO", overlay = true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, commission_type=strategy.commission.percent, commission_value=0.075, currency='USD')
+startP = timestamp(input(2017, "Start Year"), input(12, "Month"), input(17, "Day"), 0, 0)
+end   = timestamp(input(9999, "End Year"),   input(1, "Month"),   input(1, "Day"),   0, 0)
+// OPT-2528-01：开始结束时间未用于入场过滤；恢复函数范围，退出已经独立有效。
+// OPT-2528-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-2528-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+_testPeriod() =>
+    time >= startP and time <= end
+
+//Inputs
+fast_ma = input(8, title="Fast EMA", minval=2)
+slow_ma = input(20, minval=1, title="Slow SMA")
+AO_fast = input(5, minval=1, title="Awesome Length Fast")
+AO_slow = input(8, minval=1, title="Awesome Length Slow")
+
+//MA
+fast  = ema(close, fast_ma)
+slow =  sma(close, slow_ma)
+
+//AO
+AO_1 = sma(hl2, AO_fast)
+AO_2 = sma(hl2, AO_slow)
+dif = AO_1 - AO_2
+AO = dif>=0? dif > dif[1] ? 1 : 2 : dif > dif[1] ? -1 : -2
+
+long   =  crossover(fast, slow) and close > slow and abs(AO)==1
+short =   fast < slow and close < slow and abs(AO)==2
+
+long_condition =  long and _testPeriod() 
+strategy.entry('BUY', strategy.long, when=long_condition)  
+ 
+short_condition = short 
+strategy.close('BUY', when=short_condition)
+
+
+plot(fast, color=color.green)
+plot(slow, color=color.red)

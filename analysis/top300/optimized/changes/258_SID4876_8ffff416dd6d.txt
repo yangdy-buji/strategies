@@ -1,0 +1,34 @@
+{
+  "rank": 258,
+  "sid": 4876,
+  "source_sha256": "a8f0fef5bf0dd0d061d59e959ea7297cee063666ad944c0943c3c9ac0b6108ad",
+  "base_kind": "original",
+  "base_sha256": "a53680c1300472db076236dcda3bca1d257fd587012f7ea2a1276e7fc3f1bbfa",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA14上穿28做多，7根最低点逐级超过入场价5%台阶后抬保护至对应价。 按七根最低点跨越利润台阶抬止损有解释性，但台阶逐根重算会退回较低档。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "按七根最低点跨越利润台阶抬止损有解释性，但台阶逐根重算会退回较低档。 后续验证：先升至+15%档后七根最低点回落，确认是否允许降档。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "先升至+15%档后七根最低点回落，确认是否允许降档。"
+  ],
+  "id": "8ffff416dd6d",
+  "title": "渐进止损上移策略Gradual-Stop-Loss-Movement-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/258_SID4876_8ffff416dd6d_original.pine",
+  "original": "originals/258_SID4876_8ffff416dd6d.pine",
+  "baseline": "baselines/258_SID4876_8ffff416dd6d.pine",
+  "changes": "changes/258_SID4876_8ffff416dd6d.txt",
+  "card": "cards/8ffff416dd6d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a53680c1300472db076236dcda3bca1d257fd587012f7ea2a1276e7fc3f1bbfa",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,66 @@
+{
+  "rank": 142,
+  "sid": 3762,
+  "source_sha256": "e1aab7e69324f8fc14e28909a498e4a764ada05bb1ed0476479e2f5d2060dc24",
+  "base_kind": "prior_candidate",
+  "base_sha256": "9040435c53a6df938e726bbb91b2d51882ced396aa1c631d989ec09fd4265ed2",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "只在空仓信号锚定保护，持续超卖不覆盖已有入场锚。；额外买入仅限真实持仓且无退出信号，旧锚不在平仓后触发新买入。",
+  "patches": [
+    {
+      "old": "if (longCondition)\n    entryPrice := close",
+      "new": "if (longCondition and strategy.position_size == 0)\n    entryPrice := close",
+      "reason": "只在空仓信号锚定保护，持续超卖不覆盖已有入场锚。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "100锚定后90重复超卖仍触原止损。"
+      ]
+    },
+    {
+      "old": "if buymore\n",
+      "new": "if buymore and strategy.position_size > 0 and not (rsiExitCondition or takeProfitHit or stopLossHit)\n",
+      "reason": "额外买入仅限真实持仓且无退出信号，旧锚不在平仓后触发新买入。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "空仓残留旧价禁止add more；止损柱禁止加单。"
+      ]
+    }
+  ],
+  "resolved": [
+    "RSI退出覆盖已有额外入场ID，不改变加仓配置。",
+    "接入已有收盘止损布尔，并让止盈/止损覆盖两个入场ID。",
+    "只在空仓信号锚定保护，持续超卖不覆盖已有入场锚。",
+    "额外买入仅限真实持仓且无退出信号，旧锚不在平仓后触发新买入。"
+  ],
+  "remaining": [
+    "保留默认不加仓；额外买单设计与总风险预算未启用/调整。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "覆盖Long/额外ID独立成交、平仓后价格低于旧morebuy、连续超卖与跳空止损案例。"
+  ],
+  "id": "79a39417ecce",
+  "title": "多周期RSI超卖反转策略-Multi-Timeframe-RSI-Oversold-Reversal-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/142_SID3762_79a39417ecce_candidate.pine",
+  "original": "originals/142_SID3762_79a39417ecce.pine",
+  "baseline": "baselines/142_SID3762_79a39417ecce.pine",
+  "changes": "changes/142_SID3762_79a39417ecce.txt",
+  "card": "cards/79a39417ecce.html",
+  "diff": "changes/142_SID3762_79a39417ecce.patch",
+  "original_diff": "changes/142_SID3762_79a39417ecce.original.patch",
+  "script_sha256": "0b5c8a1a784cb0ad86e04eda8040a8003ee0c7ec2491b4d45f540d0719665409",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "7d4bb33239d20604c85da75d3aa3aec228291225e8e21b553435d13f3f8d9884",
+    "review": "在已有v5候选上只在空仓信号建立close锚，重复超卖不移动保护；add more须实际多仓且无三类退出信号，避免空仓旧锚再买及平仓同柱额外加仓。已有两个entry ID的三个退出配对均保留，默认不加仓未改变。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保留默认不加仓；额外买单设计与总风险预算未启用/调整。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

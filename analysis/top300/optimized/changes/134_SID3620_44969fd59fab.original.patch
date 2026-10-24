@@ -1,0 +1,28 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 3620：本轮新候选·未回测
++// 原文件SHA256：fc781f47bdc018e4674b23c833a200b65f41ec3981581a678397053dbb0792fa
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2023-02-12 00:00:00
+ end: 2024-02-18 00:00:00
+@@ -66,9 +69,15 @@
+ SmoothedDirectionalMovementPlus := nz(SmoothedDirectionalMovementPlus[1]) - (nz(SmoothedDirectionalMovementPlus[1])/lenADX) + DirectionalMovementPlus
+ SmoothedDirectionalMovementMinus = 0.0
+ SmoothedDirectionalMovementMinus := nz(SmoothedDirectionalMovementMinus[1]) - (nz(SmoothedDirectionalMovementMinus[1])/lenADX) + DirectionalMovementMinus
+-DIPlus = SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100
+-DIMinus = SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100
+-DX = abs(DIPlus-DIMinus) / (DIPlus+DIMinus)*100
++// OPT-T300-01 修改原因：DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
++// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++DIPlus = not na(SmoothedTrueRange) and SmoothedTrueRange > 0 ? SmoothedDirectionalMovementPlus / SmoothedTrueRange * 100 : na
++// OPT-T300-02 修改原因：DI零振幅与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
++// OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++DIMinus = not na(SmoothedTrueRange) and SmoothedTrueRange > 0 ? SmoothedDirectionalMovementMinus / SmoothedTrueRange * 100 : na
++// OPT-T300-03 修改原因：DX方向和为零时显式NA，不构造虚假趋势强度。
++// OPT-T300-03 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++DX = not na(DIPlus + DIMinus) and DIPlus + DIMinus > 0 ? abs(DIPlus-DIMinus) / (DIPlus+DIMinus)*100 : na
+ ADX = sma(DX, lenADX)
+ 
+ 

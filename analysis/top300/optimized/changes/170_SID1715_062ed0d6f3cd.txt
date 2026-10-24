@@ -1,0 +1,54 @@
+{
+  "rank": 170,
+  "sid": 1715,
+  "source_sha256": "11834d41ca9cdb13959622e673b0bd3c1108e112d0da58b97e1848f1fa6fe100",
+  "base_kind": "original",
+  "base_sha256": "d8e0b66466af7c6b0b2a7a966b0326aa572f6614e96c9274f69e2a8ef9756fde",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "允许已有空头在上升信号时反转为多头。",
+  "patches": [
+    {
+      "old": "strategy.opentrades <= 0 and signal > signal[1]",
+      "new": "strategy.position_size <= 0 and signal > signal[1]",
+      "reason": "允许已有空头在上升信号时反转为多头。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "longOnly=false：多→空→多；longOnly=true原平空行为不变。"
+      ]
+    }
+  ],
+  "resolved": [
+    "允许已有空头在上升信号时反转为多头。"
+  ],
+  "remaining": [
+    "gapDn=0时比值固定1的尺度不连续仍需确定指标设计。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "信号先升后降再升的路径，开启双向后应可按设计回多；测试零负跳空到出现微小负跳空的突变。"
+  ],
+  "id": "062ed0d6f3cd",
+  "title": "动量孔隙交易策略Momentum-Gap-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/170_SID1715_062ed0d6f3cd_candidate.pine",
+  "original": "originals/170_SID1715_062ed0d6f3cd.pine",
+  "baseline": "baselines/170_SID1715_062ed0d6f3cd.pine",
+  "changes": "changes/170_SID1715_062ed0d6f3cd.txt",
+  "card": "cards/062ed0d6f3cd.html",
+  "diff": "changes/170_SID1715_062ed0d6f3cd.patch",
+  "original_diff": "changes/170_SID1715_062ed0d6f3cd.original.patch",
+  "script_sha256": "9ed113efdf3647d268bb518d9bafd0336f320b24a20d85f78f1151efdb8cd80d",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "255b54817542be4848dbb70925a3f17d7f25bc8a4e49c20a2ddf2f511106ee99",
+    "review": "v5上升入口由opentrades<=0改position_size<=0，同时覆盖空仓首笔和已有空头反多；已有多头不会重复开多。下降else分支保留longOnly平仓或short自动反手，long/short两个ID及默认qty未变。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "gapDn=0时比值固定1的尺度不连续仍需确定指标设计。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

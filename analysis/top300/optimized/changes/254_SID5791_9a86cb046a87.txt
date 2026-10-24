@@ -1,0 +1,38 @@
+{
+  "rank": 254,
+  "sid": 5791,
+  "source_sha256": "aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35",
+  "base_kind": "prior_candidate",
+  "base_sha256": "fc91b25e6ce0f6d793d20e9e2e35559c5909629db81d7bc8cb54553c45800831",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；SMA50/200金叉全权益做多，死叉平全部，提供日期背景显示。 50/200黄金交叉可作透明基准，既有日期修复是先决条件；不要因历史排名低就堆参数。",
+  "patches": [],
+  "resolved": [
+    "恢复入场日期。",
+    "死叉退出移出日期。"
+  ],
+  "remaining": [
+    "50/200黄金交叉可作透明基准，既有日期修复是先决条件；不要因历史排名低就堆参数。 后续验证：窗外死叉、横盘多次交叉、不同复权处理和持有基准同成本比较。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "窗外死叉、横盘多次交叉、不同复权处理和持有基准同成本比较。"
+  ],
+  "id": "9a86cb046a87",
+  "title": "黄金交叉策略Golden-Cross-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/254_SID5791_9a86cb046a87_candidate.pine",
+  "original": "originals/254_SID5791_9a86cb046a87.pine",
+  "baseline": "baselines/254_SID5791_9a86cb046a87.pine",
+  "changes": "changes/254_SID5791_9a86cb046a87.txt",
+  "card": "cards/9a86cb046a87.html",
+  "diff": "changes/254_SID5791_9a86cb046a87.patch",
+  "original_diff": "changes/254_SID5791_9a86cb046a87.original.patch",
+  "script_sha256": "683c54b3d6b3d6d5997dbc6d6d56f993500145d74f502af3f7ee0ef780d781cb",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

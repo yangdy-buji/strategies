@@ -1,0 +1,43 @@
+{
+  "rank": 215,
+  "sid": 4573,
+  "source_sha256": "9f67d1c7add16774126c0333cc20665e6dae0bec70161237ab21027ba00f5185",
+  "base_kind": "prior_candidate",
+  "base_sha256": "7c7ff65cd80004df1f93ded0b3141ec2ae3a7efa2564ac498ca20032e0e29461",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；确认pinbar且空仓按方向开100%权益，以成交bar振幅计算止盈止损，可选跟踪及反向信号平仓。 Pinbar反转可以核验，但保护用成交柱而非信号柱高低，追踪分支缺距离；动态历史索引另有运行边界。",
+  "patches": [],
+  "resolved": [
+    "恢复开始日期开关。",
+    "保留原始多头形态供窗外退出使用。",
+    "保留原始空头形态供窗外退出使用。",
+    "日期仅限制多头入场。",
+    "日期仅限制空头入场。",
+    "独立空头退出ID避免修改多头保护。",
+    "独立空头退出ID避免修改多头保护。"
+  ],
+  "remaining": [
+    "Pinbar反转可以核验，但保护用成交柱而非信号柱高低，追踪分支缺距离；动态历史索引另有运行边界。 后续验证：跳空成交、长期持仓历史引用、追踪激活后回撤逐笔测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；追踪分支缺trail_offset，当前仅stop可用，追踪距离设计仍未给出；barsSinceEntry动态历史引用需原生验证。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "跳空成交、长期持仓历史引用、追踪激活后回撤逐笔测试。"
+  ],
+  "id": "f8fc04aadb35",
+  "title": "形态识别吊颈线交易策略Pattern-Recognition-Pinbar-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/215_SID4573_f8fc04aadb35_candidate.pine",
+  "original": "originals/215_SID4573_f8fc04aadb35.pine",
+  "baseline": "baselines/215_SID4573_f8fc04aadb35.pine",
+  "changes": "changes/215_SID4573_f8fc04aadb35.txt",
+  "card": "cards/f8fc04aadb35.html",
+  "diff": "changes/215_SID4573_f8fc04aadb35.patch",
+  "original_diff": "changes/215_SID4573_f8fc04aadb35.original.patch",
+  "script_sha256": "9425486143f1e1cb17b22c9b30704d0124a4a15a771306889f694ab0e8f10f65",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

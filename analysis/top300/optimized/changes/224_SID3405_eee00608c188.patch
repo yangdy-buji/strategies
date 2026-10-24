@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 3405：沿用旧候选·未回测
++// 原文件SHA256：d24e89fe877202bb18c21cd8f6fa241ea7ef8d083794beddc547dba5e874d32d
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于快速移动均线和慢速移动均线的量化交易策略Dual-Moving-Average-Breakout-Strategy.md
+ // 原文件SHA256：d24e89fe877202bb18c21cd8f6fa241ea7ef8d083794beddc547dba5e874d32d

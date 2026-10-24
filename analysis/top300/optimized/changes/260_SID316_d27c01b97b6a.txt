@@ -1,0 +1,34 @@
+{
+  "rank": 260,
+  "sid": 316,
+  "source_sha256": "e178ed0321e8bd3cbdbb850b5d72e1a60656a2257b69a9b5bcd3dd4a170b083e",
+  "base_kind": "original",
+  "base_sha256": "a6e7c4b7d12b1cc48fdb0b800fd1ad3bf312949c3b6f3e39561c52a3016204a5",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；历史高低中轴EMA加减ATR形成通道；下轨穿过低点且低于中轴做多，上轨下穿高点或触及卖线做空并反转。 ATR通道相对历史极值交叉是均值回归反手模型，SELL实际开空而非仅平多；无独立保护。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "ATR通道相对历史极值交叉是均值回归反手模型，SELL实际开空而非仅平多；无独立保护。 后续验证：下跌趋势长空持有、极值跳变、常数邻域和高成本样本验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "下跌趋势长空持有、极值跳变、常数邻域和高成本样本验证。"
+  ],
+  "id": "d27c01b97b6a",
+  "title": "EMA动态趋势追踪交易策略-EMA-Dynamic-Trend-Following-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/260_SID316_d27c01b97b6a_original.pine",
+  "original": "originals/260_SID316_d27c01b97b6a.pine",
+  "baseline": "baselines/260_SID316_d27c01b97b6a.pine",
+  "changes": "changes/260_SID316_d27c01b97b6a.txt",
+  "card": "cards/d27c01b97b6a.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a6e7c4b7d12b1cc48fdb0b800fd1ad3bf312949c3b6f3e39561c52a3016204a5",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

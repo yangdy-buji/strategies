@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 4621：沿用旧候选·未回测
++// 原文件SHA256：6f52852843a35fa7f885d23aec5ace9399b970fd95485146e3e8f8d01b228c26
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：拉里威廉姆斯三周期动态均线交易策略-Larry-Williams-Three-Period-Dynamic-Moving-Average-Trading-Strategy.md
+ // 原文件SHA256：6f52852843a35fa7f885d23aec5ace9399b970fd95485146e3e8f8d01b228c26

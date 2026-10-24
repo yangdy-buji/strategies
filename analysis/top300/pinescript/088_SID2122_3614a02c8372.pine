@@ -1,0 +1,48 @@
+/*backtest
+start: 2023-01-16 00:00:00
+end: 2024-01-22 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy(title = "Estratégia de Cruzamento das Linhas")
+
+// Configuração da Média Móvel
+emaPeriod = 8
+
+ema= ema(close, emaPeriod)
+ema1= ema(close[1], emaPeriod)
+lowestEMA = lowest(ema, 8)
+
+// Calcula a diferença entre o preço e a média móvel
+diff = close - ema
+diff1 = close[1] - ema1
+diffLow = ema - lowestEMA
+
+//Condições
+diffZero = diff < 0
+diffUnder = diff < diffLow
+diffUm = diff > 0
+Low0 = diffLow == 0
+
+
+
+gain = strategy.position_avg_price*(1+0.2)
+// Sinais de entrada
+buy_signal = diffUnder and crossover(diff, diff1) and diffZero
+
+sell_signal = diffUm and diffUnder and crossunder(diff, diff1)
+
+// Executa as operações de compra/venda
+if buy_signal
+    strategy.entry("Buy", strategy.long)
+if sell_signal
+    strategy.exit("Buy", limit = gain)
+
+// Plota as linhas
+plot(0, title="Linha Zero", color=color.gray)
+plot(diff, title="Diferença", color=color.blue, linewidth=2)
+
+plot(diffLow, title="Diferença", color=color.red, linewidth=2)

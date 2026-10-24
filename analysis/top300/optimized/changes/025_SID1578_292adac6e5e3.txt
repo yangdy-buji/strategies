@@ -1,0 +1,34 @@
+{
+  "rank": 25,
+  "sid": 1578,
+  "source_sha256": "7680047645aa2336abc554db7ebf7b2ff80b52e0a9177737f06f9202a0e0dfc4",
+  "base_kind": "original",
+  "base_sha256": "43e30e54779a405aede75ff5cef709ec89809d7dab5d4168b1640fa0a827aa4a",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：百分比箱体突破配固定金额风险的意图明确，但真实仓位与实际止损距离没有严格一致。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "Shares按close乘固定百分比计算，而挂单价top、止损bot[2]；并且strategy.order可继续累加，六根opentrades不变不等于限制总风险。 暂缓原因：会改变股数与加仓路径，旧回测不能代表新版风险。"
+  ],
+  "validation_plan": [
+    "核对多次同ID加仓、跳空未成交、box更新后的风险金额，以及第一根持仓尚未提交止损的窗口。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "292adac6e5e3",
+  "title": "动态百分比盒子跟踪策略The-Dynamic-Box-Percentage-Tracking-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/025_SID1578_292adac6e5e3_original.pine",
+  "original": "originals/025_SID1578_292adac6e5e3.pine",
+  "baseline": "baselines/025_SID1578_292adac6e5e3.pine",
+  "changes": "changes/025_SID1578_292adac6e5e3.txt",
+  "card": "cards/292adac6e5e3.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "43e30e54779a405aede75ff5cef709ec89809d7dab5d4168b1640fa0a827aa4a",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

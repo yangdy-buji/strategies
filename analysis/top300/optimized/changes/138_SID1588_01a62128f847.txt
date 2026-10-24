@@ -1,0 +1,66 @@
+{
+  "rank": 138,
+  "sid": 1588,
+  "source_sha256": "0b874ba152c41c4a11bb634f7e5314db14d5be266bb30bf09996f52bcf00b00a",
+  "base_kind": "original",
+  "base_sha256": "7325825f9891e5e3673b143fae7a152e9519821f72e58e9e41fbf8a069f08211",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "恢复时段与星期开关，沿用显式UTC偏移，支持跨午夜时段。；独立季节设计实验：将六月不可能的交集拆为月初至8日或27日后，呼应相邻五月/七月区间。",
+  "patches": [
+    {
+      "old": "getUnixTime(hour, minute) =>\n    adjustedHour = hour - timezoneOffset\n    sessionDate = timestamp(year, month, dayofmonth, 0, 0)\n    sessionDate + adjustedHour * 60 * 60000 + minute * 60000\n\n// Start- und Endzeit als Unix-Zeitstempel\n// + 1 Stunde wegen UTC\nstartTime = getUnixTime(startTimeHH, startTimeMM)\nendTime = getUnixTime(endTimeHH, endTimeMM)\n\n\n// Überprüfen, ob der aktuelle Zeitpunkt innerhalb der Handelszeit liegt\nisTradingTime() => true\n\n",
+      "new": "clockZone = \"UTC\" + (timezoneOffset >= 0 ? \"+\" : \"\") + str.tostring(timezoneOffset)\nlocalMinutes = hour(time, clockZone) * 60 + minute(time, clockZone)\nstartMinutes = startTimeHH * 60 + startTimeMM\nendMinutes = endTimeHH * 60 + endTimeMM\nlocalDay = dayofweek(time, clockZone)\nallowedDay = (localDay == dayofweek.monday and tradeMonday) or (localDay == dayofweek.tuesday and tradeTuesday) or (localDay == dayofweek.wednesday and tradeWednesday) or (localDay == dayofweek.thursday and tradeThursday) or (localDay == dayofweek.friday and tradeFriday)\nisTradingTime() => allowedDay and (startMinutes <= endMinutes ? localMinutes >= startMinutes and localMinutes <= endMinutes : localMinutes >= startMinutes or localMinutes <= endMinutes)\n\n",
+      "reason": "恢复时段与星期开关，沿用显式UTC偏移，支持跨午夜时段。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "关闭周一后周一不入场；09:30/20:30包含边界；22:00至02:00跨午夜；窗外退出不受阻断。"
+      ]
+    },
+    {
+      "old": "(m == 6 and d >= 27 and d <= 8)",
+      "new": "(m == 6 and (d <= 8 or d >= 27))",
+      "reason": "独立季节设计实验：将六月不可能的交集拆为月初至8日或27日后，呼应相邻五月/七月区间。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "六月8日/27日允许，9日至26日不允许；季节关闭时无影响。"
+      ]
+    }
+  ],
+  "resolved": [
+    "恢复时段与星期开关，沿用显式UTC偏移，支持跨午夜时段。",
+    "独立季节设计实验：将六月不可能的交集拆为月初至8日或27日后，呼应相邻五月/七月区间。"
+  ],
+  "remaining": [
+    "六月两段解释为独立design_experiment，不能从原矛盾条件唯一推出作者意图。",
+    "保留固定UTC偏移，不自动切换美股夏令时；跨午夜的星期按当柱当地日判定。",
+    "未原生编译或回测。"
+  ],
+  "validation_plan": [
+    "枚举全年日期、五个工作日、夏令时和半日市；验证入场窗外禁止新增但已有止损仍工作。"
+  ],
+  "id": "01a62128f847",
+  "title": "动态移动止损长仓与季节性过滤的价格突破策略Dynamic-Trailing-Stop-Long-Only-Trend-Following-Strategy-with-Seasonality-Filter",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/138_SID1588_01a62128f847_candidate.pine",
+  "original": "originals/138_SID1588_01a62128f847.pine",
+  "baseline": "baselines/138_SID1588_01a62128f847.pine",
+  "changes": "changes/138_SID1588_01a62128f847.txt",
+  "card": "cards/01a62128f847.html",
+  "diff": "changes/138_SID1588_01a62128f847.patch",
+  "original_diff": "changes/138_SID1588_01a62128f847.original.patch",
+  "script_sha256": "a3fc531a4180ce6a121b8f2cfb4ee992f4491b7d023ecff12eaedce372a79e61",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "d11a0892205ad7623030d54f24bada5bf56c040967f4ea14ef434f54bc4327d4",
+    "review": "v5显式UTC偏移字符串由受限整数构造，hour/minute/dayofweek统一当地时间，正常时段取交集、跨午夜取并集，星期按当柱当地日。六月分支由不可能交集改两段并集，标注独立实验；时间过滤仅限制入场，原跟踪止损持续管理。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "六月两段解释为独立design_experiment，不能从原矛盾条件唯一推出作者意图。",
+      "保留固定UTC偏移，不自动切换美股夏令时；跨午夜的星期按当柱当地日判定。",
+      "未原生编译或回测。"
+    ]
+  }
+}

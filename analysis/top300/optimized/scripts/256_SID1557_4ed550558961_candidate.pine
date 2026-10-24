@@ -1,0 +1,52 @@
+// OPT-T300 SID 1557：本轮新候选·未回测
+// 原文件SHA256：8114479dcbe6ce860ef8b7ec5680e800767857f5b53b9e6803a618e2466db930
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-01-24 00:00:00
+end: 2024-01-31 00:00:00
+period: 1m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy(title="Trailing Stop Loss Percent",
+     overlay=true, pyramiding=1)
+
+// Input for the specific entry date
+entryDay = input.int(defval = 1, title = "Entry Day", minval = 1, maxval = 31)
+entryMonth = input.int(defval = 1, title = "Entry Month", minval = 1, maxval = 12)
+entryYear = input.int(defval = 2023, title = "Entry Year", minval = 1970)
+
+// Calculate the entry date timestamp
+entryDate = timestamp(entryYear, entryMonth, entryDay, 00, 00)
+
+// Trailing Stop Loss Percentage
+trailStopPercent = input.float(defval = 5.0, title = "Trailing Stop Loss (%)", minval = 0.1)
+
+// Entry Condition
+// OPT-T300-01 修改原因：指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。
+// OPT-T300-01 保持行为：原5%跟踪公式与low触发市价平仓；允许退出后再入。
+enterTrade = time >= entryDate and strategy.position_size == 0
+
+// Variables to track the highest price and stop loss level since entry
+var float highestPrice = na
+var float stopLoss = na
+
+// Update the highest price and stop loss level
+if strategy.position_size > 0
+    highestPrice := math.max(highestPrice, high)
+    stopLoss := highestPrice * (1 - trailStopPercent / 100)
+
+// Enter the strategy
+if enterTrade
+    strategy.entry("Long Entry", strategy.long)
+    highestPrice := high
+    stopLoss := highestPrice * (1 - trailStopPercent / 100)
+
+// Exit the strategy if the stop loss is hit
+if strategy.position_size > 0 and low <= stopLoss
+    strategy.close("Long Entry")
+
+// Plotting the stop loss level for reference
+plot(strategy.position_size > 0 ? stopLoss : na, "Trailing Stop Loss", color=color.red)

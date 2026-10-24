@@ -1,0 +1,102 @@
+// OPT-T300 SID 4510：本轮新候选·未回测
+// 原文件SHA256：9064931f9961e6bdc8ba0cbf8054daea4348559d55b49e13c7bb819e734a03d8
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-02-26 00:00:00
+end: 2025-02-23 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Binance","currency":"SOL_USDT"}]
+*/
+
+//@version=5
+strategy("Bullish Engulfing Strategy with BB Risk", overlay=true)
+
+// Input parameters for customization (optional, can be adjusted in Strategy Tester)
+minVolume = input.int(1000000, "Minimum Volume", minval=1)  // Optional filter for liquidity
+
+// Calculate Bollinger Bands (length=40, StdDev=2.5) for R
+length = 40
+mult = 2.5
+basis = ta.sma(close, length)  // Middle Band (40-period SMA of close)
+dev = mult * ta.stdev(close, length)  // Standard deviation multiplied by 2.5
+upperBB = basis + dev  // Upper Bollinger Band
+lowerBB = basis - dev  // Lower Bollinger Band
+
+// Define R as 0.4 times the Bollinger Bands spread: R = 0.4 * ((1 - (lowerBB / upperBB)) * 100)
+R = 0.4 * (1 - (lowerBB / upperBB))  // Percentage value, scaled by 0.4
+
+// Define Bullish Engulfing pattern with optional volume filter
+isBullishEngulfing() => close > open and close[1] < open[1] and close > open[1] and open < close[1] and close[1] < open[1] and close > open and volume > minVolume
+
+bullishEngulfing = isBullishEngulfing()
+
+// Track position and entry details
+// OPT-T300-01 修改原因：区分限价待成交与实际持仓，固定入场R。
+// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+inPosition = strategy.position_size > 0
+var bool pendingEntry = false
+var float entryR = na
+if inPosition
+    pendingEntry := false
+var float entryPrice = 0.0
+var int entryBar = 0
+var int exitBar = 0  // Track exit bar (added here to fix undeclared variable)
+var float exitPrice = 0.0  // Track exit price
+
+// Enter long position on the next bar after Bullish Engulfing, with position size risking 0.75% of portfolio
+// OPT-T300-02 修改原因：限制一张有效待成交入口并拒绝非正风险。
+// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+if (bullishEngulfing and not inPosition and not pendingEntry and R > 0 and close > 0 and strategy.equity > 0)
+    // Calculate position size to risk 0.75% of portfolio
+    portfolioValue = strategy.equity  // Current portfolio equity
+    riskPerTrade = portfolioValue * 0.0075  // 0.75% of portfolio
+    stopLossDistance = R  // R% of entry price (stop-loss distance)
+    entryPrice := close
+    positionSize = riskPerTrade / stopLossDistance / entryPrice  // Position size in units (contracts/shares)
+    
+    // Ensure positionSize is rounded to a practical number (e.g., whole shares)
+    // OPT-T300-09 修改原因：定仓向下取整，避免四舍五入突破预算。
+    // OPT-T300-09 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+    positionSize := math.floor(positionSize)
+    
+    // Enter long position with calculated size
+    // OPT-T300-03 修改原因：提交限价只进入待成交状态，锁定风险比例。；零数量不发单且不进入永久待成交状态。
+    // OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+    if positionSize > 0
+        strategy.entry("Long", strategy.long, limit = entryPrice, qty=positionSize)
+        pendingEntry := true
+        entryR := R
+    entryBar := bar_index
+
+// Exit logic: Stop-loss or Take-profit
+if (inPosition)
+    // Stop-loss: Exit if price drops below entryPrice - R%
+    // OPT-T300-04 修改原因：止损沿用提交限价时风险。
+    // OPT-T300-04 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+    stopLossLevel = entryPrice * (1 - entryR)
+    if (low <= stopLossLevel)
+        strategy.close("Long")
+        // OPT-T300-07 修改原因：平仓提交后不提前清除真实持仓。
+        // OPT-T300-07 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+        exitBar := bar_index
+        exitPrice := close
+    
+    // Take-profit: Exit if price rises above entryPrice + 4R%
+    // OPT-T300-05 修改原因：目标沿用提交限价时4R。
+    // OPT-T300-05 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+    takeProfitLevel = entryPrice * (1 + 4 * entryR)
+    // OPT-T300-06 修改原因：双触价维持止损优先，避免同柱重复关闭。
+    // OPT-T300-06 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+    if (high >= takeProfitLevel and low > stopLossLevel)
+        strategy.close("Long")
+        // OPT-T300-08 修改原因：平仓提交后不提前清除真实持仓。
+        // OPT-T300-08 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+        exitBar := bar_index
+        exitPrice := close
+
+// Optional: Plot signals and R for visualization
+if (bullishEngulfing)
+    label.new(bar_index, high, "Bullish Engulfing", yloc=yloc.abovebar, color=color.green, style=label.style_label_down, textcolor=color.white)
+
+plot(R, title="R (BB Spread %)", color=color.blue, style=plot.style_histogram)

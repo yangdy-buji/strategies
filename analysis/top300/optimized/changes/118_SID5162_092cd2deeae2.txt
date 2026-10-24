@@ -1,0 +1,64 @@
+{
+  "rank": 118,
+  "sid": 5162,
+  "source_sha256": "7a1239d0bb47ea37cbbe54bf1564a704d4d5c023b0b4566b75ef3fb1a5826f57",
+  "base_kind": "original",
+  "base_sha256": "c6cb7687ca2dc0255db6b1e676247503e22405845da669186f5c2e7be9a39184",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "早退针对真实亏损多头而非永不存在的空头。；获利持有条件须实际盈利。",
+  "patches": [
+    {
+      "old": "strategy.position_size < 0 and rsi > rsiOverbought",
+      "new": "strategy.position_size > 0 and close < strategy.position_avg_price and rsi > rsiOverbought",
+      "reason": "早退针对真实亏损多头而非永不存在的空头。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "多头均价100、close95且RSI超买触发；盈利或空仓不触发。"
+      ]
+    },
+    {
+      "old": "strategy.position_size > 0 and rsi < rsiOversold",
+      "new": "strategy.position_size > 0 and close > strategy.position_avg_price and rsi < rsiOversold",
+      "reason": "获利持有条件须实际盈利。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "多头亏损且RSI超卖不能被误标为获利持有。"
+      ]
+    }
+  ],
+  "resolved": [
+    "早退针对真实亏损多头而非永不存在的空头。",
+    "获利持有条件须实际盈利。"
+  ],
+  "remaining": [
+    "保留原RSI作用方向；是否用超卖判定不利情绪属于独立设计实验。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "分别构造亏损多头、获利多头、超买超卖及无仓状态，证明每个退出分支在其设计状态可达。"
+  ],
+  "id": "092cd2deeae2",
+  "title": "组合动量均线交叉策略结合市场情绪与阻力位优化系统-Combined-Momentum-SMA-Crossover-Strategy-with-Market-Sentiment-and-Resistance-Level-Optimization-System",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/118_SID5162_092cd2deeae2_candidate.pine",
+  "original": "originals/118_SID5162_092cd2deeae2.pine",
+  "baseline": "baselines/118_SID5162_092cd2deeae2.pine",
+  "changes": "changes/118_SID5162_092cd2deeae2.txt",
+  "card": "cards/092cd2deeae2.html",
+  "diff": "changes/118_SID5162_092cd2deeae2.patch",
+  "original_diff": "changes/118_SID5162_092cd2deeae2.original.patch",
+  "script_sha256": "653e732b1b77f163b086f83e289a87a80d65a38ab84548e08bc1cb16deb2377b",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "f1e82d4ca92e0596181fd085b20ff9dbba95120cbdf8010133c28128e6538957",
+    "review": "v5仅Buy多头订单；原closeEarly的负仓条件永远不可达，现用正仓且close低于成交均价判断浮亏，盈利持有亦增加close高于均价。首次未成交时不误用均价；退出继续匹配Buy，RSI阈值与方向不动。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保留原RSI作用方向；是否用超卖判定不利情绪属于独立设计实验。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

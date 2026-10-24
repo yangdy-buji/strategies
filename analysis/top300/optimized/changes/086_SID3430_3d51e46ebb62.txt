@@ -1,0 +1,34 @@
+{
+  "rank": 86,
+  "sid": 3430,
+  "source_sha256": "01d04c117b7375c4b19b95d352e6447290461ee3438716adae1493dd8abc4d6d",
+  "base_kind": "original",
+  "base_sha256": "c8971be93fb287ab7d0127f67bd90d8a9364ad9dfd7a326ef4fe8fcfbdcf0459",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：使用已确认枢轴并再滞后一根做突破，因果性明确，适合趋势基线。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "10根右侧确认带来真实延迟，不能将枢轴定位时间当作交易可知时间；全权益与零费用也需对齐。 暂缓原因：缩短确认可增加噪声枢轴和换手。"
+  ],
+  "validation_plan": [
+    "逐枢轴核对形成根、确认根及允许入场根，防止回测引擎提前使用枢轴。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "3d51e46ebb62",
+  "title": "基于支撑阻力突破的趋势追踪策略Trend-Following-Strategy-Based-on-Pivot-Point-Breakout",
+  "category": "待分类",
+  "priority": "P2",
+  "script": "scripts/086_SID3430_3d51e46ebb62_original.pine",
+  "original": "originals/086_SID3430_3d51e46ebb62.pine",
+  "baseline": "baselines/086_SID3430_3d51e46ebb62.pine",
+  "changes": "changes/086_SID3430_3d51e46ebb62.txt",
+  "card": "cards/3d51e46ebb62.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c8971be93fb287ab7d0127f67bd90d8a9364ad9dfd7a326ef4fe8fcfbdcf0459",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,36 @@
+{
+  "rank": 159,
+  "sid": 621,
+  "source_sha256": "ae4106355ea696bcb1e5c7cc84aebbc283beacd2efe0c211a07706d37be56054",
+  "base_kind": "prior_candidate",
+  "base_sha256": "0143125cd7c1b0d4f9d8c37cd5ff78b99a211991ee83ba3907597cd9f74af7a3",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原反向信号仅平仓且遗留限价单；先撤Long待成交单再平仓。",
+  "patches": [],
+  "resolved": [
+    "原反向信号仅平仓且遗留限价单；先撤Long待成交单再平仓。"
+  ],
+  "remaining": [
+    "limit=open为已过去的信号柱开盘价，禁止回填当柱触价。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "信号后无回踩、反向后回踩、跳空跨价三种路径逐笔核对，原生订单不得回填旧开盘。"
+  ],
+  "id": "4c8e539e9fcf",
+  "title": "N-Bars-Breakout-Strategy-N-Bars-突破策略",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/159_SID621_4c8e539e9fcf_candidate.pine",
+  "original": "originals/159_SID621_4c8e539e9fcf.pine",
+  "baseline": "baselines/159_SID621_4c8e539e9fcf.pine",
+  "changes": "changes/159_SID621_4c8e539e9fcf.txt",
+  "card": "cards/4c8e539e9fcf.html",
+  "diff": "changes/159_SID621_4c8e539e9fcf.patch",
+  "original_diff": "changes/159_SID621_4c8e539e9fcf.original.patch",
+  "script_sha256": "ced93a7e705c444cf5749f136b62972a78e71e8d6d6376d9b52a2f614ce5150c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

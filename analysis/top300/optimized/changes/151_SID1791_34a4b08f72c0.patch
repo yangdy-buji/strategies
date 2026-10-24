@@ -1,0 +1,32 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=6
++// OPT-T300 SID 1791：本轮新候选·未回测
++// 原文件SHA256：c90e3feed6725cae827031f7564f22d6632b3777c2e8204f0879c334468295a8
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：动量自适应高斯通道多周期策略-Momentum-Adaptive-Gaussian-Channel-Multi-Period-Strategy.md
+ // 原文件SHA256：c90e3feed6725cae827031f7564f22d6632b3777c2e8204f0879c334468295a8
+@@ -122,7 +125,9 @@
+ 
+ // ====== VOLATILITY MANAGEMENT ======
+ atr = ta.atr(atrLength)
+-positionSize = math.min((strategy.equity * riskPercent/100) / atr, strategy.equity * 0.5 / close)
++// OPT-T300-01 修改原因：ATR/价格或权益非正时不定仓，保留既有50%名义上限。
++// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++positionSize = not na(atr) and atr > 0 and close > 0 and strategy.equity > 0 ? math.min((strategy.equity * riskPercent/100) / atr, strategy.equity * 0.5 / close) : na
+ 
+ // ====== TRADING LOGIC ======
+ trendUp = mainFilter > mainFilter[1]
+@@ -132,7 +137,9 @@
+ exitCondition = ta.crossunder(close, lowerBand)
+ 
+ // ====== EXECUTION ======
+-if longCondition
++// OPT-T300-02 修改原因：入口拒绝无效数量，避免NA触发默认定仓。
++// OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++if longCondition and not na(positionSize) and positionSize > 0
+     strategy.entry("Long", strategy.long, qty=positionSize)
+     
+ if exitCondition

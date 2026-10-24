@@ -1,0 +1,85 @@
+{
+  "rank": 2,
+  "sid": 3900,
+  "source_sha256": "06f64820539b86119617155b7f39c2e079f9b2ff48f2df1c89522635ef9eb799",
+  "base_kind": "original",
+  "base_sha256": "352d0f2974d6fbd6ca3e54dff070a49b2c21ba05b8b24a0ede04c38b49389c47",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "仅限制DMI、ADX平滑、Supertrend及RSI周期输入为正整数；RSI低端/高端同时放行继续保留为待拆分研究的经济规则。",
+  "patches": [
+    {
+      "old": "diLength = input.int(14, title=\"DI Length\")",
+      "new": "diLength = input.int(14, title=\"DI Length\", minval=1)",
+      "reason": "DI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+      "validation_cases": [
+        "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+      ]
+    },
+    {
+      "old": "adxSmoothing = input.int(14, title=\"ADX Smoothing\")",
+      "new": "adxSmoothing = input.int(14, title=\"ADX Smoothing\", minval=1)",
+      "reason": "ADX Smoothing被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+      "validation_cases": [
+        "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+      ]
+    },
+    {
+      "old": "supertrendPeriod = input.int(14, title=\"Supertrend Period\")",
+      "new": "supertrendPeriod = input.int(14, title=\"Supertrend Period\", minval=1)",
+      "reason": "Supertrend Period被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+      "validation_cases": [
+        "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+      ]
+    },
+    {
+      "old": "rsiLength = input.int(14, title=\"RSI Length\")",
+      "new": "rsiLength = input.int(14, title=\"RSI Length\", minval=1)",
+      "reason": "RSI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+      "validation_cases": [
+        "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+      ]
+    }
+  ],
+  "resolved": [
+    "DI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+    "ADX Smoothing被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+    "Supertrend Period被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+    "RSI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。"
+  ],
+  "remaining": [
+    "RSI<40与RSI>60同时做多，混合回撤与强势追涨；无价格保护单，Supertrend反向是收盘条件退出。 暂缓原因：删掉一端可能丢失有效收益；止损可能增加震荡换手。",
+    "原生Pine v6编译和输入界面边界验证尚未执行；RSI双端入场经济规则保留。"
+  ],
+  "validation_plan": [
+    "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+    "按两种RSI入场来源分组比较费用后收益、尾部亏损及持仓天数；模拟跳空越过趋势线。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "3584e3b6e286",
+  "title": "多指标交叉动量趋势跟踪策略基于Supertrend与ADX双重确认的量化交易系统-Multi-Indicator-Momentum-Trend-Following-Strategy-Quantitative-Trading-System-Based-on-Supertrend-and-ADX-Dual-Confirmation",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/002_SID3900_3584e3b6e286_candidate.pine",
+  "original": "originals/002_SID3900_3584e3b6e286.pine",
+  "baseline": "baselines/002_SID3900_3584e3b6e286.pine",
+  "changes": "changes/002_SID3900_3584e3b6e286.txt",
+  "card": "cards/3584e3b6e286.html",
+  "diff": "changes/002_SID3900_3584e3b6e286.patch",
+  "original_diff": "changes/002_SID3900_3584e3b6e286.original.patch",
+  "script_sha256": "bde98322f6e23b14f4b847a777d29e6295090c102dc6605805edc68620261d40",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "b9f3037e0a8d507b08abe5ad67d5658892020f2a8f5981f3b90ac0e48067823d",
+    "review": "逐项对照原始v6源码、四条patch与生成diff：DI、ADX平滑、Supertrend和RSI输入仅新增minval=1，默认14与订单条件均保持。注释位于完整顶层语句前。测试从实际生成输入表达式提取minval，并证明原版拒绝测试失败，未伪造指标公式。",
+    "remaining": [
+      "原生Pine v6编译和输入界面边界验证尚未执行；RSI双端入场经济规则保留。"
+    ]
+  }
+}

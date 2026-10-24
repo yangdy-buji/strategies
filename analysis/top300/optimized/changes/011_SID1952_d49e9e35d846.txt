@@ -1,0 +1,34 @@
+{
+  "rank": 11,
+  "sid": 1952,
+  "source_sha256": "4ebd0b325b09053e0e6736e8a59859ff790868b13489bd46716b74c7febbcf2e",
+  "base_kind": "original",
+  "base_sha256": "e6ee0db3af8aa9c23937cfc6262f8bf8a23cffb74ee8bdd92aaf6cea75701681",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：123反转与BearPower一致的组合有明确状态逻辑，但绝对价差阈值30/3限制跨市场可迁移性。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "BearPower持久方向与价格尺度绑定；书籍叙述与源码随机指标方向也并非一一相同，须以源码定义为准。 暂缓原因：归一化会改变信号方向与持仓期，需独立版本。"
+  ],
+  "validation_plan": [
+    "价格缩放、拆股前后、长时间不触阈值时检查方向是否沿用；逐条核对随机指标条件。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "d49e9e35d846",
+  "title": "双向跨均线反转策略Dual-Cross-Moving-Average-Reversal-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/011_SID1952_d49e9e35d846_original.pine",
+  "original": "originals/011_SID1952_d49e9e35d846.pine",
+  "baseline": "baselines/011_SID1952_d49e9e35d846.pine",
+  "changes": "changes/011_SID1952_d49e9e35d846.txt",
+  "card": "cards/d49e9e35d846.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e6ee0db3af8aa9c23937cfc6262f8bf8a23cffb74ee8bdd92aaf6cea75701681",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

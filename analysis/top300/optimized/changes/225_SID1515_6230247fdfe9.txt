@@ -1,0 +1,34 @@
+{
+  "rank": 225,
+  "sid": 1515,
+  "source_sha256": "9c9eb376455ca33a261661070f45860a944194229e8396a1899c822a1eacfe8c",
+  "base_kind": "original",
+  "base_sha256": "e42702090e24f1344eb84886e02be90e43bff002e7bea6f5f8a261542c53cbf2",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；EMA20/50金叉、RSI>55、MACD及EMA200一致时10%权益做多；信号价1.5ATR止损、2R止盈，卖信号仅绘图。 多指标趋势共振可解释，但sell_condition仅绘图；真实策略只多并靠信号价ATR括号退出。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "多指标趋势共振可解释，但sell_condition仅绘图；真实策略只多并靠信号价ATR括号退出。 后续验证：逐个去掉RSI/MACD/EMA200做消融，并检查重复买信号是否重锚保护。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐个去掉RSI/MACD/EMA200做消融，并检查重复买信号是否重锚保护。"
+  ],
+  "id": "6230247fdfe9",
+  "title": "动态多指标趋势动量优化交易策略-Dynamic-Multi-Indicator-Trend-Momentum-Enhanced-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/225_SID1515_6230247fdfe9_original.pine",
+  "original": "originals/225_SID1515_6230247fdfe9.pine",
+  "baseline": "baselines/225_SID1515_6230247fdfe9.pine",
+  "changes": "changes/225_SID1515_6230247fdfe9.txt",
+  "card": "cards/6230247fdfe9.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e42702090e24f1344eb84886e02be90e43bff002e7bea6f5f8a261542c53cbf2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

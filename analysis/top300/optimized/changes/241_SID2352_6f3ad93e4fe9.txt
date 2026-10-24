@@ -1,0 +1,34 @@
+{
+  "rank": 241,
+  "sid": 2352,
+  "source_sha256": "7bad3c1d0a47611bd69d57fad2c7bd5a30013b063695381faad8ea401b3e4eeb",
+  "base_kind": "original",
+  "base_sha256": "c17a95222b4125500f113f19853a1edd2a68f5615325b2d20b65df8500741c9c",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SSL翻转且价格在EMA200对应侧时全权益开多空；以信号SSL线挂止损，获利且SSL反转时市价退出。 SSL+EMA200双向信号有因果逻辑，但止损输入未用，盈利过滤混合10%价格界限与0.1货币利润。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "SSL+EMA200双向信号有因果逻辑，但止损输入未用，盈利过滤混合10%价格界限与0.1货币利润。 后续验证：不同股数下退出门槛、止损首次提交后SL清零而订单存续、空头盈利区间验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "不同股数下退出门槛、止损首次提交后SL清零而订单存续、空头盈利区间验证。"
+  ],
+  "id": "6f3ad93e4fe9",
+  "title": "双顺势破坏均线止损策略Dual-SSL-Strategy-with-EMA-Stop-Loss",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/241_SID2352_6f3ad93e4fe9_original.pine",
+  "original": "originals/241_SID2352_6f3ad93e4fe9.pine",
+  "baseline": "baselines/241_SID2352_6f3ad93e4fe9.pine",
+  "changes": "changes/241_SID2352_6f3ad93e4fe9.txt",
+  "card": "cards/6f3ad93e4fe9.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c17a95222b4125500f113f19853a1edd2a68f5615325b2d20b65df8500741c9c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

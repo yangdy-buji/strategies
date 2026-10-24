@@ -1,0 +1,46 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 5507：本轮新候选·未回测
++// 原文件SHA256：d6ca360d9aa41dac57c17c1e801dced44cd59e0e63648e72a17d8a78d787594b
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2023-01-01 00:00:00
+ end: 2023-12-07 00:00:00
+@@ -18,8 +21,12 @@
+ ////////////////////////////////////////////////////////////
+ strategy(title="N Bars Up", shorttitle="NBU Backtest", overlay = false) 
+ nLength = input(4, minval=1)
+-input_takeprofit = input(20, title="Take Profit pip", step=0.01)
+-input_stoploss = input(10, title="Stop Loss pip", step=0.01)
++// OPT-T300-02 修改原因：输入按实际价格差命名，保留原数值单位。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++input_takeprofit = input(20, title="Take Profit price distance", step=0.01)
++// OPT-T300-03 修改原因：输入按实际价格差命名，保留原数值单位。
++// OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++input_stoploss = input(10, title="Stop Loss price distance", step=0.01)
+ nCounter = 0
+ nCounter := iff(close[1] >= open[1], nz(nCounter[1],0)+1,
+              iff(close[1] < open[1], 0, nCounter))
+@@ -27,12 +34,14 @@
+ posprice = 0.0
+ pos = 0
+ barcolor(nz(pos[1], 0) == -1 ? color.red: nz(pos[1], 0) == 1 ? color.green : color.blue ) 
+-posprice := iff(C1== 1, close, nz(posprice[1], 0)) 
+-pos := iff(posprice > 0, 1, 0)
+-if (pos == 0) 
+-    strategy.close_all()
+-if (pos == 1)
++// OPT-T300-01 修改原因：先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++entrySignal = C1 == 1
++posprice := strategy.position_size > 0 ? strategy.position_avg_price : 0
++pos := strategy.position_size > 0 ? 1 : 0
++if strategy.position_size > 0
++    if low <= posprice - input_stoploss or high >= posprice + input_takeprofit
++        strategy.close_all()
++else if entrySignal
+     strategy.entry("Long", strategy.long)
+-posprice := iff(low <= posprice - input_stoploss and posprice > 0, 0 ,  nz(posprice, 0))
+-posprice := iff(high >= posprice + input_takeprofit and posprice > 0, 0 ,  nz(posprice, 0))
+-plot(C1, title='NBU', color=color.green)+plot(C1, title='NBU', color=color.green)

@@ -1,0 +1,34 @@
+{
+  "rank": 202,
+  "sid": 2990,
+  "source_sha256": "b5c9552b72411beb713258064a635f390ba2b5a553b593dc048c817f9b77ab02",
+  "base_kind": "original",
+  "base_sha256": "08d83c1abb142b9cb03d69a06172b152a3bd704034626c64744bdfa350fc6957",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；EMA13/48金叉10%权益做多、死叉平仓，持仓均价除1.08止损；空头及跟踪设置未接入执行。 13/48 EMA交叉简单可核验；slPoints、跟踪开关和偏移输入不驱动订单，实际固定均价/1.08止损。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "13/48 EMA交叉简单可核验；slPoints、跟踪开关和偏移输入不驱动订单，实际固定均价/1.08止损。 后续验证：逐个改变slPoints/useTS/tslPoints，核对原成交不变并验证新实现响应。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐个改变slPoints/useTS/tslPoints，核对原成交不变并验证新实现响应。"
+  ],
+  "id": "34c12c5fab48",
+  "title": "基于两条不同参数渐变均线交易策略Meticulous-EMA-Crossover-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/202_SID2990_34c12c5fab48_original.pine",
+  "original": "originals/202_SID2990_34c12c5fab48.pine",
+  "baseline": "baselines/202_SID2990_34c12c5fab48.pine",
+  "changes": "changes/202_SID2990_34c12c5fab48.txt",
+  "card": "cards/34c12c5fab48.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "08d83c1abb142b9cb03d69a06172b152a3bd704034626c64744bdfa350fc6957",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

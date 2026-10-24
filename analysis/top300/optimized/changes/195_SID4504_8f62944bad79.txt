@@ -1,0 +1,34 @@
+{
+  "rank": 195,
+  "sid": 4504,
+  "source_sha256": "d52de4df52137e822fded1dd31451de66e0032058e4a7685e048a4b20dcb4d6d",
+  "base_kind": "original",
+  "base_sha256": "5f6d9574aba85ac153fc7155e5fdb5ce85278b7e072e3c90fe73e48f449825dd",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：整条布林带位于SMA200同侧判趋势，再做带内回调/反弹，结构较清楚但多空并不对称。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "空头在上穿上轨时逆短期反弹做空，空头出口还有SMA230条件；多头上轨触及用high而平仓为市价，不能按上轨价计算利润。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "按多空分拆收益与最大不利波动，检查同柱触上轨但收盘回落时的实际退出价。"
+  ],
+  "id": "8f62944bad79",
+  "title": "布林带趋势震荡交易策略Bollinger-Trend-Shock-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/195_SID4504_8f62944bad79_original.pine",
+  "original": "originals/195_SID4504_8f62944bad79.pine",
+  "baseline": "baselines/195_SID4504_8f62944bad79.pine",
+  "changes": "changes/195_SID4504_8f62944bad79.txt",
+  "card": "cards/8f62944bad79.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "5f6d9574aba85ac153fc7155e5fdb5ce85278b7e072e3c90fe73e48f449825dd",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

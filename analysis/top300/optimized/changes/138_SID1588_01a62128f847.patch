@@ -1,0 +1,47 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1588：本轮新候选·未回测
++// 原文件SHA256：0b874ba152c41c4a11bb634f7e5314db14d5be266bb30bf09996f52bcf00b00a
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-01-27 00:00:00
+ end: 2024-02-26 00:00:00
+@@ -39,25 +42,23 @@
+ tradeFriday = input.bool(true, title="Trade on Friday")
+ 
+ // Konvertierung der Uhrzeit in Unix-Zeitstempel
+-getUnixTime(hour, minute) =>
+-    adjustedHour = hour - timezoneOffset
+-    sessionDate = timestamp(year, month, dayofmonth, 0, 0)
+-    sessionDate + adjustedHour * 60 * 60000 + minute * 60000
+-
+-// Start- und Endzeit als Unix-Zeitstempel
+-// + 1 Stunde wegen UTC
+-startTime = getUnixTime(startTimeHH, startTimeMM)
+-endTime = getUnixTime(endTimeHH, endTimeMM)
+-
+-
+-// Überprüfen, ob der aktuelle Zeitpunkt innerhalb der Handelszeit liegt
+-isTradingTime() => true
++// OPT-T300-01 修改原因：恢复时段与星期开关，沿用显式UTC偏移，支持跨午夜时段。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++clockZone = "UTC" + (timezoneOffset >= 0 ? "+" : "") + str.tostring(timezoneOffset)
++localMinutes = hour(time, clockZone) * 60 + minute(time, clockZone)
++startMinutes = startTimeHH * 60 + startTimeMM
++endMinutes = endTimeHH * 60 + endTimeMM
++localDay = dayofweek(time, clockZone)
++allowedDay = (localDay == dayofweek.monday and tradeMonday) or (localDay == dayofweek.tuesday and tradeTuesday) or (localDay == dayofweek.wednesday and tradeWednesday) or (localDay == dayofweek.thursday and tradeThursday) or (localDay == dayofweek.friday and tradeFriday)
++isTradingTime() => allowedDay and (startMinutes <= endMinutes ? localMinutes >= startMinutes and localMinutes <= endMinutes : localMinutes >= startMinutes or localMinutes <= endMinutes)
+ 
+ // Saisonale Zeiträume definieren
+ isSeason(time) =>
+     m = month(time)
+     d = dayofmonth(time)
+-    (m == 1 and d >= 1) or (m == 2 and d <= 15) or (m == 3 and d >= 23) or (m == 4 and d <= 17) or (m == 5 and d >= 12) or (m == 6 and d >= 27 and d <= 8) or (m == 7 and d <= 29) or (m == 10 and d >= 15) or (m == 11 and d >= 1) or (m == 12 and d <= 2) or (m == 12 and d >= 20 and d <= 27)
++    // OPT-T300-02 修改原因：独立季节设计实验：将六月不可能的交集拆为月初至8日或27日后，呼应相邻五月/七月区间。
++    // OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    (m == 1 and d >= 1) or (m == 2 and d <= 15) or (m == 3 and d >= 23) or (m == 4 and d <= 17) or (m == 5 and d >= 12) or (m == 6 and (d <= 8 or d >= 27)) or (m == 7 and d <= 29) or (m == 10 and d >= 15) or (m == 11 and d >= 1) or (m == 12 and d <= 2) or (m == 12 and d >= 20 and d <= 27)
+ 
+ // Hintergrundfarbe für saisonale Bereiche und aktive Handelszeiten
+ bgcolor(enableSeasonality and isSeason(time) ? seasonColor : na)

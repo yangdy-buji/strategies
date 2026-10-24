@@ -1,0 +1,30 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1622：本轮新候选·未回测
++// 原文件SHA256：6d08dd4fb71b49f6ff732b20948849fce3b694848855dac806bdff27e8117c13
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-04-03 00:00:00
+ end: 2025-04-02 00:00:00
+@@ -77,9 +80,17 @@
+ plusDM  = (up > down and up > 0) ? up : 0.0
+ minusDM = (down > up and down > 0) ? down : 0.0
+ trur    = ta.rma(ta.tr, adxLen)
+-plusDI  = 100 * ta.rma(plusDM, adxLen) / trur
+-minusDI = 100 * ta.rma(minusDM, adxLen) / trur
+-dx      = 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)
++// OPT-T300-01 修改原因：平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。
++// OPT-T300-01 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
++smoothedPlusDM = ta.rma(plusDM, adxLen)
++smoothedMinusDM = ta.rma(minusDM, adxLen)
++plusDI  = trur == 0 ? 0.0 : 100 * smoothedPlusDM / trur
++// OPT-T300-02 修改原因：平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。
++// OPT-T300-02 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
++minusDI = trur == 0 ? 0.0 : 100 * smoothedMinusDM / trur
++// OPT-T300-03 修改原因：双DI为0表示无方向强度，DX回退0避免再次零除。
++// OPT-T300-03 保持行为：非零DI比例、ADX平滑及原买卖过滤不变。
++dx      = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)
+ adxVal  = ta.rma(dx, adxLen)
+ 
+ // Determine the dynamic ATR multiplier based solely on ADX

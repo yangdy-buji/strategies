@@ -1,0 +1,60 @@
+// OPT-T300 SID 1715：本轮新候选·未回测
+// 原文件SHA256：11834d41ca9cdb13959622e673b0bd3c1108e112d0da58b97e1848f1fa6fe100
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2022-12-21 00:00:00
+end: 2023-12-27 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//  TASC Issue: January 2024 - Vol. 42, Issue 1
+//     Article: Gap Momentum Indicator
+//              Taking A Page From The On-Balance Volume
+//  Article By: Perry J. Kaufman
+//    Language: TradingView's Pine Script™ v5
+// Provided By: PineCoders, for tradingview.com
+
+
+//@version=5
+string title  = 'TASC 2024.01 Gap Momentum System'
+string stitle = 'GMS'
+strategy(title, stitle, false)
+
+
+int period       = input.int( 40,   'Period:')
+int signalPeriod = input.int( 20,   'Signal Period:')
+bool longOnly    = input.bool(true, 'Long Only:')
+
+
+float gap   = open - close[1]
+float gapUp = 0.0
+float gapDn = 0.0
+switch
+    gap > 0 => gapUp += gap
+    gap < 0 => gapDn -= gap
+
+
+float gapsUp   = math.sum(gapUp, period)
+float gapsDn   = math.sum(gapDn, period)
+float gapRatio = gapsDn == 0?1.0:100.0*gapsUp/gapsDn
+float signal   = ta.sma(gapRatio, signalPeriod)
+
+
+// OPT-T300-01 修改原因：允许已有空头在上升信号时反转为多头。
+// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+if strategy.position_size <= 0 and signal > signal[1]
+    // buy at next open:
+    strategy.entry('long', strategy.long)
+else if strategy.opentrades > 0 and signal < signal[1]
+    if longOnly
+        // close all at next open:
+        strategy.close_all()
+    else
+        // sell at next open:
+        strategy.entry('short', strategy.short)
+
+
+plot(gapRatio, 'Gap Momentum', color.red,    2)
+plot(signal,   'Signal',       color.silver, 1)

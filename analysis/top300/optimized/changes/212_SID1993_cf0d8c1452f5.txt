@@ -1,0 +1,34 @@
+{
+  "rank": 212,
+  "sid": 1993,
+  "source_sha256": "1ce10d7f0ffef7185cf938235a47adc74d2096cd159a954c77e4cd66c4e2a4e5",
+  "base_kind": "original",
+  "base_sha256": "5f5b08582f26d4499a121b6b29706793601216c4c756cacb870450e20bb90aca",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA21>SMA55时随机RSI在20下金叉买多；在80上死叉平仓，平台默认数量。 均线上行时随机RSI超卖交叉买入、超买死叉退出，信号链自洽；趋势破坏后未必再到超买。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线上行时随机RSI超卖交叉买入、超买死叉退出，信号链自洽；趋势破坏后未必再到超买。 后续验证：持仓后SMA21跌破55且K长期低于80的熊市分段测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "持仓后SMA21跌破55且K长期低于80的熊市分段测试。"
+  ],
+  "id": "cf0d8c1452f5",
+  "title": "双均线交叉与随机RSI超买超卖区间优化交易策略-Dual-Moving-Average-Crossover-with-Stochastic-RSI-Overbought-Oversold-Enhanced-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/212_SID1993_cf0d8c1452f5_original.pine",
+  "original": "originals/212_SID1993_cf0d8c1452f5.pine",
+  "baseline": "baselines/212_SID1993_cf0d8c1452f5.pine",
+  "changes": "changes/212_SID1993_cf0d8c1452f5.txt",
+  "card": "cards/cf0d8c1452f5.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "5f5b08582f26d4499a121b6b29706793601216c4c756cacb870450e20bb90aca",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

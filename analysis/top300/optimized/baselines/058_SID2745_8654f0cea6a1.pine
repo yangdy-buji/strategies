@@ -1,0 +1,48 @@
+/*backtest
+start: 2023-04-12 00:00:00
+end: 2024-04-17 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Optimized MACD Trend-Following Strategy with Risk Management", shorttitle="Opt. MACD RM", overlay=true)
+
+// Input parameters
+fastLength = input(12)
+slowLength = input(26)
+signalSmoothing = input(9)
+riskPercent = input.float(2, title="Risk Percentage (%)") / 100 // 2% risk per trade
+atrMultiplierSL = input.float(2, title="ATR Multiplier for Stop Loss")
+atrMultiplierTP = input.float(5, title="ATR Multiplier for Take Profit")
+
+// Calculate ATR for 5-minute timeframe
+atr5 = ta.atr(5)
+
+// Calculate stop loss and take profit levels based on ATR
+stopLoss = atr5 * atrMultiplierSL
+takeProfit = atr5 * atrMultiplierTP
+
+// Initialize trade variables
+var float entryPrice = na
+var float stopLossPrice = na
+var float takeProfitPrice = na
+
+// Calculate MACD
+[macdLine, signalLine, _] = ta.macd(close, fastLength, slowLength, signalSmoothing)
+
+// Buy signal
+buySignal = ta.crossover(macdLine, signalLine) and macdLine < 0 and not na(close[1]) and close > open
+
+// Long entry
+if buySignal and strategy.opentrades == 0
+    entryPrice := close
+    stopLossPrice := close - stopLoss
+    takeProfitPrice := close + takeProfit
+    strategy.entry("Buy", strategy.long)
+    strategy.exit("Stop Loss/TP", "Buy", stop=stopLossPrice, limit=takeProfitPrice)
+
+// Plot stop loss and take profit levels
+plot(entryPrice > 0 ? stopLossPrice : na, color=color.red, style=plot.style_stepline, title="Stop Loss")
+plot(entryPrice > 0 ? takeProfitPrice : na, color=color.green, style=plot.style_stepline, title="Take Profit")

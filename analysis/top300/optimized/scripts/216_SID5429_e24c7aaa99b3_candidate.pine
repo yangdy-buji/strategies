@@ -1,0 +1,85 @@
+// OPT-T300 SID 5429：本轮新候选·未回测
+// 原文件SHA256：ae51429d65571b20dbfbd24b5b02cbfce544f490669d1f8e2d76ffdeed9cad9c
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-05-01 00:00:00
+end: 2024-05-31 23:59:59
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Strategia Stop Loss & Take Profit z Filtrem Trendu i Wyjątkiem", shorttitle="Smooth MA SL & TP with Exception", overlay=true)
+
+// Parametry
+tp_multiplier = input.float(1.5, title="Mnożnik Take Profit")
+sl_percent = input.float(5, title="Procent Stop Loss")
+wait_bars = input.int(3, title="Liczba Oczekiwanych Świec")
+sma_period = input.int(200, title="Okres SMA")
+rsi_period = input.int(14, title="Okres RSI")
+vol_ma_period = input.int(20, title="Okres Średniej Wolumenu")
+tr_ma_period = input.int(20, title="Okres Średniej Rzeczywistego Zakresu")
+
+// Obliczenie Gładkiej Średniej Kroczącej
+sma = ta.sma(close, sma_period)
+
+// Obliczenie RSI
+rsi = ta.rsi(close, rsi_period)
+
+// Filtr Trendu
+uptrend = close > sma
+downtrend = close < sma
+
+// Warunek konsolidacji: Niski wolumen i niska zmienność
+niski_wolumen = volume < ta.sma(volume, vol_ma_period)
+niska_zmienosc = ta.tr(true) < ta.sma(ta.tr(true), tr_ma_period)
+
+// Warunek Wejścia (Long): Cena poniżej SMA 200 i filtr trendu w strefie czerwonej
+warunek_wejscia = close < sma and niski_wolumen and niska_zmienosc and not uptrend
+
+// Warunek Wyjścia ze strategii
+// OPT-T300-01 修改原因：采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。
+// OPT-T300-01 保持行为：原低波动逆势做多入口和百分比目标保持。
+warunek_wyjscia = ta.crossover(close, sma)
+
+// Ustalanie Stop Loss i Take Profit
+var float stop_loss = na
+var float take_profit = na
+
+var int indeks_wejscia = na
+
+// OPT-T300-02 修改原因：仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。
+// OPT-T300-02 保持行为：不增加仓位或改默认信号。
+if (warunek_wejscia and strategy.position_size == 0)
+    stop_loss := close * (1 - sl_percent / 100)
+    take_profit := close * (1 + tp_multiplier)
+    indeks_wejscia := bar_index
+
+// Handel
+// OPT-T300-03 修改原因：仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。
+// OPT-T300-03 保持行为：不增加仓位或改默认信号。
+if (warunek_wejscia and strategy.position_size == 0)
+    strategy.entry("Long", strategy.long)
+
+// Warunek Wyjścia: RSI w strefie wykupienia lub Stop Loss/Take Profit
+// OPT-T300-04 修改原因：等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。
+// OPT-T300-04 保持行为：保留等待期仅RSI超买挂目标的原规则和默认等待3根。
+if (strategy.opentrades != 0)
+    if (bar_index - indeks_wejscia >= wait_bars)
+        strategy.exit("Take Profit/Stop Loss", "Long", stop=stop_loss, limit=take_profit)
+    else if (rsi > 70)
+        strategy.exit("Take Profit/Stop Loss", "Long", limit=take_profit)
+
+// Wyjątek: Warunek Wyjścia z Longów na podstawie zmiany trendu
+if (warunek_wyjscia)
+    strategy.close("Long")
+
+// Rysowanie RSI
+rsi_plot = plot(rsi, title="RSI", color=color.blue)
+
+// Rysowanie Gładkiej Średniej Kroczącej
+sma_plot = plot(sma, color=color.gray, title="Smooth MA", linewidth=2)
+
+// Rysowanie Filtru Trendu
+fill(sma_plot, rsi_plot, color=downtrend ? color.new(color.red, 90) : na)

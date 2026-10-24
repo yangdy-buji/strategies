@@ -1,0 +1,34 @@
+{
+  "rank": 75,
+  "sid": 3086,
+  "source_sha256": "65b6f4dab2b58d5f738fd2dd402490c0baf3e3667c3c2f1a182b9abc1edc3371",
+  "base_kind": "original",
+  "base_sha256": "ebf0593c04277c4985b10768908808d7f2be08ec9c8b60497c9f37e204cc8e73",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：MASS反映高低区间扩张，却被直接映射为多空方向，规则机械完整但经济方向依据弱。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "高低波幅没有价格方向信息，同样波幅的上涨/下跌可能得到相同持仓方向；长期反手需考虑借券成本。 暂缓原因：引入方向过滤将成为新模型。"
+  ],
+  "validation_plan": [
+    "构造镜像涨跌序列保持波幅，比较方向和收益；按多空及行情状态拆分贡献。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "52a2f2cf7c44",
+  "title": "基于动量指标的短期交易策略Short-term-Trading-Strategy-Based-on-Momentum-Indicator",
+  "category": "波动率",
+  "priority": "P1",
+  "script": "scripts/075_SID3086_52a2f2cf7c44_original.pine",
+  "original": "originals/075_SID3086_52a2f2cf7c44.pine",
+  "baseline": "baselines/075_SID3086_52a2f2cf7c44.pine",
+  "changes": "changes/075_SID3086_52a2f2cf7c44.txt",
+  "card": "cards/52a2f2cf7c44.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ebf0593c04277c4985b10768908808d7f2be08ec9c8b60497c9f37e204cc8e73",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

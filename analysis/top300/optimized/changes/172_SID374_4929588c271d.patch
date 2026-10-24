@@ -1,0 +1,41 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 374：本轮新候选·未回测
++// 原文件SHA256：465802fe9540520cffb291d032c607277fb17fb930e275bdcd3a7d12cc392138
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2022-04-24 00:00:00
+ end: 2022-05-23 23:59:00
+@@ -120,7 +123,9 @@
+ if v1 == true
+     
+     strategy.entry("Long", strategy.long, when = Buy_1, alert_message = "v1 - Buy Signal!")
+-    strategy.entry("Sell", when = Sell_1, alert_message = "v1 - Sell Signal!")
++    // OPT-T300-01 修改原因：独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。
++    // OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    strategy.close("Long", when = Sell_1, alert_message = "v1 - Sell Signal!")
+ 
+ // v2 Signals
+ 
+@@ -129,7 +134,9 @@
+ 
+ if v2 == true
+     strategy.entry("Long", strategy.long, when = Buy_2, alert_message = "v2 - Buy Signal!")
+-    strategy.entry("Sell", when = Sell_2, alert_message = "v2 - Sell Signal!")
++    // OPT-T300-02 修改原因：独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。
++    // OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    strategy.close("Long", when = Sell_2, alert_message = "v2 - Sell Signal!")
+     strategy.exit("Stoploss/TP", "Long", stop = v2stoploss_level, limit = v2takeprofit_level)
+ 
+ // v3 Signals
+@@ -139,6 +146,8 @@
+ 
+ if v3 == true
+     strategy.entry("Long", strategy.long, when = Buy_3, alert_message = "v2 - Buy Signal!")
+-    strategy.entry("Sell", when = Sell_3, alert_message = "v2 - Sell Signal!")
++    // OPT-T300-03 修改原因：独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。
++    // OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    strategy.close("Long", when = Sell_3, alert_message = "v2 - Sell Signal!")
+     strategy.exit("Stoploss/TP", "Long", stop = v3stoploss_level, limit = v3takeprofit_level)
+ 

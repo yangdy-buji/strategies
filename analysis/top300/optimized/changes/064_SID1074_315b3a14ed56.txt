@@ -1,0 +1,34 @@
+{
+  "rank": 64,
+  "sid": 1074,
+  "source_sha256": "61c223b75d376d20fbfdbcd6d70c415708943bb33ae05bfac62152d65511c8ae",
+  "base_kind": "original",
+  "base_sha256": "95fc438c856a06aee73e634b8cc8cf2fadc29c3d674fcb755fc7c232c516f35c",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：窗口极值与WaveTrend方向组合并按风险距离定仓，风控意图较明确，但并非经典枢轴背离。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "持仓中再次出现bullishDivergence仍会改stop为新low-ATR，可能放宽保护；数量按信号close计算且无总敞口上限。 暂缓原因：不允许放宽可能提前出场；限制数量改变收益。"
+  ],
+  "validation_plan": [
+    "对重复信号、低点更低、ATR扩张、极小止损距离和跳空成交做逐笔风险检查。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "315b3a14ed56",
+  "title": "WaveTrend-Oscillator-Divergence-Strategy-波动趋势震荡指标背离策略",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/064_SID1074_315b3a14ed56_original.pine",
+  "original": "originals/064_SID1074_315b3a14ed56.pine",
+  "baseline": "baselines/064_SID1074_315b3a14ed56.pine",
+  "changes": "changes/064_SID1074_315b3a14ed56.txt",
+  "card": "cards/315b3a14ed56.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "95fc438c856a06aee73e634b8cc8cf2fadc29c3d674fcb755fc7c232c516f35c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

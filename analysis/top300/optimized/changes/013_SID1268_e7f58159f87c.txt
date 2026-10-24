@@ -1,0 +1,34 @@
+{
+  "rank": 13,
+  "sid": 1268,
+  "source_sha256": "1697fc7df38a303c300a451debea78ecb80c9cc859aaaabc01a967a18d1e183f",
+  "base_kind": "original",
+  "base_sha256": "67661fbf3e79e9da83dd25cbf40f8a5e78f7f8edbad334fb9f4480aecab2b7dc",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：PMax利用均线和ATR递推形成方向线，默认仅多、反向信号平仓，核心逻辑完整。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线类型选项多且初始化方式不同，容易产生参数选择偏差；10000现金下单和零手续费与报告统一口径不同。 暂缓原因：减少选项可能放弃某些市场优势，但能降低过拟合自由度。"
+  ],
+  "validation_plan": [
+    "比较不同预热长度和同一股票池下的逐笔信号，明确反向模式是否反手及其成本。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "e7f58159f87c",
+  "title": "乘法移动平均线双向交易策略Multiplicative-Moving-Average-Dual-direction-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/013_SID1268_e7f58159f87c_original.pine",
+  "original": "originals/013_SID1268_e7f58159f87c.pine",
+  "baseline": "baselines/013_SID1268_e7f58159f87c.pine",
+  "changes": "changes/013_SID1268_e7f58159f87c.txt",
+  "card": "cards/e7f58159f87c.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "67661fbf3e79e9da83dd25cbf40f8a5e78f7f8edbad334fb9f4480aecab2b7dc",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

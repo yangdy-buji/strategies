@@ -1,0 +1,34 @@
+{
+  "rank": 281,
+  "sid": 5110,
+  "source_sha256": "ff49c0c09bd3ec19b72cc682977714710d9214f8bf1b5d2bf3ec469c6dede5a6",
+  "base_kind": "original",
+  "base_sha256": "2ca10f92b7ae585ffc72ea7a0c58b4423923f772e9ba06cecda08c8d2db5d25d",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；确认枢轴时收盘作为水平，突破阻力全权益做多；反向支撑取消挂单，信号消失后才设置均价止盈2%止损1.75%。 枢轴突破逻辑可解释，但实际取确认柱close而非枢轴值，保护只在入场条件不成立时挂出。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "枢轴突破逻辑可解释，但实际取确认柱close而非枢轴值，保护只在入场条件不成立时挂出。 后续验证：32柱确认延迟、持续Lc1真期间大亏、仅取消未成交订单与真实持仓退出测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "32柱确认延迟、持续Lc1真期间大亏、仅取消未成交订单与真实持仓退出测试。"
+  ],
+  "id": "eeb7e5b374fc",
+  "title": "突破型上升趋势参考策略Quantitative-Breakthrough-Uptrend-Reference-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/281_SID5110_eeb7e5b374fc_original.pine",
+  "original": "originals/281_SID5110_eeb7e5b374fc.pine",
+  "baseline": "baselines/281_SID5110_eeb7e5b374fc.pine",
+  "changes": "changes/281_SID5110_eeb7e5b374fc.txt",
+  "card": "cards/eeb7e5b374fc.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2ca10f92b7ae585ffc72ea7a0c58b4423923f772e9ba06cecda08c8d2db5d25d",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,37 @@
+{
+  "rank": 162,
+  "sid": 4488,
+  "source_sha256": "b7568684ae12b9574578bdb492987db71cf5d63e33470fa3512c0bd26f506ce8",
+  "base_kind": "prior_candidate",
+  "base_sha256": "85822b7c921db7be5e2bcddc2486c321aef402f3cb99b12deac693ffca5c92ed",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：恢复日期。；出口移出日期窗。",
+  "patches": [],
+  "resolved": [
+    "恢复日期。",
+    "出口移出日期窗。"
+  ],
+  "remaining": [
+    "qty=1与外部统一仓位结果仍需对齐。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "起止边界、窗外持仓与不同MA类型的首个有效值，核对固定1股成交及3tick滑点。"
+  ],
+  "id": "77bafc111633",
+  "title": "布林带突破动量跟踪交易策略-Bollinger-Bands-Breakout-Momentum-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/162_SID4488_77bafc111633_candidate.pine",
+  "original": "originals/162_SID4488_77bafc111633.pine",
+  "baseline": "baselines/162_SID4488_77bafc111633.pine",
+  "changes": "changes/162_SID4488_77bafc111633.txt",
+  "card": "cards/77bafc111633.html",
+  "diff": "changes/162_SID4488_77bafc111633.patch",
+  "original_diff": "changes/162_SID4488_77bafc111633.original.patch",
+  "script_sha256": "4f163aae416b32b0b849b3ed2d7afbc04f85c43aeebe8d5e5be861906bec0887",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

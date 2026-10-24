@@ -1,0 +1,34 @@
+{
+  "rank": 286,
+  "sid": 3392,
+  "source_sha256": "baccf4a728e2dc06086b40974a23e900543cdf3b5d7906e39317430a8e4c1fac",
+  "base_kind": "original",
+  "base_sha256": "e02b8b8bfa6dfcfebc51d5147ad5ceb064a2802f326346578bdcb24b45369fc8",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；低波动统计显著且价格在确认分形支撑之上空仓买权益5%整份，ATR跟踪止损及1R/2R/3R各平初始三分之一。 分形支撑+低波动入场有机制，但ATR相关序列构造的test_stat不能直接宣称95%统计置信；整除分档可能余仓。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "分形支撑+低波动入场有机制，但ATR相关序列构造的test_stat不能直接宣称95%统计置信；整除分档可能余仓。 后续验证：自相关重采样检验误报率，数量1/2/4/5份及跨多目标跳空验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "自相关重采样检验误报率，数量1/2/4/5份及跨多目标跳空验证。"
+  ],
+  "id": "0f4f75d5181e",
+  "title": "基于广义支撑-阻力的反转交易策略Reversal-Trading-Strategy-Based-on-Generalized-Support-Resistance",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/286_SID3392_0f4f75d5181e_original.pine",
+  "original": "originals/286_SID3392_0f4f75d5181e.pine",
+  "baseline": "baselines/286_SID3392_0f4f75d5181e.pine",
+  "changes": "changes/286_SID3392_0f4f75d5181e.txt",
+  "card": "cards/0f4f75d5181e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e02b8b8bfa6dfcfebc51d5147ad5ceb064a2802f326346578bdcb24b45369fc8",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

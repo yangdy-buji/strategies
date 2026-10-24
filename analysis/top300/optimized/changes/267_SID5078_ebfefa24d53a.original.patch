@@ -1,0 +1,107 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,15 @@
++//@version=4
++// OPT-T300 SID 5078：本轮新候选·未回测
++// 原文件SHA256：ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：移动平均线金叉交易策略Moving-Average-Crossover-Trading-Strategy.md
++// 原文件SHA256：ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68
++// SID：5078；原研究名单序号：206
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2022-10-30 00:00:00
+ end: 2023-11-05 00:00:00
+@@ -8,8 +20,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © TwoChiefs
+-
+-//@version=4
+ strategy("John EMA Crossover Strategy", overlay=true)
+ ////////////////////////////////////////////////////////////////////////////////
+ // BACKTESTING RANGE
+@@ -27,7 +37,10 @@
+ // Calculate start/end date and time condition
+ startDate = timestamp(fromYear, fromMonth, fromDay, 00, 00)
+ finishDate = timestamp(toYear, toMonth, toDay, 00, 00)
+-time_cond = true
++// OPT-5078-01：日期条件恒真。
++// OPT-5078-01 保持：原参数、仓位及窗外退出
++// OPT-5078-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++time_cond = time >= startDate and time <= finishDate
+  
+ ////////////////////////////////////////////////////////////////////////////////
+ 
+@@ -47,31 +60,32 @@
+ pivot = (high + low + close) / 3
+ 
+ //MA CALCULATION FUNCTION
+-ma(smoothing, src, length) => 
+-    if smoothing == "RMA"
++// OPT-T300-01 修改原因：SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。
++// OPT-T300-01 保持行为：EMA默认、价格源pivot、13/48/30周期和已有日期及退出修复。
++ma(smoothing, src, length) =>
++    e1 = ema(src, length)
++    e2 = ema(e1, length)
++    e3 = ema(e2, length)
++    if smoothing == "RMA" or smoothing == "SMMA"
+         rma(src, length)
++    else if smoothing == "SMA"
++        sma(src, length)
++    else if smoothing == "EMA"
++        e1
++    else if smoothing == "WMA"
++        wma(src, length)
++    else if smoothing == "VWMA"
++        vwma(src, length)
++    else if smoothing == "DEMA"
++        2 * e1 - e2
++    else if smoothing == "TEMA"
++        3 * e1 - 3 * e2 + e3
++    else if smoothing == "HullMA"
++        wma(2 * wma(src, max(1, int(length / 2))) - wma(src, length), max(1, int(round(sqrt(length)))))
++    else if smoothing == "LSMA"
++        linreg(src, length, 0)
+     else
+-        if smoothing == "SMA"
+-            sma(src, length)
+-        else 
+-            if smoothing == "EMA"
+-                ema(src, length)
+-            else 
+-                if smoothing == "WMA"
+-                    wma(src, length)
+-				else
+-					if smoothing == "VWMA"
+-						vwma(src, length)
+-					else
+-						if smoothing == "SMMA"
+-							na(src[1]) ? sma(src, length) : (src[1] * (length - 1) + src) / length
+-						
+-						else
+-							if smoothing == "HullMA"
+-								wma(2 * wma(src, length / 2) - wma(src, length), round(sqrt(length)))
+-
+-
+-
++        na
+ 
+ //ASSIGN A MOVING AVERAGE RESULT TO A VARIABLE
+ shortMA=ma(smoothingShort, pivot, periodShort)
+@@ -91,7 +105,10 @@
+ 
+ 
+ strategy.entry("long",true,when=buy and time_cond)
+-strategy.close("long",when=exit and time_cond)
++// OPT-5078-02：信号退出不受日期门禁。
++// OPT-5078-02 保持：原参数、仓位及窗外退出
++// OPT-5078-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.close("long",when=exit)
+ 
+ 
+ if (not time_cond)

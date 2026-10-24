@@ -1,0 +1,60 @@
+// OPT-T300 SID 4863：本轮新候选·未回测
+// 原文件SHA256：910b74e39e8526ac7a5a3e9de45b557e027afc036162ef51cfab171b2f9283d8
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-05-22 00:00:00
+end: 2024-05-27 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Estratégia Híbrida Quantitativa", overlay=true)
+
+// Definição de parâmetros
+sma_length = input.int(20, title="Período da SMA")
+threshold_high = input.float(1.5, title="Threshold Alto")
+threshold_low = input.float(-1.5, title="Threshold Baixo")
+lookback_period = input.int(252, title="Período de Retorno Histórico (dias)")
+
+// Funções auxiliares
+f_sma(source, length) =>
+    ta.sma(source, length)
+
+f_bollinger_band(source, length, mult) =>
+    basis = ta.sma(source, length)
+    dev = mult * ta.stdev(source, length)
+    [basis + dev, basis - dev]
+
+// Cálculo dos indicadores
+sma = f_sma(close, sma_length)
+[upper_band, lower_band] = f_bollinger_band(close, sma_length, 2)
+
+// Regime de Mercado: Binomial
+retornos = ta.change(close, 1)
+media_retornos = ta.sma(retornos, lookback_period)
+desvio_padrao_retornos = ta.stdev(retornos, lookback_period)
+
+// Indicador de Regime: Z-Score
+// OPT-T300-01 修改原因：收益零方差不计算Z分数；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
+// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+z_score = not na(desvio_padrao_retornos) and desvio_padrao_retornos > 0 ? (retornos - media_retornos) / desvio_padrao_retornos : na
+
+// Sinal de Compra e Venda
+sinal_compra = z_score < threshold_low and close < lower_band
+sinal_venda = z_score > threshold_high and close > upper_band
+
+// Execução de Ordem
+if (sinal_compra)
+    strategy.entry("Long", strategy.long)
+if (sinal_venda)
+    strategy.close("Long")
+
+// Plotagem dos Indicadores
+plot(sma, title="SMA", color=color.blue)
+plot(upper_band, title="Upper Bollinger Band", color=color.red)
+plot(lower_band, title="Lower Bollinger Band", color=color.green)
+hline(threshold_high, "Threshold Alto", color=color.red, linestyle=hline.style_dashed)
+hline(threshold_low, "Threshold Baixo", color=color.green, linestyle=hline.style_dashed)
+plot(z_score, title="Z-Score", color=color.purple)

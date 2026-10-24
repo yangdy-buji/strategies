@@ -1,0 +1,35 @@
+{
+  "rank": 132,
+  "sid": 4265,
+  "source_sha256": "baae72b1c18ede9e723f6fb8223a617508f57f596a56f9cc269f4658961b0d5a",
+  "base_kind": "original",
+  "base_sha256": "6d79e054e3caf10ea675f03e72a9bb814671936546173f8fa218313d6ad03b1c",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：200层状态加仓是源码显式设定，不能将其误当编译缺陷；层数上限、每层份数与总敞口均未获唯一替代值，需先定义风险预算。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "200层状态加仓是源码显式设定，不能将其误当编译缺陷；层数上限、每层份数与总敞口均未获唯一替代值，需先定义风险预算。",
+    "MA仅绘图未过滤；longCondition为状态不是交叉，可连续加仓至200层；空头条件k>99且k<d非常苛刻，可能长期无法反向退出。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "持续满足超卖的序列统计每次新增份数；检查200层时总敞口及空头退出长期缺失的情形。"
+  ],
+  "id": "e2218fbcd12e",
+  "title": "多重指标交叉趋势跟踪交易策略基于随机相对强弱与均线系统的量化分析-Multi-Indicator-Cross-Trend-Following-Trading-Strategy-Quantitative-Analysis-Based-on-Stochastic-RSI-and-Moving-Average-System",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/132_SID4265_e2218fbcd12e_original.pine",
+  "original": "originals/132_SID4265_e2218fbcd12e.pine",
+  "baseline": "baselines/132_SID4265_e2218fbcd12e.pine",
+  "changes": "changes/132_SID4265_e2218fbcd12e.txt",
+  "card": "cards/e2218fbcd12e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "6d79e054e3caf10ea675f03e72a9bb814671936546173f8fa218313d6ad03b1c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

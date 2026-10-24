@@ -1,0 +1,34 @@
+{
+  "rank": 18,
+  "sid": 3800,
+  "source_sha256": "a31f3ff1bb3cdb038ee5304a70c4e6eb1de4d0487b80857b643e2abde8f86454",
+  "base_kind": "original",
+  "base_sha256": "12e5dad1fb73e3dbb5f6b60ddb4b0976f970ffa30bb94e1649176fb5ca9a1e49",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：实际交易是SMA加0.5与EMA减0.5交叉，不是多时间框架相位模型；规则可复算但命名夸大。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "固定0.5价格偏移对低价与高价股票有不同作用，后面13/26等EMA图形不参与订单。 暂缓原因：归一化会重排信号，不能宣称保留旧收益。"
+  ],
+  "validation_plan": [
+    "同OHLC乘10后对比信号；检查删除仅绘图均线不影响订单；做后续窗口验证。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "793131cc73d2",
+  "title": "多周期相位交叉与指数移动平均趋势跟踪策略-Multi-Period-Phase-Crossover-with-EMA-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/018_SID3800_793131cc73d2_original.pine",
+  "original": "originals/018_SID3800_793131cc73d2.pine",
+  "baseline": "baselines/018_SID3800_793131cc73d2.pine",
+  "changes": "changes/018_SID3800_793131cc73d2.txt",
+  "card": "cards/793131cc73d2.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "12e5dad1fb73e3dbb5f6b60ddb4b0976f970ffa30bb94e1649176fb5ca9a1e49",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

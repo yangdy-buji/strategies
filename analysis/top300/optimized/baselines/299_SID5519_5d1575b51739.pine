@@ -1,0 +1,118 @@
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：追踪趋势获利策略Take-Profit-on-Trend-Strategy.md
+// 原文件SHA256：f15e83093392f33f5b96dfe4c1ddce9b55e1384bd1ab07d062b4ee9360d666c7
+// SID：5519；原研究名单序号：276
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-08-26 00:00:00
+end: 2023-09-25 00:00:00
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © BHD_Trade_Bot
+
+// @version=5
+strategy(
+ shorttitle            = 'Take Profit On Trend',
+ title                 = 'Take Profit On Trend (by BHD_Trade_Bot)',
+ overlay               = true,
+ calc_on_every_tick    = true,
+ calc_on_order_fills   = true,
+ use_bar_magnifier     = true,
+ initial_capital       = 1000,
+ default_qty_type      = strategy.percent_of_equity,
+ default_qty_value     = 100,
+ commission_type       = strategy.commission.percent,
+ commission_value      = 0.1)
+
+
+
+// Backtest Time Period
+start_year   = input(title='Start year'   ,defval=2021)
+start_month  = input(title='Start month'  ,defval=1)
+start_day    = input(title='Start day'    ,defval=1)
+start_time = timestamp(start_year, start_month, start_day, 00, 00)
+
+end_year     = input(title='end year'     ,defval=2050)
+end_month    = input(title='end month'    ,defval=1)
+end_day      = input(title='end day'      ,defval=1)
+end_time = timestamp(end_year, end_month, end_day, 23, 59)
+
+// OPT-5519-01：日期输入失效；只恢复入场时间过滤，退出独立。
+// OPT-5519-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-5519-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+is_back_test_time() => time >= start_time and time <= end_time
+
+
+
+// EMA
+ema50 = ta.ema(close, 50)
+ema200 = ta.ema(close, 200)
+
+// RSI
+rsi200 = ta.rsi(close, 200)
+
+// EMA_CD
+emacd = ema50 - ema200
+emacd_signal = ta.ema(emacd, 50)
+hist = emacd - emacd_signal
+
+// BHD Unit
+bhd_unit = ta.rma(high - low, 200) * 2
+bhd_upper = ema200 + bhd_unit
+bhd_lower = ema200 - bhd_unit
+
+
+
+// All n candles is going down
+all_body_decrease(n) =>
+    isValid = true
+    for i = 0 to (n - 1)
+        if (close[i] > close[i + 1])
+            isValid := false
+            break
+    isValid
+
+
+
+// ENTRY CONDITIONS
+
+// Long-term uptrend
+entry_condition1 = rsi200 > 51 and hist > 0
+
+// Short-term downtrend
+entry_condition2 = all_body_decrease(2)
+
+ENTRY_CONDITIONS = entry_condition1 and entry_condition2
+
+if ENTRY_CONDITIONS and is_back_test_time()
+    strategy.entry('entry', strategy.long)
+
+
+// CLOSE CONDITIONS
+
+// Price increase 2 BHD unit
+take_profit = close > strategy.position_avg_price + bhd_unit * 2
+
+// Price decrease 3 BHD unit
+stop_loss = close < strategy.position_avg_price - bhd_unit * 3
+
+CLOSE_CONDITIONS = take_profit or stop_loss
+
+if CLOSE_CONDITIONS
+    strategy.close('entry')
+
+
+
+// Draw
+plot(ema50, color=color.orange, linewidth=2)
+plot(ema200, color=color.purple, linewidth=2)
+bhd_upper_line = plot(bhd_upper, color=color.teal)
+bhd_lower_line = plot(bhd_lower, color=color.teal)
+fill(bhd_upper_line, bhd_lower_line, color=color.new(color.teal, 90))

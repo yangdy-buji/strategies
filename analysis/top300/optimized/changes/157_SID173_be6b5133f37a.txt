@@ -1,0 +1,74 @@
+{
+  "rank": 157,
+  "sid": 173,
+  "source_sha256": "02e3d193becf6bd128bdc6bcee60d858d512445e94996f7f536480ba709f7058",
+  "base_kind": "original",
+  "base_sha256": "88b3e3cacb531053ecb1a8f3357803ef97c4f3b42bcacefea53def6ce098f347",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。；输入按实际价格差命名，保留原数值单位。；输入按实际价格差命名，保留原数值单位。",
+  "patches": [
+    {
+      "old": "posprice := abs(close - open) >= input_minsizebody? open[1] > close[1] ? close > open ? close <= open[1] ? close[1] <= open ? close - open < open[1] - close[1] ? close :nz(posprice[1], 0) :nz(posprice[1], 0) : nz(posprice[1], 0) : nz(posprice[1], 0) : nz(posprice[1], 0): nz(posprice[1], 0)\npos := iff(posprice > 0, 1, 0)\nif (pos == 0) \n    strategy.close_all()\nif (pos == 1)\n    strategy.entry(\"Long\", strategy.long)\nposprice := iff(low <= posprice - input_stoploss and posprice > 0, 0 ,  nz(posprice, 0))\nposprice := iff(high >= posprice + input_takeprofit and posprice > 0, 0 ,  nz(posprice, 0))",
+      "new": "entrySignal = abs(close - open) >= input_minsizebody and open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1]\nposprice := strategy.position_size > 0 ? strategy.position_avg_price : 0\npos := strategy.position_size > 0 ? 1 : 0\nif strategy.position_size > 0\n    if low <= posprice - input_stoploss or high >= posprice + input_takeprofit\n        strategy.close_all()\nelse if entrySignal\n    strategy.entry(\"Long\", strategy.long)\n",
+      "reason": "先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "入场100，止损10，连续信号柱low85触平仓；空仓信号柱不回看保护；退出待成交不重入。"
+      ]
+    },
+    {
+      "old": "Take Profit pip",
+      "new": "Take Profit price distance",
+      "reason": "输入按实际价格差命名，保留原数值单位。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "不同股票按价格差解释；不隐式乘tick或外汇pip。"
+      ]
+    },
+    {
+      "old": "Stop Loss pip",
+      "new": "Stop Loss price distance",
+      "reason": "输入按实际价格差命名，保留原数值单位。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "不同股票按价格差解释；不隐式乘tick或外汇pip。"
+      ]
+    }
+  ],
+  "resolved": [
+    "先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。",
+    "输入按实际价格差命名，保留原数值单位。",
+    "输入按实际价格差命名，保留原数值单位。"
+  ],
+  "remaining": [
+    "形态阈值仍为绝对价格差；触价后市价关闭不保证止损价格。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测试触止损后次柱再次孕线、同柱双触价和不同最小跳动，验证固定参考价及只退出一次。"
+  ],
+  "id": "be6b5133f37a",
+  "title": "Bullish-Harami-Reversal-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/157_SID173_be6b5133f37a_candidate.pine",
+  "original": "originals/157_SID173_be6b5133f37a.pine",
+  "baseline": "baselines/157_SID173_be6b5133f37a.pine",
+  "changes": "changes/157_SID173_be6b5133f37a.txt",
+  "card": "cards/be6b5133f37a.html",
+  "diff": "changes/157_SID173_be6b5133f37a.patch",
+  "original_diff": "changes/157_SID173_be6b5133f37a.original.patch",
+  "script_sha256": "0075a92be4307f1e34926e962ee9ddb7592162944a8bd9f70ef303190b0035c1",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "dce3df256e9a1157a8aefe5aaff9097c0a02d7eb8ef7addcab2f9d895ad9def2",
+    "review": "v3将多层三元Harami条件等价展开为and，历史首柱NA不构成信号；实际持仓时固定成交均价判断两种触价，空仓else才发Long，不再连续形态重写保护。pos仍用于颜色，绝对价格差输入仅更名。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "形态阈值仍为绝对价格差；触价后市价关闭不保证止损价格。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

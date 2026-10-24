@@ -1,0 +1,34 @@
+{
+  "rank": 7,
+  "sid": 3988,
+  "source_sha256": "5915c17d3f8f878bc5d364a87284e4f9f45f4b1354c5d2a98dd3308e15c9ca43",
+  "base_kind": "original",
+  "base_sha256": "1b26a3ad4e43267e5100ae2d9fb6f2e62aad731ece2906e54099fd8faf7cd723",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：布林中轨、RSI和OBV方向确认做多，下轨退出，信号与退出配套；指标相关性需要证实增益。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "三项入场因子都源于同一价格/成交量，组合复杂度不等于三个独立优势；下轨退出可能给回较多浮盈。 暂缓原因：简化可能增加假突破，过度筛选也可能减少样本。"
+  ],
+  "validation_plan": [
+    "逐股及滚动窗口比较完整/删因子版本，按趋势和震荡市场分层；不改变仓位口径。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "8177c04d713e",
+  "title": "多指标趋势动量交易策略基于布林带相对强弱与交易量的综合量化交易系统-Multi-Indicator-Trend-Momentum-Trading-Strategy-A-Comprehensive-Quantitative-Trading-System-Based-on-Bollinger-Bands-RSI-and-OBV",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/007_SID3988_8177c04d713e_original.pine",
+  "original": "originals/007_SID3988_8177c04d713e.pine",
+  "baseline": "baselines/007_SID3988_8177c04d713e.pine",
+  "changes": "changes/007_SID3988_8177c04d713e.txt",
+  "card": "cards/8177c04d713e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "1b26a3ad4e43267e5100ae2d9fb6f2e62aad731ece2906e54099fd8faf7cd723",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,106 @@
+// OPT-T300 SID 4228：本轮新候选·未回测
+// 原文件SHA256：ac66d510a20b6ec59abf314d57ec7781f3c759f74db7c8c0c4309491a01c78b7
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-01-01 00:00:00
+end: 2024-11-11 00:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Combined Volume Indicators Strategy", overlay=true)
+
+// تنظیمات
+lengthRSI = 14
+lengthMFI = 14
+lengthCMF = 20
+fastLength = 5
+slowLength = 10
+
+// محاسبه OBV
+obv = ta.cum(close > close[1] ? volume : close < close[1] ? -volume : 0)
+
+// محاسبه A/D به‌صورت دستی
+var float ad = na
+// OPT-T300-01 修改原因：零振幅K线的AD增量为0，避免0/0污染累计值并在下一根重置为0。
+// OPT-T300-01 保持行为：首根AD仍初始化0，正常振幅下计算及七项投票不变。
+adIncrement = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low) * volume
+ad := na(ad[1]) ? 0 : ad[1] + adIncrement
+
+// محاسبه CMF (Chaikin Money Flow)
+// OPT-T300-02 修改原因：平价K线没有可分配的收盘区间方向，资金流乘数置0。
+// OPT-T300-02 保持行为：正常K线仍使用原收盘区间比率；不变更MFI方向归类。
+moneyFlowMultiplier = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low)
+moneyFlowVolume = moneyFlowMultiplier * volume
+// OPT-T300-03 修改原因：完整窗口均量为0时CMF给中性0，避免无交易窗口的0/0；只对精确零回退。 两个SMA每根无条件求值，guard仅使用缓存标量，避免跳过历史样本。
+// OPT-T300-03 保持行为：暖机NA不强行补零；正常成交量比率与投票阈值保持。
+avgMoneyFlowVolume = ta.sma(moneyFlowVolume, lengthCMF)
+avgVolume = ta.sma(volume, lengthCMF)
+cmf = avgVolume == 0 ? 0.0 : avgMoneyFlowVolume / avgVolume
+
+// محاسبه MFI به‌صورت دستی
+typicalPrice = (high + low + close) / 3
+moneyFlow = typicalPrice * volume
+
+// محاسبه جریان پول مثبت و منفی
+positiveFlow = 0.0
+negativeFlow = 0.0
+
+for i = 0 to lengthMFI - 1
+    positiveFlow := positiveFlow + (close[i] > close[i + 1] ? moneyFlow[i] : 0)
+    negativeFlow := negativeFlow + (close[i] < close[i + 1] ? moneyFlow[i] : 0)
+
+// OPT-T300-04 修改原因：有正资金流且负流为0时MFI取单边极限100；双零保持NA而不虚构超买超卖。
+// OPT-T300-04 保持行为：按close方向归类及有负流的原MFI公式保持；双零不产生MFI投票。
+mfi = negativeFlow == 0 ? positiveFlow > 0 ? 100.0 : na : 100 - (100 / (1 + (positiveFlow / negativeFlow)))
+
+// محاسبه VWAP
+vwap = ta.vwap(close)
+
+// محاسبه Volume Oscillator
+fastVolMA = ta.sma(volume, fastLength)
+slowVolMA = ta.sma(volume, slowLength)
+volumeOscillator = fastVolMA - slowVolMA
+
+// محاسبه VRSI (Volume RSI)
+vrsi = ta.rsi(volume, lengthRSI)
+
+// شمارش اندیکاتورهای سیگنال خرید
+buySignals = 0
+buySignals := buySignals + (obv > obv[1] ? 1 : 0)
+buySignals := buySignals + (ad > ad[1] ? 1 : 0)
+buySignals := buySignals + (cmf > 0 ? 1 : 0)
+buySignals := buySignals + (mfi < 40 ? 1 : 0)
+buySignals := buySignals + (close < vwap ? 1 : 0)
+buySignals := buySignals + (volumeOscillator > 0 ? 1 : 0)
+buySignals := buySignals + (vrsi < 40 ? 1 : 0)
+
+// شمارش اندیکاتورهای سیگنال فروش
+sellSignals = 0
+sellSignals := sellSignals + (obv < obv[1] ? 1 : 0)
+sellSignals := sellSignals + (ad < ad[1] ? 1 : 0)
+sellSignals := sellSignals + (cmf < 0 ? 1 : 0)
+sellSignals := sellSignals + (mfi > 60 ? 1 : 0)
+sellSignals := sellSignals + (close > vwap ? 1 : 0)
+sellSignals := sellSignals + (volumeOscillator < 0 ? 1 : 0)
+sellSignals := sellSignals + (vrsi > 60 ? 1 : 0)
+
+// شرایط سیگنال خرید: اگر بیش از 4 اندیکاتور سیگنال خرید دهند
+buyCondition = (buySignals > 4)
+
+// شرایط سیگنال فروش: اگر بیش از 4 اندیکاتور سیگنال فروش دهند
+sellCondition = (sellSignals > 4)
+
+// ورود به معامله خرید
+if (buyCondition)
+    strategy.entry("Buy", strategy.long)
+
+// خروج از معامله فروش
+if (sellCondition)
+    strategy.close("Buy")
+
+// رسم سیگنال‌های خرید و فروش بر روی چارت
+plotshape(buyCondition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+plotshape(sellCondition, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")

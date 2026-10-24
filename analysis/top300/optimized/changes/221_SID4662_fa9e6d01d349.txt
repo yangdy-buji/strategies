@@ -1,0 +1,34 @@
+{
+  "rank": 221,
+  "sid": 4662,
+  "source_sha256": "f04e89d9f8dc455cc8ebd8354597626640ff249767228b163bf667b94f2fe215",
+  "base_kind": "original",
+  "base_sha256": "5903b9b275deebf2fd82688f88459c47cbcaeaf2d41f66c0670f5778ed4ca6c3",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；前根所谓枢轴上下触及时按ATR风险金额多空，2 ATR加价差止损、3 ATR目标。 支撑与阻力完全同式，close单独除3使水平严重偏高；名义金额上限除ATR不是按价格限制名义敞口。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "支撑与阻力完全同式，close单独除3使水平严重偏高；名义金额上限除ATR不是按价格限制名义敞口。 后续验证：OHLC=100附近手算枢轴，验证long/short覆盖和20倍杠杆上限实际金额。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "OHLC=100附近手算枢轴，验证long/short覆盖和20倍杠杆上限实际金额。"
+  ],
+  "id": "fa9e6d01d349",
+  "title": "支撑阻力策略结合动态风险管理系统-Support-and-Resistance-Strategy-with-Dynamic-Risk-Management-System",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/221_SID4662_fa9e6d01d349_original.pine",
+  "original": "originals/221_SID4662_fa9e6d01d349.pine",
+  "baseline": "baselines/221_SID4662_fa9e6d01d349.pine",
+  "changes": "changes/221_SID4662_fa9e6d01d349.txt",
+  "card": "cards/fa9e6d01d349.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "5903b9b275deebf2fd82688f88459c47cbcaeaf2d41f66c0670f5778ed4ca6c3",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

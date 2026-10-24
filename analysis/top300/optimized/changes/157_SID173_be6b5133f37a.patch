@@ -1,0 +1,43 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 173：本轮新候选·未回测
++// 原文件SHA256：02e3d193becf6bd128bdc6bcee60d858d512445e94996f7f536480ba709f7058
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2023-01-01 00:00:00
+ end: 2023-09-10 00:00:00
+@@ -19,18 +22,24 @@
+ // - This script to change bars colors.
+ ////////////////////////////////////////////////////////////
+ strategy(title = "Bullish Harami Backtest", overlay = true)
+-input_takeprofit = input(60, title="Take Profit pip")
+-input_stoploss = input(18, title="Stop Loss pip")
++// OPT-T300-02 修改原因：输入按实际价格差命名，保留原数值单位。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++input_takeprofit = input(60, title="Take Profit price distance")
++// OPT-T300-03 修改原因：输入按实际价格差命名，保留原数值单位。
++// OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++input_stoploss = input(18, title="Stop Loss price distance")
+ input_minsizebody = input(1, title="Min. Size Body pip", step = 0.01)
+ barcolor(abs(close - open) >= input_minsizebody ? open[1] > close[1] ? close > open ? close <= open[1] ? close[1] <= open ? close - open < open[1] - close[1] ? yellow :na :na : na : na : na : na)
+ pos = 0.0
+ barcolor(nz(pos[1], 0) == -1 ? red: nz(pos[1], 0) == 1 ? green : blue ) 
+ posprice = 0.0
+-posprice := abs(close - open) >= input_minsizebody? open[1] > close[1] ? close > open ? close <= open[1] ? close[1] <= open ? close - open < open[1] - close[1] ? close :nz(posprice[1], 0) :nz(posprice[1], 0) : nz(posprice[1], 0) : nz(posprice[1], 0) : nz(posprice[1], 0): nz(posprice[1], 0)
+-pos := iff(posprice > 0, 1, 0)
+-if (pos == 0) 
+-    strategy.close_all()
+-if (pos == 1)
++// OPT-T300-01 修改原因：先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++entrySignal = abs(close - open) >= input_minsizebody and open[1] > close[1] and close > open and close <= open[1] and close[1] <= open and close - open < open[1] - close[1]
++posprice := strategy.position_size > 0 ? strategy.position_avg_price : 0
++pos := strategy.position_size > 0 ? 1 : 0
++if strategy.position_size > 0
++    if low <= posprice - input_stoploss or high >= posprice + input_takeprofit
++        strategy.close_all()
++else if entrySignal
+     strategy.entry("Long", strategy.long)
+-posprice := iff(low <= posprice - input_stoploss and posprice > 0, 0 ,  nz(posprice, 0))
+-posprice := iff(high >= posprice + input_takeprofit and posprice > 0, 0 ,  nz(posprice, 0))

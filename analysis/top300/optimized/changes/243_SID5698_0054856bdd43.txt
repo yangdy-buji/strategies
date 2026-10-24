@@ -1,0 +1,34 @@
+{
+  "rank": 243,
+  "sid": 5698,
+  "source_sha256": "02f52146c43c3f5344398edb65b6ef06c1cff21cc4b6bc4aca3852049364653a",
+  "base_kind": "original",
+  "base_sha256": "95b18e1b44d47624b73e7229525274778ddd1461987ae73d67b1b3c6b6bc2fd4",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；一目转换/基准金叉且价格高于位移云上方开多；死叉或跌破位移云下方即平多，另外严格双条件退出重复但无增仓。 云层历史偏移配合转折线交叉是清楚仅多趋势模型，未见当前数据被当未来信息使用；显示云填充对象不对应span。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "云层历史偏移配合转折线交叉是清楚仅多趋势模型，未见当前数据被当未来信息使用；显示云填充对象不对应span。 后续验证：逐根对齐26柱前span、实际信号与绘图，核验退出OR与AND两模型。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐根对齐26柱前span、实际信号与绘图，核验退出OR与AND两模型。"
+  ],
+  "id": "0054856bdd43",
+  "title": "高收益日线交易策略Cloud-Soaring-High-Yield-Daily-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/243_SID5698_0054856bdd43_original.pine",
+  "original": "originals/243_SID5698_0054856bdd43.pine",
+  "baseline": "baselines/243_SID5698_0054856bdd43.pine",
+  "changes": "changes/243_SID5698_0054856bdd43.txt",
+  "card": "cards/0054856bdd43.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "95b18e1b44d47624b73e7229525274778ddd1461987ae73d67b1b3c6b6bc2fd4",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

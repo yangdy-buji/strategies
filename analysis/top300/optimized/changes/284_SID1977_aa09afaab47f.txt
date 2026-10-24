@@ -1,0 +1,37 @@
+{
+  "rank": 284,
+  "sid": 1977,
+  "source_sha256": "8d47af2d26a0c55eb4cafbf995da3857d6caf746a58a6454c5693d731bce62da",
+  "base_kind": "prior_candidate",
+  "base_sha256": "ea50b8e4c3706dcd2cce0eda5144cdf351874a90f3334cd05ec6c2052f952291",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；EMA50>100且RSI>70做多，均线转空平多；交叉时EMA100应作为止损。 EMA多头排列追RSI强势有动量解释，但注释第二根确认未实现，入场清空止损已有修复。",
+  "patches": [],
+  "resolved": [
+    "入场分支把刚记录的止损设为na，持仓保护分支不执行；删除这次清空。"
+  ],
+  "remaining": [
+    "EMA多头排列追RSI强势有动量解释，但注释第二根确认未实现，入场清空止损已有修复。 后续验证：绿带首柱RSI>70、止损后同带再入、跨带重置与初始保护测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；同一绿带内止损后再入会继续用该绿带交叉价，这是原状态锚点，未改为每笔成交价。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "绿带首柱RSI>70、止损后同带再入、跨带重置与初始保护测试。"
+  ],
+  "id": "aa09afaab47f",
+  "title": "双均线RSI动量突破交易策略-Dual-EMA-RSI-Momentum-Breakout-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/284_SID1977_aa09afaab47f_candidate.pine",
+  "original": "originals/284_SID1977_aa09afaab47f.pine",
+  "baseline": "baselines/284_SID1977_aa09afaab47f.pine",
+  "changes": "changes/284_SID1977_aa09afaab47f.txt",
+  "card": "cards/aa09afaab47f.html",
+  "diff": "changes/284_SID1977_aa09afaab47f.patch",
+  "original_diff": "changes/284_SID1977_aa09afaab47f.original.patch",
+  "script_sha256": "f33f3181dd7bf353227350c46bc4e68acd58355a29a80ed8dad061594d31e5d5",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

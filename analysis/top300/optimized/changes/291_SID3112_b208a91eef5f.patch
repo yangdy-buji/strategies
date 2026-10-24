@@ -1,0 +1,30 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 3112：本轮新候选·未回测
++// 原文件SHA256：fcb5743b5dd45cbec25bafd30b662923b85be4243f348c04cedfb736dfeb457a
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-02-20 00:00:00
+ end: 2025-02-17 08:00:00
+@@ -49,14 +52,18 @@
+ var bool crossed_above_70 = false
+ if ta.crossover(delta_sma, above_70_threshold)
+     crossed_above_70 := true
+-if delta_sma < below_60_threshold*0.5 and crossed_above_70
+-    crossed_above_70 := false  // Reset after triggering sell
++// OPT-T300-01 修改原因：删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。
++// OPT-T300-01 保持行为：原交易信号阈值、仓位和其余退出设计；不调整参数。
+ 
+ // Buy condition: `delta_sma` was very low and now crosses 0
+ buy_condition = was_very_low and ta.crossover(delta_sma, 0)
+ 
+ // Sell condition: `delta_sma` crossed above 70% of the high and now drops below 60%
++// OPT-T300-02 修改原因：先保存当柱退出结果，再清跨柱状态。
++// OPT-T300-02 保持行为：原深跌清零门槛和普通回落的状态持续规则。
+ sell_condition = crossed_above_70 and delta_sma < below_60_threshold
++if delta_sma < below_60_threshold*0.5 and crossed_above_70
++    crossed_above_70 := false
+ 
+ // Place a long order when buy condition is met
+ if buy_condition

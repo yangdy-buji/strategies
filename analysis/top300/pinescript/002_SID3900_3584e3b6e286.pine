@@ -1,0 +1,53 @@
+/*backtest
+start: 2025-02-13 00:00:00
+end: 2025-02-20 00:00:00
+period: 5m
+basePeriod: 5m
+exchanges: [{"eid":"Binance","currency":"ETH_USDT"}]
+*/
+
+//@version=6
+strategy("Supertrend + ADX Strategy", overlay=true)
+
+// Parameter für ADX und Supertrend
+diLength = input.int(14, title="DI Length")
+adxSmoothing = input.int(14, title="ADX Smoothing")
+adxThreshold = input.float(14)
+supertrendFactor = input.float(3.0, title="Supertrend Factor")
+supertrendPeriod = input.int(14, title="Supertrend Period")
+
+// Berechnung von +DI, -DI und ADX
+[diplus, diminus, adx] = ta.dmi(diLength, adxSmoothing)
+
+// RSI-Berechnung
+rsiLength = input.int(14, title="RSI Length")
+rsi = ta.rsi(close, rsiLength)
+
+// Supertrend-Berechnung
+[supertrendValue, supertrendDirection] = ta.supertrend(supertrendFactor, supertrendPeriod)
+
+// Long-Einstiegsbedingung
+longCondition = supertrendDirection == -1 and adx > adxThreshold and (rsi < 40 or rsi > 60)
+
+// Long-Ausstiegsbedingung (wenn Supertrend grün wird)
+exitCondition = supertrendDirection == 1
+
+// Visualisierung der Einstiegssignale (Pfeile)
+plotshape(series=longCondition, location=location.belowbar, color=color.green, style=shape.triangleup, title="Buy Signal")
+plotshape(series=exitCondition, location=location.abovebar, color=color.red, style=shape.triangledown, title="Sell Signal")
+
+// Supertrend-Plot im Chart
+plot(supertrendValue, color=supertrendDirection == -1 ? color.yellow : color.red, linewidth=2, title="Supertrend Line")
+
+// Alerts für Einstieg/Ausstieg
+alertcondition(longCondition, title="Long Signal", message="Supertrend + ADX: Long Entry")
+alertcondition(exitCondition, title="Exit Signal", message="Supertrend turned Green: Exit")
+
+// Strategieausführung
+if longCondition and supertrendDirection == -1
+    strategy.entry("Long", strategy.long)
+
+if exitCondition
+    strategy.close("Long")
+
+

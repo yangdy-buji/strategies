@@ -1,0 +1,34 @@
+{
+  "rank": 65,
+  "sid": 1710,
+  "source_sha256": "8389978d124afbba976daed45ca482fc19484e59c3f6fed9c81f5af24a071da5",
+  "base_kind": "original",
+  "base_sha256": "a647055b50c2ac313b6161f05a8967a1f77ccb9b8f94787cb4150db1e86c9462",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：使用SMA9/26交叉与过去云层过滤，规则可解释且不存在使用未来云值的问题。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "Tenkan/Kijun/SpanB用收盘SMA而非高低中点，是自定义均线云而非标准一目均衡。 暂缓原因：标准化可能让结果变差，不能视为必然修复。"
+  ],
+  "validation_plan": [
+    "核对两种定义逐根数值、displacement历史索引、入退差异和后续窗口。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "6b416f0ebe7e",
+  "title": "动量型一目均衡交易策略Momentum-Ichimoku-Cloud-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/065_SID1710_6b416f0ebe7e_original.pine",
+  "original": "originals/065_SID1710_6b416f0ebe7e.pine",
+  "baseline": "baselines/065_SID1710_6b416f0ebe7e.pine",
+  "changes": "changes/065_SID1710_6b416f0ebe7e.txt",
+  "card": "cards/6b416f0ebe7e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a647055b50c2ac313b6161f05a8967a1f77ccb9b8f94787cb4150db1e86c9462",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

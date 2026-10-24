@@ -1,0 +1,20 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 3528：本轮新候选·未回测
++// 原文件SHA256：d32bf5b21706129f576cf5d5c796d247502396bf13d412cf541025f83a3758b3
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2023-09-22 00:00:00
+ end: 2023-10-22 00:00:00
+@@ -20,7 +23,9 @@
+ stdev = stdev(FPrice,len)
+ ema2 = ema(FPrice,len)
+ 
+-Rate1 = (FPrice - ema2) / stdev
++// OPT-T300-01 修改原因：零方差标准化返回NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
++// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++Rate1 = not na(stdev) and stdev > 0 ? (FPrice - ema2) / stdev : na
+ //bgcolor(color=((stdev/ema)>0.0015)?color.green:#00000000,transp=80)
+ 
+ colorG = color.lime

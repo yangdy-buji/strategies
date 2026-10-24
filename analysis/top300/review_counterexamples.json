@@ -1,0 +1,33 @@
+{
+  "scope": "Local arithmetic and source-presence checks only; not native Pine execution or a backtest",
+  "cases": [
+    {
+      "sid": 803,
+      "case": "held entry=100, original stop=95, repeated buy signal close=90",
+      "original_stop_hit": true,
+      "rewritten_stop": 85.5,
+      "rewritten_stop_hit": false,
+      "source_sha256": "60e45c45d07888a62d994b63d63ace6743d04311af50b2981e9c98f125f3a3af",
+      "pine_sha256": "999059a2d82a01c661d16d6da99f133e978e7d1cc3a95152fb0860fc9d5cc62a"
+    },
+    {
+      "sid": 1776,
+      "case": "impulse high=110 low=100; pullbackLow initialized to impulse low",
+      "same_bar_retracement_percent": 100,
+      "default_max_pullback_percent": 50,
+      "flag_survives": false,
+      "existing_variant_has_inFlag_entry_guard": true,
+      "variant_sha256": "5fa90140e6ec89dbf636236d1fe01aaf34b3043d1590089fe62aa33597815a0e",
+      "source_sha256": "97aeb38dab11c43d2fd5e39c0745cb9954f4c6be136351421008c3dd82ea2910",
+      "pine_sha256": "72c76c8dc2d44514c449e1447fd5f200e79ed406f4f8f398289900b90fcef74e"
+    },
+    {
+      "sid": 4632,
+      "case": "risk=1000 USD; close=100 USD/share; stop=97.5 USD/share",
+      "risk_based_shares": 400.0,
+      "script_amount": 4.0,
+      "source_sha256": "cd1a0411f8e704d76a8815cbc42a28c23a408f6994607e302b6805cf7f2c482c",
+      "pine_sha256": "5936dc48f9d94f40a11fd0b81599c58bdbed5cffe523b9cb8e9995fc2c46e024"
+    }
+  ]
+}

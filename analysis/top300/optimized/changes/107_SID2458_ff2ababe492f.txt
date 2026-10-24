@@ -1,0 +1,36 @@
+{
+  "rank": 107,
+  "sid": 2458,
+  "source_sha256": "bc5722e8427f767693149c947e9776c5b45e7fdcee8e1b555dc4dac9dfe2195f",
+  "base_kind": "prior_candidate",
+  "base_sha256": "fa2b50f05703cc757e7870dbe8859bec36f8a6aa45242d6cf4c239c3f48a41c1",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原日期门禁恒真；恢复起止参数并包含边界，仅限制入场。",
+  "patches": [],
+  "resolved": [
+    "原日期门禁恒真；恢复起止参数并包含边界，仅限制入场。"
+  ],
+  "remaining": [
+    "200%权益、逐tick和收盘发单配置仍保留；无最大亏损限制。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测起止日期边界、窗外持仓退出、连续暴跌/跳空；按原200%与对照仓位分别归因收益和回撤。"
+  ],
+  "id": "ff2ababe492f",
+  "title": "均值回归型连续K线反转交易策略-Mean-Reversion-Consecutive-Candle-Reversal-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/107_SID2458_ff2ababe492f_candidate.pine",
+  "original": "originals/107_SID2458_ff2ababe492f.pine",
+  "baseline": "baselines/107_SID2458_ff2ababe492f.pine",
+  "changes": "changes/107_SID2458_ff2ababe492f.txt",
+  "card": "cards/ff2ababe492f.html",
+  "diff": "changes/107_SID2458_ff2ababe492f.patch",
+  "original_diff": "changes/107_SID2458_ff2ababe492f.original.patch",
+  "script_sha256": "a5af1b245e05ce08359eb6cffa74d5ac68cd513ff5ff434df570dee7c207675f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

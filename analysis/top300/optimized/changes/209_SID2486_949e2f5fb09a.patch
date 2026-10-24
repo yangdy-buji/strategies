@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 2486：沿用旧候选·未回测
++// 原文件SHA256：897516abaf09ff804f046c6f914742063fa6766a2667031529e346522eada76c
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：均线交叉长线并量化策略EMA-Crossover-for-Long-Line-Quant-Strategy.md
+ // 原文件SHA256：897516abaf09ff804f046c6f914742063fa6766a2667031529e346522eada76c

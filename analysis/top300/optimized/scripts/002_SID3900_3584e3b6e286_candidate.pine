@@ -1,0 +1,64 @@
+// OPT-T300 SID 3900：本轮新候选·未回测
+// 原文件SHA256：06f64820539b86119617155b7f39c2e079f9b2ff48f2df1c89522635ef9eb799
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2025-02-13 00:00:00
+end: 2025-02-20 00:00:00
+period: 5m
+basePeriod: 5m
+exchanges: [{"eid":"Binance","currency":"ETH_USDT"}]
+*/
+
+//@version=6
+strategy("Supertrend + ADX Strategy", overlay=true)
+
+// Parameter für ADX und Supertrend
+// OPT-T300-01 修改原因：DI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。
+// OPT-T300-01 保持行为：默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。
+diLength = input.int(14, title="DI Length", minval=1)
+// OPT-T300-02 修改原因：ADX Smoothing被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。
+// OPT-T300-02 保持行为：默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。
+adxSmoothing = input.int(14, title="ADX Smoothing", minval=1)
+adxThreshold = input.float(14)
+supertrendFactor = input.float(3.0, title="Supertrend Factor")
+// OPT-T300-03 修改原因：Supertrend Period被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。
+// OPT-T300-03 保持行为：默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。
+supertrendPeriod = input.int(14, title="Supertrend Period", minval=1)
+
+// Berechnung von +DI, -DI und ADX
+[diplus, diminus, adx] = ta.dmi(diLength, adxSmoothing)
+
+// RSI-Berechnung
+// OPT-T300-04 修改原因：RSI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。
+// OPT-T300-04 保持行为：默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。
+rsiLength = input.int(14, title="RSI Length", minval=1)
+rsi = ta.rsi(close, rsiLength)
+
+// Supertrend-Berechnung
+[supertrendValue, supertrendDirection] = ta.supertrend(supertrendFactor, supertrendPeriod)
+
+// Long-Einstiegsbedingung
+longCondition = supertrendDirection == -1 and adx > adxThreshold and (rsi < 40 or rsi > 60)
+
+// Long-Ausstiegsbedingung (wenn Supertrend grün wird)
+exitCondition = supertrendDirection == 1
+
+// Visualisierung der Einstiegssignale (Pfeile)
+plotshape(series=longCondition, location=location.belowbar, color=color.green, style=shape.triangleup, title="Buy Signal")
+plotshape(series=exitCondition, location=location.abovebar, color=color.red, style=shape.triangledown, title="Sell Signal")
+
+// Supertrend-Plot im Chart
+plot(supertrendValue, color=supertrendDirection == -1 ? color.yellow : color.red, linewidth=2, title="Supertrend Line")
+
+// Alerts für Einstieg/Ausstieg
+alertcondition(longCondition, title="Long Signal", message="Supertrend + ADX: Long Entry")
+alertcondition(exitCondition, title="Exit Signal", message="Supertrend turned Green: Exit")
+
+// Strategieausführung
+if longCondition and supertrendDirection == -1
+    strategy.entry("Long", strategy.long)
+
+if exitCondition
+    strategy.close("Long")
+
+

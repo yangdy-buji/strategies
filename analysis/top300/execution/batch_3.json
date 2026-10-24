@@ -1,0 +1,2321 @@
+[
+  {
+    "rank": 201,
+    "sid": 5579,
+    "source_sha256": "02fd5612c6546547b0a0bc7bcaf78f4bc75a36c56ef94eeb0bafb18c8f74a4a3",
+    "base_kind": "original",
+    "base_sha256": "95e7c8ce7e5e157f71495e36422affa83049f13d67cb2d64577efc27e4836b74",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；收盘或HA收盘穿越递归ATR止线做多100%权益，反向穿越平多。 ATR线反转做多可以解释，但所谓动态止损只是反向信号市价平仓，不是盘中止损单；标题多空而实际只多。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "ATR线反转做多可以解释，但所谓动态止损只是反向信号市价平仓，不是盘中止损单；标题多空而实际只多。 后续验证：用触线后收回及隔夜跳空路径比较信号平仓与挂单。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "用触线后收回及隔夜跳空路径比较信号平仓与挂单。"
+    ]
+  },
+  {
+    "rank": 202,
+    "sid": 2990,
+    "source_sha256": "b5c9552b72411beb713258064a635f390ba2b5a553b593dc048c817f9b77ab02",
+    "base_kind": "original",
+    "base_sha256": "08d83c1abb142b9cb03d69a06172b152a3bd704034626c64744bdfa350fc6957",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；EMA13/48金叉10%权益做多、死叉平仓，持仓均价除1.08止损；空头及跟踪设置未接入执行。 13/48 EMA交叉简单可核验；slPoints、跟踪开关和偏移输入不驱动订单，实际固定均价/1.08止损。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "13/48 EMA交叉简单可核验；slPoints、跟踪开关和偏移输入不驱动订单，实际固定均价/1.08止损。 后续验证：逐个改变slPoints/useTS/tslPoints，核对原成交不变并验证新实现响应。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐个改变slPoints/useTS/tslPoints，核对原成交不变并验证新实现响应。"
+    ]
+  },
+  {
+    "rank": 203,
+    "sid": 5514,
+    "source_sha256": "69e0b3e34220dc92fda553288c2e8d2e4d41eff913b12e12a41e8f667f45052f",
+    "base_kind": "original",
+    "base_sha256": "d7615a3fb881e006e29d81609ca00053c78d3522ab93d2a78289aa76e988a4aa",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA14上穿28做多，初始3%止损，涨过3%后单调抬至保本；死叉或保护退出。 该规则是3%初始止损、浮盈超过3%后保本，之后不随峰值继续抬升；并非通常的百分比跟踪。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "该规则是3%初始止损、浮盈超过3%后保本，之后不随峰值继续抬升；并非通常的百分比跟踪。 后续验证：检查入场后首柱保护、盈利3%上下边界及回撤到成本的成交。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "检查入场后首柱保护、盈利3%上下边界及回撤到成本的成交。"
+    ]
+  },
+  {
+    "rank": 204,
+    "sid": 2462,
+    "source_sha256": "68070f67d4671a4eb3d9ca3c76e454d7fbcf632b274dc1d3c04a38f905d67677",
+    "base_kind": "prior_candidate",
+    "base_sha256": "203ea82606d806f78fdc883560f620679164cced2833bc02b2efaab520b08d08",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；ATR偏离自身均值标准差且对数收益漂移向上做多，低价减2 ATR单调跟踪市价退出，原日期条件恒真。 ATR偏离叠加漂移向上更像波动择时做多，非价格均值回归；以low触线后市价平仓并不按止损价成交。",
+    "patches": [],
+    "resolved": [
+      "日期恒真绕过输入。",
+      "窗外不应重置已有持仓止损。",
+      "恢复日期只门控入场；已有持仓需继续处理退出。",
+      "已有持仓窗外不能加仓。"
+    ],
+    "remaining": [
+      "ATR偏离叠加漂移向上更像波动择时做多，非价格均值回归；以low触线后市价平仓并不按止损价成交。 后续验证：跟踪线不下降、低点触线收回、窗外持仓继续保护三个场景逐笔比对。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "跟踪线不下降、低点触线收回、窗外持仓继续保护三个场景逐笔比对。"
+    ]
+  },
+  {
+    "rank": 205,
+    "sid": 2213,
+    "source_sha256": "081aa85507ac20e4aa555c71470350d78f93515543812e1af429200aae0560d0",
+    "base_kind": "prior_candidate",
+    "base_sha256": "85de2ead10de75145f50ecc4b2ab69fb484ea7229f524afd1994f22f037a7c7a",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；长均线上短均线下回调或52柱高点回撤14%时空仓10%权益买多；短均线上转弱或自计跌幅/均线条件退出。 长期趋势回调与逆势抄底并列，两类风险不同；止损距离用当前close作分母，15%不是相对买价的15%。",
+    "patches": [],
+    "resolved": [
+      "恢复仅入口日期。"
+    ],
+    "remaining": [
+      "长期趋势回调与逆势抄底并列，两类风险不同；止损距离用当前close作分母，15%不是相对买价的15%。 后续验证：买价100时close=85/87分别核验触发，并测试低开时buyPrice与成交价。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；stopDistance按当前close作分母，与按买价止损比例不完全等价；原设计未改。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "买价100时close=85/87分别核验触发，并测试低开时buyPrice与成交价。"
+    ]
+  },
+  {
+    "rank": 206,
+    "sid": 4851,
+    "source_sha256": "55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691",
+    "base_kind": "prior_candidate",
+    "base_sha256": "d6d659e77ea239afef4201acc2f683f9ec4d51a7731d599d1d4545558247e6f7",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；收盘在EMA200上EMA5下且连续三柱高低下降全权益收盘买多，上穿退出EMA平仓，窗外原有强平。 200EMA上三根下移后回归EMA5是清楚的回调假设；版本注解格式及同收盘成交需要原生核验。",
+    "patches": [],
+    "resolved": [
+      "恢复日期及原窗外强平。"
+    ],
+    "remaining": [
+      "200EMA上三根下移后回归EMA5是清楚的回调假设；版本注解格式及同收盘成交需要原生核验。 后续验证：逐根列出三日形态、收盘订单和下一开盘成交差价。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；原版本行// @version = 5需目标编译确认识别；未改写版本。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "逐根列出三日形态、收盘订单和下一开盘成交差价。"
+    ]
+  },
+  {
+    "rank": 207,
+    "sid": 373,
+    "source_sha256": "f0e4e066be0e1ba014303fa69cb23444e6649d7c81e0565e47cd0d4a8da0344e",
+    "base_kind": "prior_candidate",
+    "base_sha256": "0157d129f9044fd1e693b1ef6ca937be0ee6eecf71bb089e00ee33901908beb2",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；布林下轨以下且RSI高于42做多；DCA按小时选择订单ID，RSI高于70且越上轨才挂均价百分比保护单。 下轨回落且RSI>42是有限回撤买入；DCA开关不等于真实加仓，pyramiding=0且卖信号出现前未提交保护。",
+    "patches": [],
+    "resolved": [
+      "保护退出覆盖两个做多入口ID。"
+    ],
+    "remaining": [
+      "下轨回落且RSI>42是有限回撤买入；DCA开关不等于真实加仓，pyramiding=0且卖信号出现前未提交保护。 后续验证：分别开关DCA并核对Long/DCA Long首笔成交到首次退出单的空窗。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；sell_condition限制保护提交及pyramiding=0仍保留；dca_interval未限制正数。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "分别开关DCA并核对Long/DCA Long首笔成交到首次退出单的空窗。"
+    ]
+  },
+  {
+    "rank": 208,
+    "sid": 3322,
+    "source_sha256": "8637e9238b926156759354b8d49f1b3cbeff4a7e9e6ef7fe0aeee08dd75207bf",
+    "base_kind": "prior_candidate",
+    "base_sha256": "1763265e8c7cc25e1047475f62d04fe919db2fd853686f5be02f4f6f707d328f",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；布林%B低位做多，均价百分比止盈止损。 %B低于0的逆势买入可解释，但100%止损为零价且日期参数未使用；已有持续保护补丁不是风险控制完成。",
+    "patches": [],
+    "resolved": [
+      "原保护单仅在入场信号为真时提交；改为确认持多仓时持续提交，空仓不提交。"
+    ],
+    "remaining": [
+      "%B低于0的逆势买入可解释，但100%止损为零价且日期参数未使用；已有持续保护补丁不是风险控制完成。 后续验证：验证默认零止损、零带宽、首笔成交后保护以及日期截止后的持仓。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；默认100%止损产生零止损价；首次成交到后续计算之间保护覆盖未验证。；start_date/end_date仍未接入，本轮未扩大范围。；未原生Pine编译/回测；静态及小范围模型不等于订单成交模拟，旧版收益不适用。",
+      "验证默认零止损、零带宽、首笔成交后保护以及日期截止后的持仓。"
+    ]
+  },
+  {
+    "rank": 209,
+    "sid": 2486,
+    "source_sha256": "897516abaf09ff804f046c6f914742063fa6766a2667031529e346522eada76c",
+    "base_kind": "prior_candidate",
+    "base_sha256": "e7a5a6638d8d1fd2128bb31f5d72c56f7037e6e32aa1fcb41d429454f57a9211",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；阴线跌破前低时按EMA20/50/100/200所在区间选四级数量做多；均线多头排列后转弱且盈利1%才平所有入口。退出另需近期RSI高于65。 分均线区间买跌，退出必须盈利且满足多重条件，存在长期套牢；pyramiding输入仅乘数量。",
+    "patches": [],
+    "resolved": [
+      "恢复入场日期。",
+      "退出移出日期限制。",
+      "退出移出日期限制。"
+    ],
+    "remaining": [
+      "分均线区间买跌，退出必须盈利且满足多重条件，存在长期套牢；pyramiding输入仅乘数量。 后续验证：连续跌穿EMA200后持续亏损、四入口数量和亏损年持仓时长压力测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；pyramiding变量只是数量乘数，未设置平台加仓参数。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "连续跌穿EMA200后持续亏损、四入口数量和亏损年持仓时长压力测试。"
+    ]
+  },
+  {
+    "rank": 210,
+    "sid": 3662,
+    "source_sha256": "d43e777391c8e438ba093dd1d9e66a4c8468e298ea9f62fd153ef340989f836a",
+    "base_kind": "original",
+    "base_sha256": "9d075fb6de1e0f35c7d7ed5039dde483e153adbbfdc03304287ba6de988df8ba",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；成交量流指数下穿其波动下轨买入、上穿上轨卖出；同向strategy.order加1单位，反向先平仓，空仓再入场。 VFI带内回归规则清楚，但信号为数值vfima、when使用中间价格隐式布尔，且order可不断增仓。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "VFI带内回归规则清楚，但信号为数值vfima、when使用中间价格隐式布尔，且order可不断增仓。 后续验证：vfima=0、连续同向信号、零成交量时验证信号及累计数量。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "vfima=0、连续同向信号、零成交量时验证信号及累计数量。"
+    ]
+  },
+  {
+    "rank": 211,
+    "sid": 2849,
+    "source_sha256": "ad575d81b1f8cf7df489ed842ddf0958913add339736ba541814c0332c2c4856",
+    "base_kind": "prior_candidate",
+    "base_sha256": "0e9bd114977852e6a38a714ca185b959f45b5560a003c99b80a5fd862dcbc097",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；RSI14低于40且RSI10更低空仓做多，固定入场ATR缓冲单调跟踪；可选风险收益目标及RSI超买且达目标退出。 双RSI回落入场有均值回归解释，但RSI退出仍要求动态ATR利润目标，可能在过热回落时不退出。",
+    "patches": [],
+    "resolved": [
+      "开始日期输入未用于入场。"
+    ],
+    "remaining": [
+      "双RSI回落入场有均值回归解释，但RSI退出仍要求动态ATR利润目标，可能在过热回落时不退出。 后续验证：超买但未达目标、波动骤升导致目标远移、尾部计数重置分别验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；RSI退出额外要求take_profit_long，是否应无条件RSI退出属于设计选择。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "超买但未达目标、波动骤升导致目标远移、尾部计数重置分别验证。"
+    ]
+  },
+  {
+    "rank": 212,
+    "sid": 1993,
+    "source_sha256": "1ce10d7f0ffef7185cf938235a47adc74d2096cd159a954c77e4cd66c4e2a4e5",
+    "base_kind": "original",
+    "base_sha256": "5f5b08582f26d4499a121b6b29706793601216c4c756cacb870450e20bb90aca",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA21>SMA55时随机RSI在20下金叉买多；在80上死叉平仓，平台默认数量。 均线上行时随机RSI超卖交叉买入、超买死叉退出，信号链自洽；趋势破坏后未必再到超买。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线上行时随机RSI超卖交叉买入、超买死叉退出，信号链自洽；趋势破坏后未必再到超买。 后续验证：持仓后SMA21跌破55且K长期低于80的熊市分段测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "持仓后SMA21跌破55且K长期低于80的熊市分段测试。"
+    ]
+  },
+  {
+    "rank": 213,
+    "sid": 1738,
+    "source_sha256": "5fb8af3ecaa344b2064039b06e39c91581efc55f664e7bf9b2e90c8eb02b8313",
+    "base_kind": "prior_candidate",
+    "base_sha256": "48ff4867c41c3e86a289016503e87415a0b1e545f5ccd6e10fdf8141fb35f9fe",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；RSI3减其SMA21再SMA13，上穿阈值并可选EMA200过滤做多，下穿平多，开始日期原被忽略。 RSI相对自身均值偏离的平滑零轴交叉可解释，默认关闭长趋势过滤；首先恢复已有日期门禁。",
+    "patches": [],
+    "resolved": [
+      "日期函数恒真绕过开始日期。"
+    ],
+    "remaining": [
+      "RSI相对自身均值偏离的平滑零轴交叉可解释，默认关闭长趋势过滤；首先恢复已有日期门禁。 后续验证：日期前后信号、震荡成本、RSI3/4及平滑邻域做固定样本外对照。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "日期前后信号、震荡成本、RSI3/4及平滑邻域做固定样本外对照。"
+    ]
+  },
+  {
+    "rank": 214,
+    "sid": 3958,
+    "source_sha256": "8696c43f637b04ac929ef74536873ba80b404d43449702031c6c053bfac1eb50",
+    "base_kind": "original",
+    "base_sha256": "8630c487f6dbc28b820531e11dbf6be239ec03891a2d6d18641a44a8d2af592f",
+    "action": "new_patch",
+    "change_type": "mixed",
+    "summary": "新增候选：按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。",
+    "patches": [
+      {
+        "old": "strategy.opentrades.profit(trade_num) >= strategy.opentrades.entry_price(trade_num) * 0.30",
+        "new": "close >= strategy.opentrades.entry_price(trade_num) * 1.30",
+        "reason": "按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。",
+        "preserved": "原入场、仓位与close订单ID；不引入真实期权交易。",
+        "validation_cases": [
+          "成本100，价格129不平、130平；持仓1份和100份结果相同。"
+        ]
+      }
+    ],
+    "resolved": [
+      "按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。"
+    ],
+    "remaining": [
+      "此版本是图表标的多头，不是期权模型；采用标的价格涨30%目标并不等同含成本净收益30%。",
+      "仍无硬止损；未原生编译或回测。"
+    ],
+    "validation_plan": [
+      "相同价格路径用1股、10股、100股检查价格收益阈值是否一致。"
+    ]
+  },
+  {
+    "rank": 215,
+    "sid": 4573,
+    "source_sha256": "9f67d1c7add16774126c0333cc20665e6dae0bec70161237ab21027ba00f5185",
+    "base_kind": "prior_candidate",
+    "base_sha256": "7c7ff65cd80004df1f93ded0b3141ec2ae3a7efa2564ac498ca20032e0e29461",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；确认pinbar且空仓按方向开100%权益，以成交bar振幅计算止盈止损，可选跟踪及反向信号平仓。 Pinbar反转可以核验，但保护用成交柱而非信号柱高低，追踪分支缺距离；动态历史索引另有运行边界。",
+    "patches": [],
+    "resolved": [
+      "恢复开始日期开关。",
+      "保留原始多头形态供窗外退出使用。",
+      "保留原始空头形态供窗外退出使用。",
+      "日期仅限制多头入场。",
+      "日期仅限制空头入场。",
+      "独立空头退出ID避免修改多头保护。",
+      "独立空头退出ID避免修改多头保护。"
+    ],
+    "remaining": [
+      "Pinbar反转可以核验，但保护用成交柱而非信号柱高低，追踪分支缺距离；动态历史索引另有运行边界。 后续验证：跳空成交、长期持仓历史引用、追踪激活后回撤逐笔测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；追踪分支缺trail_offset，当前仅stop可用，追踪距离设计仍未给出；barsSinceEntry动态历史引用需原生验证。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "跳空成交、长期持仓历史引用、追踪激活后回撤逐笔测试。"
+    ]
+  },
+  {
+    "rank": 216,
+    "sid": 5429,
+    "source_sha256": "ae51429d65571b20dbfbd24b5b02cbfce544f490669d1f8e2d76ffdeed9cad9c",
+    "base_kind": "original",
+    "base_sha256": "bffa92202ec77cbf26477cb4fb6ebe21c681434d2d3577eabff525e4b0f63fbf",
+    "action": "new_patch",
+    "change_type": "mixed",
+    "summary": "新增候选：采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。；仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。；仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。；等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。",
+    "patches": [
+      {
+        "old": "warunek_wyjscia = downtrend and close > sma and ta.crossover(close, sma)",
+        "new": "warunek_wyjscia = ta.crossover(close, sma)",
+        "reason": "采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。",
+        "preserved": "原低波动逆势做多入口和百分比目标保持。",
+        "validation_cases": [
+          "前close99/SMA100，现101应可退出；原矛盾条件不可达。"
+        ]
+      },
+      {
+        "old": "if (warunek_wejscia)\n    stop_loss",
+        "new": "if (warunek_wejscia and strategy.position_size == 0)\n    stop_loss",
+        "reason": "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+        "preserved": "不增加仓位或改默认信号。",
+        "validation_cases": [
+          "持仓连续信号不改初始索引和止损。"
+        ]
+      },
+      {
+        "old": "if (warunek_wejscia)\n    strategy.entry",
+        "new": "if (warunek_wejscia and strategy.position_size == 0)\n    strategy.entry",
+        "reason": "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+        "preserved": "不增加仓位或改默认信号。",
+        "validation_cases": [
+          "持仓连续信号不改初始索引和止损。"
+        ]
+      },
+      {
+        "old": "if (strategy.opentrades != 0)\n    if (rsi > 70)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=take_profit)\n    else if (bar_index - indeks_wejscia == wait_bars)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=stop_loss, limit=take_profit)\n\n",
+        "new": "if (strategy.opentrades != 0)\n    if (bar_index - indeks_wejscia >= wait_bars)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=stop_loss, limit=take_profit)\n    else if (rsi > 70)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=take_profit)\n\n",
+        "reason": "等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。",
+        "preserved": "保留等待期仅RSI超买挂目标的原规则和默认等待3根。",
+        "validation_cases": [
+          "第3根RSI80仍含stop；第4根继续保护。"
+        ]
+      }
+    ],
+    "resolved": [
+      "采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。",
+      "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+      "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+      "等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。"
+    ],
+    "remaining": [
+      "上穿SMA退出是独立设计选择；等待从信号柱起算，等待期间可能无止损。",
+      "tp_multiplier=1.5仍表示+150%目标而非1.5R，未擅自修改。",
+      "未原生编译、订单撮合或回测。"
+    ],
+    "validation_plan": [
+      "连续十根入场条件、RSI>70、等待根数到达和趋势上穿均应有明确退出路径。"
+    ]
+  },
+  {
+    "rank": 217,
+    "sid": 2992,
+    "source_sha256": "b8c00bb41b15c2de77b8de8645d45603f995a83968c05788f4b51818372b0b9e",
+    "base_kind": "original",
+    "base_sha256": "5bc257eebc61d595497414c6dbd24eb37f1eb48085b2e7f0c4900993b73aba6d",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；公历年份模12划分牛熊横盘，牛年做多熊年做空反转，横盘年平全部，仓位默认。 规则机械清楚，但仅以公历年对12取模决定整年多空，并非农历计算；缺乏可验证经济机制。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "规则机械清楚，但仅以公历年对12取模决定整年多空，并非农历计算；缺乏可验证经济机制。 后续验证：用独立完整周期、年份标签置换与持有基准比较，并计入做空借券。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "用独立完整周期、年份标签置换与持有基准比较，并计入做空借券。"
+    ]
+  },
+  {
+    "rank": 218,
+    "sid": 3050,
+    "source_sha256": "ed0c9d1c2445aaf954a86bf649acad891231bd6c100b5533e435f58ea8df3972",
+    "base_kind": "original",
+    "base_sha256": "5c8b156683442c237fa952c884ec4aefd38d904ee36fb6060fad493019caccd2",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；Keltner外轨突破后在极值外1tick挂多空stop，价格回到中线取消；单向模式反轨挂stop平仓，双向依赖反转。 凯特纳突破挂单及反向退出有趋势解释，但单向模式回到中线可取消唯一退出单。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "凯特纳突破挂单及反向退出有趋势解释，但单向模式回到中线可取消唯一退出单。 后续验证：退出挂出后回中线、再次下跌、双向反手与未成交单共存测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "退出挂出后回中线、再次下跌、双向反手与未成交单共存测试。"
+    ]
+  },
+  {
+    "rank": 219,
+    "sid": 5252,
+    "source_sha256": "72fe216b79a46915eeca69ef3e20f202ab750d21fa2e353875f81f20f78d3e2f",
+    "base_kind": "original",
+    "base_sha256": "87d30fcd5be6e7f08b09f597982b7cf7afee8b37e9079036a804dd6964e83ecb",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA5/50金叉用余额除价格全仓做多，2%或标准差比例止损单调抬升，无其他退出。 均线金叉加波动自适应单向跟踪是可解释结构；全额已实现余额仓位和信号价估数量造成成本及跳空差异。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线金叉加波动自适应单向跟踪是可解释结构；全额已实现余额仓位和信号价估数量造成成本及跳空差异。 后续验证：高开入场、stddev=0、第二笔交易新低价验证订单金额及止损不继承旧值。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "高开入场、stddev=0、第二笔交易新低价验证订单金额及止损不继承旧值。"
+    ]
+  },
+  {
+    "rank": 220,
+    "sid": 1990,
+    "source_sha256": "34abbec1ee8d464637d268b290af97354f789ba875dc5f76b6d56d91a0f43961",
+    "base_kind": "prior_candidate",
+    "base_sha256": "6f2f88d7214160da973ffd79d27c8174b48231bb8ad9342e443cf4f2bce6c463",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；9/21 SMA趋势与RSI反向极值空仓多空，ATR风险倍数目标；独立目标订单使180根等待分支失效。 空头目标的负号错误已有候选修复；180是K线根数且尾部TP无等待门禁，所谓最短3小时并未成立。",
+    "patches": [],
+    "resolved": [
+      "空头目标减去负价差导致目标在入场价上方。"
+    ],
+    "remaining": [
+      "空头目标的负号错误已有候选修复；180是K线根数且尾部TP无等待门禁，所谓最短3小时并未成立。 后续验证：在1分钟/1小时/日线核对180根含义；等待期内触目标和大亏分别验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；180按bar计数而非时钟小时，尾部TP调用绕过最短持仓；未擅自选择时长语义。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "在1分钟/1小时/日线核对180根含义；等待期内触目标和大亏分别验证。"
+    ]
+  },
+  {
+    "rank": 221,
+    "sid": 4662,
+    "source_sha256": "f04e89d9f8dc455cc8ebd8354597626640ff249767228b163bf667b94f2fe215",
+    "base_kind": "original",
+    "base_sha256": "5903b9b275deebf2fd82688f88459c47cbcaeaf2d41f66c0670f5778ed4ca6c3",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；前根所谓枢轴上下触及时按ATR风险金额多空，2 ATR加价差止损、3 ATR目标。 支撑与阻力完全同式，close单独除3使水平严重偏高；名义金额上限除ATR不是按价格限制名义敞口。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "支撑与阻力完全同式，close单独除3使水平严重偏高；名义金额上限除ATR不是按价格限制名义敞口。 后续验证：OHLC=100附近手算枢轴，验证long/short覆盖和20倍杠杆上限实际金额。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "OHLC=100附近手算枢轴，验证long/short覆盖和20倍杠杆上限实际金额。"
+    ]
+  },
+  {
+    "rank": 222,
+    "sid": 5786,
+    "source_sha256": "8d7b9e7099a5843d30cfb0f51ec70636f5ceee2d83a08905a99374bfae0a3fd9",
+    "base_kind": "original",
+    "base_sha256": "d19f260afdf952fa05cc01d40ca8f3773bb2ab41b522824869466e813148793c",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA10/30交叉开多空，但死叉同时触发close_all。 均线双向反转与死叉全平同时发生，方向意图不唯一；不是单纯均线交叉可直接判定。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线双向反转与死叉全平同时发生，方向意图不唯一；不是单纯均线交叉可直接判定。 后续验证：空仓死叉、持多死叉和持空金叉在原生订单队列中逐笔对照。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "空仓死叉、持多死叉和持空金叉在原生订单队列中逐笔对照。"
+    ]
+  },
+  {
+    "rank": 223,
+    "sid": 3115,
+    "source_sha256": "01041d963cc1f8c127c544a1ee2c54ea19d84d9fb19776549f63d80e73654b97",
+    "base_kind": "prior_candidate",
+    "base_sha256": "37778e14ef8b9f39afcf6da29dfb01cc4961cbb3d35ecf6ee0e0cda442aeaf58",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；突破前200柱最高价买1份，跌破EMA90退出。 突破前200根高点再按EMA退出是清楚趋势逻辑；已有默认90低于min100的输入修复仍需编译。",
+    "patches": [],
+    "resolved": [
+      "让既定默认90合法。"
+    ],
+    "remaining": [
+      "突破前200根高点再按EMA退出是清楚趋势逻辑；已有默认90低于min100的输入修复仍需编译。 后续验证：默认参数原生编译、90/100 EMA邻域、次日跳空与复权前高验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；strategy overlay=1的旧隐式类型兼容性仍需原生检查。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "默认参数原生编译、90/100 EMA邻域、次日跳空与复权前高验证。"
+    ]
+  },
+  {
+    "rank": 224,
+    "sid": 3405,
+    "source_sha256": "d24e89fe877202bb18c21cd8f6fa241ea7ef8d083794beddc547dba5e874d32d",
+    "base_kind": "prior_candidate",
+    "base_sha256": "ae837364ebe972b2f973c9f9759df312837dbb14ee952ece61e9b80a4f6014f4",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；平滑OHLC4的EMA12/26状态转换，支持只多、只空或双向，单向反信号平仓。 双重平滑EMA转向有清晰因果性；日期候选恢复后需分别衡量仅多、仅空和双向的收益来源。",
+    "patches": [],
+    "resolved": [
+      "恢复模式入场时间范围。",
+      "单向多仓退出独立。",
+      "单向空仓退出独立。",
+      "双向模式窗外只平原仓，禁止反向新开。"
+    ],
+    "remaining": [
+      "双重平滑EMA转向有清晰因果性；日期候选恢复后需分别衡量仅多、仅空和双向的收益来源。 后续验证：三模式逐笔一致性、窗外仅平不反手、横盘成本敏感度测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "三模式逐笔一致性、窗外仅平不反手、横盘成本敏感度测试。"
+    ]
+  },
+  {
+    "rank": 225,
+    "sid": 1515,
+    "source_sha256": "9c9eb376455ca33a261661070f45860a944194229e8396a1899c822a1eacfe8c",
+    "base_kind": "original",
+    "base_sha256": "e42702090e24f1344eb84886e02be90e43bff002e7bea6f5f8a261542c53cbf2",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；EMA20/50金叉、RSI>55、MACD及EMA200一致时10%权益做多；信号价1.5ATR止损、2R止盈，卖信号仅绘图。 多指标趋势共振可解释，但sell_condition仅绘图；真实策略只多并靠信号价ATR括号退出。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "多指标趋势共振可解释，但sell_condition仅绘图；真实策略只多并靠信号价ATR括号退出。 后续验证：逐个去掉RSI/MACD/EMA200做消融，并检查重复买信号是否重锚保护。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐个去掉RSI/MACD/EMA200做消融，并检查重复买信号是否重锚保护。"
+    ]
+  },
+  {
+    "rank": 226,
+    "sid": 3524,
+    "source_sha256": "781a5390eac0d386576256d87fe959e19adc449fc5b814c1666fdacd80bf57b0",
+    "base_kind": "prior_candidate",
+    "base_sha256": "f03d593616365ea3fcc31e5473170114c888f9f2c04d63eec5f32ecdfe4ec5cb",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；阳线放量且ATR大于布林标准差做多，低点触及跟踪止损或高波动阴吞没平多。 低波动放量阳线买入假设清楚；末尾空仓清零会在下单尚未成交时抹去入场锚。",
+    "patches": [],
+    "resolved": [
+      "恢复可选结束时间的入场窗口。",
+      "不得因日期越界重置已有持仓跟踪止损。",
+      "将日期门槛下移至入场，退出控制流始终可达。"
+    ],
+    "remaining": [
+      "低波动放量阳线买入假设清楚；末尾空仓清零会在下单尚未成交时抹去入场锚。 后续验证：信号柱仍空仓、次柱成交、止损与新入场同柱分别逐根跟踪变量。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；空仓尾部会清零原entry_price/stop_loss_price，原统计与追踪初始化仍有语义疑点。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "信号柱仍空仓、次柱成交、止损与新入场同柱分别逐根跟踪变量。"
+    ]
+  },
+  {
+    "rank": 227,
+    "sid": 3878,
+    "source_sha256": "509c59c531cd182d7bbaae8e34fc811264adb3ef22839583d2ccdbb55d8d0e64",
+    "base_kind": "original",
+    "base_sha256": "a6aad81c271a1a1b0ce9dd962c45e8e2058d326422e6293c0273aae46c2c18dd",
+    "action": "new_patch",
+    "change_type": "mixed",
+    "summary": "新增候选：采用四档各25%的独立设计候选；每档自带止损且多空ID不同，消除全量目标占满保护预留。",
+    "patches": [
+      {
+        "old": "// Exit conditions based on Take Profit levels\nstrategy.exit(\"Take Profit 1\", \"Buy\", limit=takeProfit1)\nstrategy.exit(\"Take Profit 2\", \"Buy\", limit=takeProfit2)\nstrategy.exit(\"Take Profit 3\", \"Buy\", limit=takeProfit3)\nstrategy.exit(\"Take Profit 4\", \"Buy\", limit=takeProfit4)\n\nstrategy.exit(\"Take Profit 1\", \"Sell\", limit=takeProfit1)\nstrategy.exit(\"Take Profit 2\", \"Sell\", limit=takeProfit2)\nstrategy.exit(\"Take Profit 3\", \"Sell\", limit=takeProfit3)\nstrategy.exit(\"Take Profit 4\", \"Sell\", limit=takeProfit4)\n\n// Optionally, add a stop loss\nstopLoss = 0.03  // Example: 3% stop loss\nstrategy.exit(\"Stop Loss\", \"Buy\", stop=close * (1 - stopLoss))\nstrategy.exit(\"Stop Loss\", \"Sell\", stop=close * (1 + stopLoss))\n",
+        "new": "// Four equal reserved brackets; each slice carries its own stop.\nstopLoss = 0.03\nstrategy.exit(\"Buy TP1\", \"Buy\", qty_percent=25, limit=takeProfit1, stop=close * (1 - stopLoss))\nstrategy.exit(\"Buy TP2\", \"Buy\", qty_percent=25, limit=takeProfit2, stop=close * (1 - stopLoss))\nstrategy.exit(\"Buy TP3\", \"Buy\", qty_percent=25, limit=takeProfit3, stop=close * (1 - stopLoss))\nstrategy.exit(\"Buy TP4\", \"Buy\", qty_percent=25, limit=takeProfit4, stop=close * (1 - stopLoss))\nstrategy.exit(\"Sell TP1\", \"Sell\", qty_percent=25, limit=takeProfit1, stop=close * (1 + stopLoss))\nstrategy.exit(\"Sell TP2\", \"Sell\", qty_percent=25, limit=takeProfit2, stop=close * (1 + stopLoss))\nstrategy.exit(\"Sell TP3\", \"Sell\", qty_percent=25, limit=takeProfit3, stop=close * (1 + stopLoss))\nstrategy.exit(\"Sell TP4\", \"Sell\", qty_percent=25, limit=takeProfit4, stop=close * (1 + stopLoss))\n",
+        "reason": "采用四档各25%的独立设计候选；每档自带止损且多空ID不同，消除全量目标占满保护预留。",
+        "preserved": "原四档价格、方向、3%止损计算与交叉入场。",
+        "validation_cases": [
+          "每方向合计100%；八个唯一ID；每个25%目标均含止损。"
+        ]
+      }
+    ],
+    "resolved": [
+      "采用四档各25%的独立设计候选；每档自带止损且多空ID不同，消除全量目标占满保护预留。"
+    ],
+    "remaining": [
+      "25%等分是新增设计假设，未证明优于原第一档全平。",
+      "止损仍随close变化，目标反向信号重算和分批后重挂数量必须原生撮合核验。"
+    ],
+    "validation_plan": [
+      "四档数量之和、部分成交后剩余保护、反手时旧目标清除原生验证。"
+    ]
+  },
+  {
+    "rank": 228,
+    "sid": 2868,
+    "source_sha256": "df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169",
+    "base_kind": "prior_candidate",
+    "base_sha256": "6c661fe22d2ae35002f384422e3f9ba7fd9620fa3c88aefbd4f7dd0af7e1a11b",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；RSI14低于25做多，均价+7%/-3.5%保护只在超卖分支提交。 RSI低于25买入是超卖均值回归，但画出的上穿入场与真实低于阈值入场不同。",
+    "patches": [],
+    "resolved": [
+      "保护单独立于入场信号，在有效持仓均价存在时每根维护。"
+    ],
+    "remaining": [
+      "RSI低于25买入是超卖均值回归，但画出的上穿入场与真实低于阈值入场不同。 后续验证：首笔成交后RSI立即恢复、7%/3.5%目标及图示对应订单检查。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；首次保护依赖成交后的下一次计算，未添加成交重算。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "首笔成交后RSI立即恢复、7%/3.5%目标及图示对应订单检查。"
+    ]
+  },
+  {
+    "rank": 229,
+    "sid": 5306,
+    "source_sha256": "80dc68537c6ad41a432c1e3ba8fafdb0c0afc91c407e16835096b59cc098e98c",
+    "base_kind": "original",
+    "base_sha256": "ce52fc847c65f1928aee106f52dd8c7e436b8e0cba0a447a1877dccf14b43c67",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；RSI14偏离50后WMA5再双曲变换，上穿-0.8在close挂stop做多，无信号撤单；下穿动态0/1阈值退出。 逆Fisher RSI反转可解释，但上阈值是随RVS变化的0/1而非固定0.8，退出定义需明确。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "逆Fisher RSI反转可解释，但上阈值是随RVS变化的0/1而非固定0.8，退出定义需明确。 后续验证：RVS从0.9到0.7、从0.7到0.9及挂单未成交次根撤销手算。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "RVS从0.9到0.7、从0.7到0.9及挂单未成交次根撤销手算。"
+    ]
+  },
+  {
+    "rank": 230,
+    "sid": 2002,
+    "source_sha256": "031d78a7d881b268a835c06152917dad3d83e1e169b7f55d50645aa6d45fd9a5",
+    "base_kind": "original",
+    "base_sha256": "d6146a49764ddfbedfe82ab41709c279e68365d965863e2f359fdb5694c6df1b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；EMA20/50金叉做多，死叉或收盘达到信号价-2.5%/+4%时市价平多。 EMA交叉加百分比退出逻辑可读，但所谓止损是收盘判断市价平仓，且锚定信号收盘而非实际成交。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "EMA交叉加百分比退出逻辑可读，但所谓止损是收盘判断市价平仓，且锚定信号收盘而非实际成交。 后续验证：盘中跌破2.5%后收回、跳空低开和连续金叉重设锚点测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "盘中跌破2.5%后收回、跳空低开和连续金叉重设锚点测试。"
+    ]
+  },
+  {
+    "rank": 231,
+    "sid": 5084,
+    "source_sha256": "0ee7eb419b44cf843a3b3d42563fef0ccc1d314a7c6bd9e5de982f6a00feb688",
+    "base_kind": "prior_candidate",
+    "base_sha256": "f4cb6899b783baff9dcefcf9c85f569d8f07278048ca270283f72b17b5351c9e",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；SMA5/20金叉做多、死叉退出；布林、RSI、均价云和ROC仅作展示。 实际交易只有SMA5/20交叉，布林/RSI/云/Momentum只是展示；已有BB元组修复只影响显示。",
+    "patches": [],
+    "resolved": [
+      "修复展示返回值。"
+    ],
+    "remaining": [
+      "实际交易只有SMA5/20交叉，布林/RSI/云/Momentum只是展示；已有BB元组修复只影响显示。 后续验证：清理前后订单完全一致，BB标签正确，均线邻域与成本压力测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "清理前后订单完全一致，BB标签正确，均线邻域与成本压力测试。"
+    ]
+  },
+  {
+    "rank": 232,
+    "sid": 799,
+    "source_sha256": "5244f67bbbfd825ef266e0e011b9fc88be589ccc5b2897ebacac26a98037e313",
+    "base_kind": "prior_candidate",
+    "base_sha256": "73a32f71cd450ff0eccc8bf832552b140f6ac134ba362f2b4953c288ef52a0aa",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；RSI16的EMA12高于SMA29且价格高于EMA8做多100%权益，RSI均线反向时平多。 RSI均线状态加价格EMA过滤可解释；重复条件下重新买入需核对退出后的再入频率。",
+    "patches": [],
+    "resolved": [
+      "恢复日期窗。",
+      "退出移出日期入场门禁。"
+    ],
+    "remaining": [
+      "RSI均线状态加价格EMA过滤可解释；重复条件下重新买入需核对退出后的再入频率。 后续验证：连续emavalue>smavalue、价格反复穿EMA8时记录完整交易序列。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "连续emavalue>smavalue、价格反复穿EMA8时记录完整交易序列。"
+    ]
+  },
+  {
+    "rank": 233,
+    "sid": 1546,
+    "source_sha256": "30b0477884adc30fd7285451d12f733659115d33dd7f283c46f9fc21a6b64f32",
+    "base_kind": "original",
+    "base_sha256": "4464495fa99d009454ba810f9497e50dd9fdc558e7fab2956e22c16b46da81f6",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；在SMA50/200上且回落三个区间中点均值时做多，以动态78.6%水平止损和2R止盈。 均线之上回调买入有趋势回撤逻辑，但78.6%距离对三段总和取值而基准取平均，尺度混用。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线之上回调买入有趋势回撤逻辑，但78.6%距离对三段总和取值而基准取平均，尺度混用。 后续验证：三个相同区间高110低100时手算目标应否为102.14，并检查负止损。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "三个相同区间高110低100时手算目标应否为102.14，并检查负止损。"
+    ]
+  },
+  {
+    "rank": 234,
+    "sid": 381,
+    "source_sha256": "ec26c8644aa57fb6107d93f1eda32f99fdc6bc8585e6402ed90a218c278326cb",
+    "base_kind": "original",
+    "base_sha256": "a52eee92bd2ffe0dd5a1aabbe1ca5e0dadbe0e41f94a2a71cda8635664ccb2fb",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；确认前一根局部高点后向上突破做多，确认局部低点后向下突破平多；负位移只用于标记。 枢轴确认后突破是合理可解释规则，但要求open在水平内会漏过直接跳空穿越，图形回移易误读。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "枢轴确认后突破是合理可解释规则，但要求open在水平内会漏过直接跳空穿越，图形回移易误读。 后续验证：开盘越过entryHigh/exitLow、同根双向穿越和确认延迟验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "开盘越过entryHigh/exitLow、同根双向穿越和确认延迟验证。"
+    ]
+  },
+  {
+    "rank": 235,
+    "sid": 2604,
+    "source_sha256": "63cc75b16f279c76c13ae8fdb16e8f2ada342fca822abfb02d7e643a58e31628",
+    "base_kind": "original",
+    "base_sha256": "684364b515df79dc492307666322c0f98192c5507d93fe718878a63497c9e713",
+    "action": "new_patch",
+    "change_type": "design_experiment",
+    "summary": "独立设计候选：默认单档保留原同柱通道保护；多档补齐多空分档止损与成交均价距离目标，并明确成交前保护空窗。",
+    "patches": [
+      {
+        "old": "// Exit Logic\nif (takeProfitType == \"1 Take Profit\")\n    strategy.exit(\"TP/SL\", \"Long\", limit=rangeHigh, stop=rangeLow)\n    strategy.exit(\"TP/SL\", \"Short\", limit=rangeLow, stop=rangeHigh)\nelse if (takeProfitType == \"2 Take Profits\")\n    strategy.exit(\"TP1\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh / 2)\n    strategy.exit(\"TP2\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh)\n    strategy.exit(\"TP1\", \"Short\", qty=strategy.position_size * 0.5, limit=rangeLow / 2)\n    strategy.exit(\"TP2\", \"Short\", qty=strategy.position_size * 0.5, limit=rangeLow)\nelse if (takeProfitType == \"3 Take Profits\")\n    strategy.exit(\"TP1\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh / 2)\n    strategy.exit(\"TP2\", \"Long\", qty=strategy.position_size * 0.25, limit=rangeHigh * 0.75)\n    strategy.exit(\"TP3\", \"Long\", qty=strategy.position_size * 0.25, limit=rangeHigh * 1.5)\n",
+        "new": "// Exit Logic: equal reserved brackets for two targets, 50/25/25 for three.\nentryAnchor = strategy.position_avg_price\nlongDistance = rangeHigh - entryAnchor\nshortDistance = rangeLow - entryAnchor\nif (takeProfitType == \"1 Take Profit\")\n    strategy.exit(\"Long TP1\", \"Long\", qty_percent=100, limit=rangeHigh, stop=rangeLow)\n    strategy.exit(\"Short TP1\", \"Short\", qty_percent=100, limit=rangeLow, stop=rangeHigh)\nelse if (takeProfitType == \"2 Take Profits\")\n    if strategy.position_size > 0\n        strategy.exit(\"Long TP1\", \"Long\", qty_percent=50, limit=entryAnchor + longDistance * 0.5, stop=rangeLow)\n        strategy.exit(\"Long TP2\", \"Long\", qty_percent=50, limit=entryAnchor + longDistance * 1, stop=rangeLow)\n    if strategy.position_size < 0\n        strategy.exit(\"Short TP1\", \"Short\", qty_percent=50, limit=entryAnchor + shortDistance * 0.5, stop=rangeHigh)\n        strategy.exit(\"Short TP2\", \"Short\", qty_percent=50, limit=entryAnchor + shortDistance * 1, stop=rangeHigh)\nelse if (takeProfitType == \"3 Take Profits\")\n    if strategy.position_size > 0\n        strategy.exit(\"Long TP1\", \"Long\", qty_percent=50, limit=entryAnchor + longDistance * 0.5, stop=rangeLow)\n        strategy.exit(\"Long TP2\", \"Long\", qty_percent=25, limit=entryAnchor + longDistance * 0.75, stop=rangeLow)\n        strategy.exit(\"Long TP3\", \"Long\", qty_percent=25, limit=entryAnchor + longDistance * 1.5, stop=rangeLow)\n    if strategy.position_size < 0\n        strategy.exit(\"Short TP1\", \"Short\", qty_percent=50, limit=entryAnchor + shortDistance * 0.5, stop=rangeHigh)\n        strategy.exit(\"Short TP2\", \"Short\", qty_percent=25, limit=entryAnchor + shortDistance * 0.75, stop=rangeHigh)\n        strategy.exit(\"Short TP3\", \"Short\", qty_percent=25, limit=entryAnchor + shortDistance * 1.5, stop=rangeHigh)\n",
+        "reason": "单档保留原entry同柱绝对通道括号；多档采用显式分档设计，每档自带通道止损，补齐空头三档，份额两档50/50、三档50/25/25，目标用成交均价至通道距离比例，方向ID独立。",
+        "preserved": "默认单档与入场同柱提交原绝对通道stop/limit，不依赖成交均价；原入口、通道及参数；多档距离系数沿原两档0.5/1、三档0.5/0.75/1.5。",
+        "validation_cases": [
+          "多空各模式份额合计100且每档含stop；多头成本100通道110目标105/107.5/115；空头成本100通道90目标95/92.5/85；1档目标为通道本身。",
+          "默认单档空仓entry同柱可提交Long/Short对应绝对通道保护；持仓和反手不受旧方向仓位门禁阻止。",
+          "多档空仓及反手新方向在成交均价可用前不提交新方向括号，明确首成交柱至下一计算存在空窗，不能认定已全时保护。"
+        ]
+      }
+    ],
+    "resolved": [
+      "单档保留原entry同柱绝对通道括号；多档采用显式分档设计，每档自带通道止损，补齐空头三档，份额两档50/50、三档50/25/25，目标用成交均价至通道距离比例，方向ID独立。"
+    ],
+    "remaining": [
+      "多档模式使用真实成交均价：空仓入场和反手新方向必须等成交后下一次脚本计算才挂括号，默认收盘计算可能留下整个首成交柱保护空窗；未启用calc_on_order_fills，不声称全时保护。",
+      "明确假设：通道目标距离按成交均价计算，两档50/50、三档50/25/25，最后目标1.5倍距离可超出通道。",
+      "通道与止损仍逐柱变化，可能放宽或穿过成交均价；分批后重新预留数量需原生撮合核验。",
+      "未原生编译或回测，非已验证的完整风险模型。"
+    ],
+    "validation_plan": [
+      "静态核对每档qty_percent合计100及每档stop、多空独立ID。",
+      "成本100、通道110/90验证对称目标与所有模式保护；原生回放分批成交后数量预留和动态通道移动。",
+      "默认单档核对空仓信号、持仓维护与反手同柱均直接提交绝对通道括号；多档核对空仓不提交、仅维护当前实际方向，反手新方向等待均价。"
+    ]
+  },
+  {
+    "rank": 236,
+    "sid": 2687,
+    "source_sha256": "2bc4ac72d2bd702f1bd450c7d23900c0e403b4341af5d4530a5262663f59468a",
+    "base_kind": "prior_candidate",
+    "base_sha256": "c71080ed9ca9eb4d64bb102207ab3ca33692a31c1353fc948acdde973520c808",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；EMA5/20金叉做多100%权益，死叉平仓；起止时间输入未生效。 EMA5/20仅多交叉是适合基准的简单模型，优化应优先成本稳健性而非堆叠指标。",
+    "patches": [],
+    "resolved": [
+      "恢复时间输入。",
+      "解除平仓的日期限制。"
+    ],
+    "remaining": [
+      "EMA5/20仅多交叉是适合基准的简单模型，优化应优先成本稳健性而非堆叠指标。 后续验证：恢复日期前后仅窗内新增交易、窗外退出，费用翻倍与邻域参数对照。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "恢复日期前后仅窗内新增交易、窗外退出，费用翻倍与邻域参数对照。"
+    ]
+  },
+  {
+    "rank": 237,
+    "sid": 2497,
+    "source_sha256": "1000e9ffd1d4cb0053ce6d9fe1513d393159cd10be064fc17b2de02831b6f070",
+    "base_kind": "prior_candidate",
+    "base_sha256": "94d02696aabae20ea986b8fb377b29919b369da8dedfa89e02a2382f2750321c",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；新13根支撑低点做多最多10笔，新阻力高点平多；另有5%收盘止损条件。 真正入场是创新低买入、创新高平仓，均线与鳄鱼指标不参与交易；原止损不可达已有候选。",
+    "patches": [],
+    "resolved": [
+      "正价格不可能小于自身95%，止损永不触发。"
+    ],
+    "remaining": [
+      "真正入场是创新低买入、创新高平仓，均线与鳄鱼指标不参与交易；原止损不可达已有候选。 后续验证：连续创新低十次、加仓均价变化及低开穿越95%阈值测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；仍为收盘触发市价退出，不是盘中95止损单；加仓后按新均价计算。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "连续创新低十次、加仓均价变化及低开穿越95%阈值测试。"
+    ]
+  },
+  {
+    "rank": 238,
+    "sid": 2168,
+    "source_sha256": "c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97",
+    "base_kind": "prior_candidate",
+    "base_sha256": "4eb561c2df58d8ce59da757c70a9834647185b453f2289b119754b9efdd46345",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；两组EMA差RSI及EMA RSI上穿零分别开多，按启用组数均分权益；下穿零或超过终日分别平仓。 所谓双时间轴实际是同周期两种RSI趋势长度；两开关皆关时count=0，默认不加仓可能令两腿不能独立持有。",
+    "patches": [],
+    "resolved": [
+      "恢复入场窗口。"
+    ],
+    "remaining": [
+      "所谓双时间轴实际是同周期两种RSI趋势长度；两开关皆关时count=0，默认不加仓可能令两腿不能独立持有。 后续验证：四种开关组合、同根双信号、单腿退出另一腿仍持有验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；两个Trade开关皆false时count=0导致Amount无效，未修。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "四种开关组合、同根双信号、单腿退出另一腿仍持有验证。"
+    ]
+  },
+  {
+    "rank": 239,
+    "sid": 1441,
+    "source_sha256": "aa050d9c9c335070eea478a28d4f65da6039fdcd553a50ebdf98b34908991285",
+    "base_kind": "original",
+    "base_sha256": "180a71128ffbe15e7f894d54537628369150926d1ea4279e07fa4167670b1bd7",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；价格上穿PSAR且RSI超卖时以10%权益做多，信号价5%目标与3%止损；反向PSAR且RSI超买平仓。 PSAR转多同时RSI超卖是窄窗口反转条件；TP/SL按信号close并可能被后续买信号重锚。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "PSAR转多同时RSI超卖是窄窗口反转条件；TP/SL按信号close并可能被后续买信号重锚。 后续验证：信号后跳空、持仓中再次PSAR翻多及稀疏交易分布验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "信号后跳空、持仓中再次PSAR翻多及稀疏交易分布验证。"
+    ]
+  },
+  {
+    "rank": 240,
+    "sid": 4127,
+    "source_sha256": "e9b78cbf92b9e517377a74354a969957afde377fb456d50c8d7a213bc955fcc7",
+    "base_kind": "prior_candidate",
+    "base_sha256": "d0a84040757e2e13d1ba3b4b811e2a596b003cb79dcfaa1b97dca9a4d0b87b18",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；EMA20、SMA100/200与MACD持续向上且价格结构满足时固定1000现金做多，5%收盘止损或前根均线死叉平仓。 多均线上行+MACD确认可解释，但手工持仓状态假设下单即成交，反向EMA判断还延迟一柱。",
+    "patches": [],
+    "resolved": [
+      "窗口函数恒真。",
+      "保持窗外持仓退出。",
+      "只允许窗口内新入场。"
+    ],
+    "remaining": [
+      "多均线上行+MACD确认可解释，但手工持仓状态假设下单即成交，反向EMA判断还延迟一柱。 后续验证：资金不足未成交、开仓与退出同根及死叉前后两柱逐步复核。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；手工持仓标志仍假设订单成交；不改变历史撮合行为。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "资金不足未成交、开仓与退出同根及死叉前后两柱逐步复核。"
+    ]
+  },
+  {
+    "rank": 241,
+    "sid": 2352,
+    "source_sha256": "7bad3c1d0a47611bd69d57fad2c7bd5a30013b063695381faad8ea401b3e4eeb",
+    "base_kind": "original",
+    "base_sha256": "c17a95222b4125500f113f19853a1edd2a68f5615325b2d20b65df8500741c9c",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SSL翻转且价格在EMA200对应侧时全权益开多空；以信号SSL线挂止损，获利且SSL反转时市价退出。 SSL+EMA200双向信号有因果逻辑，但止损输入未用，盈利过滤混合10%价格界限与0.1货币利润。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "SSL+EMA200双向信号有因果逻辑，但止损输入未用，盈利过滤混合10%价格界限与0.1货币利润。 后续验证：不同股数下退出门槛、止损首次提交后SL清零而订单存续、空头盈利区间验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "不同股数下退出门槛、止损首次提交后SL清零而订单存续、空头盈利区间验证。"
+    ]
+  },
+  {
+    "rank": 242,
+    "sid": 5240,
+    "source_sha256": "5455817804f192caf44f009646677dfc932adc1633b7e147e3b563790af1e651",
+    "base_kind": "original",
+    "base_sha256": "32fadcb0f535aef2b10e7b05b87fe08b53f8cb57966a86bd2d683e1c67b1b628",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "新增候选：保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。",
+    "patches": [
+      {
+        "old": "if (bullishCross)\n    strategy.entry(\"Buy\", strategy.long)  // Buy pozitsiyasini ochish\n    strategy.exit(\"Exit Buy\", \"Buy\", stop=longSL, limit=longTP)  // SL va TP qo'yish\n\n    // 2% foyda bo'lganda SLni break-even ga o'zgartirish\n    if (strategy.position_size > 0)\n        profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100\n        if (profitPercentage >= 2)\n            strategy.exit(\"Exit Buy BE\", \"Buy\", stop=strategy.position_avg_price) // SLni break-even ga o'zgartirish\n\n",
+        "new": "var float activeSL = na\nvar float activeTP = na\nif (bullishCross and strategy.position_size == 0)\n    activeSL := longSL\n    activeTP := longTP\n    strategy.entry(\"Buy\", strategy.long)\n    strategy.exit(\"Exit Buy\", \"Buy\", stop=activeSL, limit=activeTP)\n\nif strategy.position_size > 0\n    profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100\n    if profitPercentage >= 2\n        activeSL := math.max(activeSL, strategy.position_avg_price)\n    strategy.exit(\"Exit Buy\", \"Buy\", stop=activeSL, limit=activeTP)\n\n",
+        "reason": "保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。",
+        "preserved": "2%保本触发、原3倍风险目标及金叉入口；激活后不下降。",
+        "validation_cases": [
+          "无第二次金叉也能在盈利2%激活；回落1%不撤保本；同一exit ID更新。"
+        ]
+      }
+    ],
+    "resolved": [
+      "保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。"
+    ],
+    "remaining": [
+      "lastRedCandleLow缺失时仍可能无有效止损；信号价与成交价跳空差异未改。",
+      "原生撮合、首笔保护及回测未执行。"
+    ],
+    "validation_plan": [
+      "金叉次日成交、非金叉柱浮盈2%、部分成交及跳空回成本验证。"
+    ]
+  },
+  {
+    "rank": 243,
+    "sid": 5698,
+    "source_sha256": "02f52146c43c3f5344398edb65b6ef06c1cff21cc4b6bc4aca3852049364653a",
+    "base_kind": "original",
+    "base_sha256": "95b18e1b44d47624b73e7229525274778ddd1461987ae73d67b1b3c6b6bc2fd4",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；一目转换/基准金叉且价格高于位移云上方开多；死叉或跌破位移云下方即平多，另外严格双条件退出重复但无增仓。 云层历史偏移配合转折线交叉是清楚仅多趋势模型，未见当前数据被当未来信息使用；显示云填充对象不对应span。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "云层历史偏移配合转折线交叉是清楚仅多趋势模型，未见当前数据被当未来信息使用；显示云填充对象不对应span。 后续验证：逐根对齐26柱前span、实际信号与绘图，核验退出OR与AND两模型。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐根对齐26柱前span、实际信号与绘图，核验退出OR与AND两模型。"
+    ]
+  },
+  {
+    "rank": 244,
+    "sid": 3647,
+    "source_sha256": "e92225f7311f03c8564d5ee712f8af753f9acd920c8c0fe630ae3351231c7a45",
+    "base_kind": "original",
+    "base_sha256": "3d758c086744df2b42e8cbfa5824c42380909a7f77b2fa67767a7fe16e8b699a",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；高价上穿六期RMA收盘上浮1.9%开多，低价下穿RMA下浮1.5%市价退出，均线会双向移动。 上下RMA百分比通道突破是趋势规则，但止损线会随均线下降，并非持仓只升不降的跟踪。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "上下RMA百分比通道突破是趋势规则，但止损线会随均线下降，并非持仓只升不降的跟踪。 后续验证：均线持续下降时止损是否放宽、同根高低穿双轨和次开盘成交验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "均线持续下降时止损是否放宽、同根高低穿双轨和次开盘成交验证。"
+    ]
+  },
+  {
+    "rank": 245,
+    "sid": 4501,
+    "source_sha256": "44bd6dcbb577ed07892fa033fbc89a1baecafa31bdd061208c242aa8fbeb829b",
+    "base_kind": "original",
+    "base_sha256": "fc304317ec6929e507f91240d23c59e34eeea71885842495b1019598798d75ce",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA200上方且布林%b连续三根<0.2做多，%b>0.8平多。 长期均线上连续三根%B低位后回归高位是自洽均值回归；无明确最长持有或趋势失效退出。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "长期均线上连续三根%B低位后回归高位是自洽均值回归；无明确最长持有或趋势失效退出。 后续验证：三根低位后长期不达0.8、带宽为零及费用翻倍的策略路径。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "三根低位后长期不达0.8、带宽为零及费用翻倍的策略路径。"
+    ]
+  },
+  {
+    "rank": 246,
+    "sid": 3552,
+    "source_sha256": "5d52c84c20f80928990d437199a9169f7e6eace40c07752ef9f22bd9dd9da856",
+    "base_kind": "prior_candidate",
+    "base_sha256": "3f33bee407168ebc4914347e0fda3e97dec1c4b4fc1246c699d19100c704e441",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；SMA2下穿SMA5的97%做多，SMA2上穿SMA5平多。 SMA2偏离SMA5达3%后均值回归，逻辑简单；原版本注解错误已有候选，固定3%跨波动差异大。",
+    "patches": [],
+    "resolved": [
+      "版本注解格式错误。"
+    ],
+    "remaining": [
+      "SMA2偏离SMA5达3%后均值回归，逻辑简单；原版本注解错误已有候选，固定3%跨波动差异大。 后续验证：小/大波动股票分层、阈值2/3/4%与成本敏感度及版本编译。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "小/大波动股票分层、阈值2/3/4%与成本敏感度及版本编译。"
+    ]
+  },
+  {
+    "rank": 247,
+    "sid": 2541,
+    "source_sha256": "b7c272a3c3c9ad299e4dd1185fa3f472e8c8fd07655bca27e2325f075628c17d",
+    "base_kind": "original",
+    "base_sha256": "3810a843723d5ea7a8855fb458ca0deba927fa91ea81957daf21d6501d4cdc84",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；EMA80>EMA200且价格在EMA50上，历史价下穿EMA并连续上涨时买多；成交时ATR固定3.5倍止损目标。 趋势中回撤恢复的意图可解释，但止损要先收盘跌破成本才挂出，止盈又须同时跌到MA1下。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "趋势中回撤恢复的意图可解释，但止损要先收盘跌破成本才挂出，止盈又须同时跌到MA1下。 后续验证：持仓盈利柱盘中触止损后收回、达目标但在均线上、numberOfCandles>1验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "持仓盈利柱盘中触止损后收回、达目标但在均线上、numberOfCandles>1验证。"
+    ]
+  },
+  {
+    "rank": 248,
+    "sid": 2719,
+    "source_sha256": "13a71b4dcd4adba123261f80058be2250a81ff683ab319b51f99845b94b5e1df",
+    "base_kind": "original",
+    "base_sha256": "8d72f0deef8ae3888225bd18d716dc97d419b582ed989188c859364ddbac05ad",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "最小边界修复：完整零波动窗口效率比取0，避免0/0污染KAMA递推；非零窗口沿原公式。",
+    "patches": [
+      {
+        "old": "efficiency_ratio = price_change / volatility_sum",
+        "new": "efficiency_ratio = volatility_sum == 0 ? 0.0 : price_change / volatility_sum",
+        "reason": "完整零波动窗口效率比取0，避免0/0污染KAMA递推；非零窗口沿原公式。",
+        "preserved": "原交易信号阈值、仓位和其余退出设计；不调整参数。",
+        "validation_cases": [
+          "常量窗口分母0输出0；非零10/20输出0.5；暖机na不被替换为0。"
+        ]
+      }
+    ],
+    "resolved": [
+      "完整零波动窗口效率比取0，避免0/0污染KAMA递推；非零窗口沿原公式。"
+    ],
+    "remaining": [
+      "ATR止损止盈仍随close平移，风险锚点设计暂缓。",
+      "未原生编译、回放或回测。"
+    ],
+    "validation_plan": [
+      "常量窗口分母0输出0；非零10/20输出0.5；暖机na不被替换为0。",
+      "原生Pine编译和逐柱回放待执行。"
+    ]
+  },
+  {
+    "rank": 249,
+    "sid": 3250,
+    "source_sha256": "5c27f153c7b7532186456f3a20e911698e61cca89f1371265015393c5b19a97a",
+    "base_kind": "prior_candidate",
+    "base_sha256": "248f90c9f1aaa1c272cec718e145b7616d9548584c2e6b0e1c8e4589f5ce2541",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；成交量加权快慢先行线同时上升、TSV正增强及价格上布林轨做多100%权益；双线下降退出。 量加权快慢中线+TSV+布林突破是多重趋势筛选，但同类价格过滤复杂且无硬止损；版本注解仍需核验。",
+    "patches": [],
+    "resolved": [
+      "起止日期没有生效；仅恢复入场日期过滤。"
+    ],
+    "remaining": [
+      "量加权快慢中线+TSV+布林突破是多重趋势筛选，但同类价格过滤复杂且无硬止损；版本注解仍需核验。 后续验证：原生v4编译、零成交量分母、各过滤独立贡献及历史未选择窗口。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "原生v4编译、零成交量分母、各过滤独立贡献及历史未选择窗口。"
+    ]
+  },
+  {
+    "rank": 250,
+    "sid": 1687,
+    "source_sha256": "2c206a6ae46cefd1854f291ca64cd8d2e79b4a3dfcd4c53e5db15cac9a246bdb",
+    "base_kind": "original",
+    "base_sha256": "078198b56889a698e975246638495fa2605b1f60b73acf896f36007b307f5662",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；20期相对动量累积比低于40维持多头、高于70维持空头，可整体反转方向。 RMI阈值双向反转有明确状态逻辑，但涨跌累计只在对应方向衰减，和标准平滑实现不等价。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "RMI阈值双向反转有明确状态逻辑，但涨跌累计只在对应方向衰减，和标准平滑实现不等价。 后续验证：单边上涨/下跌与交替涨跌序列手算xMU/xMD及除零边界。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "单边上涨/下跌与交替涨跌序列手算xMU/xMD及除零边界。"
+    ]
+  },
+  {
+    "rank": 251,
+    "sid": 3181,
+    "source_sha256": "5a090196f5fd6b34b6e5d075ca7cde86ba06e05ca7fc0be16628992e00ac308b",
+    "base_kind": "original",
+    "base_sha256": "5d117e35410c62221e9d172c1844f19fee0d12f215b03d296ecb545918d4330b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；RSI2低于15做多，持仓收盘高于前根高点退出；非日线时所谓昨日对应前根。 RSI2<15买超卖、突破前高退出是简单反转；注释声称收盘成交但声明未配置收盘撮合。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "RSI2<15买超卖、突破前高退出是简单反转；注释声称收盘成交但声明未配置收盘撮合。 后续验证：信号收盘到次开盘收益贡献、连续跌势无前高突破、交易成本对照。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "信号收盘到次开盘收益贡献、连续跌势无前高突破、交易成本对照。"
+    ]
+  },
+  {
+    "rank": 252,
+    "sid": 71,
+    "source_sha256": "d93a7f991540c18901ba9c8e94b554e0700d4eeaafa2f687465c05b64fda146a",
+    "base_kind": "prior_candidate",
+    "base_sha256": "8437a3ac68ed68b1b34aa2c49cf08d917bba4f5c79ee5d351b354515a88e6639",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；ATR过滤锤头与流星反转形态，2%权益多空入场，按当前高低收盘价动态设置ATR止盈止损。 锤头/流星形态加ATR过滤可解释；close与open交叉还要求前根方向变化，保护价格每根重算。",
+    "patches": [],
+    "resolved": [
+      "多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。"
+    ],
+    "remaining": [
+      "锤头/流星形态加ATR过滤可解释；close与open交叉还要求前根方向变化，保护价格每根重算。 后续验证：连续两根同色锤头、持仓下跌时止损下移及多空反转保护核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；退出价格仍随每根low/high/close/ATR变化，未固定到成交价；属于原动态设计。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "连续两根同色锤头、持仓下跌时止损下移及多空反转保护核验。"
+    ]
+  },
+  {
+    "rank": 253,
+    "sid": 2013,
+    "source_sha256": "b92196eabc1ea2d9398d104d6fbdfbd35eeec6a444180e2dfeb15c5940e61cc5",
+    "base_kind": "prior_candidate",
+    "base_sha256": "990493e41f0b8afa81073609566216110fee672cfe467f6b9e625e6a35ef1103",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；开盘高于SMA5或低于SMA5足够距离分别做多，第一类收盘不亏退出、第二类亏0.1%退出。 低于均线却要求open-ma5为正的分支不可达已有候选；两个场景分别仅盈利/仅亏损退出，不形成完整风控。",
+    "patches": [],
+    "resolved": [
+      "低于均线时open-ma5为负，不可能大于正阈值。"
+    ],
+    "remaining": [
+      "低于均线却要求open-ma5为正的分支不可达已有候选；两个场景分别仅盈利/仅亏损退出，不形成完整风控。 后续验证：场景1持续亏损、场景2持续盈利、开盘到收盘均线变化逐笔检查。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；场景1仅盈利退出、场景2仅亏损退出属于原有不对称设计，未扩写。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "场景1持续亏损、场景2持续盈利、开盘到收盘均线变化逐笔检查。"
+    ]
+  },
+  {
+    "rank": 254,
+    "sid": 5791,
+    "source_sha256": "aa0464b5bf2603a391612bd0159594c6562e43426188b66070bd1556815e3c35",
+    "base_kind": "prior_candidate",
+    "base_sha256": "fc91b25e6ce0f6d793d20e9e2e35559c5909629db81d7bc8cb54553c45800831",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；SMA50/200金叉全权益做多，死叉平全部，提供日期背景显示。 50/200黄金交叉可作透明基准，既有日期修复是先决条件；不要因历史排名低就堆参数。",
+    "patches": [],
+    "resolved": [
+      "恢复入场日期。",
+      "死叉退出移出日期。"
+    ],
+    "remaining": [
+      "50/200黄金交叉可作透明基准，既有日期修复是先决条件；不要因历史排名低就堆参数。 后续验证：窗外死叉、横盘多次交叉、不同复权处理和持有基准同成本比较。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "窗外死叉、横盘多次交叉、不同复权处理和持有基准同成本比较。"
+    ]
+  },
+  {
+    "rank": 255,
+    "sid": 4883,
+    "source_sha256": "129daeb9484005bc807daa9538f948e1ab2a3e8e6b7f31238d11833c882a343e",
+    "base_kind": "original",
+    "base_sha256": "7381e460ee34cb8af635b731ea22fc00419250efda05d228da4e7a7cdd149daf",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA20/30金叉且RSI>25买入，死叉且RSI<75平仓；可选信号价2%全部或一次半仓止盈。 均线交叉RSI过滤加可选半仓获利结构清楚，但用信号状态替代实际仓位、目标从信号close开始计。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线交叉RSI过滤加可选半仓获利结构清楚，但用信号状态替代实际仓位、目标从信号close开始计。 后续验证：部分退出后新金叉、被拒买单、卖出后状态复位及剩余仓位核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "部分退出后新金叉、被拒买单、卖出后状态复位及剩余仓位核验。"
+    ]
+  },
+  {
+    "rank": 256,
+    "sid": 1557,
+    "source_sha256": "8114479dcbe6ce860ef8b7ec5680e800767857f5b53b9e6803a618e2466db930",
+    "base_kind": "original",
+    "base_sha256": "cababcc1f5d847baade38297dd4cee2e3454cf80e93aed7aa45e7625215ec7de",
+    "action": "new_patch",
+    "change_type": "mixed",
+    "summary": "新增候选：指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。",
+    "patches": [
+      {
+        "old": "enterTrade = true",
+        "new": "enterTrade = time >= entryDate and strategy.position_size == 0",
+        "reason": "指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。",
+        "preserved": "原5%跟踪公式与low触发市价平仓；允许退出后再入。",
+        "validation_cases": [
+          "持仓峰值110后高105不重置；日期前不买、日期后空仓可以买。"
+        ]
+      }
+    ],
+    "resolved": [
+      "指定日期作为最早入场日期，且仅空仓允许入场，防止每柱重置峰值。"
+    ],
+    "remaining": [
+      "日期采用起始门槛而非只交易指定一天，退出后允许再次入场，属于明确设计假设。",
+      "low触发仍是市价请求而非原生stop单；信号峰值与成交时点仍有差异。"
+    ],
+    "validation_plan": [
+      "最高价100后回落90仍保留峰值、指定日期前禁止入场、出场后是否再入三个测试。"
+    ]
+  },
+  {
+    "rank": 257,
+    "sid": 266,
+    "source_sha256": "e37380c99f5db73f2be5b247596f5e38d5f47d2d8dd3ace66cc58ee6b378f77e",
+    "base_kind": "original",
+    "base_sha256": "33b58845143a499ab28934c225bb37b1fafb757ad8607f4f4b737d8fabfb28a0",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；21/55 EMA交叉并同向位于200 EMA两侧固定100单位多空，RSI从超买或超卖返回退出。 均线顺势进场、RSI反向极值退出是动量到反转的混合模型；固定100份跨股票敞口不可比。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线顺势进场、RSI反向极值退出是动量到反转的混合模型；固定100份跨股票敞口不可比。 后续验证：价格10/1000同信号敞口对比、长期不触RSI退出及借券费用压力。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "价格10/1000同信号敞口对比、长期不触RSI退出及借券费用压力。"
+    ]
+  },
+  {
+    "rank": 258,
+    "sid": 4876,
+    "source_sha256": "a8f0fef5bf0dd0d061d59e959ea7297cee063666ad944c0943c3c9ac0b6108ad",
+    "base_kind": "original",
+    "base_sha256": "a53680c1300472db076236dcda3bca1d257fd587012f7ea2a1276e7fc3f1bbfa",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA14上穿28做多，7根最低点逐级超过入场价5%台阶后抬保护至对应价。 按七根最低点跨越利润台阶抬止损有解释性，但台阶逐根重算会退回较低档。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "按七根最低点跨越利润台阶抬止损有解释性，但台阶逐根重算会退回较低档。 后续验证：先升至+15%档后七根最低点回落，确认是否允许降档。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "先升至+15%档后七根最低点回落，确认是否允许降档。"
+    ]
+  },
+  {
+    "rank": 259,
+    "sid": 3755,
+    "source_sha256": "ac96502c40214248bcd9b8c5e65170cae90dc157a4a9201998b069733d5b389e",
+    "base_kind": "prior_candidate",
+    "base_sha256": "f1161b34ad4347d16b8d7d100be03cf5a9748d7c1f591a4a03f1a8b6813f297c",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；EMA10>100>200且空仓时以权益/收盘四舍五入买入，排列破坏或日期窗外平仓。 三EMA多头排列为状态入场而非注释交叉；round(equity/close)可能超买预算或数量为0。",
+    "patches": [],
+    "resolved": [
+      "日期函数恒真使用户范围及窗外平仓无效；恢复用户日期即可，已有窗外平仓分支。"
+    ],
+    "remaining": [
+      "三EMA多头排列为状态入场而非注释交叉；round(equity/close)可能超买预算或数量为0。 后续验证：低资金高股价、费用后余额不足、日期截止全平及重复状态条件检查。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "低资金高股价、费用后余额不足、日期截止全平及重复状态条件检查。"
+    ]
+  },
+  {
+    "rank": 260,
+    "sid": 316,
+    "source_sha256": "e178ed0321e8bd3cbdbb850b5d72e1a60656a2257b69a9b5bcd3dd4a170b083e",
+    "base_kind": "original",
+    "base_sha256": "a6e7c4b7d12b1cc48fdb0b800fd1ad3bf312949c3b6f3e39561c52a3016204a5",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；历史高低中轴EMA加减ATR形成通道；下轨穿过低点且低于中轴做多，上轨下穿高点或触及卖线做空并反转。 ATR通道相对历史极值交叉是均值回归反手模型，SELL实际开空而非仅平多；无独立保护。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "ATR通道相对历史极值交叉是均值回归反手模型，SELL实际开空而非仅平多；无独立保护。 后续验证：下跌趋势长空持有、极值跳变、常数邻域和高成本样本验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "下跌趋势长空持有、极值跳变、常数邻域和高成本样本验证。"
+    ]
+  },
+  {
+    "rank": 261,
+    "sid": 3460,
+    "source_sha256": "90b70e59d2e49a64ed246def2cd6d93452ff7d22648bb12ea33080affe074b91",
+    "base_kind": "prior_candidate",
+    "base_sha256": "27d76047e6935ed5f0a0fb243d21cb96cbc63084f7817c7acefd31c16a764c47",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；SMA20大于60且距10根高点回撤不到10%做多30%权益，趋势反转、高点回撤或均价亏10%退出。 20/60均线趋势加10%回撤退出结构明确；10根最高点会滚落，所谓滑价7%注释不符10%代码。",
+    "patches": [],
+    "resolved": [
+      "开始日期被if true绕过，直接门控入场且退出保持不变。"
+    ],
+    "remaining": [
+      "20/60均线趋势加10%回撤退出结构明确；10根最高点会滚落，所谓滑价7%注释不符10%代码。 后续验证：持仓超过10根后峰值滚出、10%成本损失与次开盘跳空核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "持仓超过10根后峰值滚出、10%成本损失与次开盘跳空核验。"
+    ]
+  },
+  {
+    "rank": 262,
+    "sid": 4393,
+    "source_sha256": "6e61d5038f49be40c030039d58b6b73504f4e6e5442c0b2b4eef5d36293e50d0",
+    "base_kind": "prior_candidate",
+    "base_sha256": "3e12f3ca6da772f1bbdcb43711d74390c62e7083738dda26702e80b5fda3a1f4",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；2 ATR大于布林两倍标准差且平均波动下降做多，固定入场ATR缓冲跟随前收盘单调上移，低点触线平仓。 波动收缩入场、冻结ATR宽度跟踪是可解释实验，跟踪基准用上一收盘且low触发后市价退出。",
+    "patches": [],
+    "resolved": [
+      "日期输入未生效。",
+      "窗外已有持仓不能重置跟踪线。",
+      "窗外仍处理持仓退出。",
+      "窗外不能继续入场加仓。"
+    ],
+    "remaining": [
+      "波动收缩入场、冻结ATR宽度跟踪是可解释实验，跟踪基准用上一收盘且low触发后市价退出。 后续验证：价格先升后跳空、波动突然扩张、窗口外保护连续性验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "价格先升后跳空、波动突然扩张、窗口外保护连续性验证。"
+    ]
+  },
+  {
+    "rank": 263,
+    "sid": 3502,
+    "source_sha256": "c1c4f2632c6b165714fa0615d80439f17358b265ff080aa3d973e2fbc00212bb",
+    "base_kind": "original",
+    "base_sha256": "c09eb5b1bab403ee775c90094c0a0d8457dfb5334fb5a181a83aa6c2da29e4bf",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；选定多或空方向，20柱通道突破买/卖1份，反向10柱通道或前收盘加减ATR阈值退出。 前柱唐奇安突破逻辑明确，但ATR倍数输入未使用，实际上一收盘±1ATR退出而非声明2ATR。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "前柱唐奇安突破逻辑明确，但ATR倍数输入未使用，实际上一收盘±1ATR退出而非声明2ATR。 后续验证：倍数1/2变化是否真正作用、连续下跌时保护是否下移、短向对称测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "倍数1/2变化是否真正作用、连续下跌时保护是否下移、短向对称测试。"
+    ]
+  },
+  {
+    "rank": 264,
+    "sid": 4671,
+    "source_sha256": "287e6b6ddabc9a362f69d2e9b034938a97a45b79de5df9639c38ad8b575244a0",
+    "base_kind": "prior_candidate",
+    "base_sha256": "c17eb75d787d590835f689f5518a79b04429689942dd2b8949556d1e50672725",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；布林窄于2ATR且ATR不升、RSI10/14同升时空仓开多；低价触单向抬升的2ATR线或RSI超买退出。 布林收缩+双RSI上升入场有择时解释，止损仍为bar结束时读取low后close市价请求。",
+    "patches": [],
+    "resolved": [
+      "恢复可选截止日期。",
+      "窗外持仓继续单向跟踪。",
+      "允许持仓窗外执行原退出块。",
+      "入口仍严格窗内。"
+    ],
+    "remaining": [
+      "布林收缩+双RSI上升入场有择时解释，止损仍为bar结束时读取low后close市价请求。 后续验证：混合缩进原生编译、触线收回、成交首柱及窗外退出验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；源码混合tab与空格缩进，未原生编译确认；stop_loss_price为手动收盘判定非真实止损挂单。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "混合缩进原生编译、触线收回、成交首柱及窗外退出验证。"
+    ]
+  },
+  {
+    "rank": 265,
+    "sid": 2209,
+    "source_sha256": "f4919da828cadb078c7b6613d818a2d09c8f1bb78a9796e999716f391fa84172",
+    "base_kind": "prior_candidate",
+    "base_sha256": "9ebf4c188974c6664c1108f6fec47b4ebd7f910b70cf993397a1ef5d2cd95126",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；MACD在零上且高于信号线做多、零下低于信号线做空；可选单向或双向反转。 MACD零轴与信号线同向是趋势确认，退出只在两者同时转弱，可能放回大量浮盈。",
+    "patches": [],
+    "resolved": [
+      "恢复日期函数。",
+      "接入入口日期门禁。",
+      "接入入口日期门禁。",
+      "接入入口日期门禁。",
+      "接入入口日期门禁。",
+      "双向窗外保留反向平空。",
+      "双向窗外保留反向平多。"
+    ],
+    "remaining": [
+      "MACD零轴与信号线同向是趋势确认，退出只在两者同时转弱，可能放回大量浮盈。 后续验证：零轴上死叉持续数十根、Long/Short/Both模式及费用压力验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "零轴上死叉持续数十根、Long/Short/Both模式及费用压力验证。"
+    ]
+  },
+  {
+    "rank": 266,
+    "sid": 4342,
+    "source_sha256": "036f106a99c74eaac951cd6d7f23ee44560e44ff82903bd691ce5a6b17e9c2e9",
+    "base_kind": "original",
+    "base_sha256": "31015ff811d68faff65253f110a1917ae6561b7e4ae1bc4fe21cdd0161720d73",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；排除窄实体K后连跌8根做多或连涨8根做空，持有7根后全平并重置连胜负计数。 连续八次下跌后持七根是清晰均值回归假设，但手工持仓计时从信号而非成交开始，极窄doji阈值易误解。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "连续八次下跌后持七根是清晰均值回归假设，但手工持仓计时从信号而非成交开始，极窄doji阈值易误解。 后续验证：8连跌、doji打断、零振幅、下单未成交及七根持仓日历差异验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "8连跌、doji打断、零振幅、下单未成交及七根持仓日历差异验证。"
+    ]
+  },
+  {
+    "rank": 267,
+    "sid": 5078,
+    "source_sha256": "ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68",
+    "base_kind": "prior_candidate",
+    "base_sha256": "b2c8f38a9bb15bb7f2f72d643fa0aa203bb34c02c3dab6e9fbadd278d222a476",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "新增候选：SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。",
+    "patches": [
+      {
+        "old": "ma(smoothing, src, length) => \n    if smoothing == \"RMA\"\n        rma(src, length)\n    else\n        if smoothing == \"SMA\"\n            sma(src, length)\n        else \n            if smoothing == \"EMA\"\n                ema(src, length)\n            else \n                if smoothing == \"WMA\"\n                    wma(src, length)\n\t\t\t\telse\n\t\t\t\t\tif smoothing == \"VWMA\"\n\t\t\t\t\t\tvwma(src, length)\n\t\t\t\t\telse\n\t\t\t\t\t\tif smoothing == \"SMMA\"\n\t\t\t\t\t\t\tna(src[1]) ? sma(src, length) : (src[1] * (length - 1) + src) / length\n\t\t\t\t\t\t\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tif smoothing == \"HullMA\"\n\t\t\t\t\t\t\t\twma(2 * wma(src, length / 2) - wma(src, length), round(sqrt(length)))\n\n\n\n\n",
+        "new": "ma(smoothing, src, length) =>\n    e1 = ema(src, length)\n    e2 = ema(e1, length)\n    e3 = ema(e2, length)\n    if smoothing == \"RMA\" or smoothing == \"SMMA\"\n        rma(src, length)\n    else if smoothing == \"SMA\"\n        sma(src, length)\n    else if smoothing == \"EMA\"\n        e1\n    else if smoothing == \"WMA\"\n        wma(src, length)\n    else if smoothing == \"VWMA\"\n        vwma(src, length)\n    else if smoothing == \"DEMA\"\n        2 * e1 - e2\n    else if smoothing == \"TEMA\"\n        3 * e1 - 3 * e2 + e3\n    else if smoothing == \"HullMA\"\n        wma(2 * wma(src, max(1, int(length / 2))) - wma(src, length), max(1, int(round(sqrt(length)))))\n    else if smoothing == \"LSMA\"\n        linreg(src, length, 0)\n    else\n        na\n\n",
+        "reason": "SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。",
+        "preserved": "EMA默认、价格源pivot、13/48/30周期和已有日期及退出修复。",
+        "validation_cases": [
+          "SMMA长度3前均值10当前16为12，不取前价格；全部10个选项有实现；Hull长度1。"
+        ]
+      }
+    ],
+    "resolved": [
+      "日期条件恒真。",
+      "信号退出不受日期门禁。",
+      "SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。"
+    ],
+    "remaining": [
+      "SMMA采用Wilder/RMA的SMA种子约定；菜单非默认选项会改变交易集合，需分别原生编译回测。",
+      "保留原日期窗外close_all。"
+    ],
+    "validation_plan": [
+      "已补齐DEMA/TEMA/LSMA分支；用常量与阶跃短序列验证SMMA/RMA递推及DEMA/TEMA组合和LSMA线性拟合端点。",
+      "默认EMA、日期门禁与窗外退出保持；所有10个菜单选项待原生Pine编译和回测。"
+    ]
+  },
+  {
+    "rank": 268,
+    "sid": 4067,
+    "source_sha256": "2c53e9318e462ebe88038dd1def349ddbdffa4e2c4c1e90f72d801a002aa89de",
+    "base_kind": "original",
+    "base_sha256": "ce0a242c233b22ec1ebb3c6285944fc7de5911bc07225edd81e626d5ea4985b9",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；六类底部形态与超卖指标计分达到3、可选SMA下过滤及RSI14低于35做多，RSI下穿70退出。 六个底部模块计分再用RSI过滤有反转解释，但高度相关且退出须先超买后回落；颜色命名空间需编译修复。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "六个底部模块计分再用RSI过滤有反转解释，但高度相关且退出须先超买后回落；颜色命名空间需编译修复。 后续验证：所有开关组合抽样、长期熊市无法超买退出、编译与成本敏感度测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "所有开关组合抽样、长期熊市无法超买退出、编译与成本敏感度测试。"
+    ]
+  },
+  {
+    "rank": 269,
+    "sid": 5493,
+    "source_sha256": "40fc6d17fc04dcc98c2b5bf89d7b8ba548a4df526ba7303788580ec288cd5afb",
+    "base_kind": "original",
+    "base_sha256": "022e1d903e7484ab6d335238d99a795a8c53b6623f6901657f5dd2c837893f64",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "新增候选：把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。",
+    "patches": [
+      {
+        "old": "    strategy.exit(\"Profit Target\", \"Pullback Entry\", limit=close + (profitTarget * syminfo.mintick))\n    strategy.exit(\"Trailing Stop\", \"Pullback Entry\", stop=close - (trailingStop * syminfo.mintick), trail_points=trailingStop)",
+        "new": "    strategy.exit(\"Profit Target\", \"Pullback Entry\", limit=close + (profitTarget * syminfo.mintick), stop=close - (trailingStop * syminfo.mintick))",
+        "reason": "把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。",
+        "preserved": "原profitTarget、trailingStop数值与close锚定公式；Initial Entry退出不改。",
+        "validation_cases": [
+          "Pullback持仓保护不被目标预留耗尽；不声称已实现追踪。"
+        ]
+      }
+    ],
+    "resolved": [
+      "把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。"
+    ],
+    "remaining": [
+      "真正追踪的激活与offset设计暂缓；当前stop仍随close放宽，目标仍移动。",
+      "Initial Entry仍仅信号退出；两入口同时出现的优先级未改。",
+      "未原生编译、成交回放或回测。"
+    ],
+    "validation_plan": [
+      "Pullback与Initial两入口逐项测试第一目标预留、止损覆盖和稀疏信号数量。"
+    ]
+  },
+  {
+    "rank": 270,
+    "sid": 5221,
+    "source_sha256": "1ba290b9ad48dbc4ed28e064a92cdcd0cce31b19933d361d022a45eae9009e31",
+    "base_kind": "original",
+    "base_sha256": "2e8ee06861520f1b6984c27df786184a2ce47f3b41ad0054b754b6fa565a442e",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；SMA50趋势、ATR阈值下在确认分形外ATR网格挂多空限价，分形加减ATR退出。 分形回归挂限价有机制，但分形只在确认柱存在，目标常na且多头入场价与默认止损同值。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "分形回归挂限价有机制，但分形只在确认柱存在，目标常na且多头入场价与默认止损同值。 后续验证：分形确认后多根无新分形、等价入场止损、隔夜越价及同根双分形核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "分形确认后多根无新分形、等价入场止损、隔夜越价及同根双分形核验。"
+    ]
+  },
+  {
+    "rank": 271,
+    "sid": 2597,
+    "source_sha256": "ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044",
+    "base_kind": "prior_candidate",
+    "base_sha256": "9f74a3b51c4fe63ceecbf26b689d98e915df94e133954773a7d14e1c1a27f2c7",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；高低突破按连续信号编号入场，默认只做多一次、每次100%权益；ATR初始止损和通道跟踪市价退出。 唐奇安突破加ATR保护有清晰逻辑，但计数统计信号而非成交，固定枚举退出不足以覆盖所有实际层。",
+    "patches": [],
+    "resolved": [
+      "多头枚举遗漏count-3，导致该层未被跟踪退出；连续信号计数也可能超过已成交编号，后者需进一步设计。"
+    ],
+    "remaining": [
+      "唐奇安突破加ATR保护有清晰逻辑，但计数统计信号而非成交，固定枚举退出不足以覆盖所有实际层。 后续验证：超过10次信号、被拒订单、部分平仓、Long count-3及所有实际层覆盖测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；计数可超过十个，当前退出仅最近十个且计数含被拒信号，超过范围的覆盖需另行设计。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "超过10次信号、被拒订单、部分平仓、Long count-3及所有实际层覆盖测试。"
+    ]
+  },
+  {
+    "rank": 272,
+    "sid": 509,
+    "source_sha256": "eeb266e7c2a904af8f2f347d8cd3e628ea06a0a9e35e12a09d983d9348bc30c8",
+    "base_kind": "original",
+    "base_sha256": "12768025f8c476510401154f3f8eed2358ca17bd8f73e7ffe655e3d3d2ef4ebc",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；MACD柱上穿零且RSI上穿70时做多，下穿零且RSI下穿30时反手空，无独立退出。 MACD动量和RSI极端同根突破为双向追势模型，只有反向复合信号平仓，可能长期无退出。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "MACD动量和RSI极端同根突破为双向追势模型，只有反向复合信号平仓，可能长期无退出。 后续验证：单边趋势转震荡但RSI未穿另一极值、相邻阈值与借券成本测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "单边趋势转震荡但RSI未穿另一极值、相邻阈值与借券成本测试。"
+    ]
+  },
+  {
+    "rank": 273,
+    "sid": 4563,
+    "source_sha256": "ab034cdbb6cd80c0ab1123726ed510b2f197c29446bca24a09c14c2f6dcfc495",
+    "base_kind": "prior_candidate",
+    "base_sha256": "6d591eb18848a5b87357aeb2b69c0841860cbb571badd6a4b2b879d6cb8e6b63",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；英国时区四段开盘15分钟内，极端开收及5根区间扩张做多空各2份；距信号超3根挂收盘限价退出。 开盘扩张柱逻辑仅适合指定日内时段，GB时区受夏令时影响；计算的bs/ss从未挂保护。",
+    "patches": [],
+    "resolved": [
+      "多空共用exit ID，分开命名避免相互修改；限价定时退出和未使用bs/ss保护仍需设计确认。"
+    ],
+    "remaining": [
+      "开盘扩张柱逻辑仅适合指定日内时段，GB时区受夏令时影响；计算的bs/ss从未挂保护。 后续验证：美英夏令时切换周、日线误用、3根后未成交限价持续及风险保护测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；bs/ss计算未实际用于止损；实际退出为三根后close限价，原意图未改。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "美英夏令时切换周、日线误用、3根后未成交限价持续及风险保护测试。"
+    ]
+  },
+  {
+    "rank": 274,
+    "sid": 2529,
+    "source_sha256": "583711766c4cd6e7a9ed7dc703be188fd53ceacb0d8f1d56d7d3e7fdaa76a592",
+    "base_kind": "prior_candidate",
+    "base_sha256": "bc3ffcf154c6c6c2817587ed3ab960961af866795b633413321e0b698b014616",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；收盘高于可选EMA/SMA200全权益做多，低于均线平多，逐tick计算。 价格相对200EMA持有规则清楚，但calc_on_every_tick使实时柱内反复进出与历史收盘不同。",
+    "patches": [],
+    "resolved": [
+      "恢复日期。",
+      "保留窗外退出。"
+    ],
+    "remaining": [
+      "价格相对200EMA持有规则清楚，但calc_on_every_tick使实时柱内反复进出与历史收盘不同。 后续验证：同一根反复跨均线、重载后信号、手续费累计与窗外退出验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "同一根反复跨均线、重载后信号、手续费累计与窗外退出验证。"
+    ]
+  },
+  {
+    "rank": 275,
+    "sid": 1776,
+    "source_sha256": "97aeb38dab11c43d2fd5e39c0745cb9954f4c6be136351421008c3dd82ea2910",
+    "base_kind": "prior_candidate",
+    "base_sha256": "5fa90140e6ec89dbf636236d1fe01aaf34b3043d1590089fe62aa33597815a0e",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "新增候选：旗形锚点跨柱保存，冲击后才计算独立回撤；确认收盘且空仓识别冲击，突破空仓门禁防止持仓保护重锚。",
+    "patches": [
+      {
+        "old": "var bool inFlag=false,var bool partialExitUsed=false,var float flagImpulseHigh=0.0,flagImpulseLow=0.0,pullbackLow=0.0,var float maxVolSinceEntry=0.0\nvar int pullbackBars=0",
+        "new": "var bool inFlag=false\nvar bool partialExitUsed=false\nvar float flagImpulseHigh=na\nvar float flagImpulseLow=na\nvar float pullbackLow=na\nvar float maxVolSinceEntry=0.0\nvar int pullbackBars=0\nvar int impulseBarIndex=na",
+        "reason": "所有旗形锚点显式var跨柱保存；独立记录冲击柱编号。",
+        "preserved": "原冲击信号、会话、RR与分批平仓ID修复。",
+        "validation_cases": [
+          "冲击高110低100跨柱保持；新冲击替换旧锚。"
+        ]
+      },
+      {
+        "old": "inFlag:=true,flagImpulseHigh:=high,flagImpulseLow:=low,pullbackLow:=low,pullbackBars:=0",
+        "new": "inFlag:=true,flagImpulseHigh:=high,flagImpulseLow:=low,pullbackLow:=na,pullbackBars:=0,impulseBarIndex:=bar_index",
+        "reason": "回撤低点不包含冲击柱最低价，等待后续柱初始化。",
+        "preserved": "新冲击沿用原替换旧旗形规则。",
+        "validation_cases": [
+          "110/100冲击后107回撤为30%，不是100%。"
+        ]
+      },
+      {
+        "old": "if inFlag and sessActive\n    pullbackBars+=1,pullbackLow:=math.min(pullbackLow,low),retracementPct=(flagImpulseHigh-pullbackLow)/(flagImpulseHigh-flagImpulseLow)*100",
+        "new": "if inFlag and sessActive and bar_index>impulseBarIndex\n    pullbackBars+=1\n    pullbackLow:=na(pullbackLow)?low:math.min(pullbackLow,low)\n    retracementPct=(flagImpulseHigh-pullbackLow)/(flagImpulseHigh-flagImpulseLow)*100",
+        "reason": "冲击同柱不回撤也不突破；后续柱才累计回撤根数并计算比例。",
+        "preserved": "保留newHigh定义、突破量阈值、失效后禁止入场、原RR与partial exit。",
+        "validation_cases": [
+          "冲击柱无入场；后续107为30%；104为60%失效；第6柱超时禁止突破；新冲击重新初始化。"
+        ]
+      },
+      {
+        "old": "if barstate.isnew and isImpulseBar and sessActive",
+        "new": "if barstate.isconfirmed and isImpulseBar and sessActive and strategy.position_size==0",
+        "reason": "默认收盘策略以确认柱识别冲击，使历史柱与实时收盘一致；仅空仓建立旗形，不让持仓信号重建交易前状态。",
+        "preserved": "原冲击条件、会话、回撤状态机与RR；持仓中正常最高量红柱分批退出继续运行。",
+        "validation_cases": [
+          "历史确认柱和实时确认收盘同样能建立旗形；未确认实时开盘更新不能建立。",
+          "实际持仓非0时冲击/突破不能重置stop、partialExitUsed或maxVolSinceEntry；空仓有效突破仍可进入。"
+        ]
+      },
+      {
+        "old": "if inFlag and newHigh and breakoutVolOk",
+        "new": "if inFlag and newHigh and breakoutVolOk and strategy.position_size==0",
+        "reason": "突破入口限定实际空仓，避免持仓时被pyramiding拒绝的新entry仍改写保护单、分批退出标记和成交后量峰值。",
+        "preserved": "原冲击条件、会话、回撤状态机与RR；持仓中正常最高量红柱分批退出继续运行。",
+        "validation_cases": [
+          "历史确认柱和实时确认收盘同样能建立旗形；未确认实时开盘更新不能建立。",
+          "实际持仓非0时冲击/突破不能重置stop、partialExitUsed或maxVolSinceEntry；空仓有效突破仍可进入。"
+        ]
+      }
+    ],
+    "resolved": [
+      "strategy.close首参必须是入场ID，现与实际入场不匹配。",
+      "strategy.close首参必须是入场ID，现与实际入场不匹配。",
+      "旗形在本块因回撤或超时失效后，入场须重新确认inFlag，不能继续突破下单。",
+      "所有旗形锚点显式var跨柱保存；独立记录冲击柱编号。",
+      "回撤低点不包含冲击柱最低价，等待后续柱初始化。",
+      "冲击同柱不回撤也不突破；后续柱才累计回撤根数并计算比例。",
+      "默认收盘策略以确认柱识别冲击，使历史柱与实时收盘一致；仅空仓建立旗形，不让持仓信号重建交易前状态。",
+      "突破入口限定实际空仓，避免持仓时被pyramiding拒绝的新entry仍改写保护单、分批退出标记和成交后量峰值。"
+    ],
+    "remaining": [
+      "空仓冲击期间新冲击仍会替换旧旗形；跨会话计时仍沿用活跃柱计数。",
+      "newHigh仍是超过前柱高点，不改为冲击高点；信号close估算风险与实际成交可能有偏差。",
+      "未原生Pine编译、逐笔回放或回测。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "手算冲击high110/low100：原式100%失败；次柱low107应为30%，不得沿用100。测试超时、回撤50%边界、突破有效/无效、现有候选默认交易数。",
+      "历史确认柱与实时收盘确认值相同，未确认柱禁止冲击识别。",
+      "持仓重复冲击/突破不进入重锚保护和清零分批标记分支；正常持仓分批量峰值更新保持。"
+    ]
+  },
+  {
+    "rank": 276,
+    "sid": 3422,
+    "source_sha256": "fd7a3fda84536ac031b14b09b47a4fb186b441eff946a2b0445296fc4ad44555",
+    "base_kind": "prior_candidate",
+    "base_sha256": "54d667f9c485690e1b9c33c5c622c83a9b6b175c34952e9cb598e81d2b7227b2",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；EMA100上且贴近支撑做多，按3%风险距离计算数量；50%在5ATR退出，余仓10ATR目标与支撑下止损。 上升趋势近支撑买入有解释性，但动态目标随价格上涨逃离、止损随支撑下降放宽；3%风险数量未加名义上限。",
+    "patches": [],
+    "resolved": [
+      "第一档50%无止损却预留仓位，第二档止损只能保护剩余部分；给首档补同一止损。"
+    ],
+    "remaining": [
+      "上升趋势近支撑买入有解释性，但动态目标随价格上涨逃离、止损随支撑下降放宽；3%风险数量未加名义上限。 后续验证：支撑下降、ATR扩张、目标随价逃离、50%退出后全部剩余保护核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；动态目标和止损随每根指标变化，未锁定入场。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "支撑下降、ATR扩张、目标随价逃离、50%退出后全部剩余保护核验。"
+    ]
+  },
+  {
+    "rank": 277,
+    "sid": 2324,
+    "source_sha256": "cf90d23c8016f22639dc270e04246034d6600ba2562ce42a1b3b7eaf8e153622",
+    "base_kind": "prior_candidate",
+    "base_sha256": "283cb02df6663538129ee6cf437da34571b62635fdc04f38c2865e4bcb5e26dd",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；Aroon上线上穿下线且价高于LSMA20全权益做多，反向且价低于LSMA退出，原日期条件恒真。 实际为Aroon新高新低时间差加LSMA过滤，不是双均线；仅多趋势状态清楚。",
+    "patches": [],
+    "resolved": [
+      "日期恒真绕过输入。",
+      "退出必须在日期窗外继续。"
+    ],
+    "remaining": [
+      "实际为Aroon新高新低时间差加LSMA过滤，不是双均线；仅多趋势状态清楚。 后续验证：Aroon死叉但close仍高于LSMA、窗口外退出和趋势/横盘分组评估。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "Aroon死叉但close仍高于LSMA、窗口外退出和趋势/横盘分组评估。"
+    ]
+  },
+  {
+    "rank": 278,
+    "sid": 5171,
+    "source_sha256": "873c2df6cab88074ed01edd197260e02c0f2a02dff99c4586168d1977973da12",
+    "base_kind": "prior_candidate",
+    "base_sha256": "68985079cb68fb07c68e113e71bc552caccb858f2d648b6f4b37e9037f24623f",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；SMA5上穿双重SMA10买多，下穿平仓，图示及警报另含多空文本但实际仅多。 SMA与双重SMA交叉为简单仅多模型，但报警文字含做空/不同数量，和实际订单不一致。",
+    "patches": [],
+    "resolved": [
+      "恢复日期入口。",
+      "退出移出日期。"
+    ],
+    "remaining": [
+      "SMA与双重SMA交叉为简单仅多模型，但报警文字含做空/不同数量，和实际订单不一致。 后续验证：逐个多头入场/平仓事件对照报警payload方向与数量；保持订单回测不变。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "逐个多头入场/平仓事件对照报警payload方向与数量；保持订单回测不变。"
+    ]
+  },
+  {
+    "rank": 279,
+    "sid": 3100,
+    "source_sha256": "1e4ed9752080d24e43b00f7b801d6375d18126c2e9677362e48bbe02d4fa0a1c",
+    "base_kind": "original",
+    "base_sha256": "253044d10e204f84edc828f54ce1ec056204dcd2c7e0f240b517fab85143a54f",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "最小边界修复：完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。",
+    "patches": [
+      {
+        "old": "cmo = 100 * (sumUp - sumDown) / (sumUp + sumDown)",
+        "new": "cmo = sumUp + sumDown == 0 ? 0.0 : 100 * (sumUp - sumDown) / (sumUp + sumDown)",
+        "reason": "完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。",
+        "preserved": "原交易信号阈值、仓位和其余退出设计；不调整参数。",
+        "validation_cases": [
+          "0/0窗口中性0；上涨窗口100、下跌-100；暖机na继续传播。"
+        ]
+      }
+    ],
+    "resolved": [
+      "完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。"
+    ],
+    "remaining": [
+      "五根计时仍从最近超卖条件起算，持续超卖可延期；持仓计时设计未改。",
+      "未原生编译、回放或回测。"
+    ],
+    "validation_plan": [
+      "0/0窗口中性0；上涨窗口100、下跌-100；暖机na继续传播。",
+      "原生Pine编译和逐柱回放待执行。"
+    ]
+  },
+  {
+    "rank": 280,
+    "sid": 3594,
+    "source_sha256": "77ed5a9370c1ee9ec6d0088e1f93d6d74749a56709e6ab12321377fb4de1eada",
+    "base_kind": "prior_candidate",
+    "base_sha256": "94033facc65e3f0a3f8c18c6b4ef202104e347626b0eba13c97f529a59168610",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；高低SMMA34与双EMA去滞后价格形成Impulse MACD，主值上穿SMA9做多、下穿平多。 Impulse MACD反转链条可以解释，但孤立函数残块导致源码执行基础不成立，已有删除候选需原生编译。",
+    "patches": [],
+    "resolved": [
+      "孤立缩进块缺失函数定义且引用未定义len，SMA实际调用内置ta.sma。"
+    ],
+    "remaining": [
+      "Impulse MACD反转链条可以解释，但孤立函数残块导致源码执行基础不成立，已有删除候选需原生编译。 后续验证：对阶跃价格计算SMMA、ZLEMA、md与sb，并在目标版本编译。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；未运行TradingView原生编译。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "对阶跃价格计算SMMA、ZLEMA、md与sb，并在目标版本编译。"
+    ]
+  },
+  {
+    "rank": 281,
+    "sid": 5110,
+    "source_sha256": "ff49c0c09bd3ec19b72cc682977714710d9214f8bf1b5d2bf3ec469c6dede5a6",
+    "base_kind": "original",
+    "base_sha256": "2ca10f92b7ae585ffc72ea7a0c58b4423923f772e9ba06cecda08c8d2db5d25d",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；确认枢轴时收盘作为水平，突破阻力全权益做多；反向支撑取消挂单，信号消失后才设置均价止盈2%止损1.75%。 枢轴突破逻辑可解释，但实际取确认柱close而非枢轴值，保护只在入场条件不成立时挂出。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "枢轴突破逻辑可解释，但实际取确认柱close而非枢轴值，保护只在入场条件不成立时挂出。 后续验证：32柱确认延迟、持续Lc1真期间大亏、仅取消未成交订单与真实持仓退出测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "32柱确认延迟、持续Lc1真期间大亏、仅取消未成交订单与真实持仓退出测试。"
+    ]
+  },
+  {
+    "rank": 282,
+    "sid": 2162,
+    "source_sha256": "c656866040490d741d6e330cd2e41351897d5a788e456a71fff2bf0e35fbf297",
+    "base_kind": "prior_candidate",
+    "base_sha256": "37669f7187081e563de94ac16e61eb31294e7cb7f708567e5befc6aa87a6f275",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；请求高周期价格在本周期计算均线与枢轴；上升趋势低点确认时挂open限价多单，下降趋势高点确认平仓。 高周期数据合并后在低周期计算SMA与枢轴，并非高周期20根MA或低周期枢轴，名称与实现不一致。",
+    "patches": [],
+    "resolved": [
+      "反向失效时取消未成交同ID入口。"
+    ],
+    "remaining": [
+      "高周期数据合并后在低周期计算SMA与枢轴，并非高周期20根MA或低周期枢轴，名称与实现不一致。 后续验证：1h图配4h源和日线图配4h源分别对齐指标；实时/重载一致性及挂单寿命测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；高周期指标计算与实时重绘特性未改。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "1h图配4h源和日线图配4h源分别对齐指标；实时/重载一致性及挂单寿命测试。"
+    ]
+  },
+  {
+    "rank": 283,
+    "sid": 4159,
+    "source_sha256": "f7ecf68d57f802d874006734ad08ba5f6eecc014a267869571da9f6079df6320",
+    "base_kind": "original",
+    "base_sha256": "2d3a2ae949f18971dfb8b129fe05d7b6058a2011ce0200ebe6fe95bf5f5f941d",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；超级趋势多头、RSI<65且价格>SMA50做多；超级趋势转空平多，收盘减1.5ATR单调收紧保护。 Supertrend、RSI、MA确认加只升不降ATR线结构较清楚；首次保护与信号价/实际成交的风险差仍需验证。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "Supertrend、RSI、MA确认加只升不降ATR线结构较清楚；首次保护与信号价/实际成交的风险差仍需验证。 后续验证：第二笔交易较低价格、跳空入场、短暂翻空再翻多及保护单时序核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "第二笔交易较低价格、跳空入场、短暂翻空再翻多及保护单时序核验。"
+    ]
+  },
+  {
+    "rank": 284,
+    "sid": 1977,
+    "source_sha256": "8d47af2d26a0c55eb4cafbf995da3857d6caf746a58a6454c5693d731bce62da",
+    "base_kind": "prior_candidate",
+    "base_sha256": "ea50b8e4c3706dcd2cce0eda5144cdf351874a90f3334cd05ec6c2052f952291",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；EMA50>100且RSI>70做多，均线转空平多；交叉时EMA100应作为止损。 EMA多头排列追RSI强势有动量解释，但注释第二根确认未实现，入场清空止损已有修复。",
+    "patches": [],
+    "resolved": [
+      "入场分支把刚记录的止损设为na，持仓保护分支不执行；删除这次清空。"
+    ],
+    "remaining": [
+      "EMA多头排列追RSI强势有动量解释，但注释第二根确认未实现，入场清空止损已有修复。 后续验证：绿带首柱RSI>70、止损后同带再入、跨带重置与初始保护测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；同一绿带内止损后再入会继续用该绿带交叉价，这是原状态锚点，未改为每笔成交价。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "绿带首柱RSI>70、止损后同带再入、跨带重置与初始保护测试。"
+    ]
+  },
+  {
+    "rank": 285,
+    "sid": 4224,
+    "source_sha256": "67dcdf7b16b4e8bced24c76853fca11c05e3aa1c3cb336e8bde3ff401457267c",
+    "base_kind": "prior_candidate",
+    "base_sha256": "ab47225164a51340017e8e270206c3dbf323e80bdab70a460659e4ddc3ef3998",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；EMA25>50>100时价格上穿25买两个0.5份ID，分别1R/1.5R目标；跌破EMA100退出。 三EMA趋势回调分两档止盈可解释；qty=.5是半份而非权益50%，默认加仓与重复信号重锚都需确认。",
+    "patches": [],
+    "resolved": [
+      "Buy1未覆盖stop_loss条件，只有Buy2有止损；给Buy1增加同一止损触发，保留份额与默认加仓配置。"
+    ],
+    "remaining": [
+      "三EMA趋势回调分两档止盈可解释；qty=.5是半份而非权益50%，默认加仓与重复信号重锚都需确认。 后续验证：低价/高价股、两笔同根入场、重复信号、两档均止损和tick对齐验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；默认pyramiding可能只允许Buy1，两个半份订单是否同时成交需原生验证；入场条件会重写持仓锚点。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "低价/高价股、两笔同根入场、重复信号、两档均止损和tick对齐验证。"
+    ]
+  },
+  {
+    "rank": 286,
+    "sid": 3392,
+    "source_sha256": "baccf4a728e2dc06086b40974a23e900543cdf3b5d7906e39317430a8e4c1fac",
+    "base_kind": "original",
+    "base_sha256": "e02b8b8bfa6dfcfebc51d5147ad5ceb064a2802f326346578bdcb24b45369fc8",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；低波动统计显著且价格在确认分形支撑之上空仓买权益5%整份，ATR跟踪止损及1R/2R/3R各平初始三分之一。 分形支撑+低波动入场有机制，但ATR相关序列构造的test_stat不能直接宣称95%统计置信；整除分档可能余仓。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "分形支撑+低波动入场有机制，但ATR相关序列构造的test_stat不能直接宣称95%统计置信；整除分档可能余仓。 后续验证：自相关重采样检验误报率，数量1/2/4/5份及跨多目标跳空验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "自相关重采样检验误报率，数量1/2/4/5份及跨多目标跳空验证。"
+    ]
+  },
+  {
+    "rank": 287,
+    "sid": 1719,
+    "source_sha256": "f6eb15949f97481cc834834124371bcad3fb07fe94d35c84d6a73b392a6638ed",
+    "base_kind": "original",
+    "base_sha256": "d6f61087d66d22c8c152b2a68216e5624e2da31b195f7e7f563e181b126a6580",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；布林下轨上穿开多、下轨下穿开空，可选均线位置过滤；按中轨或边轨交叉平全部。 多头是下轨回归，空头实际下轨突破而非定义的上轨反转；同下轨穿越又触发全平，意图冲突。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "多头是下轨回归，空头实际下轨突破而非定义的上轨反转；同下轨穿越又触发全平，意图冲突。 后续验证：下穿上轨/下轨、同根开空与close_all及过滤开关组合测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "下穿上轨/下轨、同根开空与close_all及过滤开关组合测试。"
+    ]
+  },
+  {
+    "rank": 288,
+    "sid": 1449,
+    "source_sha256": "0830884314d77aede1e489b85043496aedb061960250d0b3dfa6ce04d5bad537",
+    "base_kind": "original",
+    "base_sha256": "13757935be8545d445815d86e96109f3886e9f409838ebc80f35b7a9fbee90c7",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；RSI8低于28买2份最多2层，每次信号按收盘重设5%止损，收盘超过前高全平。 RSI低位买入并突破前高退出可解释，但持续超卖会反复下移止损，即使加仓被平台拒绝也改保护。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "RSI低位买入并突破前高退出可解释，但持续超卖会反复下移止损，即使加仓被平台拒绝也改保护。 后续验证：超过两次超卖信号、价格持续下跌、两层成交后第三信号仍重锚测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "超过两次超卖信号、价格持续下跌、两层成交后第三信号仍重锚测试。"
+    ]
+  },
+  {
+    "rank": 289,
+    "sid": 895,
+    "source_sha256": "2479d7bedae2c72dfad6213a486878b5e5dba475eba392ebf9b13919bd4a03bc",
+    "base_kind": "original",
+    "base_sha256": "968c226e4892835f23891db737a68f4f7ec4e51a9ac81459ae6e8c0ae4df0d32",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；快SMA上升慢SMA下降及参考线偏移买入，权益96%；盈利且连续上涨条件成立才提交单调收紧止损。 均线偏移回归与利润激活跟踪是可解释但复杂设计；未盈利前无止损，版本注解也非标准格式。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线偏移回归与利润激活跟踪是可解释但复杂设计；未盈利前无止损，版本注解也非标准格式。 后续验证：入场后长期亏损、首次满足盈利条件、1.35%跟踪和96%资金占用测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "入场后长期亏损、首次满足盈利条件、1.35%跟踪和96%资金占用测试。"
+    ]
+  },
+  {
+    "rank": 290,
+    "sid": 379,
+    "source_sha256": "018f1de11ff1981b34306924918efed8f7cda007401605e5913955469029d757",
+    "base_kind": "prior_candidate",
+    "base_sha256": "022874343306239a74c0b05e84b972bd70b3d0824eecfc7cf552ea2acb79caea",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；G通道两侧穿越先后决定趋势转向，多空入场；每根收盘重设百分比止盈止损。 G通道状态翻转有趋势解释，但showcross显示开关直接控制订单，信号图标回移一根易误读。",
+    "patches": [],
+    "resolved": [
+      "多空保护使用不同ID，避免同ID修改。"
+    ],
+    "remaining": [
+      "G通道状态翻转有趋势解释，但showcross显示开关直接控制订单，信号图标回移一根易误读。 后续验证：关showcross是否原先停止交易、图标与订单实际时间、涨跌时保护移动验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；止盈止损随每根close移动，是否固定锚点属于设计选择。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "关showcross是否原先停止交易、图标与订单实际时间、涨跌时保护移动验证。"
+    ]
+  },
+  {
+    "rank": 291,
+    "sid": 3112,
+    "source_sha256": "fcb5743b5dd45cbec25bafd30b662923b85be4243f348c04cedfb736dfeb457a",
+    "base_kind": "original",
+    "base_sha256": "217d110cdf4bf1df843705322958a5b9268ea5bfb07851e35e2359cfa34fedd9",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "最小边界修复：删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。",
+    "patches": [
+      {
+        "old": "if delta_sma < below_60_threshold*0.5 and crossed_above_70\n    crossed_above_70 := false  // Reset after triggering sell\n",
+        "new": "",
+        "reason": "删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。",
+        "preserved": "原交易信号阈值、仓位和其余退出设计；不调整参数。",
+        "validation_cases": [
+          "之前已越高阈值，delta20、退出阈值50时sell为真，再清状态；delta40退出为真但保持原未深跌状态。"
+        ]
+      },
+      {
+        "old": "sell_condition = crossed_above_70 and delta_sma < below_60_threshold",
+        "new": "sell_condition = crossed_above_70 and delta_sma < below_60_threshold\nif delta_sma < below_60_threshold*0.5 and crossed_above_70\n    crossed_above_70 := false",
+        "reason": "先保存当柱退出结果，再清跨柱状态。",
+        "preserved": "原深跌清零门槛和普通回落的状态持续规则。",
+        "validation_cases": [
+          "之前已越高阈值，delta20、退出阈值50时sell为真，再清状态；delta40退出为真但保持原未深跌状态。"
+        ]
+      }
+    ],
+    "resolved": [
+      "删除卖出求值前的状态清零，并在计算sell_condition后保留原深跌复位阈值，确保深跌当柱可退出。"
+    ],
+    "remaining": [
+      "成交量方向仍为阴阳柱代理，365根非固定一年；原买入状态清零阈值10000保留。",
+      "未原生编译、回放或回测。"
+    ],
+    "validation_plan": [
+      "之前已越高阈值，delta20、退出阈值50时sell为真，再清状态；delta40退出为真但保持原未深跌状态。",
+      "原生Pine编译和逐柱回放待执行。"
+    ]
+  },
+  {
+    "rank": 292,
+    "sid": 1656,
+    "source_sha256": "04cbbc1d6b01aaac029c8cb47d57f4609078e0ea669f7e136dce9eaec715f2dd",
+    "base_kind": "original",
+    "base_sha256": "c0429f7d10da02523091860e6b50e33410db022df0b7add2d244a700bbace1cf",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；突破前20根高点且SMA8在32上做多，3ATR初始止损，均线死叉退出。 唐奇安突破加SMA趋势可解释；trail_offset写入绝对价格且缺激活参数，实际不能按注释理解为跟踪。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "唐奇安突破加SMA趋势可解释；trail_offset写入绝对价格且缺激活参数，实际不能按注释理解为跟踪。 后续验证：ATR3倍距离与不同mintick转换、未激活/已激活回撤及重复突破重锚测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "ATR3倍距离与不同mintick转换、未激活/已激活回撤及重复突破重锚测试。"
+    ]
+  },
+  {
+    "rank": 293,
+    "sid": 2764,
+    "source_sha256": "98621cd6272d3d3636749fb8263d8dca136a00bdb2e2065a046f152a140fb72a",
+    "base_kind": "prior_candidate",
+    "base_sha256": "58e27dfba91bdd75bb57fb755b87738e001c4840214442e65be0cd808eecbdea",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；MACD12/26对SMA9信号线上穿买入、下穿平多，日期函数恒真。 MACD使用SMA信号线的仅多交叉模型结构简单，已有日期修复后宜作为基准而非复杂化。",
+    "patches": [],
+    "resolved": [
+      "恢复用户起止时间。",
+      "死叉平仓窗外仍生效。"
+    ],
+    "remaining": [
+      "MACD使用SMA信号线的仅多交叉模型结构简单，已有日期修复后宜作为基准而非复杂化。 后续验证：SMA与EMA差异、日期窗外退出、横盘高换手和相邻参数验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "SMA与EMA差异、日期窗外退出、横盘高换手和相邻参数验证。"
+    ]
+  },
+  {
+    "rank": 294,
+    "sid": 3210,
+    "source_sha256": "0041722f92819a457bb5a0593c8b9ce1a305164384e15d4de12bd3dc8f71f224",
+    "base_kind": "prior_candidate",
+    "base_sha256": "7bf2bd410254cc3bb7c92fd2b0c0abb4560022db977267971f7262774168a046",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；9/21 SMA金叉做多，均价上1.5%下1%止盈止损仅随金叉提交。 SMA9/21金叉配1.5%/1%括号清楚，但原entry信号时均价尚不可用，已有持续保护候选必须验证首根空窗。",
+    "patches": [],
+    "resolved": [
+      "初始金叉时均价为na，成交后若无新金叉便没有退出订单。"
+    ],
+    "remaining": [
+      "SMA9/21金叉配1.5%/1%括号清楚，但原entry信号时均价尚不可用，已有持续保护候选必须验证首根空窗。 后续验证：金叉后下一根同时触止损/止盈、成交后不再金叉、隔夜跳空三类原生测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；默认只收盘计算，首笔成交bar在下一次计算前尚无有效保护；原源码已有此缺陷。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "金叉后下一根同时触止损/止盈、成交后不再金叉、隔夜跳空三类原生测试。"
+    ]
+  },
+  {
+    "rank": 295,
+    "sid": 4206,
+    "source_sha256": "2a7836ec5cce56639624abb73e071c0a406882432296cd8a24bbbcb390ffa46b",
+    "base_kind": "original",
+    "base_sha256": "b6df79a43ee7ec6aadc8244eb7a37b8a656cb30a5e32f98baae2a4ff2f4fb3b1",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；EMA20/250趋势及EMA2位于100/300之间、MACD交叉确认全权益多空，信号时5 ATR止损和1.5R目标。 长期趋势内短线回调配MACD反转可解释，但隐藏均线导致实际逻辑难审计，100%资金配5ATR止损风险随波动放大。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "长期趋势内短线回调配MACD反转可解释，但隐藏均线导致实际逻辑难审计，100%资金配5ATR止损风险随波动放大。 后续验证：EMA100/250/300邻域、信号跳空、5ATR占价格比例和多空借券成本验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "EMA100/250/300邻域、信号跳空、5ATR占价格比例和多空借券成本验证。"
+    ]
+  },
+  {
+    "rank": 296,
+    "sid": 1672,
+    "source_sha256": "8f6e6c26bca32746398388feac4e3a43dc1d5c686d3bebd18d374fad4f67b5af",
+    "base_kind": "original",
+    "base_sha256": "139e274833c29298782007dcd9b569427a2fd2b3cba8be18bac91b144686fa1d",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；价格相对60柱高低中点上穿0且突破两柱前高、Vortex金叉做多；反向动量退出，另以当前价格换算tick止盈止损。 区间位置与Vortex同根交叉是动量确认；0.1直接乘close代表10%而非0.1%，距离每根随close重算。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "区间位置与Vortex同根交叉是动量确认；0.1直接乘close代表10%而非0.1%，距离每根随close重算。 后续验证：输入0.1/10的百分比预期、mintick换算、持仓涨跌时目标/损失距离变化测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "输入0.1/10的百分比预期、mintick换算、持仓涨跌时目标/损失距离变化测试。"
+    ]
+  },
+  {
+    "rank": 297,
+    "sid": 2859,
+    "source_sha256": "9568440e157e43c47ba6313ae654d52f9ddb51041a73f54c2d46c4f4e22912a8",
+    "base_kind": "original",
+    "base_sha256": "60928d9b2e1f82c0358f2debc8536c6003a83c51d4522166f831307bf56b0a0b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；RSI5低于25依次计划7层多单，各ID按收盘百分比换算tick止盈止损。 RSI超卖分层有均值回归意图，但默认不允许七层，当前结果不能支持七层金字塔；退出tick距离随close变化。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "RSI超卖分层有均值回归意图，但默认不允许七层，当前结果不能支持七层金字塔；退出tick距离随close变化。 后续验证：Entry1到7可达性、连续下跌、每层成交均价与真实总风险核验。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "Entry1到7可达性、连续下跌、每层成交均价与真实总风险核验。"
+    ]
+  },
+  {
+    "rank": 298,
+    "sid": 925,
+    "source_sha256": "98f2d75469450648c1262e597442e20430bf8db3ecb862b4c1046a9219e873e1",
+    "base_kind": "original",
+    "base_sha256": "2a09b1edfec37d04e8ee19d0ff32a0e8f6c20f8689c592232720af0f667d4603",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留原规则，未擅自选择设计参数；九月逐柱发出多头入场，五月平多；没有显式仓位或止损，采用平台默认订单配置。 九月买五月卖是透明季节性基准，信号极少且收益可能主要来自市场长期上涨。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "九月买五月卖是透明季节性基准，信号极少且收益可能主要来自市场长期上涨。 后续验证：首个交易日、跨年、上市不足一年、不同年代与复权分红处理验证。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "首个交易日、跨年、上市不足一年、不同年代与复权分红处理验证。"
+    ]
+  },
+  {
+    "rank": 299,
+    "sid": 5519,
+    "source_sha256": "f15e83093392f33f5b96dfe4c1ddce9b55e1384bd1ab07d062b4ee9360d666c7",
+    "base_kind": "prior_candidate",
+    "base_sha256": "7d00b4aa79fd45bd0ffd44bec37fda78e6493e609a1ed6e9ae4a9d6e3dcbc3b5",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；长期RSI200>51及EMA差柱正、连续2根收盘不升做多100%权益；均价加2或减3个动态BHD单位市价平仓。 长周期趋势中两根下跌买入有回调解释；逐tick/成交重算/放大器与动态BHD退出使历史执行保真要求高。",
+    "patches": [],
+    "resolved": [
+      "日期输入失效；只恢复入场时间过滤，退出独立。"
+    ],
+    "remaining": [
+      "长周期趋势中两根下跌买入有回调解释；逐tick/成交重算/放大器与动态BHD退出使历史执行保真要求高。 后续验证：同柱开平再入、实时重载、波动扩大止损放宽及放大器数据缺失测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+      "同柱开平再入、实时重载、波动扩大止损放宽及放大器数据缺失测试。"
+    ]
+  },
+  {
+    "rank": 300,
+    "sid": 2,
+    "source_sha256": "58a34de7648ae6ca4abb5c795d4e52e9b1188da5004def801fb5bc97116ce745",
+    "base_kind": "prior_candidate",
+    "base_sha256": "3bc04c2c1f6a19d49d2b09afed201b6123a226d5d8736a38d7e6f80975378740",
+    "action": "carry_existing",
+    "change_type": "none",
+    "summary": "保留已核对旧补丁；10/50 EMA交叉后五根内结合200 EMA筛选回撤K线，以突破确认挂多空止损限价入场，1.62倍风险目标及跟踪退出。 EMA回撤突破有可解释条件，但stop-limit入口不是止损保护，trail_points=low是价格冒充tick；已有负号/ID候选只修局部。",
+    "patches": [],
+    "resolved": [
+      "空头风险距离第二比较使用反向差值，距离大于10.40仍通过。",
+      "多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。"
+    ],
+    "remaining": [
+      "EMA回撤突破有可解释条件，但stop-limit入口不是止损保护，trail_points=low是价格冒充tick；已有负号/ID候选只修局部。 后续验证：不同价格/mintick、停止触发后限价未成交、风险>10.40拒绝、多空保护与时区测试。",
+      "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+    ],
+    "validation_plan": [
+      "逐项核验已有changes.patch，原生编译后对比订单序列；trail_points=low仍混合价格与tick；stop-limit入场意图需原生订单验证。；修复候选未原生编译/回测；旧排名收益不适用。",
+      "不同价格/mintick、停止触发后限价未成交、风险>10.40拒绝、多空保护与时区测试。"
+    ]
+  }
+]

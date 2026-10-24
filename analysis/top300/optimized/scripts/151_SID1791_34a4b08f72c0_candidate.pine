@@ -1,0 +1,151 @@
+//@version=6
+// OPT-T300 SID 1791：本轮新候选·未回测
+// 原文件SHA256：c90e3feed6725cae827031f7564f22d6632b3777c2e8204f0879c334468295a8
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：动量自适应高斯通道多周期策略-Momentum-Adaptive-Gaussian-Channel-Multi-Period-Strategy.md
+// 原文件SHA256：c90e3feed6725cae827031f7564f22d6632b3777c2e8204f0879c334468295a8
+// SID：1791；原研究名单序号：21
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-02-08 00:00:00
+end: 2025-02-06 08:00:00
+period: 4h
+basePeriod: 4h
+exchanges: [{"eid":"Futures_Binance","currency":"DIA_USDT"}]
+*/
+strategy("Demo GPT - Gold Gaussian Strategy", overlay=true, commission_type=strategy.commission.percent, commission_value=0.1)
+
+// ====== INPUTS ======
+// Gaussian Channel
+lengthGC = input.int(144, "Gaussian Period", minval=20)
+poles = input.int(4, "Poles", minval=1, maxval=9)
+multiplier = input.float(1.414, "Volatility Multiplier", minval=1)
+
+// Stochastic RSI
+smoothK = input.int(3, "Stoch K", minval=1)
+lengthRSI = input.int(14, "RSI Length", minval=1)
+lengthStoch = input.int(14, "Stoch Length", minval=1)
+overbought = input.int(80, "Overbought Level", minval=50)
+
+// Seasonal Filter (corrected)
+startMonth = input.int(9, "Start Month (1-12)", minval=1, maxval=12)
+endMonth = input.int(2, "End Month (1-12)", minval=1, maxval=12)
+
+// Volatility Management
+atrLength = input.int(22, "ATR Length", minval=5)
+riskPercent = input.float(0.5, "Risk per Trade (%)", minval=0.1, step=0.1)
+
+// ====== GAUSSIAN CHANNEL ======
+f_filt9x(alpha, source, iterations) =>
+    float f = 0.0
+    float x = 1 - alpha
+    int m2 = iterations == 9 ? 36 : iterations == 8 ? 28 : iterations == 7 ? 21 : 
+           iterations == 6 ? 15 : iterations == 5 ? 10 : iterations == 4 ? 6 : 
+           iterations == 3 ? 3 : iterations == 2 ? 1 : 0
+    
+    int m3 = iterations == 9 ? 84 : iterations == 8 ? 56 : iterations == 7 ? 35 : 
+           iterations == 6 ? 20 : iterations == 5 ? 10 : iterations == 4 ? 4 : 
+           iterations == 3 ? 1 : 0
+    
+    int m4 = iterations == 9 ? 126 : iterations == 8 ? 70 : iterations == 7 ? 35 : 
+           iterations == 6 ? 15 : iterations == 5 ? 5 : iterations == 4 ? 1 : 0
+    
+    int m5 = iterations == 9 ? 126 : iterations == 8 ? 56 : iterations == 7 ? 21 : 
+           iterations == 6 ? 6 : iterations == 5 ? 1 : 0
+    
+    int m6 = iterations == 9 ? 84 : iterations == 8 ? 28 : iterations == 7 ? 7 : 
+           iterations == 6 ? 1 : 0
+    
+    int m7 = iterations == 9 ? 36 : iterations == 8 ? 8 : iterations == 7 ? 1 : 0
+    
+    int m8 = iterations == 9 ? 9 : iterations == 8 ? 1 : 0
+    int m9 = iterations == 9 ? 1 : 0
+    
+    f := math.pow(alpha, iterations) * nz(source) +
+      iterations * x * nz(f[1]) -
+      (iterations >= 2 ? m2 * math.pow(x, 2) * nz(f[2]) : 0) +
+      (iterations >= 3 ? m3 * math.pow(x, 3) * nz(f[3]) : 0) -
+      (iterations >= 4 ? m4 * math.pow(x, 4) * nz(f[4]) : 0) +
+      (iterations >= 5 ? m5 * math.pow(x, 5) * nz(f[5]) : 0) -
+      (iterations >= 6 ? m6 * math.pow(x, 6) * nz(f[6]) : 0) +
+      (iterations >= 7 ? m7 * math.pow(x, 7) * nz(f[7]) : 0) -
+      (iterations >= 8 ? m8 * math.pow(x, 8) * nz(f[8]) : 0) +
+      (iterations == 9 ? m9 * math.pow(x, 9) * nz(f[9]) : 0)
+    f
+
+f_pole(alpha, source, iterations) =>
+    float fn = na
+    float f1 = f_filt9x(alpha, source, 1)
+    float f2 = iterations >= 2 ? f_filt9x(alpha, source, 2) : na
+    float f3 = iterations >= 3 ? f_filt9x(alpha, source, 3) : na
+    float f4 = iterations >= 4 ? f_filt9x(alpha, source, 4) : na
+    float f5 = iterations >= 5 ? f_filt9x(alpha, source, 5) : na
+    float f6 = iterations >= 6 ? f_filt9x(alpha, source, 6) : na
+    float f7 = iterations >= 7 ? f_filt9x(alpha, source, 7) : na
+    float f8 = iterations >= 8 ? f_filt9x(alpha, source, 8) : na
+    float f9 = iterations == 9 ? f_filt9x(alpha, source, 9) : na
+    
+    fn := iterations == 1 ? f1 : 
+         iterations == 2 ? f2 : 
+         iterations == 3 ? f3 : 
+         iterations == 4 ? f4 : 
+         iterations == 5 ? f5 : 
+         iterations == 6 ? f6 : 
+         iterations == 7 ? f7 : 
+         iterations == 8 ? f8 : 
+         iterations == 9 ? f9 : na
+    [fn, f1]
+
+beta = (1 - math.cos(4 * math.asin(1) / lengthGC)) / (math.pow(1.414, 2 / poles) - 1)
+alpha = -beta + math.sqrt(math.pow(beta, 2) + 2 * beta)
+lag = int((lengthGC - 1) / (2 * poles))
+
+srcAdjusted = hlc3 + (hlc3 - hlc3[lag])
+[mainFilter, filt1] = f_pole(alpha, srcAdjusted, poles)
+[trFilter, tr1] = f_pole(alpha, ta.tr(true), poles)
+
+upperBand = mainFilter + trFilter * multiplier
+lowerBand = mainFilter - trFilter * multiplier
+
+// ====== STOCHASTIC RSI ======
+rsiValue = ta.rsi(close, lengthRSI)
+k = ta.sma(ta.stoch(rsiValue, rsiValue, rsiValue, lengthStoch), smoothK)
+stochSignal = k >= overbought
+
+// ====== SEASONAL FILTER (FIXED) ======
+currentMonth = month(time)
+// OPT-1791-01：季节逻辑固定OR只支持跨年；起月早于止月时全年均为真，须同时支持非跨年范围。
+// OPT-1791-01 保持：保留信号、默认参数、方向、仓位配置和Pine版本。
+// OPT-1791-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+inSeason = startMonth <= endMonth ? (currentMonth >= startMonth and currentMonth <= endMonth) : (currentMonth >= startMonth or currentMonth <= endMonth)
+
+// ====== VOLATILITY MANAGEMENT ======
+atr = ta.atr(atrLength)
+// OPT-T300-01 修改原因：ATR/价格或权益非正时不定仓，保留既有50%名义上限。
+// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+positionSize = not na(atr) and atr > 0 and close > 0 and strategy.equity > 0 ? math.min((strategy.equity * riskPercent/100) / atr, strategy.equity * 0.5 / close) : na
+
+// ====== TRADING LOGIC ======
+trendUp = mainFilter > mainFilter[1]
+priceAbove = close > upperBand
+longCondition = trendUp and priceAbove and stochSignal and inSeason
+
+exitCondition = ta.crossunder(close, lowerBand)
+
+// ====== EXECUTION ======
+// OPT-T300-02 修改原因：入口拒绝无效数量，避免NA触发默认定仓。
+// OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+if longCondition and not na(positionSize) and positionSize > 0
+    strategy.entry("Long", strategy.long, qty=positionSize)
+    
+if exitCondition
+    strategy.close("Long")
+
+// ====== VISUALIZATION ======
+plot(upperBand, "Upper Band", color=color.new(#00FF00, 0))
+plot(lowerBand, "Lower Band", color=color.new(#FF0000, 0))
+bgcolor(inSeason ? color.new(color.blue, 90) : na, title="Season Filter")

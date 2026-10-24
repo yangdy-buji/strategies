@@ -1,0 +1,60 @@
+{
+  "rank": 269,
+  "sid": 5493,
+  "source_sha256": "40fc6d17fc04dcc98c2b5bf89d7b8ba548a4df526ba7303788580ec288cd5afb",
+  "base_kind": "original",
+  "base_sha256": "022e1d903e7484ab6d335238d99a795a8c53b6623f6901657f5dd2c837893f64",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "新增候选：把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。",
+  "patches": [
+    {
+      "old": "    strategy.exit(\"Profit Target\", \"Pullback Entry\", limit=close + (profitTarget * syminfo.mintick))\n    strategy.exit(\"Trailing Stop\", \"Pullback Entry\", stop=close - (trailingStop * syminfo.mintick), trail_points=trailingStop)",
+      "new": "    strategy.exit(\"Profit Target\", \"Pullback Entry\", limit=close + (profitTarget * syminfo.mintick), stop=close - (trailingStop * syminfo.mintick))",
+      "reason": "把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。",
+      "preserved": "原profitTarget、trailingStop数值与close锚定公式；Initial Entry退出不改。",
+      "validation_cases": [
+        "Pullback持仓保护不被目标预留耗尽；不声称已实现追踪。"
+      ]
+    }
+  ],
+  "resolved": [
+    "把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。"
+  ],
+  "remaining": [
+    "真正追踪的激活与offset设计暂缓；当前stop仍随close放宽，目标仍移动。",
+    "Initial Entry仍仅信号退出；两入口同时出现的优先级未改。",
+    "未原生编译、成交回放或回测。",
+    "持仓后才提交Pullback保护，首成交柱到首次计算之间仍有保护空窗。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "Pullback与Initial两入口逐项测试第一目标预留、止损覆盖和稀疏信号数量。"
+  ],
+  "id": "50bf1e07f343",
+  "title": "轨迹追踪指数移动均线策略Trend-Following-Exponential-Moving-Average-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/269_SID5493_50bf1e07f343_candidate.pine",
+  "original": "originals/269_SID5493_50bf1e07f343.pine",
+  "baseline": "baselines/269_SID5493_50bf1e07f343.pine",
+  "changes": "changes/269_SID5493_50bf1e07f343.txt",
+  "card": "cards/50bf1e07f343.html",
+  "diff": "changes/269_SID5493_50bf1e07f343.patch",
+  "original_diff": "changes/269_SID5493_50bf1e07f343.original.patch",
+  "script_sha256": "028825479dda2b28931bc104bfa95fe63c8302350759b4fce96cb5f050e02bce",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "ead683e4d2c9f3f343cb90b476e6e2e6a3dcbb46299c6498dbbc818b66bbc540",
+    "review": "Pullback Entry的全量目标与固定stop合入同一括号，移除缺offset的trail_points及被全量目标挤掉的独立止损；保持close锚定100/50个mintick、持仓条件、Initial Entry原退出。该修复得到的是移动固定价括号，不能称为真正跟踪止损。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "真正追踪的激活与offset设计暂缓；当前stop仍随close放宽，目标仍移动。",
+      "Initial Entry仍仅信号退出；两入口同时出现的优先级未改。",
+      "未原生编译、成交回放或回测。",
+      "持仓后才提交Pullback保护，首成交柱到首次计算之间仍有保护空窗。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

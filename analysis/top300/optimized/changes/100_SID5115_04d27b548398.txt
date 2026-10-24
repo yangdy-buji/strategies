@@ -1,0 +1,34 @@
+{
+  "rank": 100,
+  "sid": 5115,
+  "source_sha256": "2fe5d05e77386d2de9455e2039e4bb47c49304a37c75318ececccc9d3718a161",
+  "base_kind": "original",
+  "base_sha256": "e6d02c65eded17a6f34bada7c7ceb9c4cd96608d43fe8662d42f2b2530918638",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：连续滚动低点下破时低吸、滚动高点抬升时退出，逆势回归意图清楚。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "numberOfLows对应更新后的滚动低点序列而非独立枢轴；没有亏损或超时保护，下降趋势可能长期占仓。 暂缓原因：确认入场可能减少快速反弹利润，止损可能降低胜率。"
+  ],
+  "validation_plan": [
+    "逐步滚出旧低点与产生新低两类路径核对prevLow链，模拟单边下跌和高点未创新。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "04d27b548398",
+  "title": "突破新低回归均线策略Mean-Reversion-Breakout-Low-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/100_SID5115_04d27b548398_original.pine",
+  "original": "originals/100_SID5115_04d27b548398.pine",
+  "baseline": "baselines/100_SID5115_04d27b548398.pine",
+  "changes": "changes/100_SID5115_04d27b548398.txt",
+  "card": "cards/04d27b548398.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e6d02c65eded17a6f34bada7c7ceb9c4cd96608d43fe8662d42f2b2530918638",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

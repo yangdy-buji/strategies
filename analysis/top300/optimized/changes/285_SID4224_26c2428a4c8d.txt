@@ -1,0 +1,37 @@
+{
+  "rank": 285,
+  "sid": 4224,
+  "source_sha256": "67dcdf7b16b4e8bced24c76853fca11c05e3aa1c3cb336e8bde3ff401457267c",
+  "base_kind": "prior_candidate",
+  "base_sha256": "ab47225164a51340017e8e270206c3dbf323e80bdab70a460659e4ddc3ef3998",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；EMA25>50>100时价格上穿25买两个0.5份ID，分别1R/1.5R目标；跌破EMA100退出。 三EMA趋势回调分两档止盈可解释；qty=.5是半份而非权益50%，默认加仓与重复信号重锚都需确认。",
+  "patches": [],
+  "resolved": [
+    "Buy1未覆盖stop_loss条件，只有Buy2有止损；给Buy1增加同一止损触发，保留份额与默认加仓配置。"
+  ],
+  "remaining": [
+    "三EMA趋势回调分两档止盈可解释；qty=.5是半份而非权益50%，默认加仓与重复信号重锚都需确认。 后续验证：低价/高价股、两笔同根入场、重复信号、两档均止损和tick对齐验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；默认pyramiding可能只允许Buy1，两个半份订单是否同时成交需原生验证；入场条件会重写持仓锚点。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "低价/高价股、两笔同根入场、重复信号、两档均止损和tick对齐验证。"
+  ],
+  "id": "26c2428a4c8d",
+  "title": "多重均线黄金交叉分批止盈策略-Multi-EMA-Golden-Cross-Strategy-with-Tiered-Take-Profit",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/285_SID4224_26c2428a4c8d_candidate.pine",
+  "original": "originals/285_SID4224_26c2428a4c8d.pine",
+  "baseline": "baselines/285_SID4224_26c2428a4c8d.pine",
+  "changes": "changes/285_SID4224_26c2428a4c8d.txt",
+  "card": "cards/26c2428a4c8d.html",
+  "diff": "changes/285_SID4224_26c2428a4c8d.patch",
+  "original_diff": "changes/285_SID4224_26c2428a4c8d.original.patch",
+  "script_sha256": "8645b30e460aa64846d4fea5c4e6e2908e693cc9aa331ea61f3fa237d2599cbe",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

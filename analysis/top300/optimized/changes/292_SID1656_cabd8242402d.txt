@@ -1,0 +1,34 @@
+{
+  "rank": 292,
+  "sid": 1656,
+  "source_sha256": "04cbbc1d6b01aaac029c8cb47d57f4609078e0ea669f7e136dce9eaec715f2dd",
+  "base_kind": "original",
+  "base_sha256": "c0429f7d10da02523091860e6b50e33410db022df0b7add2d244a700bbace1cf",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；突破前20根高点且SMA8在32上做多，3ATR初始止损，均线死叉退出。 唐奇安突破加SMA趋势可解释；trail_offset写入绝对价格且缺激活参数，实际不能按注释理解为跟踪。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "唐奇安突破加SMA趋势可解释；trail_offset写入绝对价格且缺激活参数，实际不能按注释理解为跟踪。 后续验证：ATR3倍距离与不同mintick转换、未激活/已激活回撤及重复突破重锚测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "ATR3倍距离与不同mintick转换、未激活/已激活回撤及重复突破重锚测试。"
+  ],
+  "id": "cabd8242402d",
+  "title": "动态震荡突破策略Dynamic-Oscillation-Breakout-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/292_SID1656_cabd8242402d_original.pine",
+  "original": "originals/292_SID1656_cabd8242402d.pine",
+  "baseline": "baselines/292_SID1656_cabd8242402d.pine",
+  "changes": "changes/292_SID1656_cabd8242402d.txt",
+  "card": "cards/cabd8242402d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c0429f7d10da02523091860e6b50e33410db022df0b7add2d244a700bbace1cf",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

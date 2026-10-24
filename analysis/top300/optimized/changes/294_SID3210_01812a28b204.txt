@@ -1,0 +1,37 @@
+{
+  "rank": 294,
+  "sid": 3210,
+  "source_sha256": "0041722f92819a457bb5a0593c8b9ce1a305164384e15d4de12bd3dc8f71f224",
+  "base_kind": "prior_candidate",
+  "base_sha256": "7bf2bd410254cc3bb7c92fd2b0c0abb4560022db977267971f7262774168a046",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；9/21 SMA金叉做多，均价上1.5%下1%止盈止损仅随金叉提交。 SMA9/21金叉配1.5%/1%括号清楚，但原entry信号时均价尚不可用，已有持续保护候选必须验证首根空窗。",
+  "patches": [],
+  "resolved": [
+    "初始金叉时均价为na，成交后若无新金叉便没有退出订单。"
+  ],
+  "remaining": [
+    "SMA9/21金叉配1.5%/1%括号清楚，但原entry信号时均价尚不可用，已有持续保护候选必须验证首根空窗。 后续验证：金叉后下一根同时触止损/止盈、成交后不再金叉、隔夜跳空三类原生测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；默认只收盘计算，首笔成交bar在下一次计算前尚无有效保护；原源码已有此缺陷。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "金叉后下一根同时触止损/止盈、成交后不再金叉、隔夜跳空三类原生测试。"
+  ],
+  "id": "01812a28b204",
+  "title": "基于均线交叉的长线追涨策略SMA-Crossover-Bullish-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/294_SID3210_01812a28b204_candidate.pine",
+  "original": "originals/294_SID3210_01812a28b204.pine",
+  "baseline": "baselines/294_SID3210_01812a28b204.pine",
+  "changes": "changes/294_SID3210_01812a28b204.txt",
+  "card": "cards/01812a28b204.html",
+  "diff": "changes/294_SID3210_01812a28b204.patch",
+  "original_diff": "changes/294_SID3210_01812a28b204.original.patch",
+  "script_sha256": "894e0c3818337df1438783d2172d29239f51f30916e61a056b075cb1b5788202",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

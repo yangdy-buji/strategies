@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 3301：沿用旧候选·未回测
++// 原文件SHA256：3606420c72ec2e7b8b4e83f7d1698da8a66c33cc1c1d3316c990ebdd6a9da3f8
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于多重指标筛选与动态止损的自动交易策略Auto-Trading-Strategy-Based-on-Multiple-Indicators-and-Dynamic-Stop-Loss.md
+ // 原文件SHA256：3606420c72ec2e7b8b4e83f7d1698da8a66c33cc1c1d3316c990ebdd6a9da3f8

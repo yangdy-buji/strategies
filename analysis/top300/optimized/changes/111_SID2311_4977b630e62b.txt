@@ -1,0 +1,64 @@
+{
+  "rank": 111,
+  "sid": 2311,
+  "source_sha256": "d5ab9dc58c9b827859bcad7f28fafd94e715b62caeade05825b986ea055ff7a4",
+  "base_kind": "original",
+  "base_sha256": "758283aeb13c9cdcb207f800060a7fb9395080fdf5b93612b0618a87a446d7fe",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "订单使用交叉布尔值，零均值交叉不丢失。；订单使用交叉布尔值，零均值交叉不丢失。",
+  "patches": [
+    {
+      "old": "when=crossoverBull and",
+      "new": "when=ta.crossover(currMacd, signal) and",
+      "reason": "订单使用交叉布尔值，零均值交叉不丢失。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "MACD从-1到1、signal从1到-1，均值0仍触发金叉。"
+      ]
+    },
+    {
+      "old": "when=crossoverBear and",
+      "new": "when=ta.crossunder(currMacd, signal) and",
+      "reason": "订单使用交叉布尔值，零均值交叉不丢失。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "MACD从-1到1、signal从1到-1，均值0仍触发金叉。"
+      ]
+    }
+  ],
+  "resolved": [
+    "订单使用交叉布尔值，零均值交叉不丢失。",
+    "订单使用交叉布尔值，零均值交叉不丢失。"
+  ],
+  "remaining": [
+    "保留原六柱RSI窗口；未增加风险退出。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造MACD=-1到1、signal=1到-1的交叉且RSI窗口满足，旧均值0漏单而布尔为真；原生确认数量与时序。"
+  ],
+  "id": "4977b630e62b",
+  "title": "双重强力指标策略Double-Strong-Indicators-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/111_SID2311_4977b630e62b_candidate.pine",
+  "original": "originals/111_SID2311_4977b630e62b.pine",
+  "baseline": "baselines/111_SID2311_4977b630e62b.pine",
+  "changes": "changes/111_SID2311_4977b630e62b.txt",
+  "card": "cards/4977b630e62b.html",
+  "diff": "changes/111_SID2311_4977b630e62b.patch",
+  "original_diff": "changes/111_SID2311_4977b630e62b.original.patch",
+  "script_sha256": "66c0eef261013bfc5834a98725ddfe363237c6f78957f61d2c34d4b186515d8e",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "0aee0ba12ae86b993f3465c227d94a2539918da513656f6b6341f266857005e3",
+    "review": "v5原订单把交叉处MACD均值当布尔，均值恰零会漏单；生成结果订单直接用crossover/crossunder，调用在全局订单参数首项，逐柱求值。六柱RSI窗口、buy入场/关闭ID及默认数量保持。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保留原六柱RSI窗口；未增加风险退出。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

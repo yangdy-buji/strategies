@@ -1,0 +1,34 @@
+{
+  "rank": 46,
+  "sid": 2106,
+  "source_sha256": "e53f93e98f9646171ef3691668c71072efd077dbf722d6788f3507627b9502a9",
+  "base_kind": "original",
+  "base_sha256": "356e96dce57f649eb2cd792268bed8b9d7aed398ad821ae2c93ecd154a82d55f",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：EMA差值越过ATR缓冲区做多、越过负缓冲区退出，尺度统一且形成迟滞区。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "中性区继续持仓，30/60/60与0.3倍ATR选择需稳健性验证，注释中做空实际被关闭。 暂缓原因：缩小缓冲提高响应但增加噪声交易。"
+  ],
+  "validation_plan": [
+    "0.2/0.3/0.4倍ATR、不同预热长度、快速反转与零ATR边界测试。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "45f896bb7c36",
+  "title": "双均线趋势追踪量化策略-Dual-EMA-Trend-Following-Quantitative-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/046_SID2106_45f896bb7c36_original.pine",
+  "original": "originals/046_SID2106_45f896bb7c36.pine",
+  "baseline": "baselines/046_SID2106_45f896bb7c36.pine",
+  "changes": "changes/046_SID2106_45f896bb7c36.txt",
+  "card": "cards/45f896bb7c36.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "356e96dce57f649eb2cd792268bed8b9d7aed398ad821ae2c93ecd154a82d55f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

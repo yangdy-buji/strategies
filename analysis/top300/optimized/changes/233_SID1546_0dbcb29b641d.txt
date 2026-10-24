@@ -1,0 +1,34 @@
+{
+  "rank": 233,
+  "sid": 1546,
+  "source_sha256": "30b0477884adc30fd7285451d12f733659115d33dd7f283c46f9fc21a6b64f32",
+  "base_kind": "original",
+  "base_sha256": "4464495fa99d009454ba810f9497e50dd9fdc558e7fab2956e22c16b46da81f6",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；在SMA50/200上且回落三个区间中点均值时做多，以动态78.6%水平止损和2R止盈。 均线之上回调买入有趋势回撤逻辑，但78.6%距离对三段总和取值而基准取平均，尺度混用。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线之上回调买入有趋势回撤逻辑，但78.6%距离对三段总和取值而基准取平均，尺度混用。 后续验证：三个相同区间高110低100时手算目标应否为102.14，并检查负止损。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "三个相同区间高110低100时手算目标应否为102.14，并检查负止损。"
+  ],
+  "id": "0dbcb29b641d",
+  "title": "动态斐波那契回撤交易策略-Dynamic-Fibonacci-Retracement-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/233_SID1546_0dbcb29b641d_original.pine",
+  "original": "originals/233_SID1546_0dbcb29b641d.pine",
+  "baseline": "baselines/233_SID1546_0dbcb29b641d.pine",
+  "changes": "changes/233_SID1546_0dbcb29b641d.txt",
+  "card": "cards/0dbcb29b641d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "4464495fa99d009454ba810f9497e50dd9fdc558e7fab2956e22c16b46da81f6",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

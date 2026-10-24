@@ -1,0 +1,20 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 803：本轮新候选·未回测
++// 原文件SHA256：60e45c45d07888a62d994b63d63ace6743d04311af50b2981e9c98f125f3a3af
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-05-01 00:00:00
+ end: 2024-05-31 23:59:59
+@@ -41,7 +44,9 @@
+ var float stopLossLevel = na
+ var float takeProfitLevel = na
+ 
+-if (buyCondition)
++// OPT-T300-01 修改原因：仅空仓初始化信号收盘锚，重复RSI下穿不刷新已有固定止损。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if (buyCondition and strategy.position_size == 0)
+     entryPrice := close
+     stopLossLevel := entryPrice * (1 - stopLossPct)
+     takeProfitLevel := entryPrice * (1 + takeProfitPct)

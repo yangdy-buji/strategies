@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 735：沿用旧候选·未回测
++// 原文件SHA256：a82e0b961539d2b7d6cb3a9df58a2eadf4c7abbaeb0d0e24229cb16d294bf610
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：RSI50_EMA长仓策略-RSI50_EMA-Long-Only-Strategy.md
+ // 原文件SHA256：a82e0b961539d2b7d6cb3a9df58a2eadf4c7abbaeb0d0e24229cb16d294bf610

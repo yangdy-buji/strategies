@@ -1,0 +1,37 @@
+{
+  "rank": 238,
+  "sid": 2168,
+  "source_sha256": "c2726e23faacfcacebbfab3b610b661f783fa781271fe6dba58ef2d99d558f97",
+  "base_kind": "prior_candidate",
+  "base_sha256": "4eb561c2df58d8ce59da757c70a9834647185b453f2289b119754b9efdd46345",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；两组EMA差RSI及EMA RSI上穿零分别开多，按启用组数均分权益；下穿零或超过终日分别平仓。 所谓双时间轴实际是同周期两种RSI趋势长度；两开关皆关时count=0，默认不加仓可能令两腿不能独立持有。",
+  "patches": [],
+  "resolved": [
+    "恢复入场窗口。"
+  ],
+  "remaining": [
+    "所谓双时间轴实际是同周期两种RSI趋势长度；两开关皆关时count=0，默认不加仓可能令两腿不能独立持有。 后续验证：四种开关组合、同根双信号、单腿退出另一腿仍持有验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；两个Trade开关皆false时count=0导致Amount无效，未修。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "四种开关组合、同根双信号、单腿退出另一腿仍持有验证。"
+  ],
+  "id": "a9f40db0eff2",
+  "title": "双时间轴波动率价差交易策略Dual-Timeframe-Volatility-Spread-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/238_SID2168_a9f40db0eff2_candidate.pine",
+  "original": "originals/238_SID2168_a9f40db0eff2.pine",
+  "baseline": "baselines/238_SID2168_a9f40db0eff2.pine",
+  "changes": "changes/238_SID2168_a9f40db0eff2.txt",
+  "card": "cards/a9f40db0eff2.html",
+  "diff": "changes/238_SID2168_a9f40db0eff2.patch",
+  "original_diff": "changes/238_SID2168_a9f40db0eff2.original.patch",
+  "script_sha256": "19d7e364bca62c9d9e972093ca9fd97eeea8ae2dd8a3b9a1a0d5d7105c07361e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

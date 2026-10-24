@@ -1,0 +1,37 @@
+{
+  "rank": 208,
+  "sid": 3322,
+  "source_sha256": "8637e9238b926156759354b8d49f1b3cbeff4a7e9e6ef7fe0aeee08dd75207bf",
+  "base_kind": "prior_candidate",
+  "base_sha256": "1763265e8c7cc25e1047475f62d04fe919db2fd853686f5be02f4f6f707d328f",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；布林%B低位做多，均价百分比止盈止损。 %B低于0的逆势买入可解释，但100%止损为零价且日期参数未使用；已有持续保护补丁不是风险控制完成。",
+  "patches": [],
+  "resolved": [
+    "原保护单仅在入场信号为真时提交；改为确认持多仓时持续提交，空仓不提交。"
+  ],
+  "remaining": [
+    "%B低于0的逆势买入可解释，但100%止损为零价且日期参数未使用；已有持续保护补丁不是风险控制完成。 后续验证：验证默认零止损、零带宽、首笔成交后保护以及日期截止后的持仓。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；默认100%止损产生零止损价；首次成交到后续计算之间保护覆盖未验证。；start_date/end_date仍未接入，本轮未扩大范围。；未原生Pine编译/回测；静态及小范围模型不等于订单成交模拟，旧版收益不适用。",
+    "验证默认零止损、零带宽、首笔成交后保护以及日期截止后的持仓。"
+  ],
+  "id": "552c8a949b0b",
+  "title": "基于布林带B指标的长线交易策略Long-Term-Trading-Strategy-Based-on-Bollinger-Bands-B-Indicator",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/208_SID3322_552c8a949b0b_candidate.pine",
+  "original": "originals/208_SID3322_552c8a949b0b.pine",
+  "baseline": "baselines/208_SID3322_552c8a949b0b.pine",
+  "changes": "changes/208_SID3322_552c8a949b0b.txt",
+  "card": "cards/552c8a949b0b.html",
+  "diff": "changes/208_SID3322_552c8a949b0b.patch",
+  "original_diff": "changes/208_SID3322_552c8a949b0b.original.patch",
+  "script_sha256": "bf18dd5e965a252abbc7a3a061be32d4c09ac4a7dd0cf04089c315bf9ff65461",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 98,
+  "sid": 841,
+  "source_sha256": "cd10bdb84c0c39d713ff6f375103a0e5d8ebbc5903f8aaae5bf649a231c99b4d",
+  "base_kind": "original",
+  "base_sha256": "ecffaaeeaedf6d3fc936b352bf6f7115e79947493dcec2adddb49bc46a07c078",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：RSI35回升买入、75回落退出，存在可选紧急退出但默认关闭。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "入场后未到75时缺少默认失败退出，RSI10紧急门槛即使打开也不是固定价格损失上限。 暂缓原因：紧急出口会减少持有恢复收益并增加成交次数。"
+  ],
+  "validation_plan": [
+    "RSI36后直接下跌、是否经过10、盘中跳空及持仓成本的对照测试。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "add7a8e6f125",
+  "title": "RSI趋势追踪型加密货币策略RSI-Trend-Following-Crypto-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/098_SID841_add7a8e6f125_original.pine",
+  "original": "originals/098_SID841_add7a8e6f125.pine",
+  "baseline": "baselines/098_SID841_add7a8e6f125.pine",
+  "changes": "changes/098_SID841_add7a8e6f125.txt",
+  "card": "cards/add7a8e6f125.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ecffaaeeaedf6d3fc936b352bf6f7115e79947493dcec2adddb49bc46a07c078",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

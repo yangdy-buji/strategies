@@ -1,0 +1,34 @@
+{
+  "rank": 121,
+  "sid": 2848,
+  "source_sha256": "e1e428d68c7fb020922ab430d82cc665d088f8891641b91a058302807a2a92de",
+  "base_kind": "original",
+  "base_sha256": "6f762a70417e2e3361434c0cb5a34d62535ff4acd850c5ef9fd59028148a02ae",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：RSI上穿30做多、下穿70平多是清楚的反弹跟踪；实际没有做空，tf变量也不设置周期。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "下穿70出口只有先升过70才可能出现，弱反弹后再下跌可能长时间无退出。标题双向和tf=1不能当作执行事实。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造RSI从25升到55再跌至20的路径，检验无70交叉时风险与持仓长度。"
+  ],
+  "id": "b9342a16a21d",
+  "title": "基于RSI指标的双向交易策略RSI-based-Dual-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P2",
+  "script": "scripts/121_SID2848_b9342a16a21d_original.pine",
+  "original": "originals/121_SID2848_b9342a16a21d.pine",
+  "baseline": "baselines/121_SID2848_b9342a16a21d.pine",
+  "changes": "changes/121_SID2848_b9342a16a21d.txt",
+  "card": "cards/b9342a16a21d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "6f762a70417e2e3361434c0cb5a34d62535ff4acd850c5ef9fd59028148a02ae",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,52 @@
+// OPT-T300 SID 3528：本轮新候选·未回测
+// 原文件SHA256：d32bf5b21706129f576cf5d5c796d247502396bf13d412cf541025f83a3758b3
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-09-22 00:00:00
+end: 2023-10-22 00:00:00
+period: 4h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Mustafaozver
+
+//@version=4
+strategy("Escaping of Rate from Avarage By Mustafa OZVER", "EoRfA", overlay=false)
+//strategy("Escaping of Rate from Avarage By Mustafa OZVER", "EoRfA", overlay=false)
+
+src = input(ohlc4,"Source")
+FPrice = wma(src,3)
+len = input(17,"Length")
+
+stdev = stdev(FPrice,len)
+ema2 = ema(FPrice,len)
+
+// OPT-T300-01 修改原因：零方差标准化返回NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
+// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+Rate1 = not na(stdev) and stdev > 0 ? (FPrice - ema2) / stdev : na
+//bgcolor(color=((stdev/ema)>0.0015)?color.green:#00000000,transp=80)
+
+colorG = color.lime
+colorR = color.red
+
+hline(0,linestyle=hline.style_solid,editable=false)
+hline1=hline(1,linestyle=hline.style_dotted,editable=false)
+hlinen1=hline(-1,linestyle=hline.style_dotted,editable=false)
+fill(hline1,hlinen1,color=color.silver,transp=85,editable=true)
+
+//plot(Rate,color=(Rate>0?colorG:colorR),transp=75,style=plot.style_area,editable=false)
+
+plot(Rate1,title="ESC1",color=(Rate1>0?colorG:colorR),style=plot.style_line,linewidth=1,editable=true)
+
+BUYSIGNAL = Rate1 < -1 and change(Rate1) > 0
+SELLSIGNAL = Rate1 > 1 and change(Rate1) < 0
+
+if (BUYSIGNAL)
+    strategy.order("LONG1",true)
+    //strategy.close("SHORT1")
+
+if (SELLSIGNAL)
+   // strategy.order("SHORT1",false)
+    strategy.close("LONG1")

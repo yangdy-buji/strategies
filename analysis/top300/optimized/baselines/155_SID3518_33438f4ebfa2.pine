@@ -1,0 +1,68 @@
+/*backtest
+start: 2024-02-21 00:00:00
+end: 2025-02-18 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Binance","currency":"DOGE_USDT"}]
+*/
+
+//@version=6
+strategy("DCA-Based Swing Strategy (Risk $200) with Signals", overlay=true)
+
+// === Main Indicators ===
+// RSI for identifying oversold conditions
+rsi = ta.rsi(close, 14)
+
+// ATR for volatility estimation
+atr = ta.atr(14)
+
+// === Strategy Parameters ===
+// Risk management
+riskPerTrade = 200                       // Total risk ($200)
+atrRisk = 2 * atr                        // Risk in dollars per buy (2 ATR)
+positionSize = riskPerTrade / atrRisk    // Position size (shares)
+
+// DCA Parameters
+maxEntries = 4                           // Maximum of 4 buys
+takeProfitATR = 3                        // Take profit: 3 ATR
+
+// === Position Management ===
+var float avgEntryPrice = na             // Average entry price
+var int entryCount = 0                   // Number of buys
+var line takeProfitLine = na             // Take profit line
+var line avgPriceLine = na               // Average entry price line
+
+// === Buy and Sell Conditions ===
+buyCondition = rsi < 30 and entryCount < maxEntries  // Buy when oversold
+if (buyCondition)
+    strategy.entry("DCA Buy", strategy.long, qty=positionSize)
+    
+    // Update the average entry price
+    avgEntryPrice := na(avgEntryPrice) ? close : (avgEntryPrice * entryCount + close) / (entryCount + 1)
+    entryCount += 1
+
+    // Display "BUY" signal on the chart
+    label.new(bar_index, low, "BUY", style=label.style_label_up, color=color.green, textcolor=color.white, size=size.normal)
+
+    // Update lines for average entry price and take profit
+    if (not na(takeProfitLine))
+        line.delete(takeProfitLine)
+    if (not na(avgPriceLine))
+        line.delete(avgPriceLine)
+    takeProfitPrice = avgEntryPrice + takeProfitATR * atr
+
+
+// Sell condition: Take profit = 3 ATR from average entry price
+takeProfitPrice = avgEntryPrice + takeProfitATR * atr
+if (close >= takeProfitPrice and entryCount > 0)
+    strategy.close("DCA Buy")
+    
+    // Reset parameters after closing
+    avgEntryPrice := na
+    entryCount := 0
+
+    // Remove lines after selling
+    if (not na(takeProfitLine))
+        line.delete(takeProfitLine)
+    if (not na(avgPriceLine))
+        line.delete(avgPriceLine)

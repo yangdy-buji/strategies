@@ -1,0 +1,34 @@
+{
+  "rank": 257,
+  "sid": 266,
+  "source_sha256": "e37380c99f5db73f2be5b247596f5e38d5f47d2d8dd3ace66cc58ee6b378f77e",
+  "base_kind": "original",
+  "base_sha256": "33b58845143a499ab28934c225bb37b1fafb757ad8607f4f4b737d8fabfb28a0",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；21/55 EMA交叉并同向位于200 EMA两侧固定100单位多空，RSI从超买或超卖返回退出。 均线顺势进场、RSI反向极值退出是动量到反转的混合模型；固定100份跨股票敞口不可比。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线顺势进场、RSI反向极值退出是动量到反转的混合模型；固定100份跨股票敞口不可比。 后续验证：价格10/1000同信号敞口对比、长期不触RSI退出及借券费用压力。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "价格10/1000同信号敞口对比、长期不触RSI退出及借券费用压力。"
+  ],
+  "id": "67cc37f743b8",
+  "title": "EMA-2155200",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/257_SID266_67cc37f743b8_original.pine",
+  "original": "originals/257_SID266_67cc37f743b8.pine",
+  "baseline": "baselines/257_SID266_67cc37f743b8.pine",
+  "changes": "changes/257_SID266_67cc37f743b8.txt",
+  "card": "cards/67cc37f743b8.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "33b58845143a499ab28934c225bb37b1fafb757ad8607f4f4b737d8fabfb28a0",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

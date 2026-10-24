@@ -1,0 +1,34 @@
+{
+  "rank": 70,
+  "sid": 3861,
+  "source_sha256": "7a3990428a8eefcbefc8dce16ee692cf8a615ccda91ceafff8ad52af44e60357",
+  "base_kind": "original",
+  "base_sha256": "215bb0f3f9f0d0b5a62d92e9bce2d54ffce7f51c0f3e3500321387c808d56802",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：均线多头排列中回撤入场并冻结ATR保护价，设计较完整。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "首次entry发出时position_size仍为0，exit需持仓后计算才提交，存在首个成交周期保护空窗；止损锚定信号close。 暂缓原因：启用成交后重算会改变历史计算顺序，需防乐观填单。"
+  ],
+  "validation_plan": [
+    "模拟次根跳空并触发保护位，记录第一张保护单创建时间及实际风险。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "38df119fd68d",
+  "title": "多均线趋势跟踪与ATR动态目标策略-Multi-EMA-Trend-Following-Strategy-with-Dynamic-ATR-Targets",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/070_SID3861_38df119fd68d_original.pine",
+  "original": "originals/070_SID3861_38df119fd68d.pine",
+  "baseline": "baselines/070_SID3861_38df119fd68d.pine",
+  "changes": "changes/070_SID3861_38df119fd68d.txt",
+  "card": "cards/38df119fd68d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "215bb0f3f9f0d0b5a62d92e9bce2d54ffce7f51c0f3e3500321387c808d56802",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

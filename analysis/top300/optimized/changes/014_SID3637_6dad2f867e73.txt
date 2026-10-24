@@ -1,0 +1,34 @@
+{
+  "rank": 14,
+  "sid": 3637,
+  "source_sha256": "e2d24fc4673dd3a85e91f96ec130dc92b1b34a8175d90a653c83e41797673fda",
+  "base_kind": "original",
+  "base_sha256": "8ad9a749c0e2c3cf21ae52992927c6ce0e65d5171e858c318c55207e7b634fab",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：RSI>60并站上快速Supertrend入场、跌破即退出，简单动量跟随结构合理。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "名称含止损但实际用收盘strategy.close而不是挂价格止损；周线建议与当前配置周期不同。 暂缓原因：盘中止损更及时但更易被日内噪声触发。"
+  ],
+  "validation_plan": [
+    "逐笔比较周线和日线同口径结果；模拟日内跌穿后收回、隔夜跳空及下一根成交价。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "6dad2f867e73",
+  "title": "基于趋势跟踪止损的动量交易策略Momentum-Trading-Strategy-Based-on-Trend-Tracking-Stop-Loss",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/014_SID3637_6dad2f867e73_original.pine",
+  "original": "originals/014_SID3637_6dad2f867e73.pine",
+  "baseline": "baselines/014_SID3637_6dad2f867e73.pine",
+  "changes": "changes/014_SID3637_6dad2f867e73.txt",
+  "card": "cards/6dad2f867e73.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "8ad9a749c0e2c3cf21ae52992927c6ce0e65d5171e858c318c55207e7b634fab",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

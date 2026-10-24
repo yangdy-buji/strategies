@@ -1,0 +1,65 @@
+{
+  "rank": 161,
+  "sid": 2943,
+  "source_sha256": "f4f2e0e3c7e993f8e619ab1861c9f4f3180b7cfc31b29e625549cd9f8792e852",
+  "base_kind": "prior_candidate",
+  "base_sha256": "ecc446c29df342b99533562e1024a2828c6982dd36295a3cfd92f0f813518fff",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "独立风控设计实验：收盘止损脱离绿色信号门禁。；独立风控设计实验：非收盘模式保护单不依赖绿色信号。",
+  "patches": [
+    {
+      "old": "close < stop and waitForCloseBeforeStop and linRegColor == color.green",
+      "new": "close < stop and waitForCloseBeforeStop",
+      "reason": "独立风控设计实验：收盘止损脱离绿色信号门禁。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "红/橙/灰条件下close跌破stop，仍执行保护；保留收盘模式。"
+      ]
+    },
+    {
+      "old": "when=not waitForCloseBeforeStop and linRegColor == color.green",
+      "new": "when=not waitForCloseBeforeStop",
+      "reason": "独立风控设计实验：非收盘模式保护单不依赖绿色信号。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "非收盘模式在全部颜色提交已有stop；止损数值不变。"
+      ]
+    }
+  ],
+  "resolved": [
+    "原日期门禁恒真；恢复包含边界的日期范围，只作用于原入场条件。",
+    "独立风控设计实验：收盘止损脱离绿色信号门禁。",
+    "独立风控设计实验：非收盘模式保护单不依赖绿色信号。"
+  ],
+  "remaining": [
+    "删除颜色门禁会改变保护交易集合，明确归类独立design_experiment；旧日期修复继续保留。",
+    "原生保护单撮合与跳空回放尚未执行。"
+  ],
+  "validation_plan": [
+    "枚举四种颜色下跌破同一stop，核对是否符合明确风险政策；测试窗外继续保护。"
+  ],
+  "id": "796b8b9f4242",
+  "title": "基于Vix修复线性回归的低点捕捉策略Vix-Fix-Linear-Regression-Bottom-Fishing-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/161_SID2943_796b8b9f4242_candidate.pine",
+  "original": "originals/161_SID2943_796b8b9f4242.pine",
+  "baseline": "baselines/161_SID2943_796b8b9f4242.pine",
+  "changes": "changes/161_SID2943_796b8b9f4242.txt",
+  "card": "cards/796b8b9f4242.html",
+  "diff": "changes/161_SID2943_796b8b9f4242.patch",
+  "original_diff": "changes/161_SID2943_796b8b9f4242.original.patch",
+  "script_sha256": "386c080b06d78b85140c9770519628cf9a5225728d5933878a3e0bec659bb3f5",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "1b2a774c0a49ef8e293f4192e329f7f5171ffafc7121f01abe118e32a5b050a3",
+    "review": "v4仅移除两处linRegColor绿色限制；waitForCloseBeforeStop仍选择收盘close与strategy.exit保护单，两者ID匹配Long。既有日期门禁和vix状态保留；改变止损交易集合已定为独立风控实验。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "删除颜色门禁会改变保护交易集合，明确归类独立design_experiment；旧日期修复继续保留。",
+      "原生保护单撮合与跳空回放尚未执行。"
+    ]
+  }
+}

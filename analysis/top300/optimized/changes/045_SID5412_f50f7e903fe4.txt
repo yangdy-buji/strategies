@@ -1,0 +1,34 @@
+{
+  "rank": 45,
+  "sid": 5412,
+  "source_sha256": "d98d0139e6e8f8b7ba27ece4b47cfdcc0d8ecba3821de88b0a9a912fb07419b0",
+  "base_kind": "original",
+  "base_sha256": "e40e3b4dbce58b7d740ac135f95918e3fec8e057e727ddb4b39362e82f23eac9",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：EMA10/30金叉与长线斜率确认，另有跨130线入场，退出统一10/30死叉，逻辑可读。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "所谓additional entry默认pyramiding未开启并不意味着实际加仓；两个入场来源应分开统计。 暂缓原因：开启加仓会显著改变敞口，不能当作无害优化。"
+  ],
+  "validation_plan": [
+    "记录每次入场来自哪个条件、被拒绝的重复入场及两条件同根情况。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "f50f7e903fe4",
+  "title": "趋势跟踪型三重指数移动平均线量化交易策略-Triple-EMA-Trend-Following-Quantitative-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/045_SID5412_f50f7e903fe4_original.pine",
+  "original": "originals/045_SID5412_f50f7e903fe4.pine",
+  "baseline": "baselines/045_SID5412_f50f7e903fe4.pine",
+  "changes": "changes/045_SID5412_f50f7e903fe4.txt",
+  "card": "cards/f50f7e903fe4.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e40e3b4dbce58b7d740ac135f95918e3fec8e057e727ddb4b39362e82f23eac9",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

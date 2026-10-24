@@ -1,0 +1,35 @@
+{
+  "rank": 108,
+  "sid": 1180,
+  "source_sha256": "c11197681490290fcf2f7efd843dea3fc182c780c781132f8397febd7cb60df6",
+  "base_kind": "original",
+  "base_sha256": "a15894a53342ac8339f9fa1215819f8ff1d74dc9da8e2366c46626604e42e374",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：固定信号ATR、成交ATR或只收紧追踪三种保护不同；现有动态ATR规则不足以唯一选择。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "固定信号ATR、成交ATR或只收紧追踪三种保护不同；现有动态ATR规则不足以唯一选择。",
+    "每柱用当前low和ATR重算止损，价格下跌可下移保护；目标跟随当前close上移。死叉退出还要求同柱RSI<50且放量，错过该柱可能继续持仓。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造下跌同时ATR增大案例确认止损不可无意放宽；测试死叉无量后持续下跌与目标不断上移场景。"
+  ],
+  "id": "b2709f45760a",
+  "title": "三均线交叉趋势跟踪策略结合RSI和成交量确认系统-Triple-EMA-Crossover-Trend-Following-Strategy-with-RSI-and-Volume-Confirmation-System",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/108_SID1180_b2709f45760a_original.pine",
+  "original": "originals/108_SID1180_b2709f45760a.pine",
+  "baseline": "baselines/108_SID1180_b2709f45760a.pine",
+  "changes": "changes/108_SID1180_b2709f45760a.txt",
+  "card": "cards/b2709f45760a.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a15894a53342ac8339f9fa1215819f8ff1d74dc9da8e2366c46626604e42e374",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

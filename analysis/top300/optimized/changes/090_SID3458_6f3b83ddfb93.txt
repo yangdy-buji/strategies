@@ -1,0 +1,55 @@
+{
+  "rank": 90,
+  "sid": 3458,
+  "source_sha256": "19c320d19213627753b232095f4bb5356b42272130c9a0eb133f4f56d087a704",
+  "base_kind": "original",
+  "base_sha256": "90dd7d9fa834140ffd5061edaa4a4abc1ea25ff1a73d7399aa3dc5843035c91e",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "累计效率比在无价格变动时回退0，保持均值状态连续；加载起点敏感性仍需独立滚动窗口实验。",
+  "patches": [
+    {
+      "old": "    net / total",
+      "new": "    total == 0 ? 0.0 : net / total",
+      "reason": "首根及累计平价段total=0时效率比取0，让均值保留而非被NA打断。",
+      "preserved": "从首根累计的start/total及后续指数带公式保留；不改变历史起点依赖。",
+      "validation_cases": [
+        "net0 total0时alpha0；净变动4总变动4时alpha1；2/4时0.5。"
+      ]
+    }
+  ],
+  "resolved": [
+    "首根及累计平价段total=0时效率比取0，让均值保留而非被NA打断。"
+  ],
+  "remaining": [
+    "start与total仍从加载首根累计，不同历史起点会改变效率比和后续交易；滚动窗口长度不可从源码唯一推出。",
+    "原生v4编译、跨加载起点与均值/偏差完整序列回放尚未执行；历史起点依赖保留。"
+  ],
+  "validation_plan": [
+    "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+    "从不同起始日期加载同一末段，比较alpha、带和订单；测试恒定价格后首次跳变。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "6f3b83ddfb93",
+  "title": "基于时间序列数据的自适应动态阈值策略-Time-Series-Adaptive-Dynamic-Threshold-Strategy-Based-on-Equity-Data",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/090_SID3458_6f3b83ddfb93_candidate.pine",
+  "original": "originals/090_SID3458_6f3b83ddfb93.pine",
+  "baseline": "baselines/090_SID3458_6f3b83ddfb93.pine",
+  "changes": "changes/090_SID3458_6f3b83ddfb93.txt",
+  "card": "cards/6f3b83ddfb93.html",
+  "diff": "changes/090_SID3458_6f3b83ddfb93.patch",
+  "original_diff": "changes/090_SID3458_6f3b83ddfb93.original.patch",
+  "script_sha256": "3803715d57b7c66ad300018bdb5368eb92812a193d13b9f177bad1efd9547e0e",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "c9007b19ada200c32b9aa7f841642978187519f3cce89a3514a44521c58ab5ef",
+    "review": "已复核v4完整er与pine_ema递推及生成diff：仅累计total精确0时alpha归0；首根mean仍以src初始化，后续平价时mean保持、dev保持0，第一次价格跳变net/total仍为1。累计start/total无变更，NA输入不会被广泛nz填充。生成注释保留函数缩进。测试读取真实er返回表达式而非另一套公式，验证零/趋势/折返标量结果；递归上下文另作人工复核。",
+    "remaining": [
+      "原生v4编译、跨加载起点与均值/偏差完整序列回放尚未执行；历史起点依赖保留。"
+    ]
+  }
+}

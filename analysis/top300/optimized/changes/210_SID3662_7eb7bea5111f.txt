@@ -1,0 +1,34 @@
+{
+  "rank": 210,
+  "sid": 3662,
+  "source_sha256": "d43e777391c8e438ba093dd1d9e66a4c8468e298ea9f62fd153ef340989f836a",
+  "base_kind": "original",
+  "base_sha256": "9d075fb6de1e0f35c7d7ed5039dde483e153adbbfdc03304287ba6de988df8ba",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；成交量流指数下穿其波动下轨买入、上穿上轨卖出；同向strategy.order加1单位，反向先平仓，空仓再入场。 VFI带内回归规则清楚，但信号为数值vfima、when使用中间价格隐式布尔，且order可不断增仓。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "VFI带内回归规则清楚，但信号为数值vfima、when使用中间价格隐式布尔，且order可不断增仓。 后续验证：vfima=0、连续同向信号、零成交量时验证信号及累计数量。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "vfima=0、连续同向信号、零成交量时验证信号及累计数量。"
+  ],
+  "id": "7eb7bea5111f",
+  "title": "基于量价弥长计的波动力量策略VB-Strategy-Based-on-Volume-Balances",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/210_SID3662_7eb7bea5111f_original.pine",
+  "original": "originals/210_SID3662_7eb7bea5111f.pine",
+  "baseline": "baselines/210_SID3662_7eb7bea5111f.pine",
+  "changes": "changes/210_SID3662_7eb7bea5111f.txt",
+  "card": "cards/7eb7bea5111f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9d075fb6de1e0f35c7d7ed5039dde483e153adbbfdc03304287ba6de988df8ba",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

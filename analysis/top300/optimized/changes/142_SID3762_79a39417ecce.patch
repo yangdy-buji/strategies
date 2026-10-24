@@ -1,0 +1,30 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 3762：本轮新候选·未回测
++// 原文件SHA256：e1aab7e69324f8fc14e28909a498e4a764ada05bb1ed0476479e2f5d2060dc24
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：多周期RSI超卖反转策略-Multi-Timeframe-RSI-Oversold-Reversal-Strategy.md
+ // 原文件SHA256：e1aab7e69324f8fc14e28909a498e4a764ada05bb1ed0476479e2f5d2060dc24
+@@ -40,7 +43,9 @@
+ 
+ // Tracking the entry price, setting stop loss, and take profit
+ var float entryPrice = na
+-if (longCondition)
++// OPT-T300-01 修改原因：只在空仓信号锚定保护，持续超卖不覆盖已有入场锚。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if (longCondition and strategy.position_size == 0)
+     entryPrice := close
+ stopLossPrice = entryPrice * (1 - stopLossPercent)
+ takeProfitPrice = entryPrice * (1 + takeProfitPercent)
+@@ -74,5 +79,7 @@
+ ///add a more limit buy
+ morebuy=entryPrice*(0.98)
+ buymore=close<morebuy
+-if buymore
++// OPT-T300-02 修改原因：额外买入仅限真实持仓且无退出信号，旧锚不在平仓后触发新买入。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if buymore and strategy.position_size > 0 and not (rsiExitCondition or takeProfitHit or stopLossHit)
+     strategy.entry('add more', strategy.long, qty = 3, comment = 'letgo bitch')

@@ -1,0 +1,34 @@
+{
+  "rank": 194,
+  "sid": 3329,
+  "source_sha256": "4e9da01eaaff677c83afced3891394105a8f4cf1606a9e1ef2931c4ad0e72e83",
+  "base_kind": "original",
+  "base_sha256": "8e7460b00306a62efa8d4e80ef5a5161925f1804b247f349a6de3274a11a7098",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：布林反弹与MACD转强的四条路径做多，均线失效或约1.16%收盘亏损退出，可追溯但高度参数化。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "0.01 MACD阈值是绝对价格尺度，1.01175734321249精细止损系数存在拟合嫌疑；退出为close而非目标价格成交。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "对股价倍乘及复权数据检查信号稳定性，比较止损1%-1.5%邻域、成本和年度分布。"
+  ],
+  "id": "99f27a23365a",
+  "title": "基于布林带和MACD的量化交易策略Quantitative-Trading-Strategy-Based-on-Bollinger-Bands-and-MACD",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/194_SID3329_99f27a23365a_original.pine",
+  "original": "originals/194_SID3329_99f27a23365a.pine",
+  "baseline": "baselines/194_SID3329_99f27a23365a.pine",
+  "changes": "changes/194_SID3329_99f27a23365a.txt",
+  "card": "cards/99f27a23365a.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "8e7460b00306a62efa8d4e80ef5a5161925f1804b247f349a6de3274a11a7098",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

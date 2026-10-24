@@ -1,0 +1,37 @@
+{
+  "rank": 271,
+  "sid": 2597,
+  "source_sha256": "ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044",
+  "base_kind": "prior_candidate",
+  "base_sha256": "9f74a3b51c4fe63ceecbf26b689d98e915df94e133954773a7d14e1c1a27f2c7",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；高低突破按连续信号编号入场，默认只做多一次、每次100%权益；ATR初始止损和通道跟踪市价退出。 唐奇安突破加ATR保护有清晰逻辑，但计数统计信号而非成交，固定枚举退出不足以覆盖所有实际层。",
+  "patches": [],
+  "resolved": [
+    "多头枚举遗漏count-3，导致该层未被跟踪退出；连续信号计数也可能超过已成交编号，后者需进一步设计。"
+  ],
+  "remaining": [
+    "唐奇安突破加ATR保护有清晰逻辑，但计数统计信号而非成交，固定枚举退出不足以覆盖所有实际层。 后续验证：超过10次信号、被拒订单、部分平仓、Long count-3及所有实际层覆盖测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；计数可超过十个，当前退出仅最近十个且计数含被拒信号，超过范围的覆盖需另行设计。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "超过10次信号、被拒订单、部分平仓、Long count-3及所有实际层覆盖测试。"
+  ],
+  "id": "4a273ddd3263",
+  "title": "基于ATR和突破的ETF交易策略An-ATR-and-Breakout-based-ETF-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/271_SID2597_4a273ddd3263_candidate.pine",
+  "original": "originals/271_SID2597_4a273ddd3263.pine",
+  "baseline": "baselines/271_SID2597_4a273ddd3263.pine",
+  "changes": "changes/271_SID2597_4a273ddd3263.txt",
+  "card": "cards/4a273ddd3263.html",
+  "diff": "changes/271_SID2597_4a273ddd3263.patch",
+  "original_diff": "changes/271_SID2597_4a273ddd3263.original.patch",
+  "script_sha256": "50519b0487d1bf73617a09096084b6522470f034dad74c9bfcfd1a9ecea477cd",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

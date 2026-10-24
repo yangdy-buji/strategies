@@ -1,0 +1,34 @@
+{
+  "rank": 94,
+  "sid": 510,
+  "source_sha256": "25adc507d317045021223ea5cdfe8caf4fb1e7a737bd3ca5c280ce8efb0e6312",
+  "base_kind": "original",
+  "base_sha256": "708e55ae176ef9c95cb036612afd947e97b16e9ca9c0e12838d66d1f25ca446b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：MACD低位恢复加RSI条件入场，高位转弱退出，属于回归动量模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "退出必须MACD死叉且RSI>50，RSI弱于50的持续下跌可错过退出；布林线实际未参与订单。 暂缓原因：放松退出可能提高换手，接入布林线则是新模型。"
+  ],
+  "validation_plan": [
+    "构造死叉时RSI40、后续持续下跌场景；确认布林参数变化不影响订单。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "88fb303a5333",
+  "title": "MACD-RSI交叉趋势跟踪策略结合布林带优化系统-MACD-RSI-Crossover-Trend-Following-Strategy-with-Bollinger-Bands-Optimization-System",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/094_SID510_88fb303a5333_original.pine",
+  "original": "originals/094_SID510_88fb303a5333.pine",
+  "baseline": "baselines/094_SID510_88fb303a5333.pine",
+  "changes": "changes/094_SID510_88fb303a5333.txt",
+  "card": "cards/88fb303a5333.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "708e55ae176ef9c95cb036612afd947e97b16e9ca9c0e12838d66d1f25ca446b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,35 @@
+{
+  "rank": 182,
+  "sid": 3144,
+  "source_sha256": "e181f9f003d85c25e969b805b671948165a0d572e5b742bca663f9b66f4031ba",
+  "base_kind": "original",
+  "base_sha256": "9b671217f3a75943770a2d539232242b64e986a06e81c9ad13eca850a5ea8e21",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：risk_amount/close是资金配置而非止损风险；须选固定股数/资金比例/固定风险及保护距离，不能直接接数量。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "risk_amount/close是资金配置而非止损风险；须选固定股数/资金比例/固定风险及保护距离，不能直接接数量。",
+    "position_size计算后未传入entry，capital与risk_per_trade并不改变订单；risk_amount/close也只是资金分配而非有止损定义的风险预算。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "修改capital/risk输入并验证原订单不变；新模型需核对数量、最小份数和风险距离。"
+  ],
+  "id": "2812255e7998",
+  "title": "基于双均线交叉的移动平均线策略-Moving-Average-Crossover-Strategy-Based-on-Dual-Moving-Averages",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/182_SID3144_2812255e7998_original.pine",
+  "original": "originals/182_SID3144_2812255e7998.pine",
+  "baseline": "baselines/182_SID3144_2812255e7998.pine",
+  "changes": "changes/182_SID3144_2812255e7998.txt",
+  "card": "cards/2812255e7998.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9b671217f3a75943770a2d539232242b64e986a06e81c9ad13eca850a5ea8e21",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

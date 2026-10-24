@@ -1,0 +1,64 @@
+{
+  "rank": 175,
+  "sid": 783,
+  "source_sha256": "95abb3fcc6296fff13859e123cf8d2fc6273805f13e39c1f4a93305e1cbc9feb",
+  "base_kind": "original",
+  "base_sha256": "411b8674440818725ebfb561e8055a77cb076d13d3af144b170497621ec131c7",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "删除每柱无条件多单/反向覆盖，保留RSI双向信号和默认不加仓。；移除不接入声明的误导加仓输入。",
+  "patches": [
+    {
+      "old": "// Pyramiding\nif (strategy.opentrades < pyramiding)\n    strategy.entry(\"Buy\", strategy.long)\nelse if (strategy.opentrades > pyramiding)\n    strategy.entry(\"Sell\", strategy.short)\n\n",
+      "new": "// Pyramiding remains disabled in strategy(); entries require RSI signals.\n\n",
+      "reason": "删除每柱无条件多单/反向覆盖，保留RSI双向信号和默认不加仓。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "无RSI事件不下单；空头后无金叉保持空头。"
+      ]
+    },
+    {
+      "old": "pyramiding = input(5, title=\"Pyramiding\")",
+      "new": "// Enabling pyramiding and its risk budget requires a separate design experiment.",
+      "reason": "移除不接入声明的误导加仓输入。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "界面不再显示无效的层数配置。"
+      ]
+    }
+  ],
+  "resolved": [
+    "删除每柱无条件多单/反向覆盖，保留RSI双向信号和默认不加仓。",
+    "移除不接入声明的误导加仓输入。"
+  ],
+  "remaining": [
+    "真实多层加仓规则与风险预算留独立design_experiment；保留默认不加仓。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "RSI长期中性与一次卖出信号后的序列，核对没有买信号时的多单和空头持续时间。"
+  ],
+  "id": "3d814165dcf3",
+  "title": "RSI双边交易策略-RSI-Dual-Side-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/175_SID783_3d814165dcf3_candidate.pine",
+  "original": "originals/175_SID783_3d814165dcf3.pine",
+  "baseline": "baselines/175_SID783_3d814165dcf3.pine",
+  "changes": "changes/175_SID783_3d814165dcf3.txt",
+  "card": "cards/3d814165dcf3.html",
+  "diff": "changes/175_SID783_3d814165dcf3.patch",
+  "original_diff": "changes/175_SID783_3d814165dcf3.original.patch",
+  "script_sha256": "a7a5d8228c16b50cb44e14401d025d924b73cabf2008f2643f01344138aa116a",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "3ccb75a11c4229684a8013556ca3de335fd93f14f4a30cc09314f8c08c8bf360",
+    "review": "v5删除的opentrades<pyramiding块原会在无RSI信号时不断发Buy并覆盖空头；现只保留两条逐柱RSI交叉，Buy/Sell仍允许相互自动反转。删除未接strategy声明的输入，默认不加仓保持。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "真实多层加仓规则与风险预算留独立design_experiment；保留默认不加仓。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

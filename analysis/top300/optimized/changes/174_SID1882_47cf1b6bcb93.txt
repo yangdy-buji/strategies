@@ -1,0 +1,37 @@
+{
+  "rank": 174,
+  "sid": 1882,
+  "source_sha256": "fa646007d3c44fcc0a2491940976bdc2fb5f2c60771f621f79466d71dee68eef",
+  "base_kind": "prior_candidate",
+  "base_sha256": "f5979738004d821ff2707923c45208a2ded1967e89bacd70631e2e22384dd821",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：恢复可关闭的日期过滤。；退出不依赖入场日期窗。",
+  "patches": [],
+  "resolved": [
+    "恢复可关闭的日期过滤。",
+    "退出不依赖入场日期窗。"
+  ],
+  "remaining": [
+    "日期恢复后需核验2018–2023默认窗口、关闭过滤及窗外退出；风险退出仍按原通道规则。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测试useDateFilter两值、结束日从窗内到窗外、窗外死叉和未成交订单，确保最终仓位政策一致。"
+  ],
+  "id": "47cf1b6bcb93",
+  "title": "双EMA金叉死叉跟踪策略Dual-EMA-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/174_SID1882_47cf1b6bcb93_candidate.pine",
+  "original": "originals/174_SID1882_47cf1b6bcb93.pine",
+  "baseline": "baselines/174_SID1882_47cf1b6bcb93.pine",
+  "changes": "changes/174_SID1882_47cf1b6bcb93.txt",
+  "card": "cards/47cf1b6bcb93.html",
+  "diff": "changes/174_SID1882_47cf1b6bcb93.patch",
+  "original_diff": "changes/174_SID1882_47cf1b6bcb93.original.patch",
+  "script_sha256": "797eade14c6f074ec00dd0f21fc445efcafd50ec8f656335a09ac21054228ff6",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

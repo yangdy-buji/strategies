@@ -1,0 +1,34 @@
+{
+  "rank": 266,
+  "sid": 4342,
+  "source_sha256": "036f106a99c74eaac951cd6d7f23ee44560e44ff82903bd691ce5a6b17e9c2e9",
+  "base_kind": "original",
+  "base_sha256": "31015ff811d68faff65253f110a1917ae6561b7e4ae1bc4fe21cdd0161720d73",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；排除窄实体K后连跌8根做多或连涨8根做空，持有7根后全平并重置连胜负计数。 连续八次下跌后持七根是清晰均值回归假设，但手工持仓计时从信号而非成交开始，极窄doji阈值易误解。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "连续八次下跌后持七根是清晰均值回归假设，但手工持仓计时从信号而非成交开始，极窄doji阈值易误解。 后续验证：8连跌、doji打断、零振幅、下单未成交及七根持仓日历差异验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "8连跌、doji打断、零振幅、下单未成交及七根持仓日历差异验证。"
+  ],
+  "id": "284ccbca3443",
+  "title": "多重频次动量反转量化策略系统Multi-Frequency-Momentum-Reversal-Quantitative-Strategy-System-Multi-Frequency-Momentum-Reversal-Quantitative-Strategy-System",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/266_SID4342_284ccbca3443_original.pine",
+  "original": "originals/266_SID4342_284ccbca3443.pine",
+  "baseline": "baselines/266_SID4342_284ccbca3443.pine",
+  "changes": "changes/266_SID4342_284ccbca3443.txt",
+  "card": "cards/284ccbca3443.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "31015ff811d68faff65253f110a1917ae6561b7e4ae1bc4fe21cdd0161720d73",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

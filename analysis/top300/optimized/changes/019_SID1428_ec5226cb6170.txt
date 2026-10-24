@@ -1,0 +1,34 @@
+{
+  "rank": 19,
+  "sid": 1428,
+  "source_sha256": "281f44c01d5217aacafd64688be4de80a197b516189a4d8594d01ed38972c127",
+  "base_kind": "original",
+  "base_sha256": "592e17737055d6085edb719f429f69b961b301a4948d695337d762dd536677d2",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：快慢ATR递推线交叉形成趋势切换，尺度随波动调整，结构可解释。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "标题称追踪止损，但没有strategy.exit价格保护，只有两线交叉后的市价平仓。 暂缓原因：增加价格止损会改变两线交叉系统的持仓分布。"
+  ],
+  "validation_plan": [
+    "测试初始化、持续震荡和跳空；逐笔核对交叉根、发单根及成交根。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "ec5226cb6170",
+  "title": "动态ATR追踪止损策略Dynamic-ATR-Trailing-Stop-Loss-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/019_SID1428_ec5226cb6170_original.pine",
+  "original": "originals/019_SID1428_ec5226cb6170.pine",
+  "baseline": "baselines/019_SID1428_ec5226cb6170.pine",
+  "changes": "changes/019_SID1428_ec5226cb6170.txt",
+  "card": "cards/ec5226cb6170.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "592e17737055d6085edb719f429f69b961b301a4948d695337d762dd536677d2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

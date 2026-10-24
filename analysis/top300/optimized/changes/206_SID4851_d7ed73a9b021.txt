@@ -1,0 +1,37 @@
+{
+  "rank": 206,
+  "sid": 4851,
+  "source_sha256": "55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691",
+  "base_kind": "prior_candidate",
+  "base_sha256": "d6d659e77ea239afef4201acc2f683f9ec4d51a7731d599d1d4545558247e6f7",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；收盘在EMA200上EMA5下且连续三柱高低下降全权益收盘买多，上穿退出EMA平仓，窗外原有强平。 200EMA上三根下移后回归EMA5是清楚的回调假设；版本注解格式及同收盘成交需要原生核验。",
+  "patches": [],
+  "resolved": [
+    "恢复日期及原窗外强平。"
+  ],
+  "remaining": [
+    "200EMA上三根下移后回归EMA5是清楚的回调假设；版本注解格式及同收盘成交需要原生核验。 后续验证：逐根列出三日形态、收盘订单和下一开盘成交差价。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；原版本行// @version = 5需目标编译确认识别；未改写版本。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "逐根列出三日形态、收盘订单和下一开盘成交差价。"
+  ],
+  "id": "d7ed73a9b021",
+  "title": "海龟交易三日反转策略Turtle-Trading-3-Day-Reversion-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/206_SID4851_d7ed73a9b021_candidate.pine",
+  "original": "originals/206_SID4851_d7ed73a9b021.pine",
+  "baseline": "baselines/206_SID4851_d7ed73a9b021.pine",
+  "changes": "changes/206_SID4851_d7ed73a9b021.txt",
+  "card": "cards/d7ed73a9b021.html",
+  "diff": "changes/206_SID4851_d7ed73a9b021.patch",
+  "original_diff": "changes/206_SID4851_d7ed73a9b021.original.patch",
+  "script_sha256": "d051afaf11ece7bfab467f67d6070771a3599fac0180732ab560bc9d1d717c55",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

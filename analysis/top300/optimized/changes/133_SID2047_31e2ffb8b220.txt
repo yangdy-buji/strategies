@@ -1,0 +1,35 @@
+{
+  "rank": 133,
+  "sid": 2047,
+  "source_sha256": "ebef8cbd03cef127fdb85cabb02cbd5bed3df3f9cf1d944f399b65e94c4db78b",
+  "base_kind": "original",
+  "base_sha256": "0c46ff7d21bef27e30d2af16d9cfc25ddc0cb954d6a0b345ba6cd65363f63a29",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：testTimeFrame未接线可以删除输入或增加跨周期request；前者限制功能，后者引入确认时序和重绘问题，缺少目标周期模式约定，暂保留图表周期并标明无效输入。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "testTimeFrame未接线可以删除输入或增加跨周期request；前者限制功能，后者引入确认时序和重绘问题，缺少目标周期模式约定，暂保留图表周期并标明无效输入。",
+    "testTimeFrame输入未用于请求数据或校验，实际完全用图表close；改选10分钟不会改变运行周期。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "在相同图表上切换输入周期应证明旧版成交不变；在不同图表周期记录真实信号差异。"
+  ],
+  "id": "31e2ffb8b220",
+  "title": "双均线动态交叉策略之指数移动均线交叉执行单次交易系统-Dynamic-Dual-Moving-Average-Crossover-Strategy-with-Single-Trade-Execution-System-using-Exponential-Moving-Averages",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/133_SID2047_31e2ffb8b220_original.pine",
+  "original": "originals/133_SID2047_31e2ffb8b220.pine",
+  "baseline": "baselines/133_SID2047_31e2ffb8b220.pine",
+  "changes": "changes/133_SID2047_31e2ffb8b220.txt",
+  "card": "cards/31e2ffb8b220.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "0c46ff7d21bef27e30d2af16d9cfc25ddc0cb954d6a0b345ba6cd65363f63a29",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

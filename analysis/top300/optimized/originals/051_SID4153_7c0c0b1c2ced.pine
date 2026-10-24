@@ -1,0 +1,71 @@
+/*backtest
+start: 2019-12-23 08:00:00
+end: 2024-09-24 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Advanced Math Strategy", overlay=true)
+
+// =======================
+// ฟังก์ชันที่ใช้คำนวณเบื้องหลัง
+// =======================
+
+// ฟังก์ชันซิกมอยด์
+sigmoid(x) =>
+    1 / (1 + math.exp(-x))
+
+// ฟังก์ชันหาอัตราการเปลี่ยนแปลง (Derivative)
+roc = ta.roc(close, 1)
+
+// ฟังก์ชันการถดถอยเชิงเส้น (Linear Regression)
+linReg = ta.linreg(close, 14, 0)
+
+// ฟังก์ชันตัวกรองความถี่ต่ำ (Low-pass filter)
+lowPass = ta.ema(close, 50)
+
+// =======================
+// การคำนวณสัญญาณ Buy/Sell
+// =======================
+
+// การคำนวณอนุพันธ์สำหรับทิศทางการเคลื่อนที่ของราคา
+derivativeSignal = roc > 0 ? 1 : -1
+
+// ใช้ Linear Regression และ Low-pass Filter เพื่อช่วยในการหาจุดกลับตัว
+trendSignal = linReg > lowPass ? 1 : -1
+
+// ใช้ฟังก์ชันซิกมอยด์เพื่อปรับความผันผวนของราคา
+priceChange = close - close[1]
+volatilityAdjustment = sigmoid(priceChange)
+
+// สร้างสัญญาณ Buy/Sell โดยผสมผลจากการคำนวณเบื้องหลังทั้งหมด
+buySignal = derivativeSignal == 1 and trendSignal == 1 and volatilityAdjustment > 0.5
+sellSignal = derivativeSignal == -1 and trendSignal == -1 and volatilityAdjustment < 0.5
+
+// =======================
+// การสั่ง Buy/Sell บนกราฟ
+// =======================
+
+// ถ้าเกิดสัญญาณ Buy
+if (buySignal)
+    strategy.entry("Buy", strategy.long)
+
+// ถ้าเกิดสัญญาณ Sell
+if (sellSignal)
+    strategy.close("Buy")
+
+// =======================
+// การแสดงผลบนกราฟ
+// =======================
+
+// วาดเส้นถดถอยเชิงเส้นบนกราฟ
+plot(linReg, color=color.green, linewidth=2, title="Linear Regression")
+
+// วาดตัวกรองความถี่ต่ำ (Low-pass filter)
+plot(lowPass, color=color.purple, linewidth=2, title="Low-Pass Filter")
+
+// วาดจุด Buy/Sell บนกราฟ
+plotshape(series=buySignal, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+plotshape(series=sellSignal, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")

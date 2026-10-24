@@ -1,0 +1,27 @@
+--- original.pine
++++ candidate.pine
+@@ -1,4 +1,15 @@
+ //@version=5
++// OPT-T300 SID 379：沿用旧候选·未回测
++// 原文件SHA256：018f1de11ff1981b34306924918efed8f7cda007401605e5913955469029d757
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：G-Channel-Trend-Detection-Strategy-G-Channel趋势检测策略.md
++// 原文件SHA256：018f1de11ff1981b34306924918efed8f7cda007401605e5913955469029d757
++// SID：379；原研究名单序号：181
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ // Full credit to AlexGrover: https://www.tradingview.com/script/fIvlS64B-G-Channels-Efficient-Calculation-Of-Upper-Lower-Extremities/
+ strategy("G-Channel Trend Detection Strategy", shorttitle="G-Trend", overlay=true)
+ 
+@@ -58,4 +69,7 @@
+ strategy.exit("Take Profit/Stop Loss", "Buy", limit=take_profit_level, stop=stop_loss_level)
+ 
+ // Define the take profit and stop loss conditions for short positions
+-strategy.exit("Take Profit/Stop Loss", "Sell", limit=close * (1 - take_profit_percent / 100), stop=close * (1 + stop_loss_percent / 100))
++// OPT-379-01：多空保护使用不同ID，避免同ID修改。
++// OPT-379-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++// OPT-379-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.exit("Short Take Profit/Stop Loss", "Sell", limit=close * (1 - take_profit_percent / 100), stop=close * (1 + stop_loss_percent / 100))

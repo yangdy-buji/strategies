@@ -1,0 +1,76 @@
+//@version=5
+// OPT-T300 SID 3594：沿用旧候选·未回测
+// 原文件SHA256：77ed5a9370c1ee9ec6d0088e1f93d6d74749a56709e6ab12321377fb4de1eada
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于脉冲MACD和双均线交叉的多时间尺度趋势追踪策略-Multi-timeframe-Trend-Tracking-Strategy-Based-on-Impulse-MACD-and-Dual-Moving-Average-Crossover.md
+// 原文件SHA256：77ed5a9370c1ee9ec6d0088e1f93d6d74749a56709e6ab12321377fb4de1eada
+// SID：3594；原研究名单序号：226
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-05-11 00:00:00
+end: 2024-05-16 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Impulse MACD Strategy [LazyBear]", shorttitle="IMACD_Strategy", overlay=false)
+
+// Function to calculate SMMA
+calc_smma(src, len) =>
+    var float smma = na
+    smma := na(smma[1]) ? ta.sma(src, len) : (smma[1] * (len - 1) + src) / len
+    smma
+
+// Function to calculate SMA
+	// OPT-3594-01：孤立缩进块缺失函数定义且引用未定义len，SMA实际调用内置ta.sma。
+	// OPT-3594-01 保持：原参数、仓位及方向
+	// OPT-3594-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+calc_sma(src, len) =>
+    ta.sma(src, len)
+
+// Function to calculate ZLEMA
+calc_zlema(src, length) =>
+    var float ema1 = na
+    var float ema2 = na
+    var float d = na
+    ema1 := ta.ema(src, length)
+    ema2 := ta.ema(ema1, length)
+    d := ema1 - ema2
+    ema1 + d
+
+// Function to calculate EMA
+calc_ema(src, len) =>
+    ema = 0.0
+    ema := ta.ema(src, len)
+    ema
+
+// Inputs
+lengthMA = input(34, title="Length of Moving Average")
+lengthSignal = input(9, title="Length of Signal Line")
+
+// Calculations
+src = hlc3
+hi = calc_smma(high, lengthMA)
+lo = calc_smma(low, lengthMA)
+mi = calc_zlema(src, lengthMA) 
+
+md = mi > hi ? (mi - hi) : mi < lo ? (mi - lo) : 0
+sb = ta.sma(md, lengthSignal)
+sh = md - sb
+mdc = src > mi ? src > hi ? color.lime : color.green : src < lo ? color.red : color.orange
+
+// Plotting
+plot(0, color=color.gray, linewidth=1, title="MidLine")
+plot(md, color=mdc, linewidth=2, title="ImpulseMACD", style=plot.style_histogram)
+plot(sh, color=color.blue, linewidth=2, title="ImpulseHisto", style=plot.style_histogram)
+plot(sb, color=color.maroon, linewidth=2, title="ImpulseMACDCDSignal")
+
+// Execute trades based on signals
+if (ta.crossover(md, sb))
+    strategy.entry("Buy", strategy.long)
+if (ta.crossunder(md, sb))
+    strategy.close("Buy")

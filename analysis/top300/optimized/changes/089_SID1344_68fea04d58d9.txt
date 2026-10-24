@@ -1,0 +1,34 @@
+{
+  "rank": 89,
+  "sid": 1344,
+  "source_sha256": "854dfb1e2f898a3ce4d5269f2d5150d61da492493047542990f7abbba49ced07",
+  "base_kind": "original",
+  "base_sha256": "263f66166dc7a465563713fe29f75c9df4966712930798e06df74ca19ce40e4e",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：突破新低低吸，以成交后记录ATR固定止盈止损，风险结构比纯等待回归清楚。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均价只有成交后可用，默认计算下第一根持仓可能尚无保护；默认止盈1ATR/止损2ATR需较高胜率并计成本。 暂缓原因：更早提交或改变风险比都会影响成交路径。"
+  ],
+  "validation_plan": [
+    "次根开盘跳空并触止损、同根两端触及、ATR突变与成本翻倍的逐笔核验。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "68fea04d58d9",
+  "title": "低吸多头追踪止盈止损策略Buying-dips-with-take-profit-and-stop-loss",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/089_SID1344_68fea04d58d9_original.pine",
+  "original": "originals/089_SID1344_68fea04d58d9.pine",
+  "baseline": "baselines/089_SID1344_68fea04d58d9.pine",
+  "changes": "changes/089_SID1344_68fea04d58d9.txt",
+  "card": "cards/68fea04d58d9.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "263f66166dc7a465563713fe29f75c9df4966712930798e06df74ca19ce40e4e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

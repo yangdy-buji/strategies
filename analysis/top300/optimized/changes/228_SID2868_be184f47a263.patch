@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 2868：沿用旧候选·未回测
++// 原文件SHA256：df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于RSI的多头趋势追踪策略RSI-Trend-Tracking-Long-Only-Strategy.md
+ // 原文件SHA256：df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169

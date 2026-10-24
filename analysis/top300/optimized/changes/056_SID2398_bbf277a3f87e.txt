@@ -1,0 +1,34 @@
+{
+  "rank": 56,
+  "sid": 2398,
+  "source_sha256": "73a8f546e6c771a5ea643fbaf368cfa94753b1d55d5c34570f9b27f2a8b7e893",
+  "base_kind": "original",
+  "base_sha256": "abe8b818678a4c44b90757acee868e58009fba14b1b1f7a01f2f254ed906e7c5",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：吊灯方向切换做多/平仓，具有ATR追踪思想，但并没有把吊灯线作为挂单止损。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "initial_capital=25是普通变量而非策略本金声明；qty=25/close只是25现金名义仓位，外部统一仓位结果不同。 暂缓原因：改数量/保护单都会改变收益路径。"
+  ],
+  "validation_plan": [
+    "核对实际股数及最小股数、初始资本、突破线当根及下一根成交的差异。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "bbf277a3f87e",
+  "title": "吊灯出场策略Chandelier-Exit-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/056_SID2398_bbf277a3f87e_original.pine",
+  "original": "originals/056_SID2398_bbf277a3f87e.pine",
+  "baseline": "baselines/056_SID2398_bbf277a3f87e.pine",
+  "changes": "changes/056_SID2398_bbf277a3f87e.txt",
+  "card": "cards/bbf277a3f87e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "abe8b818678a4c44b90757acee868e58009fba14b1b1f7a01f2f254ed906e7c5",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

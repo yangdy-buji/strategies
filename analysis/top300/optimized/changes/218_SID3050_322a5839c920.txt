@@ -1,0 +1,34 @@
+{
+  "rank": 218,
+  "sid": 3050,
+  "source_sha256": "ed0c9d1c2445aaf954a86bf649acad891231bd6c100b5533e435f58ea8df3972",
+  "base_kind": "original",
+  "base_sha256": "5c8b156683442c237fa952c884ec4aefd38d904ee36fb6060fad493019caccd2",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；Keltner外轨突破后在极值外1tick挂多空stop，价格回到中线取消；单向模式反轨挂stop平仓，双向依赖反转。 凯特纳突破挂单及反向退出有趋势解释，但单向模式回到中线可取消唯一退出单。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "凯特纳突破挂单及反向退出有趋势解释，但单向模式回到中线可取消唯一退出单。 后续验证：退出挂出后回中线、再次下跌、双向反手与未成交单共存测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "退出挂出后回中线、再次下跌、双向反手与未成交单共存测试。"
+  ],
+  "id": "322a5839c920",
+  "title": "基于凯特纳通道的灵活多空交易策略-Flexible-Long-Short-Trading-Strategy-Based-on-Keltner-Channels",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/218_SID3050_322a5839c920_original.pine",
+  "original": "originals/218_SID3050_322a5839c920.pine",
+  "baseline": "baselines/218_SID3050_322a5839c920.pine",
+  "changes": "changes/218_SID3050_322a5839c920.txt",
+  "card": "cards/322a5839c920.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "5c8b156683442c237fa952c884ec4aefd38d904ee36fb6060fad493019caccd2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,36 @@
+{
+  "rank": 156,
+  "sid": 5369,
+  "source_sha256": "96452178fd848ba9d71492ab33871aa3cde502ed5bae4bcbbc25ed6fb864ed40",
+  "base_kind": "prior_candidate",
+  "base_sha256": "e0bf51bcb001f57680ed47040752b91d51aca31dc71fbb6f1d33de0225ea598a",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原上轨误接中轨；按bb返回中、上、下轨顺序接收。",
+  "patches": [],
+  "resolved": [
+    "原上轨误接中轨；按bb返回中、上、下轨顺序接收。"
+  ],
+  "remaining": [
+    "VWMA未用于订单，出口仍需同柱均线死叉及下轨条件。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "手算20期均值/标准差，验证旧upperBB为中轨；检查修复后所有订单时间及双向反转量。"
+  ],
+  "id": "433e2d506419",
+  "title": "趋势价格简单移动平均量化策略Simple-Moving-Average-Trend-Price-Quantitative-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/156_SID5369_433e2d506419_candidate.pine",
+  "original": "originals/156_SID5369_433e2d506419.pine",
+  "baseline": "baselines/156_SID5369_433e2d506419.pine",
+  "changes": "changes/156_SID5369_433e2d506419.txt",
+  "card": "cards/433e2d506419.html",
+  "diff": "changes/156_SID5369_433e2d506419.patch",
+  "original_diff": "changes/156_SID5369_433e2d506419.original.patch",
+  "script_sha256": "fbb19c9440bbddfe7e3e19cbcbcdba882d68df578cf89d224b5c1ce75b86c2ef",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

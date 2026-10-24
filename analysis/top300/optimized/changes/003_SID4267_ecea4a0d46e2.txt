@@ -1,0 +1,34 @@
+{
+  "rank": 3,
+  "sid": 4267,
+  "source_sha256": "aeb34c5f91aca4abb0d794ed99a626fd6818d6a59b07e8a82d95378b408d0690",
+  "base_kind": "original",
+  "base_sha256": "6e6347a154a320b699b20c9cd7c3f05443101b42c3614b89053b8a519d97a04e",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：均线交叉加量能及波动过滤适合作为入场质量假设，但同样过滤退出会令风险退出失去连续性。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "死叉只有发生当根同时放量1.5倍且ATR扩张才平仓；死叉被过滤后即使持续下跌也不会补发退出。 暂缓原因：更及时退出可能减少趋势反复时的收益，也会增大交易成本。"
+  ],
+  "validation_plan": [
+    "构造先死叉后两根才放量的路径，核对是否一直持仓；比较无过滤退出与原退出。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "ecea4a0d46e2",
+  "title": "多重指标动态波动交易策略-Multi-Indicator-Dynamic-Volatility-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/003_SID4267_ecea4a0d46e2_original.pine",
+  "original": "originals/003_SID4267_ecea4a0d46e2.pine",
+  "baseline": "baselines/003_SID4267_ecea4a0d46e2.pine",
+  "changes": "changes/003_SID4267_ecea4a0d46e2.txt",
+  "card": "cards/ecea4a0d46e2.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "6e6347a154a320b699b20c9cd7c3f05443101b42c3614b89053b8a519d97a04e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

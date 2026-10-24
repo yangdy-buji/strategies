@@ -1,0 +1,22 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 2311：本轮新候选·未回测
++// 原文件SHA256：d5ab9dc58c9b827859bcad7f28fafd94e715b62caeade05825b986ea055ff7a4
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2022-11-13 00:00:00
+ end: 2023-11-19 00:00:00
+@@ -36,6 +39,10 @@
+ avg_2 = math.avg(currMacd, signal)
+ crossoverBull = ta.cross(currMacd, signal) and currMacd > signal ? avg_2 : na
+ 
+-strategy.entry('buy', strategy.long, when=crossoverBull and wasOversold)
+-strategy.close('buy', when=crossoverBear and wasOverbought)
++// OPT-T300-01 修改原因：订单使用交叉布尔值，零均值交叉不丢失。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++strategy.entry('buy', strategy.long, when=ta.crossover(currMacd, signal) and wasOversold)
++// OPT-T300-02 修改原因：订单使用交叉布尔值，零均值交叉不丢失。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++strategy.close('buy', when=ta.crossunder(currMacd, signal) and wasOverbought)
+ 

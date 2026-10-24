@@ -1,0 +1,34 @@
+{
+  "rank": 82,
+  "sid": 1409,
+  "source_sha256": "f0ddb771b4869ae124882dd19b7643066518a04293240d8ed8ddd7652ac6802a",
+  "base_kind": "original",
+  "base_sha256": "ba7b58ecb0f6de16293ba57eed4af4d4e932a60548b807ad3ac91c0fe63a743b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：WMA7/9金叉且RSI<40入场，以固定价差20止损/40止盈，信号可解释但跨股风险不一致。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "低于20美元股票的stop可能为零或负数；固定绝对价格距离与1000票不同价位不可直接比较。 暂缓原因：换风险尺度会显著改变收益与持仓时间。"
+  ],
+  "validation_plan": [
+    "在5/20/200美元价格尺度上检查保护价、首根成交保护空窗及实际风险比例。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "e2f01cf453df",
+  "title": "加权移动平均线和相对强弱指数交叉策略与风险管理优化系统Weighted-Moving-Average-and-Relative-Strength-Index-Crossover-Strategy-with-Risk-Management-Optimization-System",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/082_SID1409_e2f01cf453df_original.pine",
+  "original": "originals/082_SID1409_e2f01cf453df.pine",
+  "baseline": "baselines/082_SID1409_e2f01cf453df.pine",
+  "changes": "changes/082_SID1409_e2f01cf453df.txt",
+  "card": "cards/e2f01cf453df.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ba7b58ecb0f6de16293ba57eed4af4d4e932a60548b807ad3ac91c0fe63a743b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

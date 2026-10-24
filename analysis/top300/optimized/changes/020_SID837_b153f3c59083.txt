@@ -1,0 +1,34 @@
+{
+  "rank": 20,
+  "sid": 837,
+  "source_sha256": "63702aba6144d39d9a13b60b2a2de27e3b328b34cb2fb8cc7ef31dd6c0fe23ea",
+  "base_kind": "original",
+  "base_sha256": "01961ebd135383f48552358f338ef4760cbea86d69832a74ceb953ea4e3761b2",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：连续抬高高点和RSI上升做多，跌破SMA55退出，原理是动量延续而非完整多均线系统。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "sell_condition的A或(A且B)等价于A，RSI退出分支无增量；未使用的sell_condition_ma21与注释会误导风控理解。 暂缓原因：清理等价逻辑不应改变结果；真正接入原本未使用条件会改变策略。"
+  ],
+  "validation_plan": [
+    "比较清理前后逐根布尔值应完全相同；独立测试是否需要连续走弱规则。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "b153f3c59083",
+  "title": "RSI趋势突破与动量增强交易策略-RSI-Trend-Breakthrough-and-Momentum-Enhancement-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/020_SID837_b153f3c59083_original.pine",
+  "original": "originals/020_SID837_b153f3c59083.pine",
+  "baseline": "baselines/020_SID837_b153f3c59083.pine",
+  "changes": "changes/020_SID837_b153f3c59083.txt",
+  "card": "cards/b153f3c59083.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "01961ebd135383f48552358f338ef4760cbea86d69832a74ceb953ea4e3761b2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

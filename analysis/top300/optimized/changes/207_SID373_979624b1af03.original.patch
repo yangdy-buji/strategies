@@ -1,0 +1,37 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,15 @@
++//@version=4
++// OPT-T300 SID 373：沿用旧候选·未回测
++// 原文件SHA256：f0e4e066be0e1ba014303fa69cb23444e6649d7c81e0565e47cd0d4a8da0344e
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：Flawless-Victory-DCA-动量与波动率策略Flawless-Victory-DCA-Momentum-and-Volatility-Strategy.md
++// 原文件SHA256：f0e4e066be0e1ba014303fa69cb23444e6649d7c81e0565e47cd0d4a8da0344e
++// SID：373；原研究名单序号：39
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-03-16 00:00:00
+ end: 2024-03-21 00:00:00
+@@ -8,9 +20,6 @@
+ 
+ //FOR BUY STRATGY : @Suameer
+ //Create by zipix
+-
+-
+-//@version=4
+ strategy(overlay=true, shorttitle=" DCA Strategy", default_qty_type = strategy.percent_of_equity, initial_capital = 100000, default_qty_value = 100, pyramiding = 0, title="Flawless Victory DCA Strategy", currency = 'USD')
+ 
+ ////////// ** Inputs ** //////////
+@@ -65,4 +74,7 @@
+ 
+ // Exit Condition
+ sell_condition = BBSellTrigger and rsiSellGuard
+-strategy.exit("Stoploss/TP", "Long", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = "Sell Signal!")
++// OPT-373-01：保护退出覆盖两个做多入口ID。
++// OPT-373-01 保持：保留卖出触发、百分比和DCA下单逻辑。
++// OPT-373-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++strategy.exit("Stoploss/TP", stop = stoploss_level, limit = takeprofit_level, when = sell_condition, alert_message = "Sell Signal!")

@@ -1,0 +1,34 @@
+{
+  "rank": 68,
+  "sid": 1462,
+  "source_sha256": "b4249d8f7ea717226247d2637d12c51af4080e371e7051b0f690972103733f8c",
+  "base_kind": "original",
+  "base_sha256": "b2a61d027a2d0617b0e1ba0bc5bb5a0d7c5d863d0c85c1b5390bea51573a0ea8",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：阳线EMA10/20金叉，按信号柱低点风险定仓，规则简单但最大敞口未封顶。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "阳线使close-low通常为正，但可只有一个tick，1000/距离会生成巨大股数；持仓重复信号还会重设低点止损。 暂缓原因：限仓会降低名义收益；固定止损可能改变持仓路径。"
+  ],
+  "validation_plan": [
+    "1tick实体、跳空、重复金叉更低low、保证金不足时逐笔检查数量与实际损失。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "c7cf0fd2eb67",
+  "title": "动态仓位与入场K线止损的EMA交叉策略-Dynamic-Position-Sizing-and-Entry-Candle-Stop-Loss-EMA-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/068_SID1462_c7cf0fd2eb67_original.pine",
+  "original": "originals/068_SID1462_c7cf0fd2eb67.pine",
+  "baseline": "baselines/068_SID1462_c7cf0fd2eb67.pine",
+  "changes": "changes/068_SID1462_c7cf0fd2eb67.txt",
+  "card": "cards/c7cf0fd2eb67.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "b2a61d027a2d0617b0e1ba0bc5bb5a0d7c5d863d0c85c1b5390bea51573a0ea8",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

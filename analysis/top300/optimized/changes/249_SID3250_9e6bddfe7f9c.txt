@@ -1,0 +1,37 @@
+{
+  "rank": 249,
+  "sid": 3250,
+  "source_sha256": "5c27f153c7b7532186456f3a20e911698e61cca89f1371265015393c5b19a97a",
+  "base_kind": "prior_candidate",
+  "base_sha256": "248f90c9f1aaa1c272cec718e145b7616d9548584c2e6b0e1c8e4589f5ce2541",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；成交量加权快慢先行线同时上升、TSV正增强及价格上布林轨做多100%权益；双线下降退出。 量加权快慢中线+TSV+布林突破是多重趋势筛选，但同类价格过滤复杂且无硬止损；版本注解仍需核验。",
+  "patches": [],
+  "resolved": [
+    "起止日期没有生效；仅恢复入场日期过滤。"
+  ],
+  "remaining": [
+    "量加权快慢中线+TSV+布林突破是多重趋势筛选，但同类价格过滤复杂且无硬止损；版本注解仍需核验。 后续验证：原生v4编译、零成交量分母、各过滤独立贡献及历史未选择窗口。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "原生v4编译、零成交量分母、各过滤独立贡献及历史未选择窗口。"
+  ],
+  "id": "9e6bddfe7f9c",
+  "title": "基于均量线和波动率的趋势追踪策略Trend-Following-Strategy-Based-on-Volume-weighted-Average-Price-and-Volatility",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/249_SID3250_9e6bddfe7f9c_candidate.pine",
+  "original": "originals/249_SID3250_9e6bddfe7f9c.pine",
+  "baseline": "baselines/249_SID3250_9e6bddfe7f9c.pine",
+  "changes": "changes/249_SID3250_9e6bddfe7f9c.txt",
+  "card": "cards/9e6bddfe7f9c.html",
+  "diff": "changes/249_SID3250_9e6bddfe7f9c.patch",
+  "original_diff": "changes/249_SID3250_9e6bddfe7f9c.original.patch",
+  "script_sha256": "66401a882a81cdecf4e0d844ae6dfc5b4c04475c165c2cb9fc65d2c14c771154",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,50 @@
+//@version=4
+// OPT-T300 SID 3460：沿用旧候选·未回测
+// 原文件SHA256：90b70e59d2e49a64ed246def2cd6d93452ff7d22648bb12ea33080affe074b91
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于月季线均线操作的量化交易策略Quant-Trading-Strategy-Based-on-Monthly-and-Quarterly-Moving-Average-Operation.md
+// 原文件SHA256：90b70e59d2e49a64ed246def2cd6d93452ff7d22648bb12ea33080affe074b91
+// SID：3460；原研究名单序号：205
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-12-08 00:00:00
+end: 2023-12-14 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("均線操作-月季", overlay=true, initial_capital = 100000, default_qty_type = strategy.percent_of_equity, default_qty_value = 30)
+sma20 = sma(close, 20)
+sma60 = sma(close, 60)
+
+plot(sma20, title="月線", color=color.purple,linewidth=2)
+plot(sma60, title="季線", color=color.yellow,linewidth=2)
+
+backtest_year = input(title="backtest_year",type=input.integer,defval=2020)
+backtest_month = input(title="backtest_month",type=input.integer,defval=10)
+backtest_date = input(title="backtest_date",type=input.integer,defval=1)
+backtest_start_time = timestamp(backtest_year,backtest_month,backtest_date,0,0,0)
+
+to_long = sma20 > sma60  and close > highest(10)*0.9 // 黃金交叉
+to_close = sma20 < sma60 // 死亡交叉
+to_exit = close < highest(10)*0.9 //股價嚴重回檔
+to_stop = close < 0.9*strategy.position_avg_price 
+
+// to_long = crossover(sma20, sma60)   // 黃金交叉
+// to_close = crossunder(sma20, sma60) // 死亡交叉
+
+//plotchar(to_long, char="B", text="買", color=color.red, location=location.belowbar)
+//plotchar(to_close, char="S", text="賣", color=color.green, location=location.abovebar)
+//strategy.close("open long",when = tslide, comment="多單滑價7%出場")
+if true
+    // OPT-3460-01：开始日期被if true绕过，直接门控入场且退出保持不变。
+    // OPT-3460-01 保持：原参数、仓位及方向
+    // OPT-3460-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+    strategy.entry("golden", strategy.long,  when=time >= backtest_start_time and to_long,comment="多單入場")
+    strategy.close("golden",  when=to_exit,comment="多單滑價7%出場")
+    strategy.close("golden",  when=to_close,comment="月線季線死亡交叉")
+    strategy.close("golden",  when=to_stop,comment="虧損10%強迫停損")

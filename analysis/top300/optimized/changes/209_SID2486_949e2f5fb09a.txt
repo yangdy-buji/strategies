@@ -1,0 +1,39 @@
+{
+  "rank": 209,
+  "sid": 2486,
+  "source_sha256": "897516abaf09ff804f046c6f914742063fa6766a2667031529e346522eada76c",
+  "base_kind": "prior_candidate",
+  "base_sha256": "e7a5a6638d8d1fd2128bb31f5d72c56f7037e6e32aa1fcb41d429454f57a9211",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；阴线跌破前低时按EMA20/50/100/200所在区间选四级数量做多；均线多头排列后转弱且盈利1%才平所有入口。退出另需近期RSI高于65。 分均线区间买跌，退出必须盈利且满足多重条件，存在长期套牢；pyramiding输入仅乘数量。",
+  "patches": [],
+  "resolved": [
+    "恢复入场日期。",
+    "退出移出日期限制。",
+    "退出移出日期限制。"
+  ],
+  "remaining": [
+    "分均线区间买跌，退出必须盈利且满足多重条件，存在长期套牢；pyramiding输入仅乘数量。 后续验证：连续跌穿EMA200后持续亏损、四入口数量和亏损年持仓时长压力测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；pyramiding变量只是数量乘数，未设置平台加仓参数。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "连续跌穿EMA200后持续亏损、四入口数量和亏损年持仓时长压力测试。"
+  ],
+  "id": "949e2f5fb09a",
+  "title": "均线交叉长线并量化策略EMA-Crossover-for-Long-Line-Quant-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/209_SID2486_949e2f5fb09a_candidate.pine",
+  "original": "originals/209_SID2486_949e2f5fb09a.pine",
+  "baseline": "baselines/209_SID2486_949e2f5fb09a.pine",
+  "changes": "changes/209_SID2486_949e2f5fb09a.txt",
+  "card": "cards/949e2f5fb09a.html",
+  "diff": "changes/209_SID2486_949e2f5fb09a.patch",
+  "original_diff": "changes/209_SID2486_949e2f5fb09a.original.patch",
+  "script_sha256": "c5540e0e3ebfd48f87c1ad0e6e2962980a7a56fbb877e9e648a3ca928a60aac0",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

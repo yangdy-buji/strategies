@@ -1,0 +1,35 @@
+{
+  "rank": 178,
+  "sid": 730,
+  "source_sha256": "ed1e738f9be69994ab8f39fb10b65b096a8ee6603e2d3a72bee2697e33cc266e",
+  "base_kind": "original",
+  "base_sha256": "a28269bc1f3d5931cf2321013576b2de17cabd693199498f1cd4c772f2cdf407",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：close[2]与lower[1]可能有意跨柱确认；改齐时间索引及成交锚会同时改变信号和风险，须分别对照。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "close[2]与lower[1]可能有意跨柱确认；改齐时间索引及成交锚会同时改变信号和风险，须分别对照。",
+    "close[2]比较lower[1]跨时点；TP和SL围绕信号柱low而非成交价，低点+2ATR可能不高于实际入场。保护只在检测到持仓后提交，有首覆盖空窗。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "信号后大幅跳高、信号柱宽振幅和首次成交柱，检查TP是否低于入场及是否已有有效保护。"
+  ],
+  "id": "a4ec532b45a7",
+  "title": "RSI-布林通道整合策略动态自适应的多指标交易系统-RSI-Bollinger-Bands-Integration-Strategy-A-Dynamic-Self-Adaptive-Multi-Indicator-Trading-System",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/178_SID730_a4ec532b45a7_original.pine",
+  "original": "originals/178_SID730_a4ec532b45a7.pine",
+  "baseline": "baselines/178_SID730_a4ec532b45a7.pine",
+  "changes": "changes/178_SID730_a4ec532b45a7.txt",
+  "card": "cards/a4ec532b45a7.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a28269bc1f3d5931cf2321013576b2de17cabd693199498f1cd4c772f2cdf407",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,35 @@
+{
+  "rank": 112,
+  "sid": 1779,
+  "source_sha256": "dd4abbbb5e3b41f916d84dd97f036e74bed92004fd666642c59375dc66173baa",
+  "base_kind": "original",
+  "base_sha256": "b16d53a08482603baccfa9f8434a1efb474b60799dd0fec7a7319ac2de932721",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：计算数量未使用，但固定股数与固定风险都有可能是预期；需要先定义trail tick单位与风险预算，不能直接接未校准数量。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "计算数量未使用，但固定股数与固定风险都有可能是预期；需要先定义trail tick单位与风险预算，不能直接接未校准数量。",
+    "计算出的tamanio_de_la_posicion不传入strategy.entry；固定默认数量与风险预算不一致，trail_points/offset是tick尺度，不能按不同股价直接比较。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "在不同最小跳动和股价下复算15美元风险、保护价与追踪启动；检查close等于最低价的除零边界。"
+  ],
+  "id": "5babe1e11c16",
+  "title": "动量突破策略Momentum-Breakout-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/112_SID1779_5babe1e11c16_original.pine",
+  "original": "originals/112_SID1779_5babe1e11c16.pine",
+  "baseline": "baselines/112_SID1779_5babe1e11c16.pine",
+  "changes": "changes/112_SID1779_5babe1e11c16.txt",
+  "card": "cards/5babe1e11c16.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "b16d53a08482603baccfa9f8434a1efb474b60799dd0fec7a7319ac2de932721",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

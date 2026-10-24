@@ -1,0 +1,34 @@
+{
+  "rank": 21,
+  "sid": 3667,
+  "source_sha256": "7927980d9b67329e7f307d4722453ec8ebb1d2ac97c645d1e147d3a33b014fca",
+  "base_kind": "original",
+  "base_sha256": "59a510964440ca1c404cd8b1a523b34c528a33a6c763c1af7bdd3ae0be0548ec",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：短EMA与长SMA两个入场模块共享挤压动量过滤，组合意图清楚但不是独立多周期投资组合。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "两模块不同订单ID、默认不加仓，且各自退出都要求交叉同根满足挤压及负动量；可能漏退出并造成模块占仓。 暂缓原因：独立持仓会增加总敞口；快速退出可能削弱趋势收益。"
+  ],
+  "validation_plan": [
+    "逐根记录两模块同时信号、被pyramiding拒绝的入场和各自from_entry/close执行。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "bd1f31045298",
+  "title": "基于量化动量和收敛发散的多时间框架统一策略-Multi-Timeframe-Unified-Strategy-Based-on-Quantitative-Momentum-and-Convergence-Divergence",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/021_SID3667_bd1f31045298_original.pine",
+  "original": "originals/021_SID3667_bd1f31045298.pine",
+  "baseline": "baselines/021_SID3667_bd1f31045298.pine",
+  "changes": "changes/021_SID3667_bd1f31045298.txt",
+  "card": "cards/bd1f31045298.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "59a510964440ca1c404cd8b1a523b34c528a33a6c763c1af7bdd3ae0be0548ec",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

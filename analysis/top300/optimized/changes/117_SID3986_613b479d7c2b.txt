@@ -1,0 +1,35 @@
+{
+  "rank": 117,
+  "sid": 3986,
+  "source_sha256": "1a623d8fcb45b83e3a7d98fc9062e3517a032cd9813e9e0e0e7c639dd8f356c2",
+  "base_kind": "original",
+  "base_sha256": "dece1b8073505780ed8f6af2d4ad3abab08c2ea2ce1ca5263f305a62260cab12",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：Supertrend反向过滤可能有意逆势；负方向改买入会倒置交易集合，需顺势/逆势独立对照。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "Supertrend反向过滤可能有意逆势；负方向改买入会倒置交易集合，需顺势/逆势独立对照。",
+    "ta.supertrend方向负值对应上涨，而buy使用direction>0；卖出使用direction<0且同根死叉，可能是逆势过滤或符号误解。另有重复版本声明。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "以Supertrend上下轨可视状态逐柱核对方向与订单，并覆盖EMA交叉时方向未同步的案例。"
+  ],
+  "id": "613b479d7c2b",
+  "title": "多指标趋势动量交叉量化策略-Multi-Indicator-Trend-Momentum-Crossover-Quantitative-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/117_SID3986_613b479d7c2b_original.pine",
+  "original": "originals/117_SID3986_613b479d7c2b.pine",
+  "baseline": "baselines/117_SID3986_613b479d7c2b.pine",
+  "changes": "changes/117_SID3986_613b479d7c2b.txt",
+  "card": "cards/613b479d7c2b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "dece1b8073505780ed8f6af2d4ad3abab08c2ea2ce1ca5263f305a62260cab12",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

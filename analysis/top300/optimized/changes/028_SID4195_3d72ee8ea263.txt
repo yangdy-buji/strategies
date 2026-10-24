@@ -1,0 +1,34 @@
+{
+  "rank": 28,
+  "sid": 4195,
+  "source_sha256": "7a42645ebd69061d427e704210e0bde78a195200922abacd85bf3ea30c3ad9fa",
+  "base_kind": "original",
+  "base_sha256": "aa6de30d23a97765f486c2f9f9d6918144c64681f34373a6082248cb99c4a21b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：SMA20/50金叉叠加200均线过滤，规则清楚；50/200信号只是标签。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "死叉还必须close<SMA200才能平仓，先死叉后跌破200会漏掉退出机会。 暂缓原因：提前退出可能错失修复行情，新增备用退出改变策略。"
+  ],
+  "validation_plan": [
+    "构造死叉发生在200线上随后继续下跌；比较原始与状态退出的持仓路径。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "3d72ee8ea263",
+  "title": "多重均线交叉信号优化交易策略-Multiple-Moving-Average-Crossover-Signal-Enhanced-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/028_SID4195_3d72ee8ea263_original.pine",
+  "original": "originals/028_SID4195_3d72ee8ea263.pine",
+  "baseline": "baselines/028_SID4195_3d72ee8ea263.pine",
+  "changes": "changes/028_SID4195_3d72ee8ea263.txt",
+  "card": "cards/3d72ee8ea263.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "aa6de30d23a97765f486c2f9f9d6918144c64681f34373a6082248cb99c4a21b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

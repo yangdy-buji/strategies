@@ -1,0 +1,43 @@
+{
+  "rank": 265,
+  "sid": 2209,
+  "source_sha256": "f4919da828cadb078c7b6613d818a2d09c8f1bb78a9796e999716f391fa84172",
+  "base_kind": "prior_candidate",
+  "base_sha256": "9ebf4c188974c6664c1108f6fec47b4ebd7f910b70cf993397a1ef5d2cd95126",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；MACD在零上且高于信号线做多、零下低于信号线做空；可选单向或双向反转。 MACD零轴与信号线同向是趋势确认，退出只在两者同时转弱，可能放回大量浮盈。",
+  "patches": [],
+  "resolved": [
+    "恢复日期函数。",
+    "接入入口日期门禁。",
+    "接入入口日期门禁。",
+    "接入入口日期门禁。",
+    "接入入口日期门禁。",
+    "双向窗外保留反向平空。",
+    "双向窗外保留反向平多。"
+  ],
+  "remaining": [
+    "MACD零轴与信号线同向是趋势确认，退出只在两者同时转弱，可能放回大量浮盈。 后续验证：零轴上死叉持续数十根、Long/Short/Both模式及费用压力验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "零轴上死叉持续数十根、Long/Short/Both模式及费用压力验证。"
+  ],
+  "id": "63539726a65b",
+  "title": "双移动平均线交叉MACD趋势跟踪策略Dual-Moving-Average-Crossover-MACD-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/265_SID2209_63539726a65b_candidate.pine",
+  "original": "originals/265_SID2209_63539726a65b.pine",
+  "baseline": "baselines/265_SID2209_63539726a65b.pine",
+  "changes": "changes/265_SID2209_63539726a65b.txt",
+  "card": "cards/63539726a65b.html",
+  "diff": "changes/265_SID2209_63539726a65b.patch",
+  "original_diff": "changes/265_SID2209_63539726a65b.original.patch",
+  "script_sha256": "b1ca8fc7fe8f980b62571e5bdee584cbd623cbe9365cb7e23cecac396c941a49",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

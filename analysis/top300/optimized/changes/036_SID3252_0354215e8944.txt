@@ -1,0 +1,34 @@
+{
+  "rank": 36,
+  "sid": 3252,
+  "source_sha256": "ed399484dcf718b7a51b59eff4a74a649e64232857c0545fc9c37690985d972d",
+  "base_kind": "original",
+  "base_sha256": "daa93d6bc91ff37a5490cf78ce2c98aea4e4fac27a33c14d6e21f1a27429fd18",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：六条EMA多头排列后做多、跌破EMA200退出，是强趋势持有模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "入场很苛刻而退出很慢，中间均线明显失效也不退出；六个周期增加选择自由度。 暂缓原因：减少均线可能增多假入场；更快退出可能减少大趋势收益。"
+  ],
+  "validation_plan": [
+    "比较六均线与20/200基线、趋势反转到200线之间的回撤及逐股贡献。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "0354215e8944",
+  "title": "基于多EMA买入策略Multiple-EMA-Buy-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/036_SID3252_0354215e8944_original.pine",
+  "original": "originals/036_SID3252_0354215e8944.pine",
+  "baseline": "baselines/036_SID3252_0354215e8944.pine",
+  "changes": "changes/036_SID3252_0354215e8944.txt",
+  "card": "cards/0354215e8944.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "daa93d6bc91ff37a5490cf78ce2c98aea4e4fac27a33c14d6e21f1a27429fd18",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

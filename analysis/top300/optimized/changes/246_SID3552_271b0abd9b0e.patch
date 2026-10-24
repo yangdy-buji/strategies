@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 3552：沿用旧候选·未回测
++// 原文件SHA256：5d52c84c20f80928990d437199a9169f7e6eace40c07752ef9f22bd9dd9da856
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于移动平均线均回复策略Based-on-the-Moving-Average-Reversion-Strategy.md
+ // 原文件SHA256：5d52c84c20f80928990d437199a9169f7e6eace40c07752ef9f22bd9dd9da856

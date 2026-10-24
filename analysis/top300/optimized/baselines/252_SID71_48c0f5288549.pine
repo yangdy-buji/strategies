@@ -1,0 +1,60 @@
+//@version=5
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：ATR增强型蜡烛反转模式识别与风险管理策略-ATR-Enhanced-Candlestick-Reversal-Pattern-Recognition-and-Risk-Management-Strategy.md
+// 原文件SHA256：d93a7f991540c18901ba9c8e94b554e0700d4eeaafa2f687465c05b64fda146a
+// SID：71；原研究名单序号：106
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-02-29 00:00:00
+end: 2025-02-26 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"ETH_USDT"}]
+*/
+strategy("Hammers & Stars Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=2)
+
+// ATR Filter
+atrLength = 14
+atrMultiplier = 1.5
+atrValue = ta.atr(atrLength)
+
+// Candlestick Pattern Definitions
+bodySize = math.abs(close - open)
+wicksUpper = high - math.max(close, open)
+wicksLower = math.min(close, open) - low
+totalRange = high - low
+
+// Hammer Pattern (Bullish Reversal)
+isHammer = wicksLower > (2 * bodySize) and wicksUpper < bodySize and totalRange > atrMultiplier * atrValue
+hammerSignal = isHammer and ta.crossover(close, open)  // Confirmation
+
+// Shooting Star Pattern (Bearish Reversal)
+isShootingStar = wicksUpper > (2 * bodySize) and wicksLower < bodySize and totalRange > atrMultiplier * atrValue
+shootingStarSignal = isShootingStar and ta.crossunder(close, open)  // Confirmation
+
+// Entry Conditions
+if hammerSignal
+    strategy.entry("Hammer Buy", strategy.long)
+if shootingStarSignal
+    strategy.entry("ShootingStar Sell", strategy.short)
+
+// Stop Loss & Take Profit
+slMultiplier = 1.5
+tlMultiplier = 2.5
+longStopLoss = low - slMultiplier * atrValue
+longTakeProfit = close + tlMultiplier * atrValue
+shortStopLoss = high + slMultiplier * atrValue
+shortTakeProfit = close - tlMultiplier * atrValue
+
+strategy.exit("Take Profit / Stop Loss", from_entry="Hammer Buy", stop=longStopLoss, limit=longTakeProfit)
+// OPT-71-01：多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。
+// OPT-71-01 保持：原信号、数量、价格参数与Pine版本保持。
+// OPT-71-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.exit("Short Take Profit / Stop Loss", from_entry="ShootingStar Sell", stop=shortStopLoss, limit=shortTakeProfit)
+
+// Plot Signals on Chart
+plotshape(hammerSignal, location=location.belowbar, color=color.green, style=shape.labelup, title="Hammer")
+plotshape(shootingStarSignal, location=location.abovebar, color=color.red, style=shape.labeldown, title="Shooting Star")

@@ -1,0 +1,55 @@
+{
+  "rank": 57,
+  "sid": 3159,
+  "source_sha256": "e1158f0c116f6829a7a321e3a0cc784d25dc58bdf7a88feaaf2b821f2280c1fb",
+  "base_kind": "original",
+  "base_sha256": "a35861aa3ed0592510b8df72f25e47875b2fcca7a47a98edad4afc4aa134ecbd",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "只修复CMO平价窗口分母为0；VAR=EMA(src×abs(CMO))的价格压低效应保留，标准VAR递推替换另列实验。",
+  "patches": [
+    {
+      "old": "    vCMO = (vUD - vDD) / (vUD + vDD)",
+      "new": "    vCMO = (vUD + vDD) == 0 ? 0.0 : (vUD - vDD) / (vUD + vDD)",
+      "reason": "完整窗口上涨量和下跌量均为0时CMO取中性0，避免0/0进入EMA。",
+      "preserved": "原src乘绝对CMO的VAR定义保持，不冒充标准自适应均线；暖机NA仍NA。",
+      "validation_cases": [
+        "UD=DD=0得到0；UD3 DD1得到0.5；UD0 DD3得到-1；暖机NA保留。"
+      ]
+    }
+  ],
+  "resolved": [
+    "完整窗口上涨量和下跌量均为0时CMO取中性0，避免0/0进入EMA。"
+  ],
+  "remaining": [
+    "VAR仍是EMA(src×abs(CMO))而非标准VAR递推，平价段CMO=0会逐渐压低该线；是否替换必须独立研究，不能沿用旧收益。",
+    "原生v5编译及完整EMA序列回放尚未完成；VAR经济含义与加载窗口敏感性须独立研究。"
+  ],
+  "validation_plan": [
+    "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+    "统计过滤拒绝率、恒定价格边界和原公式与常规递推公式逐根差异。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "4ff24008381a",
+  "title": "基于双均线波动率跟踪策略Dual-Moving-Average-Volatility-Tracking-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/057_SID3159_4ff24008381a_candidate.pine",
+  "original": "originals/057_SID3159_4ff24008381a.pine",
+  "baseline": "baselines/057_SID3159_4ff24008381a.pine",
+  "changes": "changes/057_SID3159_4ff24008381a.txt",
+  "card": "cards/4ff24008381a.html",
+  "diff": "changes/057_SID3159_4ff24008381a.patch",
+  "original_diff": "changes/057_SID3159_4ff24008381a.original.patch",
+  "script_sha256": "939fca0467a271ffc265cebf6368ff22c13d42859fd5119973bddedd80ee0c22",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "68012ae1d5bb5fe6186b2ef22449c4d0858d7cfe82f03c37ef19ae99c7586682",
+    "review": "已复核v5函数完整上下文及生成diff：math.sum与ta.ema仍在每根被调用的Var_Func中无条件计算，仅vCMO标量分母精确0时归0。缺失vUD/vDD仍通过原比率传播NA；四空格注释与函数缩进一致。测试提取实际vCMO表达式，覆盖双零、正负趋势、暖机NA。明确注意平价段EMA会向0衰减，这是已明示保留的src乘abs(CMO)公式后果，不冒充标准VAR。",
+    "remaining": [
+      "原生v5编译及完整EMA序列回放尚未完成；VAR经济含义与加载窗口敏感性须独立研究。"
+    ]
+  }
+}

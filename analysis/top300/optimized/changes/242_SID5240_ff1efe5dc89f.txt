@@ -1,0 +1,58 @@
+{
+  "rank": 242,
+  "sid": 5240,
+  "source_sha256": "5455817804f192caf44f009646677dfc932adc1633b7e147e3b563790af1e651",
+  "base_kind": "original",
+  "base_sha256": "32fadcb0f535aef2b10e7b05b87fe08b53f8cb57966a86bd2d683e1c67b1b628",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "新增候选：保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。",
+  "patches": [
+    {
+      "old": "if (bullishCross)\n    strategy.entry(\"Buy\", strategy.long)  // Buy pozitsiyasini ochish\n    strategy.exit(\"Exit Buy\", \"Buy\", stop=longSL, limit=longTP)  // SL va TP qo'yish\n\n    // 2% foyda bo'lganda SLni break-even ga o'zgartirish\n    if (strategy.position_size > 0)\n        profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100\n        if (profitPercentage >= 2)\n            strategy.exit(\"Exit Buy BE\", \"Buy\", stop=strategy.position_avg_price) // SLni break-even ga o'zgartirish\n\n",
+      "new": "var float activeSL = na\nvar float activeTP = na\nif (bullishCross and strategy.position_size == 0)\n    activeSL := longSL\n    activeTP := longTP\n    strategy.entry(\"Buy\", strategy.long)\n    strategy.exit(\"Exit Buy\", \"Buy\", stop=activeSL, limit=activeTP)\n\nif strategy.position_size > 0\n    profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100\n    if profitPercentage >= 2\n        activeSL := math.max(activeSL, strategy.position_avg_price)\n    strategy.exit(\"Exit Buy\", \"Buy\", stop=activeSL, limit=activeTP)\n\n",
+      "reason": "保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。",
+      "preserved": "2%保本触发、原3倍风险目标及金叉入口；激活后不下降。",
+      "validation_cases": [
+        "无第二次金叉也能在盈利2%激活；回落1%不撤保本；同一exit ID更新。"
+      ]
+    }
+  ],
+  "resolved": [
+    "保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。"
+  ],
+  "remaining": [
+    "lastRedCandleLow缺失时仍可能无有效止损；信号价与成交价跳空差异未改。",
+    "原生撮合、首笔保护及回测未执行。",
+    "activeSL为na时math.max(na,均价)仍为na，保本也不能自动修复缺失初始锚点。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "金叉次日成交、非金叉柱浮盈2%、部分成交及跳空回成本验证。"
+  ],
+  "id": "ff1efe5dc89f",
+  "title": "自适应指数均线动态调仓突破交易策略-Adaptive-EMA-Dynamic-Position-Break-out-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/242_SID5240_ff1efe5dc89f_candidate.pine",
+  "original": "originals/242_SID5240_ff1efe5dc89f.pine",
+  "baseline": "baselines/242_SID5240_ff1efe5dc89f.pine",
+  "changes": "changes/242_SID5240_ff1efe5dc89f.txt",
+  "card": "cards/ff1efe5dc89f.html",
+  "diff": "changes/242_SID5240_ff1efe5dc89f.patch",
+  "original_diff": "changes/242_SID5240_ff1efe5dc89f.original.patch",
+  "script_sha256": "9eb7f3cdb94f9e6b523f5cc8c015a3c19b3607e327eb5908c08ea05a14c36401",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "1377aa5fa740d32e97f37566b1870067adfaa5036b5c13e424fa4821a287b26f",
+    "review": "核对空仓金叉初始化activeSL/activeTP并同柱提交括号；持仓每柱检测收盘盈利2%，使用math.max抬升同一Exit Buy止损且保留目标，后续回落不撤销保本，下一次空仓金叉重新初始化。避免另一个exit ID因全仓预留而无法执行；有缺失红柱锚点的既存边界保留。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "lastRedCandleLow缺失时仍可能无有效止损；信号价与成交价跳空差异未改。",
+      "原生撮合、首笔保护及回测未执行。",
+      "activeSL为na时math.max(na,均价)仍为na，保本也不能自动修复缺失初始锚点。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 245,
+  "sid": 4501,
+  "source_sha256": "44bd6dcbb577ed07892fa033fbc89a1baecafa31bdd061208c242aa8fbeb829b",
+  "base_kind": "original",
+  "base_sha256": "fc304317ec6929e507f91240d23c59e34eeea71885842495b1019598798d75ce",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA200上方且布林%b连续三根<0.2做多，%b>0.8平多。 长期均线上连续三根%B低位后回归高位是自洽均值回归；无明确最长持有或趋势失效退出。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "长期均线上连续三根%B低位后回归高位是自洽均值回归；无明确最长持有或趋势失效退出。 后续验证：三根低位后长期不达0.8、带宽为零及费用翻倍的策略路径。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "三根低位后长期不达0.8、带宽为零及费用翻倍的策略路径。"
+  ],
+  "id": "30799d23bfc8",
+  "title": "布林带超买超卖策略-Bollinger-Band-Overbought-Oversold-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/245_SID4501_30799d23bfc8_original.pine",
+  "original": "originals/245_SID4501_30799d23bfc8.pine",
+  "baseline": "baselines/245_SID4501_30799d23bfc8.pine",
+  "changes": "changes/245_SID4501_30799d23bfc8.txt",
+  "card": "cards/30799d23bfc8.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "fc304317ec6929e507f91240d23c59e34eeea71885842495b1019598798d75ce",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

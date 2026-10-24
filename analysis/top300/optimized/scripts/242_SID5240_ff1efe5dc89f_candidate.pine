@@ -1,0 +1,65 @@
+// OPT-T300 SID 5240：本轮新候选·未回测
+// 原文件SHA256：5455817804f192caf44f009646677dfc932adc1633b7e147e3b563790af1e651
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2019-12-23 08:00:00
+end: 2024-12-18 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("EMA Crossover with TP and SL (Buy only) and Break-even", overlay=true)
+
+// EMA sozlamalari
+emaFastLength = input.int(25, title="Fast EMA Length")
+emaSlowLength = input.int(100, title="Slow EMA Length")
+
+// Hisoblash
+emaFast = ta.ema(close, emaFastLength)
+emaSlow = ta.ema(close, emaSlowLength)
+
+// Kesishishni aniqlash
+bullishCross = ta.crossover(emaFast, emaSlow) // EMA 25 EMA 100 ni yuqoriga kesib o'tganda
+
+// EMA 100 tagidagi oxirgi qizil shamning tagini olish
+lastRedCandleLow = ta.valuewhen(close < open and close < emaSlow, low, 0) // EMA 100 pastidagi qizil shamning tagi
+
+// TP va SL darajalarini hisoblash
+longSL = lastRedCandleLow
+longTP = close + 3 * (close - longSL) // TP SL ga nisbatan 1:2 masofada
+
+// Savdoni ochish va 2% foyda bo'lganda SLni break-even ga o‘zgartirish
+// OPT-T300-01 修改原因：保本检查移到每根持仓柱，抬升原Exit Buy止损并保持目标，避免另一个ID无可预留数量。
+// OPT-T300-01 保持行为：2%保本触发、原3倍风险目标及金叉入口；激活后不下降。
+var float activeSL = na
+var float activeTP = na
+if (bullishCross and strategy.position_size == 0)
+    activeSL := longSL
+    activeTP := longTP
+    strategy.entry("Buy", strategy.long)
+    strategy.exit("Exit Buy", "Buy", stop=activeSL, limit=activeTP)
+
+if strategy.position_size > 0
+    profitPercentage = (close - strategy.position_avg_price) / strategy.position_avg_price * 100
+    if profitPercentage >= 2
+        activeSL := math.max(activeSL, strategy.position_avg_price)
+    strategy.exit("Exit Buy", "Buy", stop=activeSL, limit=activeTP)
+
+// Signalni ko'rsatish
+plotshape(bullishCross, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+
+// // TP va SL chizish
+// if (bullishCross)
+//     line.new(x1=bar_index, y1=longSL, x2=bar_index+1, y2=longSL, color=color.red, width=1, extend=extend.none)
+//     line.new(x1=bar_index, y1=longTP, x2=bar_index+1, y2=longTP, color=color.green, width=1, extend=extend.none)
+//     label.new(bar_index, longSL, text="SL: " + str.tostring(longSL), style=label.style_label_down, color=color.red, textcolor=color.white, size=size.small)
+//     label.new(bar_index, longTP, text="TP: " + str.tostring(longTP), style=label.style_label_up, color=color.green, textcolor=color.white, size=size.small)
+
+// EMA chizish
+plot(emaFast, color=color.blue, title="Fast EMA (25)")
+plot(emaSlow, color=color.orange, title="Slow EMA (100)")
+
+// Alert qo'shish
+alertcondition(bullishCross, title="Buy Signal Alert", message="EMA 25 crossed above EMA 100! Buy Signal!")

@@ -1,0 +1,35 @@
+{
+  "rank": 113,
+  "sid": 4451,
+  "source_sha256": "ee4e35f5e39e9dcd3744b0fc8065d9fc470a2accef4a8d4d5f1d9b633b97d931",
+  "base_kind": "original",
+  "base_sha256": "c0c199cccc4bc7ae7d38f35f503eb369807926655060258fcb5997cc02548e9f",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：冷却以信号还是成交为起点均合理；切换会改变允许的下一次入口，现有代码未给出成交冷却要求。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "冷却以信号还是成交为起点均合理；切换会改变允许的下一次入口，现有代码未给出成交冷却要求。",
+    "lastBuyBar在每个Buy_1信号更新，即使默认pyramiding禁止持仓加仓也会重置冷却，购买间隔实际是信号间隔而非成交间隔；无独立损失上限。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造持仓中连续超卖、退出后立即再超卖的序列，对照lastBuyBar、实际成交和冷却通过时点。"
+  ],
+  "id": "9b64f7a18fbe",
+  "title": "布林带与RSI交易策略-Bollinger-Bands-and-RSI-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/113_SID4451_9b64f7a18fbe_original.pine",
+  "original": "originals/113_SID4451_9b64f7a18fbe.pine",
+  "baseline": "baselines/113_SID4451_9b64f7a18fbe.pine",
+  "changes": "changes/113_SID4451_9b64f7a18fbe.txt",
+  "card": "cards/9b64f7a18fbe.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c0c199cccc4bc7ae7d38f35f503eb369807926655060258fcb5997cc02548e9f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

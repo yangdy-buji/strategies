@@ -1,0 +1,34 @@
+{
+  "rank": 247,
+  "sid": 2541,
+  "source_sha256": "b7c272a3c3c9ad299e4dd1185fa3f472e8c8fd07655bca27e2325f075628c17d",
+  "base_kind": "original",
+  "base_sha256": "3810a843723d5ea7a8855fb458ca0deba927fa91ea81957daf21d6501d4cdc84",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；EMA80>EMA200且价格在EMA50上，历史价下穿EMA并连续上涨时买多；成交时ATR固定3.5倍止损目标。 趋势中回撤恢复的意图可解释，但止损要先收盘跌破成本才挂出，止盈又须同时跌到MA1下。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "趋势中回撤恢复的意图可解释，但止损要先收盘跌破成本才挂出，止盈又须同时跌到MA1下。 后续验证：持仓盈利柱盘中触止损后收回、达目标但在均线上、numberOfCandles>1验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "持仓盈利柱盘中触止损后收回、达目标但在均线上、numberOfCandles>1验证。"
+  ],
+  "id": "965e853247cf",
+  "title": "坚劲趋势延续策略Robust-Trend-Continuation-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/247_SID2541_965e853247cf_original.pine",
+  "original": "originals/247_SID2541_965e853247cf.pine",
+  "baseline": "baselines/247_SID2541_965e853247cf.pine",
+  "changes": "changes/247_SID2541_965e853247cf.txt",
+  "card": "cards/965e853247cf.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "3810a843723d5ea7a8855fb458ca0deba927fa91ea81957daf21d6501d4cdc84",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

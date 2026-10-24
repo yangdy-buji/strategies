@@ -1,0 +1,68 @@
+//@version=5
+// OPT-T300 SID 5503：本轮新候选·未回测
+// 原文件SHA256：9c8ad76d55119ad4beb89997efd34d179f15a1d1c5fef8a6e617f3b4973d1a38
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：连续K线反转突破策略Consecutive-Candlestick-Reversal-Breakout-Strategy.md
+// 原文件SHA256：9c8ad76d55119ad4beb89997efd34d179f15a1d1c5fef8a6e617f3b4973d1a38
+// SID：5503；原研究名单序号：110
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2024-02-01 00:00:00
+end: 2024-02-29 23:59:59
+period: 2h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("Bottom Out Strategy", overlay=true)
+consecutiveBarsUp = input(2)
+consecutiveBarsDown = input(3)
+price = close
+ups = 0.0
+ups := price > price[1] ? nz(ups[1]) + 1 : 0
+dns = 0.0
+dns := price < price[1] ? nz(dns[1]) + 1 : 0
+var entry_bar_index = 1000000
+// OPT-T300-01 修改原因：持仓状态改为真实持仓，信号柱不假装已成交。
+// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+active = strategy.position_size > 0
+var stop_loss = 0.0
+
+// === INPUT BACKTEST RANGE ===
+i_from = input(defval = timestamp("01 Jan 2023 00:00 +0000"), title = "From")
+i_thru = input(defval = timestamp("01 Mar 2024 00:00 +0000"), title = "Thru")
+// === FUNCTION EXAMPLE ===
+// OPT-5503-01：恢复日期入场。
+// OPT-5503-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-5503-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+date() => time >= i_from and time <= i_thru
+
+entry_condition() => 
+	date() and dns[2] >= consecutiveBarsDown and ups >= consecutiveBarsUp and not active
+
+exit_condition() =>
+	// OPT-5503-02：窗外原保护退出仍生效。
+	// OPT-5503-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+	// OPT-5503-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+	active and (close < nz(stop_loss) or close < high - 2 * ta.atr(7))
+
+if (entry_condition())
+	strategy.entry("ConsDnLong", strategy.long, comment="CDLEntry")
+	entry_bar_index := bar_index
+	// OPT-T300-02 修改原因：删除提交入口时提前置持仓标志。
+	// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+	stop_loss := math.min(close, close[1], close[2])
+	// log.info("Entry at bar {0}, close={1}, stop_loss={2} ", entry_bar_index, close, stop_loss)
+if (exit_condition())
+	strategy.close("ConsDnLong", comment = "CDLClose")
+	// log.info("Close at bar {0}", bar_index)
+	entry_bar_index := 1000000
+// OPT-T300-03 修改原因：删除提交出口时提前清持仓标志。
+// OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+// if (dns >= consecutiveBarsDown)
+// 	strategy.entry("ConsDnSE", strategy.short, comment="ConsDnSE")
+//plot(strategy.equity, title="equity", color=color.red, linewidth=2, style=plot.style_areabr)
+plot(high - 2* ta.atr(7))

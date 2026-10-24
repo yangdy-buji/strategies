@@ -1,0 +1,36 @@
+{
+  "rank": 199,
+  "sid": 5419,
+  "source_sha256": "377dbe055aea9f0e12a32bebb73bfde6fcae19a2e7eff8b80b9f4a76c0a2b45a",
+  "base_kind": "prior_candidate",
+  "base_sha256": "10fd9d0c79cc7d913b6a1e1767fed3828713077823ca71acd33c05342ead44d9",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：把现有正确日期函数接到唯一入场。",
+  "patches": [],
+  "resolved": [
+    "把现有正确日期函数接到唯一入场。"
+  ],
+  "remaining": [
+    "目标仍每柱close×1.12、仅退出50%；未接入绘图trailing线。固定锚、剩余仓保护与追踪方式属于独立design_experiment。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "价格上涨、横盘、急跌路径记录限价随close移动及每次qty_percent的实际保留份数，确认终止日期后的退出政策。"
+  ],
+  "id": "a7d51c90d23e",
+  "title": "趋势跟踪止损策略Trend-Following-Strategy-with-Trailing-Stop-Loss",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/199_SID5419_a7d51c90d23e_candidate.pine",
+  "original": "originals/199_SID5419_a7d51c90d23e.pine",
+  "baseline": "baselines/199_SID5419_a7d51c90d23e.pine",
+  "changes": "changes/199_SID5419_a7d51c90d23e.txt",
+  "card": "cards/a7d51c90d23e.html",
+  "diff": "changes/199_SID5419_a7d51c90d23e.patch",
+  "original_diff": "changes/199_SID5419_a7d51c90d23e.original.patch",
+  "script_sha256": "6c2a21c264e3bf59584ad34e3cad556d917f820bf99a1a444207fc163df283a6",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,38 @@
+{
+  "rank": 232,
+  "sid": 799,
+  "source_sha256": "5244f67bbbfd825ef266e0e011b9fc88be589ccc5b2897ebacac26a98037e313",
+  "base_kind": "prior_candidate",
+  "base_sha256": "73a32f71cd450ff0eccc8bf832552b140f6ac134ba362f2b4953c288ef52a0aa",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；RSI16的EMA12高于SMA29且价格高于EMA8做多100%权益，RSI均线反向时平多。 RSI均线状态加价格EMA过滤可解释；重复条件下重新买入需核对退出后的再入频率。",
+  "patches": [],
+  "resolved": [
+    "恢复日期窗。",
+    "退出移出日期入场门禁。"
+  ],
+  "remaining": [
+    "RSI均线状态加价格EMA过滤可解释；重复条件下重新买入需核对退出后的再入频率。 后续验证：连续emavalue>smavalue、价格反复穿EMA8时记录完整交易序列。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "连续emavalue>smavalue、价格反复穿EMA8时记录完整交易序列。"
+  ],
+  "id": "4414ec4b27e7",
+  "title": "RSI均线交叉趋势策略RSI-Moving-Average-Crossover-Trend-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/232_SID799_4414ec4b27e7_candidate.pine",
+  "original": "originals/232_SID799_4414ec4b27e7.pine",
+  "baseline": "baselines/232_SID799_4414ec4b27e7.pine",
+  "changes": "changes/232_SID799_4414ec4b27e7.txt",
+  "card": "cards/4414ec4b27e7.html",
+  "diff": "changes/232_SID799_4414ec4b27e7.patch",
+  "original_diff": "changes/232_SID799_4414ec4b27e7.original.patch",
+  "script_sha256": "153a5319a8b77d7e58e1de8bc00062ae2e9ab33b881d431dbaf9a97a717b7d20",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

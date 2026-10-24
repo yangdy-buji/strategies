@@ -1,0 +1,34 @@
+{
+  "rank": 35,
+  "sid": 3,
+  "source_sha256": "877d88096efc2e0585093c7512818b4fc4c2a4fc8639daf081fe7a57285e5c74",
+  "base_kind": "original",
+  "base_sha256": "40d6267b860ca5c237fb1e1b3d2d23fab4177507fe6dcbe768f5c36e4545c329",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：价格/SMA10与MACD双交叉确认提供强一致性入场，但双事件必须同根，退出同样稀疏。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "若先跌破SMA后MACD死叉，就没有双下穿同根信号，可能长期等待新的组合事件。 暂缓原因：信号会增多，过度交易风险上升。"
+  ],
+  "validation_plan": [
+    "检查交叉相隔0/1/3根的完整订单轨迹，并对两指标增益做消融。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "ae7e29ef2210",
+  "title": "10SMA与MACD双重趋势跟踪交易策略-10SMA-and-MACD-Dual-Trend-Following-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/035_SID3_ae7e29ef2210_original.pine",
+  "original": "originals/035_SID3_ae7e29ef2210.pine",
+  "baseline": "baselines/035_SID3_ae7e29ef2210.pine",
+  "changes": "changes/035_SID3_ae7e29ef2210.txt",
+  "card": "cards/ae7e29ef2210.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "40d6267b860ca5c237fb1e1b3d2d23fab4177507fe6dcbe768f5c36e4545c329",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

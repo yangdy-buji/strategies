@@ -1,0 +1,34 @@
+{
+  "rank": 203,
+  "sid": 5514,
+  "source_sha256": "69e0b3e34220dc92fda553288c2e8d2e4d41eff913b12e12a41e8f667f45052f",
+  "base_kind": "original",
+  "base_sha256": "d7615a3fb881e006e29d81609ca00053c78d3522ab93d2a78289aa76e988a4aa",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA14上穿28做多，初始3%止损，涨过3%后单调抬至保本；死叉或保护退出。 该规则是3%初始止损、浮盈超过3%后保本，之后不随峰值继续抬升；并非通常的百分比跟踪。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "该规则是3%初始止损、浮盈超过3%后保本，之后不随峰值继续抬升；并非通常的百分比跟踪。 后续验证：检查入场后首柱保护、盈利3%上下边界及回撤到成本的成交。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "检查入场后首柱保护、盈利3%上下边界及回撤到成本的成交。"
+  ],
+  "id": "17b1e9e3afa7",
+  "title": "追踪止损百分比策略Percentage-Trailing-Stop-Loss-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/203_SID5514_17b1e9e3afa7_original.pine",
+  "original": "originals/203_SID5514_17b1e9e3afa7.pine",
+  "baseline": "baselines/203_SID5514_17b1e9e3afa7.pine",
+  "changes": "changes/203_SID5514_17b1e9e3afa7.txt",
+  "card": "cards/17b1e9e3afa7.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d7615a3fb881e006e29d81609ca00053c78d3522ab93d2a78289aa76e988a4aa",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

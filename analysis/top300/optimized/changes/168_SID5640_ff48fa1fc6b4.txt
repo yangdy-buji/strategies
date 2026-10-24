@@ -1,0 +1,35 @@
+{
+  "rank": 168,
+  "sid": 5640,
+  "source_sha256": "36cd8749b73b11c3f88db1eb2ab65e6281b4d7e6abc8991f02bf38caf096c106",
+  "base_kind": "original",
+  "base_sha256": "d630e01c2909d7fba18317c7e1d60f974ec10eb9e10b24be3ae222bfd5d93696",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：日终15:45在不同周期不存在；应按美股常规/扩展会话及半日市定义最后可交易柱，未指定目标会话与是否允许隔夜，不能直接换成固定16:00。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "日终15:45在不同周期不存在；应按美股常规/扩展会话及半日市定义最后可交易柱，未指定目标会话与是否允许隔夜，不能直接换成固定16:00。",
+    "只匹配hour==15且minute>=45；小时或日线未必存在此开盘时间柱，16点也不触发；没有禁止收盘前后新增入场。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "在5分钟、30分钟、1小时、日线及半日市检查最后一次入场/退出，确认无新仓在强平之后建立。"
+  ],
+  "id": "ff48fa1fc6b4",
+  "title": "零延迟移动平均趋势交叉策略Zero-Lag-Moving-Average-Trend-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/168_SID5640_ff48fa1fc6b4_original.pine",
+  "original": "originals/168_SID5640_ff48fa1fc6b4.pine",
+  "baseline": "baselines/168_SID5640_ff48fa1fc6b4.pine",
+  "changes": "changes/168_SID5640_ff48fa1fc6b4.txt",
+  "card": "cards/ff48fa1fc6b4.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d630e01c2909d7fba18317c7e1d60f974ec10eb9e10b24be3ae222bfd5d93696",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

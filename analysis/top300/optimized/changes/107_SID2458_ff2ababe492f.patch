@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=6
++// OPT-T300 SID 2458：沿用旧候选·未回测
++// 原文件SHA256：bc5722e8427f767693149c947e9776c5b45e7fdcee8e1b555dc4dac9dfe2195f
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：均值回归型连续K线反转交易策略-Mean-Reversion-Consecutive-Candle-Reversal-Trading-Strategy.md
+ // 原文件SHA256：bc5722e8427f767693149c947e9776c5b45e7fdcee8e1b555dc4dac9dfe2195f

@@ -1,0 +1,78 @@
+{
+  "rank": 172,
+  "sid": 374,
+  "source_sha256": "465802fe9540520cffb291d032c607277fb17fb930e275bdcd3a7d12cc392138",
+  "base_kind": "original",
+  "base_sha256": "5279759eabac83d59370f0ed45a5c8596af76b8fe14ef151c5bb7c01bb707530",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。；独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。；独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。",
+  "patches": [
+    {
+      "old": "strategy.entry(\"Sell\", when = Sell_1",
+      "new": "strategy.close(\"Long\", when = Sell_1",
+      "reason": "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "Sell信号关闭Long，不开空；分别开启三个版本核对订单。"
+      ]
+    },
+    {
+      "old": "strategy.entry(\"Sell\", when = Sell_2",
+      "new": "strategy.close(\"Long\", when = Sell_2",
+      "reason": "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "Sell信号关闭Long，不开空；分别开启三个版本核对订单。"
+      ]
+    },
+    {
+      "old": "strategy.entry(\"Sell\", when = Sell_3",
+      "new": "strategy.close(\"Long\", when = Sell_3",
+      "reason": "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "Sell信号关闭Long，不开空；分别开启三个版本核对订单。"
+      ]
+    }
+  ],
+  "resolved": [
+    "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。",
+    "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。",
+    "独立设计实验：缺direction确定有误；依据仅Long保护结构选择卖出平多语义。"
+  ],
+  "remaining": [
+    "选择平多为独立design_experiment，原缺direction无法唯一推断反手意图；不声称原版交易等价。",
+    "版本开关可同时开启且共享ID；互斥选择待单独验证。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+    "原MFI辅助函数分支后仍执行最终除法，零MFIlower及混合缩进需原生检查；本次仅审核卖出订单语义。"
+  ],
+  "validation_plan": [
+    "逐一启用v1/v2/v3及组合设置检查编译、订单方向与ID；参数邻域验证不能以6.604等单点最优代替。"
+  ],
+  "id": "4929588c271d",
+  "title": "Flawless-Victory-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/172_SID374_4929588c271d_candidate.pine",
+  "original": "originals/172_SID374_4929588c271d.pine",
+  "baseline": "baselines/172_SID374_4929588c271d.pine",
+  "changes": "changes/172_SID374_4929588c271d.txt",
+  "card": "cards/4929588c271d.html",
+  "diff": "changes/172_SID374_4929588c271d.patch",
+  "original_diff": "changes/172_SID374_4929588c271d.original.patch",
+  "script_sha256": "27cad1fab30eeaef11cc1be9f64d02ec04ab02d1bcc75b21863eda13c1d7f6d9",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "1e583c61ec7d975166d1b202592c16bd66da047d4f0ea0c93eba9c3d8c074d1d",
+    "review": "v4三处无direction的Sell entry均改为close Long，能与各版本的Long入口及Stoploss/TP保护配对；没有引入裸Sell反手，alert_message与when保留。因原意不唯一以平多设计实验批准，多个版本同时启用共享ID的冲突不在此补丁修复。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "选择平多为独立design_experiment，原缺direction无法唯一推断反手意图；不声称原版交易等价。",
+      "版本开关可同时开启且共享ID；互斥选择待单独验证。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+      "原MFI辅助函数分支后仍执行最终除法，零MFIlower及混合缩进需原生检查；本次仅审核卖出订单语义。"
+    ]
+  }
+}

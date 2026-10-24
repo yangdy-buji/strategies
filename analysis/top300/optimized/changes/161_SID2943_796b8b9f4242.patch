@@ -1,0 +1,22 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 2943：本轮新候选·未回测
++// 原文件SHA256：f4f2e0e3c7e993f8e619ab1861c9f4f3180b7cfc31b29e625549cd9f8792e852
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于Vix修复线性回归的低点捕捉策略Vix-Fix-Linear-Regression-Bottom-Fishing-Strategy.md
+ // 原文件SHA256：f4f2e0e3c7e993f8e619ab1861c9f4f3180b7cfc31b29e625549cd9f8792e852
+@@ -83,5 +86,9 @@
+ myLabel = label.new(x=label_x, y=0, text="Stop : "+tostring(stop), xloc=xloc.bar_time, style=label.style_none, textcolor=color.black, size=size.normal)
+ label.delete(myLabel[1])
+ strategy.entry("Long", strategy.long, when=longCondition, oca_name="oca_buy")
+-strategy.close("Long", when=exitLongCondition or (close < stop and waitForCloseBeforeStop and linRegColor == color.green))
+-strategy.exit("ExitLong", "Long", stop = stop, when=not waitForCloseBeforeStop and linRegColor == color.green)
++// OPT-T300-01 修改原因：独立风控设计实验：收盘止损脱离绿色信号门禁。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++strategy.close("Long", when=exitLongCondition or (close < stop and waitForCloseBeforeStop))
++// OPT-T300-02 修改原因：独立风控设计实验：非收盘模式保护单不依赖绿色信号。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++strategy.exit("ExitLong", "Long", stop = stop, when=not waitForCloseBeforeStop)

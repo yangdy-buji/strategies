@@ -1,0 +1,37 @@
+{
+  "rank": 173,
+  "sid": 2199,
+  "source_sha256": "f47377c24908205fd1422153818d72ec6ed4a4a487fd2c627a03e46f76d7b2e2",
+  "base_kind": "prior_candidate",
+  "base_sha256": "072ee7d6ce5243903fc82d322203d066955c1644a13d64636e6b08a5aa8f40eb",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：时间函数恒真。；状态维护和退出需跨窗继续。",
+  "patches": [],
+  "resolved": [
+    "时间函数恒真。",
+    "状态维护和退出需跨窗继续。"
+  ],
+  "remaining": [
+    "所谓ATR为平均high-low，不含跳空；inlong记录发单而非成交，需原生回放确定状态差异。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "窗外持仓、拒单、隔夜跳空及EMA下穿stopval路径对照，不宣称stop线价格可直接成交。"
+  ],
+  "id": "326f85412de3",
+  "title": "双移动均线追踪止损策略Dual-Moving-Average-Tracking-Stop-Loss-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/173_SID2199_326f85412de3_candidate.pine",
+  "original": "originals/173_SID2199_326f85412de3.pine",
+  "baseline": "baselines/173_SID2199_326f85412de3.pine",
+  "changes": "changes/173_SID2199_326f85412de3.txt",
+  "card": "cards/326f85412de3.html",
+  "diff": "changes/173_SID2199_326f85412de3.patch",
+  "original_diff": "changes/173_SID2199_326f85412de3.original.patch",
+  "script_sha256": "1ed93f7ae7b7dee1ab611b29f32b694251e31bd3719d9b5d5f522de13f9612db",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

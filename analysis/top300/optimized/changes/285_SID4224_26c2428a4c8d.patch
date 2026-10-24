@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=6
++// OPT-T300 SID 4224：沿用旧候选·未回测
++// 原文件SHA256：67dcdf7b16b4e8bced24c76853fca11c05e3aa1c3cb336e8bde3ff401457267c
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：多重均线黄金交叉分批止盈策略-Multi-EMA-Golden-Cross-Strategy-with-Tiered-Take-Profit.md
+ // 原文件SHA256：67dcdf7b16b4e8bced24c76853fca11c05e3aa1c3cb336e8bde3ff401457267c

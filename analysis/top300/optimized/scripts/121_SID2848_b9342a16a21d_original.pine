@@ -1,0 +1,34 @@
+/*backtest
+start: 2023-03-02 00:00:00
+end: 2024-03-07 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy("RSI Strategy", shorttitle="RSI Strategy", overlay=true)
+
+// Inputs
+rsi_length = input(14, title="RSI Length")
+rsi_buy_level = input(30, title="RSI Buy Level")
+rsi_sell_level = input(70, title="RSI Sell Level")
+tf = "1"
+
+// RSI calculation
+rsi_value = rsi(close, rsi_length)
+
+// Plotting RSI
+plot(rsi_value, color=color.blue, title="RSI")
+
+// Buy and sell conditions
+buy_condition = crossover(rsi_value, rsi_buy_level)
+sell_condition = crossunder(rsi_value, rsi_sell_level)
+
+// Plot buy and sell signals
+plotshape(series=buy_condition, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small)
+plotshape(series=sell_condition, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small)
+
+// Execution
+strategy.entry("Buy", strategy.long, when=buy_condition)
+strategy.close("Buy", when=sell_condition)

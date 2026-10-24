@@ -1,0 +1,34 @@
+{
+  "rank": 126,
+  "sid": 813,
+  "source_sha256": "a966305b32ebdfc5048dfc6b6b22809aa563612ddf27bedfccd95d168833425a",
+  "base_kind": "original",
+  "base_sha256": "9733217bc8934773acc19e4cea17bb6178c3869593d18628aaf447f3a17be5a4",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：已确认RSI枢轴与价格背离后做多有因果可实现性，但绘图回移容易把确认延迟误读成提前预测。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "枢轴需默认5根右侧确认，plot offset=-lbR只把图形画回旧柱；只有普通多头背离真正下单，隐藏/空头仅绘图。RSI穿50出口可能在确认之前已发生。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "重放枢轴原始柱到确认柱，订单不能回填；覆盖确认时RSI>50以及随后从未再穿50的情况。"
+  ],
+  "id": "5dc0ea800346",
+  "title": "RSI指标分歧交易策略RSI-Divergence-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/126_SID813_5dc0ea800346_original.pine",
+  "original": "originals/126_SID813_5dc0ea800346.pine",
+  "baseline": "baselines/126_SID813_5dc0ea800346.pine",
+  "changes": "changes/126_SID813_5dc0ea800346.txt",
+  "card": "cards/5dc0ea800346.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9733217bc8934773acc19e4cea17bb6178c3869593d18628aaf447f3a17be5a4",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

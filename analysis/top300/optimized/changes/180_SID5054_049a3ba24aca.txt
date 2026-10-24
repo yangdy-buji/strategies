@@ -1,0 +1,37 @@
+{
+  "rank": 180,
+  "sid": 5054,
+  "source_sha256": "fa3c6caaa8090973f8d96ba4c4da0ee27de1fc38d705d098c88d28036a13a8dc",
+  "base_kind": "prior_candidate",
+  "base_sha256": "20fbd527ec1e94a5794923fc9b269245fa9f8f2e238a3f567a68fc99fbd00b8a",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：日期函数恒真。；退出不能被日期阻断。",
+  "patches": [],
+  "resolved": [
+    "日期函数恒真。",
+    "退出不能被日期阻断。"
+  ],
+  "remaining": [
+    "sell要求ADX>20；弱势低ADX可能错过退出，移除门禁属于独立设计。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "日期边界及DI转负但ADX<20的缓慢下跌序列，记录持仓持续时间和尾部亏损。"
+  ],
+  "id": "049a3ba24aca",
+  "title": "移动平均线双轨与趋势跟踪策略Dual-Moving-Average-Channel-with-Trend-Tracking-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/180_SID5054_049a3ba24aca_candidate.pine",
+  "original": "originals/180_SID5054_049a3ba24aca.pine",
+  "baseline": "baselines/180_SID5054_049a3ba24aca.pine",
+  "changes": "changes/180_SID5054_049a3ba24aca.txt",
+  "card": "cards/049a3ba24aca.html",
+  "diff": "changes/180_SID5054_049a3ba24aca.patch",
+  "original_diff": "changes/180_SID5054_049a3ba24aca.original.patch",
+  "script_sha256": "b788d6e07301bcdf24a866e4c037eff4799bce627092b38465d8148bd0c2d7cd",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

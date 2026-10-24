@@ -1,0 +1,34 @@
+{
+  "rank": 250,
+  "sid": 1687,
+  "source_sha256": "2c206a6ae46cefd1854f291ca64cd8d2e79b4a3dfcd4c53e5db15cac9a246bdb",
+  "base_kind": "original",
+  "base_sha256": "078198b56889a698e975246638495fa2605b1f60b73acf896f36007b307f5662",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；20期相对动量累积比低于40维持多头、高于70维持空头，可整体反转方向。 RMI阈值双向反转有明确状态逻辑，但涨跌累计只在对应方向衰减，和标准平滑实现不等价。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "RMI阈值双向反转有明确状态逻辑，但涨跌累计只在对应方向衰减，和标准平滑实现不等价。 后续验证：单边上涨/下跌与交替涨跌序列手算xMU/xMD及除零边界。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "单边上涨/下跌与交替涨跌序列手算xMU/xMD及除零边界。"
+  ],
+  "id": "f320ac44a5c2",
+  "title": "动量反转指数策略Relative-Momentum-Index-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/250_SID1687_f320ac44a5c2_original.pine",
+  "original": "originals/250_SID1687_f320ac44a5c2.pine",
+  "baseline": "baselines/250_SID1687_f320ac44a5c2.pine",
+  "changes": "changes/250_SID1687_f320ac44a5c2.txt",
+  "card": "cards/f320ac44a5c2.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "078198b56889a698e975246638495fa2605b1f60b73acf896f36007b307f5662",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

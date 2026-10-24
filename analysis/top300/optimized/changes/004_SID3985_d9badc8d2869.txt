@@ -1,0 +1,34 @@
+{
+  "rank": 4,
+  "sid": 3985,
+  "source_sha256": "809cbb4e40f23a9abfdb687645ad9009359b64e4027eec52b7bf65315ee53754",
+  "base_kind": "original",
+  "base_sha256": "60c22de3f212c78acbc8459eca87bd59fe7c918a5a25365e0f55464281c9c072",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：EMA趋势与MACD动量一致的意图清楚，但两个交叉必须同根且200%权益配置使信号稀疏与杠杆风险并存。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "EMA12/26和MACD同根死叉且RSI>30才退出；弱市RSI过低可能阻止退出。源码200%权益与外部统一仓位结果不是同一风险。 暂缓原因：放宽同根条件会改变策略身份；降杠杆通常降低名义收益但风险也不同。"
+  ],
+  "validation_plan": [
+    "枚举两个交叉相隔1-3根、RSI跌破30和跳空场景，并核对融资/保证金及真实成交数量。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "d9badc8d2869",
+  "title": "多指标趋势动量交叉策略EMA双均线与MACDRSI协同信号系统-Multi-Indicator-Trend-Momentum-Crossover-Strategy-EMA-Dual-Moving-Average-with-MACD-RSI-Synergy-System",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/004_SID3985_d9badc8d2869_original.pine",
+  "original": "originals/004_SID3985_d9badc8d2869.pine",
+  "baseline": "baselines/004_SID3985_d9badc8d2869.pine",
+  "changes": "changes/004_SID3985_d9badc8d2869.txt",
+  "card": "cards/d9badc8d2869.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "60c22de3f212c78acbc8459eca87bd59fe7c918a5a25365e0f55464281c9c072",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

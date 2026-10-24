@@ -1,0 +1,34 @@
+{
+  "rank": 40,
+  "sid": 2212,
+  "source_sha256": "6cc09c66c6284f25c03f110da5acc615623e6b835336e2f5c1a66d2f5f48b47a",
+  "base_kind": "original",
+  "base_sha256": "9fccb73a894b956c1207d68bc6c7f0be83373c81d25117d7c4498708b494de0f",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：SMA10/20交叉的简单趋势模型，入场与退出对称，可作为稳健性研究基线。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "交易优势未因简洁而自动成立，震荡换手、默认数量和未设成本仍需验证。 暂缓原因：过滤器可能降低费用，也可能错过趋势起点。"
+  ],
+  "validation_plan": [
+    "比较8-12/16-24周期邻域、不同市场阶段和逐股收益集中度。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "95227900a2ef",
+  "title": "双移动平均线交叉策略Dual-Moving-Average-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/040_SID2212_95227900a2ef_original.pine",
+  "original": "originals/040_SID2212_95227900a2ef.pine",
+  "baseline": "baselines/040_SID2212_95227900a2ef.pine",
+  "changes": "changes/040_SID2212_95227900a2ef.txt",
+  "card": "cards/95227900a2ef.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9fccb73a894b956c1207d68bc6c7f0be83373c81d25117d7c4498708b494de0f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

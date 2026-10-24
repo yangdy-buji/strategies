@@ -1,0 +1,34 @@
+{
+  "rank": 73,
+  "sid": 4076,
+  "source_sha256": "3c07ab998051a5bc1136500dcd5109039d60002b1d9abcf4c85636f62f8215f2",
+  "base_kind": "original",
+  "base_sha256": "63ba792bab9e90a3f63cee85a1c3841f4c01fbb5c2b0c5da8bb2b5594c564eda",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：周一均线穿越入场、百分比保护及周日平仓是针对连续交易市场的时间模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "美股常规交易无周日K线，周日平仓条件通常不触发；close[1]与当前out_ma比较也不是标准交叉。 暂缓原因：更换周历改变原交易集合；改标准交叉也非等价修复。"
+  ],
+  "validation_plan": [
+    "覆盖美股节假日、半日市、夏令时和周一跳空，核对所有均线选项边界长度。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "fc6e42743547",
+  "title": "多时间框架移动平均线结合交易时间的量化交易策略Multi-Timeframe-Moving-Average-Combined-with-Trading-Hours-Quantitative-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/073_SID4076_fc6e42743547_original.pine",
+  "original": "originals/073_SID4076_fc6e42743547.pine",
+  "baseline": "baselines/073_SID4076_fc6e42743547.pine",
+  "changes": "changes/073_SID4076_fc6e42743547.txt",
+  "card": "cards/fc6e42743547.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "63ba792bab9e90a3f63cee85a1c3841f4c01fbb5c2b0c5da8bb2b5594c564eda",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

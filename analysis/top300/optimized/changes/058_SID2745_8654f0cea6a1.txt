@@ -1,0 +1,34 @@
+{
+  "rank": 58,
+  "sid": 2745,
+  "source_sha256": "f333bb262f506fd60582cc0f963ff36a43672aca2cf2cdff66640207cd53cd87",
+  "base_kind": "original",
+  "base_sha256": "f7bd0e097ca93e64946688b35ae22e7a7c682c4727200e8aa8ca5a832ad67bd1",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：MACD低位金叉且阳线入场，按信号柱ATR固定保护价，逻辑基本闭环。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "riskPercent=2%没有进入数量计算，所谓2%风险并未实现；atr(5)是5根K线而非5分钟，保护价按信号收盘而非成交均价。 暂缓原因：接入风险定仓会改变敞口；改成交价锚定会改变止盈止损距离。"
+  ],
+  "validation_plan": [
+    "修改riskPercent确认原订单不变；用跳空入场逐笔计算实际风险金额与ATR周期。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "8654f0cea6a1",
+  "title": "基于MACD信号线交叉与ATR风险管理的优化趋势跟踪策略-Optimized-MACD-Trend-Following-Strategy-with-ATR-based-Risk-Management",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/058_SID2745_8654f0cea6a1_original.pine",
+  "original": "originals/058_SID2745_8654f0cea6a1.pine",
+  "baseline": "baselines/058_SID2745_8654f0cea6a1.pine",
+  "changes": "changes/058_SID2745_8654f0cea6a1.txt",
+  "card": "cards/8654f0cea6a1.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "f7bd0e097ca93e64946688b35ae22e7a7c682c4727200e8aa8ca5a832ad67bd1",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

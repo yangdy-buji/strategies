@@ -1,0 +1,34 @@
+{
+  "rank": 87,
+  "sid": 3522,
+  "source_sha256": "5385b5ced8278ef117fc2acde51c96bd18548b2cbff198c18e949e5af18bf38f",
+  "base_kind": "original",
+  "base_sha256": "be37385c556120224f33961b7f0ad469301b8e56f384af83b209d376f723609b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：RSI突破60追涨，回落80获利退出，动量含义明确但失败退出缺失。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "从60入场后若从未上80，价格/RSI回落不会触发80下穿，可无限期等待。 暂缓原因：会减少长持反弹收益，也可能缩短尾部亏损。"
+  ],
+  "validation_plan": [
+    "构造RSI61后直接跌至30且不达80，核对持仓期与风险；独立样本测试阈值。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "d3b5359eb744",
+  "title": "基于相对强弱指标动量轮回策略RSI-Crossover-Momentum-Cyclical-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/087_SID3522_d3b5359eb744_original.pine",
+  "original": "originals/087_SID3522_d3b5359eb744.pine",
+  "baseline": "baselines/087_SID3522_d3b5359eb744.pine",
+  "changes": "changes/087_SID3522_d3b5359eb744.txt",
+  "card": "cards/d3b5359eb744.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "be37385c556120224f33961b7f0ad469301b8e56f384af83b209d376f723609b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

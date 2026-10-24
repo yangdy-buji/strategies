@@ -1,0 +1,74 @@
+{
+  "rank": 169,
+  "sid": 3362,
+  "source_sha256": "e7c424ed32c95556c4324ed64a8075ea1d240ea7c69ce19312d7d2f053d95cdb",
+  "base_kind": "original",
+  "base_sha256": "b4bc495aa1e22fa252b0d4499342ac6a26885f484c4e9ea679d8cee71cf64a24",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "独立设计实验：用实际权益/持仓轮转，去掉每柱重置及虚构初始52币。；删除买单提交时用旧持仓伪记账。；删除卖单提交时以收盘价伪记已成交现金。",
+  "patches": [
+    {
+      "old": "// Startkapital\nusdt_balance = 86.0 // Anfangsbetrag in USDT\nzerebro_balance = 52.0 // Anfangsbetrag in ZEREBRO\n\n",
+      "new": "// Filled broker state is the only account ledger.\nusdt_balance = strategy.position_size == 0 ? strategy.equity : 0.0\nzerebro_balance = strategy.position_size\n\n",
+      "reason": "独立设计实验：用实际权益/持仓轮转，去掉每柱重置及虚构初始52币。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "初始空仓86现金；盈利平仓后按实际权益下单；持仓期不把发单当成交。"
+      ]
+    },
+    {
+      "old": "    usdt_balance := 0 // Alle USDT werden verwendet\n    zerebro_balance += strategy.position_size // Gekaufte ZEREBRO hinzufügen\n",
+      "new": "",
+      "reason": "删除买单提交时用旧持仓伪记账。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "待成交期间不虚构购入币数。"
+      ]
+    },
+    {
+      "old": "    usdt_balance += strategy.position_size * close // Verkaufserlös in USDT\n    zerebro_balance := 0 // Alle ZEREBRO verkauft\n",
+      "new": "",
+      "reason": "删除卖单提交时以收盘价伪记已成交现金。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "跳空成交与费用由真实权益承接。"
+      ]
+    }
+  ],
+  "resolved": [
+    "独立设计实验：用实际权益/持仓轮转，去掉每柱重置及虚构初始52币。",
+    "删除买单提交时用旧持仓伪记账。",
+    "删除卖单提交时以收盘价伪记已成交现金。"
+  ],
+  "remaining": [
+    "独立design_experiment：假设初始只有声明86现金，不承认52币为已有经纪持仓；若需初始持币需单独建模。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "连续两笔获利/亏损交易逐柱列出现金、持仓及实际成交，确保资金守恒与无凭空52份余额。"
+  ],
+  "id": "c48ba11bd9a4",
+  "title": "基于布林带的跨界动态区间量化交易策略-Cross-boundary-Dynamic-Range-Quantitative-Trading-Strategy-Based-on-Bollinger-Bands",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/169_SID3362_c48ba11bd9a4_candidate.pine",
+  "original": "originals/169_SID3362_c48ba11bd9a4.pine",
+  "baseline": "baselines/169_SID3362_c48ba11bd9a4.pine",
+  "changes": "changes/169_SID3362_c48ba11bd9a4.txt",
+  "card": "cards/c48ba11bd9a4.html",
+  "diff": "changes/169_SID3362_c48ba11bd9a4.patch",
+  "original_diff": "changes/169_SID3362_c48ba11bd9a4.original.patch",
+  "script_sha256": "5e0121d10de07cec6e541aa189358ed26816689743b190475bf34be618487ca1",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "01f669314ff0a979a01423dcca5215c25bc752deed84e81e15b2106bceb1a37d",
+    "review": "v5独立账本实验去掉每柱86/52重置和发单时伪记账，空仓才把真实权益用于qty，实际正仓才能关闭Buy；首次没有虚构币，卖出提交不会提前释放现金。两侧交叉逐柱计算，后续轮转使用真实成交状态。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "独立design_experiment：假设初始只有声明86现金，不承认52币为已有经纪持仓；若需初始持币需单独建模。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

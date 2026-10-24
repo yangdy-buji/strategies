@@ -1,0 +1,78 @@
+//@version=4
+// OPT-T300 SID 5419：沿用旧候选·未回测
+// 原文件SHA256：377dbe055aea9f0e12a32bebb73bfde6fcae19a2e7eff8b80b9f4a76c0a2b45a
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：趋势跟踪止损策略Trend-Following-Strategy-with-Trailing-Stop-Loss.md
+// 原文件SHA256：377dbe055aea9f0e12a32bebb73bfde6fcae19a2e7eff8b80b9f4a76c0a2b45a
+// SID：5419；原研究名单序号：29
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-09-29 00:00:00
+end: 2023-10-29 00:00:00
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © felipefs
+strategy("Meu Script", overlay=true)
+plot(ohlc4)
+
+//Funçao de Datas
+testStartYear = input(2018, "Backtest Start Year")
+testStartMonth = input(6, "Backtest Start Month")
+testStartDay = input(1, "Backtest Start Day")
+testPeriodStart = timestamp(testStartYear,testStartMonth,testStartDay,0,0)
+
+testStopYear = input(2019, "Backtest Stop Year")
+testStopMonth = input(12, "Backtest Stop Month")
+testStopDay = input(30, "Backtest Stop Day")
+testPeriodStop = timestamp(testStopYear,testStopMonth,testStopDay,0,0)
+
+testPeriod() => time >= testPeriodStart and time <= testPeriodStop ? true : false
+
+//Funções de Trailing Stop
+long_stop_price = 0.0
+short_stop_price = 0.0
+long_trail_perc = 0
+short_trail_perc = 0
+
+long_stop_price := if (strategy.position_size > 0)
+    stopValue = close * (1 - long_trail_perc)
+    max(stopValue, long_stop_price[1])
+else
+    0
+
+short_stop_price := if (strategy.position_size < 0)
+    stopValue = close * (1 + short_trail_perc)
+    min(stopValue, short_stop_price[1])
+else
+    999999
+
+//Função de Debug
+debug(value) =>
+    x = bar_index
+    y = close
+    label.new(x, y, tostring(value))
+    
+//Take Profit
+profit = close * (1 + 0.12)
+// OPT-5419-01：把现有正确日期函数接到唯一入场。
+// OPT-5419-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+// OPT-5419-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.entry("Long", true, when=testPeriod())
+strategy.exit("Take Profit 1 Long", from_entry="Long", limit=profit, qty_percent=50.0)
+ 
+//ATR Stop
+ 
+// xATRTrailingStopLong = 0.0
+// xATR = atr(nATRPeriod)
+// nLossLong = nATRMultipLong * xATR
+
+// if (strategy.position_size > 0)
+//     xATRTrailingStopLong := max(nz(xATRTrailingStopLong[1]), close - nLossLong)

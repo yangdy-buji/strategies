@@ -1,0 +1,35 @@
+{
+  "rank": 101,
+  "sid": 3995,
+  "source_sha256": "fec848e3833abd770927ceefc871cd60eb6b2ec86e1a283b42301dd3c107f02b",
+  "base_kind": "original",
+  "base_sha256": "8f4987b83d9ea24896ede3b7a071e3dba0f834f2d4aafa19e8792f4c5b345b92",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：待明确三事件有效期长度及相反事件同柱优先级；先复位或先入场会产生不同交易集合，无法从现有锁存规则唯一推出。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "待明确三事件有效期长度及相反事件同柱优先级；先复位或先入场会产生不同交易集合，无法从现有锁存规则唯一推出。",
+    "三个买入事件各自锁存且没有最大间隔；buyCondition/sellCondition在清除相反事件标志之前计算，因此可能使用本柱已应失效的旧状态。退出实际只用BB与RSI，Stoch/MFI已注释掉。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造三个事件间隔1/10/100柱及同柱相反事件案例，对照标志、入场和退出；再做统一费用回测。"
+  ],
+  "id": "81633296faa2",
+  "title": "多指标趋势背离量化交易策略-Multi-Indicator-Trend-Divergence-Quantitative-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/101_SID3995_81633296faa2_original.pine",
+  "original": "originals/101_SID3995_81633296faa2.pine",
+  "baseline": "baselines/101_SID3995_81633296faa2.pine",
+  "changes": "changes/101_SID3995_81633296faa2.txt",
+  "card": "cards/81633296faa2.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "8f4987b83d9ea24896ede3b7a071e3dba0f834f2d4aafa19e8792f4c5b345b92",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

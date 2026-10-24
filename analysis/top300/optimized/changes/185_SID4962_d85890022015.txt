@@ -1,0 +1,58 @@
+{
+  "rank": 185,
+  "sid": 4962,
+  "source_sha256": "3ba7d5723339cc877764a28586dfb0f4c89cc3c27dabc792ad0813ca0c230b00",
+  "base_kind": "prior_candidate",
+  "base_sha256": "6e2d74c26a9e34f61687bd97c5c777c09d4e249afb1303936868795e7dc026c3",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "保留空仓信号柱初始化止损，防止发单后清0。",
+  "patches": [
+    {
+      "old": "// CLEAN UP:\nif strategy.position_size == 0\n\tstop_loss_price := float(0)",
+      "new": "// Preserve the signal-bar stop until the first fill; flat bars initialize above.",
+      "reason": "保留空仓信号柱初始化止损，防止发单后清0。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "信号止损95，成交柱候选90，max保持95而非重建90。"
+      ]
+    }
+  ],
+  "resolved": [
+    "日期输入未生效。",
+    "窗外持仓保持跟踪。",
+    "窗外已有持仓仍执行退出。",
+    "窗外不加仓。",
+    "保留空仓信号柱初始化止损，防止发单后清0。"
+  ],
+  "remaining": [
+    "同柱平仓发单后再入场语义和实际成交时序仍需原生验证。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "记录信号柱、首成交柱、退出/再次入场柱的stop值，核对低点触发到市价成交延迟。"
+  ],
+  "id": "d85890022015",
+  "title": "相对量价策略Relative-Volume-Price-Strategy",
+  "category": "量价",
+  "priority": "P0",
+  "script": "scripts/185_SID4962_d85890022015_candidate.pine",
+  "original": "originals/185_SID4962_d85890022015.pine",
+  "baseline": "baselines/185_SID4962_d85890022015.pine",
+  "changes": "changes/185_SID4962_d85890022015.txt",
+  "card": "cards/d85890022015.html",
+  "diff": "changes/185_SID4962_d85890022015.patch",
+  "original_diff": "changes/185_SID4962_d85890022015.original.patch",
+  "script_sha256": "71188849c8a4c095f97e53ee2ceb966cc16a03f9711baa7655c61639d4f1044e",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "358c34f0313e3569410ce8be1015c45f42dca05b6500f62318289161f87ac375",
+    "review": "v4删除尾部空仓清0，信号柱上方初始化止损保留到下一柱成交，持仓继续max单向追踪；平仓确认后的空仓柱上方会重新初始化，不会永久沿用旧仓止损。已有日期门禁及Long开平ID保留。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "同柱平仓发单后再入场语义和实际成交时序仍需原生验证。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

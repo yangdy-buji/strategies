@@ -1,0 +1,34 @@
+{
+  "rank": 244,
+  "sid": 3647,
+  "source_sha256": "e92225f7311f03c8564d5ee712f8af753f9acd920c8c0fe630ae3351231c7a45",
+  "base_kind": "original",
+  "base_sha256": "3d758c086744df2b42e8cbfa5824c42380909a7f77b2fa67767a7fe16e8b699a",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；高价上穿六期RMA收盘上浮1.9%开多，低价下穿RMA下浮1.5%市价退出，均线会双向移动。 上下RMA百分比通道突破是趋势规则，但止损线会随均线下降，并非持仓只升不降的跟踪。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "上下RMA百分比通道突破是趋势规则，但止损线会随均线下降，并非持仓只升不降的跟踪。 后续验证：均线持续下降时止损是否放宽、同根高低穿双轨和次开盘成交验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "均线持续下降时止损是否放宽、同根高低穿双轨和次开盘成交验证。"
+  ],
+  "id": "7ea1d34450c0",
+  "title": "基于跟踪止损和追踪买入的简单策略Simple-Trailing-Stop-Buy-Strategy-Based-on-Percentage",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/244_SID3647_7ea1d34450c0_original.pine",
+  "original": "originals/244_SID3647_7ea1d34450c0.pine",
+  "baseline": "baselines/244_SID3647_7ea1d34450c0.pine",
+  "changes": "changes/244_SID3647_7ea1d34450c0.txt",
+  "card": "cards/7ea1d34450c0.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "3d758c086744df2b42e8cbfa5824c42380909a7f77b2fa67767a7fe16e8b699a",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

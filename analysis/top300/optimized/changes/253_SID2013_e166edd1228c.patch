@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 2013：沿用旧候选·未回测
++// 原文件SHA256：b92196eabc1ea2d9398d104d6fbdfbd35eeec6a444180e2dfeb15c5940e61cc5
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：双均线交叉开仓策略-Dual-Moving-Average-Crossover-Entry-Strategy.md
+ // 原文件SHA256：b92196eabc1ea2d9398d104d6fbdfbd35eeec6a444180e2dfeb15c5940e61cc5

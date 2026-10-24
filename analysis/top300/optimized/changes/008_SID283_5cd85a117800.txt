@@ -1,0 +1,34 @@
+{
+  "rank": 8,
+  "sid": 283,
+  "source_sha256": "6bd17f8c44841400799820f1eb101c16c45ee6c14ab5f28081630970e67e8bda",
+  "base_kind": "original",
+  "base_sha256": "ec0af92b91c37e30a36b901956448cecdb668800d82679f5e4dfb6aa97737cfb",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：EMA9上穿SMA30入场、跌穿SMA30或50退出的快进快出规则明确，200/325均线仅显示不应计为交易过滤。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "入场与SMA50退出可能在特殊均线位置同根出现，两个独立if的订单优先关系需核对。 暂缓原因：选择退出优先会减少交易，不能直接套用旧回测。"
+  ],
+  "validation_plan": [
+    "构造EMA上穿SMA30且同根下穿SMA50的路径，检查是否下单、何时成交及是否出现短暂持仓。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "5cd85a117800",
+  "title": "EMA-SMA-均线交叉-动量指标-EMA-SMA-Moving-Average-Crossover-Momentum-Indicator",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/008_SID283_5cd85a117800_original.pine",
+  "original": "originals/008_SID283_5cd85a117800.pine",
+  "baseline": "baselines/008_SID283_5cd85a117800.pine",
+  "changes": "changes/008_SID283_5cd85a117800.txt",
+  "card": "cards/5cd85a117800.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ec0af92b91c37e30a36b901956448cecdb668800d82679f5e4dfb6aa97737cfb",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

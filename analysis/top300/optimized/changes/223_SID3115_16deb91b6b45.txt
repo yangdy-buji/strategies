@@ -1,0 +1,37 @@
+{
+  "rank": 223,
+  "sid": 3115,
+  "source_sha256": "01041d963cc1f8c127c544a1ee2c54ea19d84d9fb19776549f63d80e73654b97",
+  "base_kind": "prior_candidate",
+  "base_sha256": "37778e14ef8b9f39afcf6da29dfb01cc4961cbb3d35ecf6ee0e0cda442aeaf58",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；突破前200柱最高价买1份，跌破EMA90退出。 突破前200根高点再按EMA退出是清楚趋势逻辑；已有默认90低于min100的输入修复仍需编译。",
+  "patches": [],
+  "resolved": [
+    "让既定默认90合法。"
+  ],
+  "remaining": [
+    "突破前200根高点再按EMA退出是清楚趋势逻辑；已有默认90低于min100的输入修复仍需编译。 后续验证：默认参数原生编译、90/100 EMA邻域、次日跳空与复权前高验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；strategy overlay=1的旧隐式类型兼容性仍需原生检查。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "默认参数原生编译、90/100 EMA邻域、次日跳空与复权前高验证。"
+  ],
+  "id": "16deb91b6b45",
+  "title": "基于历史新高突破的买入策略Buying-Strategy-Based-on-Historical-High-Breakout",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/223_SID3115_16deb91b6b45_candidate.pine",
+  "original": "originals/223_SID3115_16deb91b6b45.pine",
+  "baseline": "baselines/223_SID3115_16deb91b6b45.pine",
+  "changes": "changes/223_SID3115_16deb91b6b45.txt",
+  "card": "cards/16deb91b6b45.html",
+  "diff": "changes/223_SID3115_16deb91b6b45.patch",
+  "original_diff": "changes/223_SID3115_16deb91b6b45.original.patch",
+  "script_sha256": "32b1a8a4ff894447a5df50f501245cd74ea77d10d21669704bf5bdb2d3ed10fe",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

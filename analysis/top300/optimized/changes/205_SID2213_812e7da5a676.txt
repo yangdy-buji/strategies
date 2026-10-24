@@ -1,0 +1,37 @@
+{
+  "rank": 205,
+  "sid": 2213,
+  "source_sha256": "081aa85507ac20e4aa555c71470350d78f93515543812e1af429200aae0560d0",
+  "base_kind": "prior_candidate",
+  "base_sha256": "85de2ead10de75145f50ecc4b2ab69fb484ea7229f524afd1994f22f037a7c7a",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；长均线上短均线下回调或52柱高点回撤14%时空仓10%权益买多；短均线上转弱或自计跌幅/均线条件退出。 长期趋势回调与逆势抄底并列，两类风险不同；止损距离用当前close作分母，15%不是相对买价的15%。",
+  "patches": [],
+  "resolved": [
+    "恢复仅入口日期。"
+  ],
+  "remaining": [
+    "长期趋势回调与逆势抄底并列，两类风险不同；止损距离用当前close作分母，15%不是相对买价的15%。 后续验证：买价100时close=85/87分别核验触发，并测试低开时buyPrice与成交价。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；stopDistance按当前close作分母，与按买价止损比例不完全等价；原设计未改。；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "买价100时close=85/87分别核验触发，并测试低开时buyPrice与成交价。"
+  ],
+  "id": "812e7da5a676",
+  "title": "双移动平均线反转策略Dual-Moving-Average-Reversal-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/205_SID2213_812e7da5a676_candidate.pine",
+  "original": "originals/205_SID2213_812e7da5a676.pine",
+  "baseline": "baselines/205_SID2213_812e7da5a676.pine",
+  "changes": "changes/205_SID2213_812e7da5a676.txt",
+  "card": "cards/812e7da5a676.html",
+  "diff": "changes/205_SID2213_812e7da5a676.patch",
+  "original_diff": "changes/205_SID2213_812e7da5a676.original.patch",
+  "script_sha256": "fa1967ef89ec15eb52313ac8ac58a88f49248c4218bc5651b844a8241040cb7e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

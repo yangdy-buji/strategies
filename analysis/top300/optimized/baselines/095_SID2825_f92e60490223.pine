@@ -1,0 +1,53 @@
+/*backtest
+start: 2024-01-10 00:00:00
+end: 2024-01-11 06:00:00
+period: 5m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+//Lets connect on LinkedIn (https://www.linkedin.com/in/lets-grow-with-quality/)
+//
+//I use my indicator it in real life with a zero commision broker ob S&P500 Daily.
+//Best performace when used with S&, lomg only and pyramiding on daily timeframe.
+//
+//Please.. still use your brain for entries and exits: higher timeframes, market structure, trend ... 
+//If you obviously can see, like when corona started, that cubic tons of selling volume is going to punsh the markets, wait until selling climax is over and so on..
+
+strategy("RSI/WMA Strategy", overlay=true)
+
+length = input(2)
+overSold = input(10)
+overBought = input(90)
+wmaLength = input(50, title="WMA Length")
+
+enableLongTrades = input(true, title="Enable Long Trades")
+longExit = input(true, title="Enable Long Exit")
+enableShortTrades = input(false, title="Enable Short Trades")
+shortExit = input(false, title="Enable Short TradExites")
+
+price = close
+vrsi = ta.wma(ta.rsi(price, length), 2)
+wma = ta.wma(price, wmaLength)
+
+
+co = ta.crossunder(vrsi, overSold)
+cu = ta.crossunder(vrsi, overBought)
+
+if (not na(vrsi))
+    if (enableLongTrades and co) 
+        strategy.entry("RsiLE", strategy.long, comment="RsiLE")
+    if (enableShortTrades and cu) 
+        strategy.entry("RsiSE", strategy.short, comment="RsiSE")
+
+// Close long position if price crosses above SMA
+if (longExit and ta.crossover(price, wma))
+    strategy.close("RsiLE", comment="Close Long")
+
+// Close short position if price crosses below SMA
+if (shortExit and ta.crossunder(price, wma))
+    strategy.close("RsiSE", comment="Close Short")
+
+// Plot für visuelle Überprüfung
+plot(wma, title="wmi", color=color.blue)

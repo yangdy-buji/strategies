@@ -1,0 +1,87 @@
+{
+  "rank": 145,
+  "sid": 5216,
+  "source_sha256": "51d70f79bc3de103d731463b331ea167f04651fb815e2a564386de4a75f4951e",
+  "base_kind": "original",
+  "base_sha256": "281fdb506734b4eea10c544973e6e4d24c0b3b609713a1d21ef2fb58e4a85a34",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "限制周期至少1，拒绝零/负窗口。；限制周期至少1，拒绝零/负窗口。；零平均波动与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。；对数价格比必须有正价格，缺失或非正价格窗口显式保持NA。",
+  "patches": [
+    {
+      "old": "length = input.int(25, title=\"Volatility Length\")",
+      "new": "length = input.int(25, title=\"Volatility Length\", minval=1)",
+      "reason": "限制周期至少1，拒绝零/负窗口。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "周期0和-1在输入界面拒绝；默认25/14不变。"
+      ]
+    },
+    {
+      "old": "vwapLength = input.int(14, title=\"VWAP Length\")",
+      "new": "vwapLength = input.int(14, title=\"VWAP Length\", minval=1)",
+      "reason": "限制周期至少1，拒绝零/负窗口。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "周期0和-1在输入界面拒绝；默认25/14不变。"
+      ]
+    },
+    {
+      "old": "multiplier = (gcv / ta.sma(gcv, length)) * vol_multiplier",
+      "new": "gcvMean = ta.sma(gcv, length)\nmultiplier = not na(gcvMean) and gcvMean > 0 ? (gcv / gcvMean) * vol_multiplier : na",
+      "reason": "零平均波动与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    },
+    {
+      "old": "    sum_gkv := sum_gkv + 0.5 * math.pow(math.log(high[i]/low[i]), 2) - (2*math.log(2)-1) * math.pow(math.log(close[i]/open[i]), 2)",
+      "new": "    validPrices = not na(high[i]) and not na(low[i]) and not na(close[i]) and not na(open[i]) and high[i] > 0 and low[i] > 0 and close[i] > 0 and open[i] > 0\n    sum_gkv := validPrices ? sum_gkv + 0.5 * math.pow(math.log(high[i]/low[i]), 2) - (2*math.log(2)-1) * math.pow(math.log(close[i]/open[i]), 2) : na",
+      "reason": "对数价格比必须有正价格，缺失或非正价格窗口显式保持NA。",
+      "preserved": "有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。",
+      "validation_cases": [
+        "任一窗口open/low为0、负数或NA不计算log；全有效窗口原公式不变。"
+      ]
+    }
+  ],
+  "resolved": [
+    "限制周期至少1，拒绝零/负窗口。",
+    "限制周期至少1，拒绝零/负窗口。",
+    "零平均波动与暖机显式NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+    "对数价格比必须有正价格，缺失或非正价格窗口显式保持NA。"
+  ],
+  "remaining": [
+    "GK柱内波动未覆盖隔夜跳空；加入隔夜项会更换模型，留独立design_experiment。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测试平价序列、零成交量与跳空日；记录每个na来源，比较不同市场会话下带宽稳定性。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "4dae57be7a4f",
+  "title": "自适应VWAP波段基于Garman-Klass波动率动态跟踪策略-Adaptive-VWAP-Bands-with-Garman-Klass-Volatility-Dynamic-Tracking-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/145_SID5216_4dae57be7a4f_candidate.pine",
+  "original": "originals/145_SID5216_4dae57be7a4f.pine",
+  "baseline": "baselines/145_SID5216_4dae57be7a4f.pine",
+  "changes": "changes/145_SID5216_4dae57be7a4f.txt",
+  "card": "cards/4dae57be7a4f.html",
+  "diff": "changes/145_SID5216_4dae57be7a4f.patch",
+  "original_diff": "changes/145_SID5216_4dae57be7a4f.original.patch",
+  "script_sha256": "ecaf074251ef545b6af0a28f6b3a9034f0b930366b2d8d9732c75c7b76465de2",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "718c9c71e224e42889b582d6ce38a1a5bc0fbfa79521ab187644ff880a933e51",
+    "review": "v5两个窗口限制最小1；GK每根重置求和，任一OHLC缺失/非正使该窗口累计NA，后续有效项不能洗掉NA。gcvMean的sma在guard外每根调用，零均值不制造自适应倍数；bands比较自然不放行NA。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "GK柱内波动未覆盖隔夜跳空；加入隔夜项会更换模型，留独立design_experiment。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

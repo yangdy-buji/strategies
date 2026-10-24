@@ -1,0 +1,37 @@
+{
+  "rank": 211,
+  "sid": 2849,
+  "source_sha256": "ad575d81b1f8cf7df489ed842ddf0958913add339736ba541814c0332c2c4856",
+  "base_kind": "prior_candidate",
+  "base_sha256": "0e9bd114977852e6a38a714ca185b959f45b5560a003c99b80a5fd862dcbc097",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；RSI14低于40且RSI10更低空仓做多，固定入场ATR缓冲单调跟踪；可选风险收益目标及RSI超买且达目标退出。 双RSI回落入场有均值回归解释，但RSI退出仍要求动态ATR利润目标，可能在过热回落时不退出。",
+  "patches": [],
+  "resolved": [
+    "开始日期输入未用于入场。"
+  ],
+  "remaining": [
+    "双RSI回落入场有均值回归解释，但RSI退出仍要求动态ATR利润目标，可能在过热回落时不退出。 后续验证：超买但未达目标、波动骤升导致目标远移、尾部计数重置分别验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；RSI退出额外要求take_profit_long，是否应无条件RSI退出属于设计选择。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "超买但未达目标、波动骤升导致目标远移、尾部计数重置分别验证。"
+  ],
+  "id": "bcf6975d1373",
+  "title": "基于RSI指标的双轨突破策略RSI-Dual-track-Breakthrough-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/211_SID2849_bcf6975d1373_candidate.pine",
+  "original": "originals/211_SID2849_bcf6975d1373.pine",
+  "baseline": "baselines/211_SID2849_bcf6975d1373.pine",
+  "changes": "changes/211_SID2849_bcf6975d1373.txt",
+  "card": "cards/bcf6975d1373.html",
+  "diff": "changes/211_SID2849_bcf6975d1373.patch",
+  "original_diff": "changes/211_SID2849_bcf6975d1373.original.patch",
+  "script_sha256": "a2e2eec1eb1d82a7cbecc9f9764b1651830d7fff1a025f3bf2b4b96f539a5e8c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

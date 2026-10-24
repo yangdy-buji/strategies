@@ -1,0 +1,74 @@
+{
+  "rank": 139,
+  "sid": 4000,
+  "source_sha256": "63a47b0b9dea4edb7270d45c41d22e5e2e435a8e31f695c09a0171bd0b35a32f",
+  "base_kind": "original",
+  "base_sha256": "799249ad382732ea0c90f7d16654467a2ba44a3ceed68c205928a0f9c920b40a",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "修正Supertrend参数顺序及价格/方向返回值，不把±1方向绘为价格云。；看多条件按Supertrend负方向判定。；看空退出按Supertrend正方向判定。",
+  "patches": [
+    {
+      "old": "[st_upper, st_lower] = ta.supertrend(st_length, st_multiplier)\nst_color = close > st_upper ? color.green : color.red\nplot(st_upper, color=color.new(st_color, 0), title=\"SuperTrend Upper\")\nplot(st_lower, color=color.new(st_color, 0), title=\"SuperTrend Lower\")\nfill(plot(st_upper), plot(st_lower), color=color.new(st_color, 90), title=\"SuperTrend Cloud\")\n\n",
+      "new": "[st_line, st_direction] = ta.supertrend(st_multiplier, st_length)\nst_color = st_direction < 0 ? color.green : color.red\nplot(st_line, color=st_color, title=\"SuperTrend\")\n\n",
+      "reason": "修正Supertrend参数顺序及价格/方向返回值，不把±1方向绘为价格云。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "factor=3、ATR周期10；上涨方向-1、下跌方向+1；价格100和方向+1不能构成看多过滤。"
+      ]
+    },
+    {
+      "old": "close > sar and close > st_lower and vo > 0",
+      "new": "close > sar and st_direction < 0 and vo > 0",
+      "reason": "看多条件按Supertrend负方向判定。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "SAR与量能相同，下跌方向+1不得买入。"
+      ]
+    },
+    {
+      "old": "close < sar and close < st_upper and vo < 0",
+      "new": "close < sar and st_direction > 0 and vo < 0",
+      "reason": "看空退出按Supertrend正方向判定。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "方向+1且SAR/量能满足时退出多头。"
+      ]
+    }
+  ],
+  "resolved": [
+    "修正Supertrend参数顺序及价格/方向返回值，不把±1方向绘为价格云。",
+    "看多条件按Supertrend负方向判定。",
+    "看空退出按Supertrend正方向判定。"
+  ],
+  "remaining": [
+    "移除虚假双轨云展示；Supertrend方向/实际成交需原生编译回放。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "手工记录API价格线/方向，核验价格100时close>±1几乎恒真这一局部事实，并对照参数3,10原生结果。"
+  ],
+  "id": "ff799efab7e5",
+  "title": "多指标趋势跟踪交易策略结合抛物线SAR和SuperTrend云层-Multi-Indicator-Trend-Following-Trading-Strategy-with-Parabolic-SAR-and-SuperTrend-Cloud",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/139_SID4000_ff799efab7e5_candidate.pine",
+  "original": "originals/139_SID4000_ff799efab7e5.pine",
+  "baseline": "baselines/139_SID4000_ff799efab7e5.pine",
+  "changes": "changes/139_SID4000_ff799efab7e5.txt",
+  "card": "cards/ff799efab7e5.html",
+  "diff": "changes/139_SID4000_ff799efab7e5.patch",
+  "original_diff": "changes/139_SID4000_ff799efab7e5.original.patch",
+  "script_sha256": "18929b8c1eb1905beccbad7d2d9b47f5cbf3b2c093ed302c31c4d87251f9f1d8",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "2be0cd375a9191dc7d7c4db6c4d1c25bca46475b7c84c95acc034c2ab814e09e",
+    "review": "v5 Supertrend调用现为factor=3、atrPeriod=10，返回的价格线与方向分别绑定；负方向看多、正方向看空退出，绘图不再把方向±1当价格。SAR及量能条件保持、Long开平ID一致，无新增历史条件调用。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "移除虚假双轨云展示；Supertrend方向/实际成交需原生编译回放。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

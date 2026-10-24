@@ -1,0 +1,2098 @@
+[
+  {
+    "rank": 1,
+    "sid": 2351,
+    "source_sha256": "5a7906cd9ac0e9b41ae2698e3bd52f470a5baf8c2bc6172b09dc60512d9720bc",
+    "base_kind": "original",
+    "base_sha256": "cd9a8120bfcd345908eb053334543b595dc514b5668241736267e81d117d0138",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：123反转与BullPower方向一致才持仓，冲突平仓，规则闭环且可解释，但状态记忆和绝对阈值削弱跨股通用性。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "BullPower以原始价差与15/3比较，价格整体放大后方向分类可能变化；两模块又沿用旧方向，不能把当前数值直接当作当前信号。 暂缓原因：归一化和失效规则都会改变交易集合，旧收益不可继承。"
+    ],
+    "validation_plan": [
+      "对同一OHLC整体乘10及不同起始历史长度，比较信号、状态持续长度和逐笔退出。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 2,
+    "sid": 3900,
+    "source_sha256": "06f64820539b86119617155b7f39c2e079f9b2ff48f2df1c89522635ef9eb799",
+    "base_kind": "original",
+    "base_sha256": "352d0f2974d6fbd6ca3e54dff070a49b2c21ba05b8b24a0ede04c38b49389c47",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "仅限制DMI、ADX平滑、Supertrend及RSI周期输入为正整数；RSI低端/高端同时放行继续保留为待拆分研究的经济规则。",
+    "patches": [
+      {
+        "old": "diLength = input.int(14, title=\"DI Length\")",
+        "new": "diLength = input.int(14, title=\"DI Length\", minval=1)",
+        "reason": "DI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+        "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+        "validation_cases": [
+          "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+        ]
+      },
+      {
+        "old": "adxSmoothing = input.int(14, title=\"ADX Smoothing\")",
+        "new": "adxSmoothing = input.int(14, title=\"ADX Smoothing\", minval=1)",
+        "reason": "ADX Smoothing被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+        "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+        "validation_cases": [
+          "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+        ]
+      },
+      {
+        "old": "supertrendPeriod = input.int(14, title=\"Supertrend Period\")",
+        "new": "supertrendPeriod = input.int(14, title=\"Supertrend Period\", minval=1)",
+        "reason": "Supertrend Period被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+        "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+        "validation_cases": [
+          "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+        ]
+      },
+      {
+        "old": "rsiLength = input.int(14, title=\"RSI Length\")",
+        "new": "rsiLength = input.int(14, title=\"RSI Length\", minval=1)",
+        "reason": "RSI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+        "preserved": "默认14、Supertrend方向、RSI双端入场及独立趋势退出保持。",
+        "validation_cases": [
+          "拒绝-1和0；接受1及默认14；原生界面验证输入约束。"
+        ]
+      }
+    ],
+    "resolved": [
+      "DI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "ADX Smoothing被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "Supertrend Period被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。",
+      "RSI Length被传入要求正周期的指标；限制最小1以阻止0和负数导致无效指标输入。"
+    ],
+    "remaining": [
+      "RSI<40与RSI>60同时做多，混合回撤与强势追涨；无价格保护单，Supertrend反向是收盘条件退出。 暂缓原因：删掉一端可能丢失有效收益；止损可能增加震荡换手。"
+    ],
+    "validation_plan": [
+      "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+      "按两种RSI入场来源分组比较费用后收益、尾部亏损及持仓天数；模拟跳空越过趋势线。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 3,
+    "sid": 4267,
+    "source_sha256": "aeb34c5f91aca4abb0d794ed99a626fd6818d6a59b07e8a82d95378b408d0690",
+    "base_kind": "original",
+    "base_sha256": "6e6347a154a320b699b20c9cd7c3f05443101b42c3614b89053b8a519d97a04e",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：均线交叉加量能及波动过滤适合作为入场质量假设，但同样过滤退出会令风险退出失去连续性。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "死叉只有发生当根同时放量1.5倍且ATR扩张才平仓；死叉被过滤后即使持续下跌也不会补发退出。 暂缓原因：更及时退出可能减少趋势反复时的收益，也会增大交易成本。"
+    ],
+    "validation_plan": [
+      "构造先死叉后两根才放量的路径，核对是否一直持仓；比较无过滤退出与原退出。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 4,
+    "sid": 3985,
+    "source_sha256": "809cbb4e40f23a9abfdb687645ad9009359b64e4027eec52b7bf65315ee53754",
+    "base_kind": "original",
+    "base_sha256": "60c22de3f212c78acbc8459eca87bd59fe7c918a5a25365e0f55464281c9c072",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA趋势与MACD动量一致的意图清楚，但两个交叉必须同根且200%权益配置使信号稀疏与杠杆风险并存。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "EMA12/26和MACD同根死叉且RSI>30才退出；弱市RSI过低可能阻止退出。源码200%权益与外部统一仓位结果不是同一风险。 暂缓原因：放宽同根条件会改变策略身份；降杠杆通常降低名义收益但风险也不同。"
+    ],
+    "validation_plan": [
+      "枚举两个交叉相隔1-3根、RSI跌破30和跳空场景，并核对融资/保证金及真实成交数量。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 5,
+    "sid": 334,
+    "source_sha256": "0c9c03dc11a489f10b2badd228d40a8b461912c371626ab48c3e6d5b1c106070",
+    "base_kind": "original",
+    "base_sha256": "5e97146857d18f62987467ffbfd96ed28700989812b533085bee23a1fbe02ba4",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：SMA2穿越EMA21加减ATR通道，具有波动尺度适应性；入场和退出简洁，是可保留的基线。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "通道退出依赖收盘交叉，100%权益及隔夜跳空风险未被硬性限制；旧Pine版本也需原生验证。 暂缓原因：增加止损会改变原有追踪风格，不能假设必然改善。"
+    ],
+    "validation_plan": [
+      "比较正常与双倍成本，21周期附近参数，跳空低开及拆股复权数据；核对信号根与成交根。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 6,
+    "sid": 303,
+    "source_sha256": "46c3b55dc0dd4199f92fea3f22d4b10af5ce22981ebe40ce5e391285a4bf7226",
+    "base_kind": "original",
+    "base_sha256": "584b0407a95412898456005a6b5d73af6975f0012857195af7b9e608cbc37888",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA价格交叉与Supertrend状态联合做多，指标逻辑可解释，但事件与状态同步要求偏强。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "EMA下穿若发生时Supertrend仍多头，随后趋势变空并不会重新产生EMA下穿事件，可能漏掉这段下跌退出。 暂缓原因：更灵敏退出可能在趋势回撤中反复止出。"
+    ],
+    "validation_plan": [
+      "构造先下穿EMA、隔两根Supertrend翻空且价格始终在EMA下的路径，并检查退出。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 7,
+    "sid": 3988,
+    "source_sha256": "5915c17d3f8f878bc5d364a87284e4f9f45f4b1354c5d2a98dd3308e15c9ca43",
+    "base_kind": "original",
+    "base_sha256": "1b26a3ad4e43267e5100ae2d9fb6f2e62aad731ece2906e54099fd8faf7cd723",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：布林中轨、RSI和OBV方向确认做多，下轨退出，信号与退出配套；指标相关性需要证实增益。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "三项入场因子都源于同一价格/成交量，组合复杂度不等于三个独立优势；下轨退出可能给回较多浮盈。 暂缓原因：简化可能增加假突破，过度筛选也可能减少样本。"
+    ],
+    "validation_plan": [
+      "逐股及滚动窗口比较完整/删因子版本，按趋势和震荡市场分层；不改变仓位口径。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 8,
+    "sid": 283,
+    "source_sha256": "6bd17f8c44841400799820f1eb101c16c45ee6c14ab5f28081630970e67e8bda",
+    "base_kind": "original",
+    "base_sha256": "ec0af92b91c37e30a36b901956448cecdb668800d82679f5e4dfb6aa97737cfb",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：EMA9上穿SMA30入场、跌穿SMA30或50退出的快进快出规则明确，200/325均线仅显示不应计为交易过滤。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "入场与SMA50退出可能在特殊均线位置同根出现，两个独立if的订单优先关系需核对。 暂缓原因：选择退出优先会减少交易，不能直接套用旧回测。"
+    ],
+    "validation_plan": [
+      "构造EMA上穿SMA30且同根下穿SMA50的路径，检查是否下单、何时成交及是否出现短暂持仓。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 9,
+    "sid": 5123,
+    "source_sha256": "6625c613e87714f09c8c0517a9a25414b1a5e61ad6b8eda5a69ea210833dd1bd",
+    "base_kind": "original",
+    "base_sha256": "2f1b71e6b9b13604ae9fb2b692dfcd2da0d255147575f629c0114de4f966ed8e",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：引用前柱唐奇安通道进行突破，避免用当前最高价作为不可达收盘突破阈值；属于清晰趋势基线。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "全权益配置与外部统一仓位不同；下轨或中轨退出是两种不同风险模型，不应事后择优解释。 暂缓原因：中轨退出更快但可能牺牲大趋势；下轨退出回撤较大。"
+    ],
+    "validation_plan": [
+      "对20周期及邻域、两种退出方式固定划分训练/验证期，核对所有股票的成交与风险集中度。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 10,
+    "sid": 4392,
+    "source_sha256": "144323a032161c4ee739269f1925f085403e3b84aadc91a047e522e56f48fce3",
+    "base_kind": "original",
+    "base_sha256": "ed0f4c89fc8ef0551af1335014aa1cdda6949af21c4533f87ff0403637b480d2",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：1.5倍标准差上轨突破做多、下轨或中轨退出，意图清楚且参数较少。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "固定qty=1使价格高低股票的资金权重不同，外部统一仓位回测不能直接反映源码资金曲线。 暂缓原因：改为统一资金属于仓位设计变更，收益与回撤都可能改变。"
+    ],
+    "validation_plan": [
+      "逐笔核对持股数、名义金额和成本；将高价/低价股票分组比较收益贡献。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 11,
+    "sid": 1952,
+    "source_sha256": "4ebd0b325b09053e0e6736e8a59859ff790868b13489bd46716b74c7febbcf2e",
+    "base_kind": "original",
+    "base_sha256": "e6ee0db3af8aa9c23937cfc6262f8bf8a23cffb74ee8bdd92aaf6cea75701681",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：123反转与BearPower一致的组合有明确状态逻辑，但绝对价差阈值30/3限制跨市场可迁移性。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "BearPower持久方向与价格尺度绑定；书籍叙述与源码随机指标方向也并非一一相同，须以源码定义为准。 暂缓原因：归一化会改变信号方向与持仓期，需独立版本。"
+    ],
+    "validation_plan": [
+      "价格缩放、拆股前后、长时间不触阈值时检查方向是否沿用；逐条核对随机指标条件。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 12,
+    "sid": 68,
+    "source_sha256": "49bb20d47504c8f33eb734f965bd4cd734908f588bfb58832396d11655a21e54",
+    "base_kind": "original",
+    "base_sha256": "80199a78df3ef46ce667aaf5330a48f2736fe0557e3c30ea931a007eacd64f98",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：两条ATR趋势线与T3一致才入场，T3百分比带退出，具有趋势与波动双重依据。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "信号使用三线共识但退出由固定5%T3带控制；启用做空时反向entry与显式close可能同时出现，风险模型并非单一ATR止损。 暂缓原因：替换退出尺度会改变持仓风格，不宜直接优化到旧样本最优。"
+    ],
+    "validation_plan": [
+      "枚举多空翻转同根、单边跳空、5%带不同波动股票的实际损失及交易成本。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 13,
+    "sid": 1268,
+    "source_sha256": "1697fc7df38a303c300a451debea78ecb80c9cc859aaaabc01a967a18d1e183f",
+    "base_kind": "original",
+    "base_sha256": "67661fbf3e79e9da83dd25cbf40f8a5e78f7f8edbad334fb9f4480aecab2b7dc",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：PMax利用均线和ATR递推形成方向线，默认仅多、反向信号平仓，核心逻辑完整。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均线类型选项多且初始化方式不同，容易产生参数选择偏差；10000现金下单和零手续费与报告统一口径不同。 暂缓原因：减少选项可能放弃某些市场优势，但能降低过拟合自由度。"
+    ],
+    "validation_plan": [
+      "比较不同预热长度和同一股票池下的逐笔信号，明确反向模式是否反手及其成本。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 14,
+    "sid": 3637,
+    "source_sha256": "e2d24fc4673dd3a85e91f96ec130dc92b1b34a8175d90a653c83e41797673fda",
+    "base_kind": "original",
+    "base_sha256": "8ad9a749c0e2c3cf21ae52992927c6ce0e65d5171e858c318c55207e7b634fab",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：RSI>60并站上快速Supertrend入场、跌破即退出，简单动量跟随结构合理。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "名称含止损但实际用收盘strategy.close而不是挂价格止损；周线建议与当前配置周期不同。 暂缓原因：盘中止损更及时但更易被日内噪声触发。"
+    ],
+    "validation_plan": [
+      "逐笔比较周线和日线同口径结果；模拟日内跌穿后收回、隔夜跳空及下一根成交价。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 15,
+    "sid": 2143,
+    "source_sha256": "7e79b63d5890b5bc9e1f39d529c32c532ed420c78042593b04cd7b7ca3c2f385",
+    "base_kind": "original",
+    "base_sha256": "ca957232764f35671c630b95eb9db63e13b1f36663e7c4d145ae53072936d9b2",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：EMA9/21交叉由RSI30过滤，退出又允许反向交叉或RSI失效，风险失效不必等入场全部条件反转。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "RSI阈值30使多空触发不对称；同根反手entry与旧仓close的数量及顺序需要原生核对。 暂缓原因：强行对称可能损害原策略；简化反手也会改变交易时机。"
+    ],
+    "validation_plan": [
+      "分别统计多空交易、借券成本及交叉和RSI同时失效时的订单ID、净仓位。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 16,
+    "sid": 1395,
+    "source_sha256": "37447f7008060000439315d41daad14175ac2916d596b91ef013a2834b0da290",
+    "base_kind": "original",
+    "base_sha256": "3f944acfd8a349c4ef536c72abf93fd947ecf32e4688a45d03c79a8e71f0ea56",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：前柱唐奇安上下轨状态突破与回撤退出，入场和退出周期可分别控制，是清楚的趋势模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "offset_bar输入没有进入交易条件，固定1份仓位也不等同统一资金组合；图形偏移不代表订单延迟。 暂缓原因：接入offset参数会改变策略，应单独评估而非默默修正。"
+    ],
+    "validation_plan": [
+      "改变offset输入确认原信号不变；核对1股仓位，比较不同通道长度与成本。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 17,
+    "sid": 5222,
+    "source_sha256": "839d56622e58e8a719b4f125d3e72de86f980049c98c7543c20088849b194f23",
+    "base_kind": "original",
+    "base_sha256": "3c0f25795d292a899f230010b71453a58db92d2c353522e2c03e8b53681dbb60",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：ROC跌后回穿下统计带入场、从上带回落退出，属于明确均值回归假设。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "源码只在ROC从上带回落时退出，没有实现注释中的再次跌破下带退出；若反弹从未到上带，可长期持有亏损。 暂缓原因：更早退出会减少长期反弹收益，并增加亏损实现频率。"
+    ],
+    "validation_plan": [
+      "构造入场后ROC持续走弱且从未触上带路径；统计极长持仓、最大不利波动和费用敏感度。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 18,
+    "sid": 3800,
+    "source_sha256": "a31f3ff1bb3cdb038ee5304a70c4e6eb1de4d0487b80857b643e2abde8f86454",
+    "base_kind": "original",
+    "base_sha256": "12e5dad1fb73e3dbb5f6b60ddb4b0976f970ffa30bb94e1649176fb5ca9a1e49",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：实际交易是SMA加0.5与EMA减0.5交叉，不是多时间框架相位模型；规则可复算但命名夸大。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "固定0.5价格偏移对低价与高价股票有不同作用，后面13/26等EMA图形不参与订单。 暂缓原因：归一化会重排信号，不能宣称保留旧收益。"
+    ],
+    "validation_plan": [
+      "同OHLC乘10后对比信号；检查删除仅绘图均线不影响订单；做后续窗口验证。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 19,
+    "sid": 1428,
+    "source_sha256": "281f44c01d5217aacafd64688be4de80a197b516189a4d8594d01ed38972c127",
+    "base_kind": "original",
+    "base_sha256": "592e17737055d6085edb719f429f69b961b301a4948d695337d762dd536677d2",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：快慢ATR递推线交叉形成趋势切换，尺度随波动调整，结构可解释。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "标题称追踪止损，但没有strategy.exit价格保护，只有两线交叉后的市价平仓。 暂缓原因：增加价格止损会改变两线交叉系统的持仓分布。"
+    ],
+    "validation_plan": [
+      "测试初始化、持续震荡和跳空；逐笔核对交叉根、发单根及成交根。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 20,
+    "sid": 837,
+    "source_sha256": "63702aba6144d39d9a13b60b2a2de27e3b328b34cb2fb8cc7ef31dd6c0fe23ea",
+    "base_kind": "original",
+    "base_sha256": "01961ebd135383f48552358f338ef4760cbea86d69832a74ceb953ea4e3761b2",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：连续抬高高点和RSI上升做多，跌破SMA55退出，原理是动量延续而非完整多均线系统。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "sell_condition的A或(A且B)等价于A，RSI退出分支无增量；未使用的sell_condition_ma21与注释会误导风控理解。 暂缓原因：清理等价逻辑不应改变结果；真正接入原本未使用条件会改变策略。"
+    ],
+    "validation_plan": [
+      "比较清理前后逐根布尔值应完全相同；独立测试是否需要连续走弱规则。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 21,
+    "sid": 3667,
+    "source_sha256": "7927980d9b67329e7f307d4722453ec8ebb1d2ac97c645d1e147d3a33b014fca",
+    "base_kind": "original",
+    "base_sha256": "59a510964440ca1c404cd8b1a523b34c528a33a6c763c1af7bdd3ae0be0548ec",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：短EMA与长SMA两个入场模块共享挤压动量过滤，组合意图清楚但不是独立多周期投资组合。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "两模块不同订单ID、默认不加仓，且各自退出都要求交叉同根满足挤压及负动量；可能漏退出并造成模块占仓。 暂缓原因：独立持仓会增加总敞口；快速退出可能削弱趋势收益。"
+    ],
+    "validation_plan": [
+      "逐根记录两模块同时信号、被pyramiding拒绝的入场和各自from_entry/close执行。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 22,
+    "sid": 4228,
+    "source_sha256": "ac66d510a20b6ec59abf314d57ec7781f3c759f74db7c8c0c4309491a01c78b7",
+    "base_kind": "original",
+    "base_sha256": "a59bf7d2736f779c24db7ceda6619a54140dd041ac6b8f461382be514835f3b3",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "修复AD平价柱累计中断、CMF零均量与MFI单边资金流边界；保留close方向归类、七指标投票门槛。",
+    "patches": [
+      {
+        "old": "ad := na(ad[1]) ? 0 : ad[1] + ((close - low) - (high - close)) / (high - low) * volume",
+        "new": "adIncrement = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low) * volume\nad := na(ad[1]) ? 0 : ad[1] + adIncrement",
+        "reason": "零振幅K线的AD增量为0，避免0/0污染累计值并在下一根重置为0。",
+        "preserved": "首根AD仍初始化0，正常振幅下计算及七项投票不变。",
+        "validation_cases": [
+          "历史AD=75，平价K线后仍75；下一根正资金流继续累计；首根仍0。"
+        ]
+      },
+      {
+        "old": "moneyFlowMultiplier = ((close - low) - (high - close)) / (high - low)",
+        "new": "moneyFlowMultiplier = high == low ? 0.0 : ((close - low) - (high - close)) / (high - low)",
+        "reason": "平价K线没有可分配的收盘区间方向，资金流乘数置0。",
+        "preserved": "正常K线仍使用原收盘区间比率；不变更MFI方向归类。",
+        "validation_cases": [
+          "H=L=C时乘数0；H=12 L=8 C=11时0.5。"
+        ]
+      },
+      {
+        "old": "cmf = ta.sma(moneyFlowVolume, lengthCMF) / ta.sma(volume, lengthCMF)",
+        "new": "avgMoneyFlowVolume = ta.sma(moneyFlowVolume, lengthCMF)\navgVolume = ta.sma(volume, lengthCMF)\ncmf = avgVolume == 0 ? 0.0 : avgMoneyFlowVolume / avgVolume",
+        "reason": "完整窗口均量为0时CMF给中性0，避免无交易窗口的0/0；只对精确零回退。 两个SMA每根无条件求值，guard仅使用缓存标量，避免跳过历史样本。",
+        "preserved": "暖机NA不强行补零；正常成交量比率与投票阈值保持。",
+        "validation_cases": [
+          "零均量CMF=0，不增加买卖票；5/10=0.5；缺失均量仍NA。",
+          "连续零量窗口再恢复：资金流和成交量SMA每根各采样一次；恢复比例0.5。"
+        ]
+      },
+      {
+        "old": "mfi = 100 - (100 / (1 + (positiveFlow / negativeFlow)))",
+        "new": "mfi = negativeFlow == 0 ? positiveFlow > 0 ? 100.0 : na : 100 - (100 / (1 + (positiveFlow / negativeFlow)))",
+        "reason": "有正资金流且负流为0时MFI取单边极限100；双零保持NA而不虚构超买超卖。",
+        "preserved": "按close方向归类及有负流的原MFI公式保持；双零不产生MFI投票。",
+        "validation_cases": [
+          "正10负0得到100；正0负10得到0；正30负10得到75；双零为NA。"
+        ]
+      }
+    ],
+    "resolved": [
+      "零振幅K线的AD增量为0，避免0/0污染累计值并在下一根重置为0。",
+      "平价K线没有可分配的收盘区间方向，资金流乘数置0。",
+      "完整窗口均量为0时CMF给中性0，避免无交易窗口的0/0；只对精确零回退。",
+      "有正资金流且负流为0时MFI取单边极限100；双零保持NA而不虚构超买超卖。"
+    ],
+    "remaining": [
+      "MFI仍按close而非typicalPrice方向分类；改分类会改变交易集合，需要独立对照。",
+      "缺失成交量并非零成交量，当前不填补缺失数据；需原生验证长期NA后的恢复。"
+    ],
+    "validation_plan": [
+      "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+      "输入平价K线、零成交量、连续14根上涨/下跌，核对每项指标有限性、AD连续性及最终票数。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 23,
+    "sid": 3992,
+    "source_sha256": "d326261f8ed28e891d7dc203b4b7b9a8cb25946cea56b671cde349229e05ef9e",
+    "base_kind": "original",
+    "base_sha256": "9b41359be3f71ac87c4e55e1b5d9c84ee8e69a0f12671d77442df35e3441a01c",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA交叉叠加RSI、MACD及长趋势确认，入场过滤可以理解，但退出过滤过于苛刻。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "EMA20/50死叉必须同时RSI<50、MACD弱且close<EMA200才退出；任一项不同步会错过唯一事件。 暂缓原因：放松退出可能提高换手和假退出，须看费用后表现。"
+    ],
+    "validation_plan": [
+      "构造死叉时仍在EMA200上，之后才跌破200但无再死叉的路径，检查持续持仓风险。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 24,
+    "sid": 322,
+    "source_sha256": "0b7da93460b1583c1b858372d9f72cddfd484eacce51f4b2210c56694208a739",
+    "base_kind": "original",
+    "base_sha256": "a347265c33d0f51d0c9044192d443a59ad8af8d9af803e7c31cc1f68b503b818",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：9/21 EMA交叉入场和退出简洁且一致，适合作为复杂模型的对照基线。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "震荡期可能频繁换手，原声明没有实际费用和硬保护设置；不能从组合均值推断每股有效。 暂缓原因：过滤器可能降低换手，也可能错失趋势启动。"
+    ],
+    "validation_plan": [
+      "做9/21附近参数网格、双倍费用压力测试、逐股收益集中度和样本外窗口。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 25,
+    "sid": 1578,
+    "source_sha256": "7680047645aa2336abc554db7ebf7b2ff80b52e0a9177737f06f9202a0e0dfc4",
+    "base_kind": "original",
+    "base_sha256": "43e30e54779a405aede75ff5cef709ec89809d7dab5d4168b1640fa0a827aa4a",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：百分比箱体突破配固定金额风险的意图明确，但真实仓位与实际止损距离没有严格一致。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "Shares按close乘固定百分比计算，而挂单价top、止损bot[2]；并且strategy.order可继续累加，六根opentrades不变不等于限制总风险。 暂缓原因：会改变股数与加仓路径，旧回测不能代表新版风险。"
+    ],
+    "validation_plan": [
+      "核对多次同ID加仓、跳空未成交、box更新后的风险金额，以及第一根持仓尚未提交止损的窗口。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 26,
+    "sid": 4191,
+    "source_sha256": "d67916edeeb3e5e5615c179069aaab65cfe4456176ece23ac077d3e481381788",
+    "base_kind": "original",
+    "base_sha256": "6384149a4d740b3a0318942b3bdfe138caf427425202d52664aa66f66f44bbb1",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：价在EMA9上且9在21上做多，完全反转时退出，状态型确认避免单根交叉错过问题。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "EMA200只用于显示云层，不是长趋势过滤；中性区继续持仓可能扩大回撤。 暂缓原因：中性退出增加交易、可能削弱趋势持有收益。"
+    ],
+    "validation_plan": [
+      "比较进入中性区后反弹/持续下跌两类路径，核对EMA200变动是否影响订单。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 27,
+    "sid": 1190,
+    "source_sha256": "704d9a7594a42be2ed719b3a097f706184ca6b7cfa6be0928c27c1d71a7c9941",
+    "base_kind": "original",
+    "base_sha256": "e2ee22d697af54c5c00e1d8d439695b27c9bdc95eeca1405d0fd81af1cfd5353",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：下轨回穿买入、上轨回落平仓是均值回归，但注释写成直接低于/高于带，图形又提前一根着色。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "缺少失败回归退出，长期不触3倍上轨可能长时间被套；offset=-1仅绘图却可能造成视觉前视印象。 暂缓原因：更近目标降低持仓和单笔收益，也可能提高换手。"
+    ],
+    "validation_plan": [
+      "对比实际信号根与背景标记；统计未到上轨交易的最长持有及最差浮亏。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 28,
+    "sid": 4195,
+    "source_sha256": "7a42645ebd69061d427e704210e0bde78a195200922abacd85bf3ea30c3ad9fa",
+    "base_kind": "original",
+    "base_sha256": "aa6de30d23a97765f486c2f9f9d6918144c64681f34373a6082248cb99c4a21b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：SMA20/50金叉叠加200均线过滤，规则清楚；50/200信号只是标签。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "死叉还必须close<SMA200才能平仓，先死叉后跌破200会漏掉退出机会。 暂缓原因：提前退出可能错失修复行情，新增备用退出改变策略。"
+    ],
+    "validation_plan": [
+      "构造死叉发生在200线上随后继续下跌；比较原始与状态退出的持仓路径。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 29,
+    "sid": 4317,
+    "source_sha256": "b49473f6bdb4f6d914a5d9134c669b862d8c8c880d67fc2ad80011b354d49d12",
+    "base_kind": "original",
+    "base_sha256": "2562b3d8e8fb531682501cade0eaa607bbab4d14d4ceca40cc4dded09ad99adc",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA11/50交叉由随机RSI方向确认，具有趋势过滤含义。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "K与D高度平滑，EMA死叉时K<D未必同步，可能过滤掉本应关注的趋势失效退出。 暂缓原因：退出解耦可能增多震荡成本。"
+    ],
+    "validation_plan": [
+      "让EMA先死叉、K/D后转弱，检查原版是否仍持有；测试平滑长度邻域。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 30,
+    "sid": 501,
+    "source_sha256": "833a5768be879bdd6eb427996732760177af7adb31fcbe14bb9de38b70d69df4",
+    "base_kind": "original",
+    "base_sha256": "169d981eca9119d08920a3afec099a17c1b8cf65490ae4f0e3f7456eae47c2b8",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：快慢EMA与价格共同确定牛熊区域，首次进入区域时交易，规则比标题MACD更接近EMA状态切换。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "灰色中性区域一直保持旧仓，风险随下一次熊区出现而定，未限制最大亏损或时间。 暂缓原因：中性区减仓会改变趋势持有收益。"
+    ],
+    "validation_plan": [
+      "按趋势/震荡拆分，检查区域连续转换、重入和费用后的稳定性。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 31,
+    "sid": 5202,
+    "source_sha256": "5e2ff493e0be3a4e34acc49b2dc8de580f321206d91a40d55cc7d465877998de",
+    "base_kind": "original",
+    "base_sha256": "09e7cffe93baef02f2cc67e3422d6173a3a3de354e0918e0bdd4a91f37ae9fee",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：多指标全确认后双向反转，但这些指标高度相关；并非真正多时间框架。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "卖出条件CCI>(100-100)=0而非常见负阈值，且要MACD死叉、RSI>30、随机转弱及价在200线下同时出现，经济含义需明确。 暂缓原因：修改CCI阈值或拆退出会改变策略方向与交易频率。"
+    ],
+    "validation_plan": [
+      "对CCI在-100/0/100、多个信号不同步、反手成交数量进行逐根验证。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 32,
+    "sid": 2154,
+    "source_sha256": "f0742a9d856435697dee449b9ba44b5dc32767b3732df205597c31b5e7f51a7a",
+    "base_kind": "original",
+    "base_sha256": "e712a80dab5bc33a0c8d2eec1a2c6925383956ad156afb5a6f23cdf30ebd7123",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：超卖随机指标回升入场，EMA失效或亏损阈值退出，可解释但止损是收盘市场指令。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "lossp乘leverage会随杠杆增大而放宽价格亏损阈值，可能与控制权益风险的目的相反；参数大时止损价可到零以下。 暂缓原因：纠正风险定义会改变止损频率，不能沿用旧绩效。"
+    ],
+    "validation_plan": [
+      "测试leverage=1/2/10与lossp边界，检查止损价正值、权益损失和跳空成交。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 33,
+    "sid": 3136,
+    "source_sha256": "5b825d28b722f673a816cfbd2c4341972b9e0ce0ec975daa82be8edbdbc5b6bb",
+    "base_kind": "original",
+    "base_sha256": "42aca69349fb534e72d521963b0a95c70a45ba74fc83688b0c76b51aad42b5ab",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：SAR、长均线、MACD和RSI同向确认，默认仅多，结构可解释但多因子全反转退出偏迟。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "quickexit=false需四项全空才离场，部分失效时一直持仓；quickexit=true则任一多头条件失效退出，两者是不同模型。 暂缓原因：快退降低持仓连续性并可能增加噪声交易。"
+    ],
+    "validation_plan": [
+      "按四因子逐项失效/恢复路径验证两种模式，比较最差浮亏与手续费。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 34,
+    "sid": 972,
+    "source_sha256": "295bffc9410c283896fb6485532d0cbcb503d929254a2dabcfa5e2a0b04c983a",
+    "base_kind": "original",
+    "base_sha256": "f67c660da4e6743fec7a06fa31e204549fba1b267b31cf47ea3666dc7b178263",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA20/50交叉叠加Supertrend，入场合理但退出采用同根共振而非持续失效。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "死叉与Supertrend空头不同步会漏掉退出；100/200均线显示不参与交易。 暂缓原因：更早退出可能降低长趋势捕捉率。"
+    ],
+    "validation_plan": [
+      "分别构造先死叉后翻空、先翻空后死叉，核对是否及时平仓。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 35,
+    "sid": 3,
+    "source_sha256": "877d88096efc2e0585093c7512818b4fc4c2a4fc8639daf081fe7a57285e5c74",
+    "base_kind": "original",
+    "base_sha256": "40d6267b860ca5c237fb1e1b3d2d23fab4177507fe6dcbe768f5c36e4545c329",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：价格/SMA10与MACD双交叉确认提供强一致性入场，但双事件必须同根，退出同样稀疏。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "若先跌破SMA后MACD死叉，就没有双下穿同根信号，可能长期等待新的组合事件。 暂缓原因：信号会增多，过度交易风险上升。"
+    ],
+    "validation_plan": [
+      "检查交叉相隔0/1/3根的完整订单轨迹，并对两指标增益做消融。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 36,
+    "sid": 3252,
+    "source_sha256": "ed399484dcf718b7a51b59eff4a74a649e64232857c0545fc9c37690985d972d",
+    "base_kind": "original",
+    "base_sha256": "daa93d6bc91ff37a5490cf78ce2c98aea4e4fac27a33c14d6e21f1a27429fd18",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：六条EMA多头排列后做多、跌破EMA200退出，是强趋势持有模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "入场很苛刻而退出很慢，中间均线明显失效也不退出；六个周期增加选择自由度。 暂缓原因：减少均线可能增多假入场；更快退出可能减少大趋势收益。"
+    ],
+    "validation_plan": [
+      "比较六均线与20/200基线、趋势反转到200线之间的回撤及逐股贡献。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 37,
+    "sid": 201,
+    "source_sha256": "80c93d2f61daa75e5fe24273d3cc6528612dcb172372c8706270370f56ca3b31",
+    "base_kind": "original",
+    "base_sha256": "ce60d9c9e2a3b7170e171bb176d65326db201e08b2e0400e05e13109e91766cc",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：通道交叉入场、另一通道失效退出，方向逻辑可解释，但所谓风险乘数实际可能产生很高杠杆。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "默认指数模式qty=5*equity/1560根最低收盘价，名义仓位约为5*当前价/最低价倍权益，与止损距离无关。 暂缓原因：风险约束会显著改变回测收益与可成交性。"
+    ],
+    "validation_plan": [
+      "计算每笔名义敞口/权益和最大杠杆，加入长期上涨、低价历史及保证金不足场景。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 38,
+    "sid": 2780,
+    "source_sha256": "8b93d30ca49e6264a7c0c60a17852b617c2b25f306778339f0bf481f7dfad04c",
+    "base_kind": "original",
+    "base_sha256": "3799cb3504a966cc1ca74ffd63f3edd91cfd187ab76e38db73eb50c26ae199df",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：OBV方向、Coppock趋势及CMO强弱共同确认，模型清楚但多头退出必须进入显著空头状态。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "CMO<-50且Coppock<0并下降且OBV下降才退出，持仓恶化时可能长时间不满足全部条件。 暂缓原因：提前离场可能削弱趋势中的正常回撤容忍度。"
+    ],
+    "validation_plan": [
+      "分解退出各条件到达时间，测最慢条件导致的额外持仓与尾部损失。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 39,
+    "sid": 3445,
+    "source_sha256": "7f88e2a3fabcb242ab2efca6f67d736c84b8bc73f40972c7ac3c07ebe15354df",
+    "base_kind": "original",
+    "base_sha256": "7f1c92c10cd1391bd46783e7880ad3ddd940133227cadb955194c2634e7267be",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：滚动高低区间的回撤位交叉可解释为区间回归，不应仅因Fibonacci名称赋予统计优势。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "买入回穿较低水平后，仅等待更高水平向下交叉；若反弹失败且未到上方，缺少独立退出。 暂缓原因：新增退出会改变收益分布，选阈值需避开全样本调优。"
+    ],
+    "validation_plan": [
+      "用反弹失败和区间高低点滚动移出路径检查触发，做比例邻域与后续窗口对照。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 40,
+    "sid": 2212,
+    "source_sha256": "6cc09c66c6284f25c03f110da5acc615623e6b835336e2f5c1a66d2f5f48b47a",
+    "base_kind": "original",
+    "base_sha256": "9fccb73a894b956c1207d68bc6c7f0be83373c81d25117d7c4498708b494de0f",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：SMA10/20交叉的简单趋势模型，入场与退出对称，可作为稳健性研究基线。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "交易优势未因简洁而自动成立，震荡换手、默认数量和未设成本仍需验证。 暂缓原因：过滤器可能降低费用，也可能错过趋势起点。"
+    ],
+    "validation_plan": [
+      "比较8-12/16-24周期邻域、不同市场阶段和逐股收益集中度。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 41,
+    "sid": 2308,
+    "source_sha256": "c059cba298a670db3e8ffea3e81b416197e94b38f04b753b0ba1b9300fe037c4",
+    "base_kind": "original",
+    "base_sha256": "3e9f31617beb96935932557049361bb22a49828a41cc2e6954011bdb8e7dd06d",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：双重平滑HA方向翻转为信号，平滑可降低噪声但增加滞后；使用真实K线计算而非直接以HA价格成交更易核验。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "图形信号offset=1与实际信号时点不同；在HA图上运行可能又引入合成价格成交差异。 暂缓原因：降低平滑可能提高响应但增加换手。"
+    ],
+    "validation_plan": [
+      "核对普通图/HA图差异、前100根预热、翻色根与下一根成交，避免图形偏移误判。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 42,
+    "sid": 4256,
+    "source_sha256": "f8ba2d459f68b845883cf237f94cec582f94a21e4a5106637b4a608552694f8f",
+    "base_kind": "original",
+    "base_sha256": "fef0526a4a7a208e4c9c7e8d54ea14d79c370d9f820c22b073dfd6eb666de94f",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：三条短EMA都在长EMA上时进入，完全转为空头时退出，属于状态切换趋势模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "退出要求三线全到长线下，失效早期仍持仓；long+3/short-3只画标记不代表止损。 暂缓原因：更快退出可能增多震荡损失。"
+    ],
+    "validation_plan": [
+      "逐项均线穿越顺序回放，统计中性持仓期、最差浮亏及费用。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 43,
+    "sid": 2292,
+    "source_sha256": "c00878afb7e0d135e7c109764589d9682d49c322fb7f777d150c439ed5feeba8",
+    "base_kind": "original",
+    "base_sha256": "bf80a2d0a7001dda338cc3d3fe25a7d3a670f4207a9080595fb4a3138f066148",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：123反转与MASS一致时持仓、分歧时离场，组合规则完整。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "MASS衡量区间扩张而非价格方向，直接把高于26.5映射为空头、低于映射多头，方向因果解释不足。 暂缓原因：改变映射会改变策略身份，不能声称简单修复。"
+    ],
+    "validation_plan": [
+      "对相同波幅的上涨和下跌序列比较MASS方向，检验多空收益是否仅来自市场漂移。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 44,
+    "sid": 338,
+    "source_sha256": "660b79e219a5c37e66f3ffb46f3e22058a688668a263c97a93b6d4d20d9e0a19",
+    "base_kind": "original",
+    "base_sha256": "a87a9598be28b3ae5fb05814639734bb37acd45d9dd2cdc2a3bb2be6a8a637fa",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：实际EMA14/100交叉长趋势跟随，交易规则清楚，变量中记录的上次价格不参与下单。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "图例称9 EMA但输入默认14，容易误读；较慢退出缺少尾部风险约束。 暂缓原因：增加风险退出会改变长期趋势收益。"
+    ],
+    "validation_plan": [
+      "改图例前后订单应一致；做12-16/80-120邻域及跳空压力测试。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 45,
+    "sid": 5412,
+    "source_sha256": "d98d0139e6e8f8b7ba27ece4b47cfdcc0d8ecba3821de88b0a9a912fb07419b0",
+    "base_kind": "original",
+    "base_sha256": "e40e3b4dbce58b7d740ac135f95918e3fec8e057e727ddb4b39362e82f23eac9",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：EMA10/30金叉与长线斜率确认，另有跨130线入场，退出统一10/30死叉，逻辑可读。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "所谓additional entry默认pyramiding未开启并不意味着实际加仓；两个入场来源应分开统计。 暂缓原因：开启加仓会显著改变敞口，不能当作无害优化。"
+    ],
+    "validation_plan": [
+      "记录每次入场来自哪个条件、被拒绝的重复入场及两条件同根情况。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 46,
+    "sid": 2106,
+    "source_sha256": "e53f93e98f9646171ef3691668c71072efd077dbf722d6788f3507627b9502a9",
+    "base_kind": "original",
+    "base_sha256": "356e96dce57f649eb2cd792268bed8b9d7aed398ad821ae2c93ecd154a82d55f",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：EMA差值越过ATR缓冲区做多、越过负缓冲区退出，尺度统一且形成迟滞区。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "中性区继续持仓，30/60/60与0.3倍ATR选择需稳健性验证，注释中做空实际被关闭。 暂缓原因：缩小缓冲提高响应但增加噪声交易。"
+    ],
+    "validation_plan": [
+      "0.2/0.3/0.4倍ATR、不同预热长度、快速反转与零ATR边界测试。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 47,
+    "sid": 4259,
+    "source_sha256": "deac2e500cd42c537ef142a459e5f9e9d1437d405c8a0a8ae324926b305dcb3f",
+    "base_kind": "original",
+    "base_sha256": "cbaa3cb7238b24ad95cca4580d1f8171ce281dcaafb47eb54e87a36378cc1e6c",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：EMA20/50交叉交易、150线仅作图，交易核心简单并显式设置成本。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "源码100%权益、0.1手续费和3跳滑点需与外部报告一致；图形Golden Cross并非真实订单条件。 暂缓原因：若改用150线过滤将是新模型，不能沿用原绩效。"
+    ],
+    "validation_plan": [
+      "逐笔比较实际成交量、手续费、tick大小和两个交叉信号的时间差。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 48,
+    "sid": 3537,
+    "source_sha256": "24e9078cab95a7c6abb26a04a48c629d23ab40762872792cd97763d3b8168a7c",
+    "base_kind": "original",
+    "base_sha256": "f89f8eff1ac4a02fc9872bc23e31d563167817e9ad7fe94469fa1ae33b842e22",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：价上穿EMA8且在EMA50上买入、EMA8下穿18退出，入退条件不同但可解释。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "价格可能在EMA8仍低于EMA18时反弹入场；若之后继续跌而没有新的8/18死叉，则等待事件退出会延迟。 暂缓原因：新增过滤会减少交易，可能错过早期反弹。"
+    ],
+    "validation_plan": [
+      "构造入场时8<18、随后价格下跌且8一直<18的路径，检查是否有退出。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 49,
+    "sid": 1622,
+    "source_sha256": "6d08dd4fb71b49f6ff732b20948849fce3b694848855dac806bdff27e8117c13",
+    "base_kind": "original",
+    "base_sha256": "ebab0198c6bc2b8681f3d47b2d7ff3270a39a81cc6156d9dfcc10c5659b4447e",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "仅修复自算DI/DX平价和零方向边界；保留ADX20两侧ATR阈值跳变，平滑阈值须独立研究。",
+    "patches": [
+      {
+        "old": "plusDI  = 100 * ta.rma(plusDM, adxLen) / trur",
+        "new": "smoothedPlusDM = ta.rma(plusDM, adxLen)\nsmoothedMinusDM = ta.rma(minusDM, adxLen)\nplusDI  = trur == 0 ? 0.0 : 100 * smoothedPlusDM / trur",
+        "reason": "平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。",
+        "preserved": "波幅非零仍采用原Wilder平滑；暖机NA保持未定义。",
+        "validation_cases": [
+          "TR=0、DM=0时DI=0；TR=4、DM=2时DI=50；TR缺失仍NA。"
+        ]
+      },
+      {
+        "old": "minusDI = 100 * ta.rma(minusDM, adxLen) / trur",
+        "new": "minusDI = trur == 0 ? 0.0 : 100 * smoothedMinusDM / trur",
+        "reason": "平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。",
+        "preserved": "波幅非零仍采用原Wilder平滑；暖机NA保持未定义。",
+        "validation_cases": [
+          "TR=0、DM=0时DI=0；TR=4、DM=2时DI=50；TR缺失仍NA。"
+        ]
+      },
+      {
+        "old": "dx      = 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)",
+        "new": "dx      = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)",
+        "reason": "双DI为0表示无方向强度，DX回退0避免再次零除。",
+        "preserved": "非零DI比例、ADX平滑及原买卖过滤不变。",
+        "validation_cases": [
+          "双DI零时DX=0；DI50/25时DX=100/3；任一NA仍NA。"
+        ]
+      }
+    ],
+    "resolved": [
+      "平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。",
+      "平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。",
+      "双DI为0表示无方向强度，DX回退0避免再次零除。"
+    ],
+    "remaining": [
+      "ADX跨20仍使ATR系数由0.1切到0.3，修复零分母不消除阈值跳变；需对强弱区间及边界反复穿越分别回放。"
+    ],
+    "validation_plan": [
+      "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+      "恒定OHLC、ADX在20附近反复波动和EMA差值不变的路径，核对信号是否由阈值跳变引起。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 50,
+    "sid": 328,
+    "source_sha256": "849c81b42f367192dd9dbf7f331ff91b8634807667689c37b077dd9ae798ec71",
+    "base_kind": "original",
+    "base_sha256": "e73e5a853d0dc6c3f31e338cc2909b88e34920c3aa5861cf6b84943b0cf697d8",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：实际是价格突破30期高低EMA通道而非34/76/144交叉，核心趋势逻辑可保留。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "标题及多条显示EMA容易使用户以为有多均线确认；通道内维持持仓。 暂缓原因：简化显示不改交易；新增均线过滤将改变交易集合。"
+    ],
+    "validation_plan": [
+      "删除只绘图EMA后订单应一致，测试通道长度邻域、震荡与跳空。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 51,
+    "sid": 4153,
+    "source_sha256": "b4240c55530f035fbebd8191d3138fa78feb5ee97ab3e2cb128beb8c2a486147",
+    "base_kind": "original",
+    "base_sha256": "940f9bd7568d206ad632b2eb01b7e026250bfa98bfafdbefbd4c6856ec28a536",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：实际是正收益且线性回归高于EMA50做多，反向时退出，远比多维数学名称简单。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "sigmoid(priceChange)>0.5等价于priceChange>0，与roc>0基本重复，不能视为独立波动调节。 暂缓原因：等价清理应不改变信号；若要真正波动调节需另建模型。"
+    ],
+    "validation_plan": [
+      "对正/零/负价差、极大价差及预热NA边界核对清理前后布尔值。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 52,
+    "sid": 2096,
+    "source_sha256": "c5717549b66e0aca7cbe30527599d74471f362b720f605ace51e689dc096bf92",
+    "base_kind": "original",
+    "base_sha256": "b9ce08a36dac0b2f88d764329765efe3355a549f62790219d87d969fa2ade001",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：真实参数是47/95 EMA，交叉规则对称且简单；变量名和图例11/21与计算不同。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "47/95特殊默认值可能来自样本选择，且图例误导周期；没有证据证明优于标准邻域。 暂缓原因：换成常见周期也会改变收益，不应凭习惯替换。"
+    ],
+    "validation_plan": [
+      "40-55/80-110区间稳定性、逐股分组和成本压力；文案修正前后订单一致。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 53,
+    "sid": 5785,
+    "source_sha256": "3657a827f1c723b9f0d723b2d5e50794dfb3b92ac37bc2589d07043db32ff5e5",
+    "base_kind": "original",
+    "base_sha256": "00c52ad8275fc6f48fe0140495d6e7e7f87213af8857f2264ee8c45fdeb9e7f3",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：SMA50/200黄金交叉是低复杂度长趋势基线，源码也明确不含额外止损。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "低频且退出缓慢，可能依赖美股长期上涨；仓位和费用未明确不能据总收益判定优势。 暂缓原因：加硬止损可能破坏长趋势容忍度，需单独验证。"
+    ],
+    "validation_plan": [
+      "按熊市/横盘/牛市分层，检查交易样本量、持仓暴露与基准超额来源。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 54,
+    "sid": 3769,
+    "source_sha256": "9cbb9e8c9bc7162809599c56b1f980317ddbb76bec5628d6b19adef131b83d8c",
+    "base_kind": "original",
+    "base_sha256": "bfc3cfa14053dcdf59fae91b41f7f8966476711a2ee4030237e4cc4266fc5fe9",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：SMA50/200交叉加RSI过滤，入场防过热的意图可理解。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "死叉时RSI<=30会禁止退出，偏偏可能在急跌中发生；之后RSI回升也不会重新生成死叉。 暂缓原因：更及时退出可能错过超卖反弹。"
+    ],
+    "validation_plan": [
+      "模拟死叉时RSI20、后续回升40但均线仍死叉，核对是否持续持仓。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 55,
+    "sid": 4258,
+    "source_sha256": "078dbde20f8f027f05eeebd1288096aa3250aef25cced20056a398af083f42a0",
+    "base_kind": "original",
+    "base_sha256": "06fc71792e179649b8538ab56d88fd6d898a5cd109d7539a67f37db70f36f494",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：四EMA多头排列、价在9线上且RSI不超60入场，21/63死叉退出，规则具有趋势回撤含义。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "入场要求强排列同时限制RSI可能减少样本；0.75%手续费与10%权益需保真对齐。 暂缓原因：简化可能增加假信号，降低费用假设则会虚增结果。"
+    ],
+    "validation_plan": [
+      "按RSI区间分组、不同成本、21/63退出延迟及逐股集中度核验。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 56,
+    "sid": 2398,
+    "source_sha256": "73a8f546e6c771a5ea643fbaf368cfa94753b1d55d5c34570f9b27f2a8b7e893",
+    "base_kind": "original",
+    "base_sha256": "abe8b818678a4c44b90757acee868e58009fba14b1b1f7a01f2f254ed906e7c5",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：吊灯方向切换做多/平仓，具有ATR追踪思想，但并没有把吊灯线作为挂单止损。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "initial_capital=25是普通变量而非策略本金声明；qty=25/close只是25现金名义仓位，外部统一仓位结果不同。 暂缓原因：改数量/保护单都会改变收益路径。"
+    ],
+    "validation_plan": [
+      "核对实际股数及最小股数、初始资本、突破线当根及下一根成交的差异。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 57,
+    "sid": 3159,
+    "source_sha256": "e1158f0c116f6829a7a321e3a0cc784d25dc58bdf7a88feaaf2b821f2280c1fb",
+    "base_kind": "original",
+    "base_sha256": "a35861aa3ed0592510b8df72f25e47875b2fcca7a47a98edad4afc4aa134ecbd",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "只修复CMO平价窗口分母为0；VAR=EMA(src×abs(CMO))的价格压低效应保留，标准VAR递推替换另列实验。",
+    "patches": [
+      {
+        "old": "    vCMO = (vUD - vDD) / (vUD + vDD)",
+        "new": "    vCMO = (vUD + vDD) == 0 ? 0.0 : (vUD - vDD) / (vUD + vDD)",
+        "reason": "完整窗口上涨量和下跌量均为0时CMO取中性0，避免0/0进入EMA。",
+        "preserved": "原src乘绝对CMO的VAR定义保持，不冒充标准自适应均线；暖机NA仍NA。",
+        "validation_cases": [
+          "UD=DD=0得到0；UD3 DD1得到0.5；UD0 DD3得到-1；暖机NA保留。"
+        ]
+      }
+    ],
+    "resolved": [
+      "完整窗口上涨量和下跌量均为0时CMO取中性0，避免0/0进入EMA。"
+    ],
+    "remaining": [
+      "VAR仍是EMA(src×abs(CMO))而非标准VAR递推，平价段CMO=0会逐渐压低该线；是否替换必须独立研究，不能沿用旧收益。"
+    ],
+    "validation_plan": [
+      "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+      "统计过滤拒绝率、恒定价格边界和原公式与常规递推公式逐根差异。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 58,
+    "sid": 2745,
+    "source_sha256": "f333bb262f506fd60582cc0f963ff36a43672aca2cf2cdff66640207cd53cd87",
+    "base_kind": "original",
+    "base_sha256": "f7bd0e097ca93e64946688b35ae22e7a7c682c4727200e8aa8ca5a832ad67bd1",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：MACD低位金叉且阳线入场，按信号柱ATR固定保护价，逻辑基本闭环。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "riskPercent=2%没有进入数量计算，所谓2%风险并未实现；atr(5)是5根K线而非5分钟，保护价按信号收盘而非成交均价。 暂缓原因：接入风险定仓会改变敞口；改成交价锚定会改变止盈止损距离。"
+    ],
+    "validation_plan": [
+      "修改riskPercent确认原订单不变；用跳空入场逐笔计算实际风险金额与ATR周期。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 59,
+    "sid": 3128,
+    "source_sha256": "e360e4f28728a6091df44f60f7f4f8317e31cd67cae75ea94be7ef9b90e51bf0",
+    "base_kind": "original",
+    "base_sha256": "502ad9addcf2b631707a4ecfcff02680d38c38fc7823abde156e67c946d94978",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：EMA3/30交叉趋势配100%利润目标，规则简洁；目标只以收盘触发市价平仓。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "100%目标很远且不挂限价单，主要退出可能仍由均线死叉决定，目标名称不等于成交保证。 暂缓原因：降低目标可能截断大趋势，不能凭较高胜率判断改进。"
+    ],
+    "validation_plan": [
+      "统计因目标/死叉退出的比例，检查盘中到目标又回落、跳空和实际成交价。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 60,
+    "sid": 432,
+    "source_sha256": "82f79e158688af745b0b21ffa04e1f71366166c82731c60269aec949d3f0d76e",
+    "base_kind": "original",
+    "base_sha256": "8bcff9180a00657922153bcbf5f7974d7ea8c7239cb2ef213b842a0d32c72e18",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：价与26根前的52期高低中点交叉，正确使用过去值而非未来数据，具有清晰因果性。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "前移绘图与历史引用需要统一理解；conversion/base输入在订单中无直接作用，模型只是SpanB阈值。 暂缓原因：增加完整云图条件会引入新策略而非修补。"
+    ],
+    "validation_plan": [
+      "对齐绘图云层与实际引用值，检查预热期和不同位移参数的逐根信号。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 61,
+    "sid": 3167,
+    "source_sha256": "39e2053f0335e87215a7058c0087585662e666798d30fb94fb4239b6fb09ff57",
+    "base_kind": "original",
+    "base_sha256": "11d070891f8cdc72a4781e0bc19433b01e5c395cd0018f6b184b24c8674f2612",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：成交量EMA减SMA的交叉叠加OBV方向可解释，但不是一般价格动量系统。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "绝对成交量阈值1几乎等同零轴且对股票成交量尺度敏感；ATR计算未参与风险管理，退出仍有同根OBV过滤。 暂缓原因：标准化与解耦将改变信号，旧回测不可直接比较为优化收益。"
+    ],
+    "validation_plan": [
+      "对volume整体乘100、零量和OBV确认滞后路径验证信号及退出。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 62,
+    "sid": 1855,
+    "source_sha256": "51cb0d1985056a5c03206df5f6558e7762fe993da410d1d3ad440f81e8d4646b",
+    "base_kind": "original",
+    "base_sha256": "e1dc59908014061ca40bde2d2f66497a6f08ee143ef596a95e9032da048d37df",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：当前高点创55期新高且在长均线上买入、低点创20期新低退出，属于触价型突破。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "注释写收盘突破但代码用high/low相等，外包线可同根满足入退条件，不能按收盘海龟规则解释。 暂缓原因：收盘确认会减少假突破也会推迟入场。"
+    ],
+    "validation_plan": [
+      "构造同根创55期高和20期低的宽幅K线，逐单检查入场/平仓与下一根成交。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 63,
+    "sid": 2418,
+    "source_sha256": "91c01c021b879c1aa73b23a39d1996b1777986760345bd6080a9b7109a14fab6",
+    "base_kind": "original",
+    "base_sha256": "54203e71612aad63c7f54f161c9506ee979005971213256d718ff6744144ac19",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：前柱100期唐奇安突破配ATR递推线退出，入场因果性清楚，退出尺度自适应。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "ATRSL是收盘crossunder条件，不是盘中stop订单；跨越线后回收的行为不同。 暂缓原因：真实stop可能更多被盘中噪声触发。"
+    ],
+    "validation_plan": [
+      "用盘中跌破又收回、隔夜跳空、递推线初始化与参数邻域检验。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 64,
+    "sid": 1074,
+    "source_sha256": "61c223b75d376d20fbfdbcd6d70c415708943bb33ae05bfac62152d65511c8ae",
+    "base_kind": "original",
+    "base_sha256": "95fc438c856a06aee73e634b8cc8cf2fadc29c3d674fcb755fc7c232c516f35c",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：窗口极值与WaveTrend方向组合并按风险距离定仓，风控意图较明确，但并非经典枢轴背离。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "持仓中再次出现bullishDivergence仍会改stop为新low-ATR，可能放宽保护；数量按信号close计算且无总敞口上限。 暂缓原因：不允许放宽可能提前出场；限制数量改变收益。"
+    ],
+    "validation_plan": [
+      "对重复信号、低点更低、ATR扩张、极小止损距离和跳空成交做逐笔风险检查。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 65,
+    "sid": 1710,
+    "source_sha256": "8389978d124afbba976daed45ca482fc19484e59c3f6fed9c81f5af24a071da5",
+    "base_kind": "original",
+    "base_sha256": "a647055b50c2ac313b6161f05a8967a1f77ccb9b8f94787cb4150db1e86c9462",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：使用SMA9/26交叉与过去云层过滤，规则可解释且不存在使用未来云值的问题。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "Tenkan/Kijun/SpanB用收盘SMA而非高低中点，是自定义均线云而非标准一目均衡。 暂缓原因：标准化可能让结果变差，不能视为必然修复。"
+    ],
+    "validation_plan": [
+      "核对两种定义逐根数值、displacement历史索引、入退差异和后续窗口。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 66,
+    "sid": 3700,
+    "source_sha256": "ca0a18b112f379d02287fe6f04efb54f8676c0a7071dc06690ff438f395192ff",
+    "base_kind": "original",
+    "base_sha256": "a2294d613bbe97737a0a6fe728715574bc7911d1249bbc0fd0a76a1aa3fb87c7",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：长期均线上方RSI超卖买入并设5%价格止损，具有趋势内回撤逻辑。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "盈利退出条件是SMA170下穿SMA90，即较快线转强时退出，而非一般死叉；保护基于成交均价只在后续计算可得。 暂缓原因：改变方向会改变策略身份，不应凭标题改成相反交叉。"
+    ],
+    "validation_plan": [
+      "对快慢线交叉方向和RSI50门禁制作真值表，核对首根成交后的保护单生效。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 67,
+    "sid": 4026,
+    "source_sha256": "dcccdb4cbba1caff46cb1d6979e466d818d5606a0c4b09cc1ed1140c28dbf12d",
+    "base_kind": "original",
+    "base_sha256": "771aea0cccfd168bb48b656ddd017c046cdbc554b8d13fe614cc9e977b42b4eb",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：四组MACD/RSI/成交量条件组成双向系统，但固定价差和多模块订单语义使保真风险高。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "四个退出调用共用TPS但绑定不同from_entry，存在修改同ID订单的歧义；无匹配from_entry可能不生成单，不能仅凭文本断言全部失效。 暂缓原因：ID隔离可能揭示原先被覆盖的保护，历史收益需要重新计算。"
+    ],
+    "validation_plan": [
+      "分别只触发四模块及同根多模块，核对每个entry对应的stop/limit、重复调用后的挂单和反手情况。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 68,
+    "sid": 1462,
+    "source_sha256": "b4249d8f7ea717226247d2637d12c51af4080e371e7051b0f690972103733f8c",
+    "base_kind": "original",
+    "base_sha256": "b2a61d027a2d0617b0e1ba0bc5bb5a0d7c5d863d0c85c1b5390bea51573a0ea8",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：阳线EMA10/20金叉，按信号柱低点风险定仓，规则简单但最大敞口未封顶。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "阳线使close-low通常为正，但可只有一个tick，1000/距离会生成巨大股数；持仓重复信号还会重设低点止损。 暂缓原因：限仓会降低名义收益；固定止损可能改变持仓路径。"
+    ],
+    "validation_plan": [
+      "1tick实体、跳空、重复金叉更低low、保证金不足时逐笔检查数量与实际损失。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 69,
+    "sid": 5023,
+    "source_sha256": "afc91bc4c4952ab5b228d8dfa48757f668a3bc5f58bcf2551237910f64ac5112",
+    "base_kind": "original",
+    "base_sha256": "2a49c5b7bdea28abcdbe56549cb654da3627afc35293315506b8ca653817fd54",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：均线百分比带回归配stop入场和取消管理，规则可追踪，但阈值按当前价格而非均线构建。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "stop=close是入场触发单不是止损；下一根触发/跳空和当根收盘成交不同，固定带宽也非ATR风险。 暂缓原因：订单类型改变会显著改变填单率与收益。"
+    ],
+    "validation_plan": [
+      "检查次根高开/低开、信号消失后的cancel、生效前触价和仅单根信号的成交。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 70,
+    "sid": 3861,
+    "source_sha256": "7a3990428a8eefcbefc8dce16ee692cf8a615ccda91ceafff8ad52af44e60357",
+    "base_kind": "original",
+    "base_sha256": "215bb0f3f9f0d0b5a62d92e9bce2d54ffce7f51c0f3e3500321387c808d56802",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：均线多头排列中回撤入场并冻结ATR保护价，设计较完整。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "首次entry发出时position_size仍为0，exit需持仓后计算才提交，存在首个成交周期保护空窗；止损锚定信号close。 暂缓原因：启用成交后重算会改变历史计算顺序，需防乐观填单。"
+    ],
+    "validation_plan": [
+      "模拟次根跳空并触发保护位，记录第一张保护单创建时间及实际风险。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 71,
+    "sid": 1603,
+    "source_sha256": "d809ee1366f2902c077a49154d183890e9164aee21c706a7b374f0b1e6211343",
+    "base_kind": "original",
+    "base_sha256": "cc1ae9f85ca65d5b2a90f792f7ca0e7c907b4ae845f12f6ab68f8d912f8630cb",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "为MACD零振幅窗口添加显式NA分支，避免执行0/0；保留KD独立信号、正常归一化及动态ATR保护规则。",
+    "patches": [
+      {
+        "old": "normalizedMacd = (macdLine - ta.lowest(macdLine, lengthRSI)) / (ta.highest(macdLine, lengthRSI) - ta.lowest(macdLine, lengthRSI)) * (highestK - lowestK) + lowestK",
+        "new": "macdLow = ta.lowest(macdLine, lengthRSI)\nmacdHigh = ta.highest(macdLine, lengthRSI)\nmacdRange = macdHigh - macdLow\nnormalizedMacd = macdRange == 0 ? na : (macdLine - macdLow) / macdRange * (highestK - lowestK) + lowestK",
+        "reason": "MACD最高值与最低值相等时不存在唯一归一化坐标，显式返回NA并跳过除法；避免任意补0、中点或k改变交易集合。 极值先逐根无条件计算，零分母判断只处理缓存标量。",
+        "preserved": "正常振幅映射、暖机NA、differenceKD独立买卖分支及动态ATR保护保持；不宣称原版NA行为已造成错误成交。",
+        "validation_cases": [
+          "MACD窗口固定5时返回NA且不执行除零。",
+          "窗口0至10、MACD5、K范围20至80时映射50；MACD10映射80。",
+          "缺失极值仍NA；平价后恢复振幅时恢复原映射。"
+        ]
+      }
+    ],
+    "resolved": [
+      "零振幅归一化显式跳过0/0；保留未定义坐标而不虚构中性交易信号。"
+    ],
+    "remaining": [
+      "动态ATR每根重算stop和target，ATR变大仍可放宽止损、推远目标；固定入场ATR或单向收紧是不同风险模型，须独立实验。",
+      "MACD归一化缺失时differenceTotal仍NA，KD独立分支按原逻辑继续；若要求整条信号无效则属于额外设计变更。"
+    ],
+    "validation_plan": [
+      "运行test_top300_batch_a.py：严格除零反例原版失败，补丁应返回NA；验证正常范围及缺失极值。",
+      "原生Pine v6编译，逐根核对平价、恢复与KD分支信号；新增防护应不改变既有有效数据交易集合。",
+      "另设固定ATR/单向收紧实验，按跳空及波动放大路径比较退出、成本和尾部亏损，不继承旧收益。"
+    ]
+  },
+  {
+    "rank": 72,
+    "sid": 5718,
+    "source_sha256": "a101239ca98de0737c45653a6f13700b00ea0dd62a33c51914f46ca796ee5eaa",
+    "base_kind": "original",
+    "base_sha256": "bc149df02a88a5e0a2cc3868c52f50ff3af9f2e43bfa38c20bdaf64ad23b1976",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：滚动区间0.618突破买入，上下极值挂止盈止损，具有区间风险结构。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "stop/target每根随滚动高低点变化，新低可让止损更低；sell_signal只画图不平仓，容易误认退出。 暂缓原因：固定风险位可能与动态区间思想不同，不能当作等价整理。"
+    ],
+    "validation_plan": [
+      "持仓后新低、旧高点滚出窗口、同根两端触及及0.382信号出现时核验订单。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 73,
+    "sid": 4076,
+    "source_sha256": "3c07ab998051a5bc1136500dcd5109039d60002b1d9abcf4c85636f62f8215f2",
+    "base_kind": "original",
+    "base_sha256": "63ba792bab9e90a3f63cee85a1c3841f4c01fbb5c2b0c5da8bb2b5594c564eda",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：周一均线穿越入场、百分比保护及周日平仓是针对连续交易市场的时间模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "美股常规交易无周日K线，周日平仓条件通常不触发；close[1]与当前out_ma比较也不是标准交叉。 暂缓原因：更换周历改变原交易集合；改标准交叉也非等价修复。"
+    ],
+    "validation_plan": [
+      "覆盖美股节假日、半日市、夏令时和周一跳空，核对所有均线选项边界长度。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 74,
+    "sid": 1653,
+    "source_sha256": "a999081d483ae618481f9f959b6237f1140b1a733175b62a1373c9755d1f679d",
+    "base_kind": "original",
+    "base_sha256": "8e4ee14cbd32232e1f57144e474418582fd9f816ab988c36c021575e58c0507a",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：单根价格变动超过阈值做多、反向大跌或六根低点触发退出，规则明确但手工仓位状态不是成交状态。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "position在发单时就更新，可能与未成交/拒单状态不一致；止损用low触发后市价close而非在低点挂stop。 暂缓原因：状态修订会改变异常路径；真实stop与收盘市场退出结果不同。"
+    ],
+    "validation_plan": [
+      "跳空、拒单、阈值0.1代表10%及触及六根低点后恢复的路径逐笔核验。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 75,
+    "sid": 3086,
+    "source_sha256": "65b6f4dab2b58d5f738fd2dd402490c0baf3e3667c3c2f1a182b9abc1edc3371",
+    "base_kind": "original",
+    "base_sha256": "ebf0593c04277c4985b10768908808d7f2be08ec9c8b60497c9f37e204cc8e73",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：MASS反映高低区间扩张，却被直接映射为多空方向，规则机械完整但经济方向依据弱。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "高低波幅没有价格方向信息，同样波幅的上涨/下跌可能得到相同持仓方向；长期反手需考虑借券成本。 暂缓原因：引入方向过滤将成为新模型。"
+    ],
+    "validation_plan": [
+      "构造镜像涨跌序列保持波幅，比较方向和收益；按多空及行情状态拆分贡献。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 76,
+    "sid": 3505,
+    "source_sha256": "7e4be3ed053978f076be3d2c6ee224f89365bb07e7c2cf54006d4c34a10a6c56",
+    "base_kind": "original",
+    "base_sha256": "065e904d66cf3f6b5d49435b2f6edc7bef5b33fc174986b95a0f77b31cad03ce",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：BearPower价差区间映射持久多空状态，规则可复算但绝对阈值限制通用性。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "10/1价差阈值对不同价格和拆股后的股票含义不同，处于中间区间时长期沿用旧仓。 暂缓原因：两项改动都会改变方向及交易频率。"
+    ],
+    "validation_plan": [
+      "同序列价格乘10、长时间处于中间区间和拆股前后检查信号与持仓。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 77,
+    "sid": 2679,
+    "source_sha256": "0e8b627b0d585c98b09f03c8162e70a64c8b20da2298d191600a11514d070a80",
+    "base_kind": "original",
+    "base_sha256": "a26e91a75e99b266898e836b208a09b4b657bd4199c7028d0c093279049282bf",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：标题仅空头但代码实际两方向反手；空头需三个交叉同根，多头只需一个金叉，明显非对称。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "空头触发极苛刻，可能大部分时间是多头；同ID反向entry本身可反手，不能当作两条独立子策略。 暂缓原因：改成仅空头或对称条件会改变策略身份。"
+    ],
+    "validation_plan": [
+      "记录三个交叉时点和多空成交数，比较原生反手净仓位、佣金及借券假设。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 78,
+    "sid": 3625,
+    "source_sha256": "73d832f10e26771d52b3c613593de63c813f416e045c675ed3e1972842311252",
+    "base_kind": "original",
+    "base_sha256": "83a850c7cbb286866928120380ebf929acec252a05af4fa9587640761418f524",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：TAI使用均线局部振幅/价格衡量趋势强度，但振幅本身不包含方向。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "强振幅直接做多、弱振幅直接做空，可能把下跌趋势也分类成多头，逻辑合理性低于纯价格方向模型。 暂缓原因：新增斜率不是小修复，需重新排名。"
+    ],
+    "validation_plan": [
+      "镜像涨跌但相同振幅序列、震荡低波动区间及多空贡献检验。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 79,
+    "sid": 3388,
+    "source_sha256": "c2e0631c91ba55d9ad53b9b1a1f97cf60ea99651b887aa9a7bfa2d9d88b016ab",
+    "base_kind": "original",
+    "base_sha256": "9cecabb379cd234d72809ac58a93aa6ab4e86e4025dff0ac6a21aae5001ee7b7",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：平滑RSI从40回升买入、从80回落退出，是恢复动量获利模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "入场后若RSI从未到80，退出可能长期不发生；缺少失败恢复或时间风险约束。 暂缓原因：新增失败退出可能减少长期反弹收益并增加换手。"
+    ],
+    "validation_plan": [
+      "构造入场后RSI一路下滑但未曾到80，统计最长持仓和最差浮亏。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 80,
+    "sid": 4902,
+    "source_sha256": "7b91da47280c64f8ac1f83210664b524b2d53176612ad361c341304d7eec0a2c",
+    "base_kind": "original",
+    "base_sha256": "ee80436b23f08a50039a68adcd5ea6a76d8196348adc36f12691116c62baa43b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：BullPower价差阈值驱动多空，规则有持久状态但不具备价格尺度不变性。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "40/3绝对价差阈值可能令低价股几乎持续多头，高价股更常空头，表现可能来自价格分组偏差。 暂缓原因：归一化会改变方向分布，原绩效不可继承。"
+    ],
+    "validation_plan": [
+      "价格缩放、拆股与高低价股票组的多空暴露、借券成本及状态持续性比较。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 81,
+    "sid": 3344,
+    "source_sha256": "4489fc04c14f89c40670bdb26f0aa0cfb098e029991f9ce865a7c917182c9da5",
+    "base_kind": "original",
+    "base_sha256": "f70df6ccd7e60cd238188895251196dd89f14cff8c8a90801d5940ccb8415931",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：布林下轨回穿且RSI较低做多，期待均值回归，入场逻辑清楚。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "退出需上轨下穿时RSI仍>70，同步过滤可能漏过；下行失败没有独立退出。 暂缓原因：更近退出可能截断反弹，增加亏损实现频率。"
+    ],
+    "validation_plan": [
+      "构造上轨回落时RSI65、之后始终走弱的路径，检查遗漏退出与持仓尾部。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 82,
+    "sid": 1409,
+    "source_sha256": "f0ddb771b4869ae124882dd19b7643066518a04293240d8ed8ddd7652ac6802a",
+    "base_kind": "original",
+    "base_sha256": "ba7b58ecb0f6de16293ba57eed4af4d4e932a60548b807ad3ac91c0fe63a743b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：WMA7/9金叉且RSI<40入场，以固定价差20止损/40止盈，信号可解释但跨股风险不一致。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "低于20美元股票的stop可能为零或负数；固定绝对价格距离与1000票不同价位不可直接比较。 暂缓原因：换风险尺度会显著改变收益与持仓时间。"
+    ],
+    "validation_plan": [
+      "在5/20/200美元价格尺度上检查保护价、首根成交保护空窗及实际风险比例。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 83,
+    "sid": 5389,
+    "source_sha256": "bf2661adf8c9750fd1c582b7f5d0769c737a5c9d4cb37b3a0ddc68af3309ed87",
+    "base_kind": "original",
+    "base_sha256": "61271b5dd9f0d79f3829a5dba6e261db0cf52b4ecd46b5bb3926d7d402f3c878",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "仅修复自算DI/DX平价和零方向边界；保留ADX与随机指标共同退出，取消同步过滤须独立研究。",
+    "patches": [
+      {
+        "old": "plusDI   = 100 * ta.rma(plusDM, adxPeriod) / atrValue",
+        "new": "smoothedPlusDM = ta.rma(plusDM, adxPeriod)\nsmoothedMinusDM = ta.rma(minusDM, adxPeriod)\nplusDI   = atrValue == 0 ? 0.0 : 100 * smoothedPlusDM / atrValue",
+        "reason": "平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。",
+        "preserved": "波幅非零仍采用原Wilder平滑；暖机NA保持未定义。",
+        "validation_cases": [
+          "TR=0、DM=0时DI=0；TR=4、DM=2时DI=50；TR缺失仍NA。"
+        ]
+      },
+      {
+        "old": "minusDI  = 100 * ta.rma(minusDM, adxPeriod) / atrValue",
+        "new": "minusDI  = atrValue == 0 ? 0.0 : 100 * smoothedMinusDM / atrValue",
+        "reason": "平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。",
+        "preserved": "波幅非零仍采用原Wilder平滑；暖机NA保持未定义。",
+        "validation_cases": [
+          "TR=0、DM=0时DI=0；TR=4、DM=2时DI=50；TR缺失仍NA。"
+        ]
+      },
+      {
+        "old": "dx       = 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)",
+        "new": "dx       = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)",
+        "reason": "双DI为0表示无方向强度，DX回退0避免再次零除。",
+        "preserved": "非零DI比例、ADX平滑及原买卖过滤不变。",
+        "validation_cases": [
+          "双DI零时DX=0；DI50/25时DX=100/3；任一NA仍NA。"
+        ]
+      }
+    ],
+    "resolved": [
+      "平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。",
+      "平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。",
+      "双DI为0表示无方向强度，DX回退0避免再次零除。"
+    ],
+    "remaining": [
+      "退出仍要求ADX高于阈值且随机指标在超买区死叉；弱趋势失效退出是否解耦属于独立经济规则选择。"
+    ],
+    "validation_plan": [
+      "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+      "平价K线、ADX跌破25后价格持续下行、随机指标不同步三类路径核验。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 84,
+    "sid": 4817,
+    "source_sha256": "36ef4e404531b24507d812b507538787d8edbf125ae828eaa97cddabfffb19bd",
+    "base_kind": "original",
+    "base_sha256": "eb81fa5a068ac20f572eadde304b162b040e1c9e76b0671d177d65e2fc4504ca",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：布林带突破后递推ATR趋势线，方向切换交易，主体逻辑自洽。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "趋势线初始NA传递和第一轮方向建立需核验；绘制线并非挂真实止损单。 暂缓原因：调整初始化可能改变最早几笔交易，不宜计入稳定优势。"
+    ],
+    "validation_plan": [
+      "不同数据起点、首个上下突破、连续中性区及快速反转的逐根状态检查。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 85,
+    "sid": 3138,
+    "source_sha256": "93d89bc2b80febb9bb1d080fc77927c410bd0cf05792eff231ed45239bf55017",
+    "base_kind": "original",
+    "base_sha256": "2234c128886989148df9c3a2260159d564fa3c3c0216e759165f7eac3542ea6c",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：DMI交叉叠加ADX/EMA并用手工状态限制重复信号，方向逻辑可解释。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "入场/退出ADX阈值不同，退出30更高可能忽略弱趋势失效；firstbuybar等在发单而非成交更新，与真实仓位可能偏离。 暂缓原因：状态修复或阈值调整会改变拒单/反手路径。"
+    ],
+    "validation_plan": [
+      "模拟ADX20-30区间反向交叉、同根反手与旧仓close、拒单后的手工标记一致性。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 86,
+    "sid": 3430,
+    "source_sha256": "01d04c117b7375c4b19b95d352e6447290461ee3438716adae1493dd8abc4d6d",
+    "base_kind": "original",
+    "base_sha256": "c8971be93fb287ab7d0127f67bd90d8a9364ad9dfd7a326ef4fe8fcfbdcf0459",
+    "action": "unchanged",
+    "change_type": "none",
+    "summary": "保留现有交易核心：使用已确认枢轴并再滞后一根做突破，因果性明确，适合趋势基线。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "10根右侧确认带来真实延迟，不能将枢轴定位时间当作交易可知时间；全权益与零费用也需对齐。 暂缓原因：缩短确认可增加噪声枢轴和换手。"
+    ],
+    "validation_plan": [
+      "逐枢轴核对形成根、确认根及允许入场根，防止回测引擎提前使用枢轴。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 87,
+    "sid": 3522,
+    "source_sha256": "5385b5ced8278ef117fc2acde51c96bd18548b2cbff198c18e949e5af18bf38f",
+    "base_kind": "original",
+    "base_sha256": "be37385c556120224f33961b7f0ad469301b8e56f384af83b209d376f723609b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：RSI突破60追涨，回落80获利退出，动量含义明确但失败退出缺失。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "从60入场后若从未上80，价格/RSI回落不会触发80下穿，可无限期等待。 暂缓原因：会减少长持反弹收益，也可能缩短尾部亏损。"
+    ],
+    "validation_plan": [
+      "构造RSI61后直接跌至30且不达80，核对持仓期与风险；独立样本测试阈值。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 88,
+    "sid": 2122,
+    "source_sha256": "0522d5d6c3cf0b94d9184502f58288fac587e8de0c8f23be8159ab19ff34e0bb",
+    "base_kind": "original",
+    "base_sha256": "f19333abf98e60e7056165ce4133d68c953bd500a55ede9b7d4d4e789d88ae28",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA偏离变化的回归入场可解释，但卖出信号并非立即离场，只是提交20%盈利限价。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "strategy.exit(limit=gain)无止损，亏损或不到20%目标时即使出现sell_signal也继续持仓；容易误读为信号平仓。 暂缓原因：改市价平仓会彻底改变收益路径，不能当作等价修复。"
+    ],
+    "validation_plan": [
+      "在sell_signal时价格低于目标、随后下跌及长期不达目标场景检查订单与持仓。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 89,
+    "sid": 1344,
+    "source_sha256": "854dfb1e2f898a3ce4d5269f2d5150d61da492493047542990f7abbba49ced07",
+    "base_kind": "original",
+    "base_sha256": "263f66166dc7a465563713fe29f75c9df4966712930798e06df74ca19ce40e4e",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：突破新低低吸，以成交后记录ATR固定止盈止损，风险结构比纯等待回归清楚。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "均价只有成交后可用，默认计算下第一根持仓可能尚无保护；默认止盈1ATR/止损2ATR需较高胜率并计成本。 暂缓原因：更早提交或改变风险比都会影响成交路径。"
+    ],
+    "validation_plan": [
+      "次根开盘跳空并触止损、同根两端触及、ATR突变与成本翻倍的逐笔核验。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 90,
+    "sid": 3458,
+    "source_sha256": "19c320d19213627753b232095f4bb5356b42272130c9a0eb133f4f56d087a704",
+    "base_kind": "original",
+    "base_sha256": "90dd7d9fa834140ffd5061edaa4a4abc1ea25ff1a73d7399aa3dc5843035c91e",
+    "action": "new_patch",
+    "change_type": "correctness",
+    "summary": "累计效率比在无价格变动时回退0，保持均值状态连续；加载起点敏感性仍需独立滚动窗口实验。",
+    "patches": [
+      {
+        "old": "    net / total",
+        "new": "    total == 0 ? 0.0 : net / total",
+        "reason": "首根及累计平价段total=0时效率比取0，让均值保留而非被NA打断。",
+        "preserved": "从首根累计的start/total及后续指数带公式保留；不改变历史起点依赖。",
+        "validation_cases": [
+          "net0 total0时alpha0；净变动4总变动4时alpha1；2/4时0.5。"
+        ]
+      }
+    ],
+    "resolved": [
+      "首根及累计平价段total=0时效率比取0，让均值保留而非被NA打断。"
+    ],
+    "remaining": [
+      "start与total仍从加载首根累计，不同历史起点会改变效率比和后续交易；滚动窗口长度不可从源码唯一推出。"
+    ],
+    "validation_plan": [
+      "运行tests/test_top300_batch_a.py局部标量反例；原版8项失败、补丁须通过；不代替Pine原生编译或成交回放。",
+      "从不同起始日期加载同一末段，比较alpha、带和订单；测试恒定价格后首次跳变。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 91,
+    "sid": 1703,
+    "source_sha256": "3e6a6eb2c4e2567d3ff1628492acf83a84f73fbabf72dc86e1b28b1b1878d0ff",
+    "base_kind": "original",
+    "base_sha256": "04a6bdd6a08fc92a1a4c4ef6d390b23aba6637c85c7680ee6e8784fcdbf40578",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：EMA10/20交叉叠加走势持续时间过滤，意图是避免过早转向，但状态变量复杂且易误解。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "barssince在事件未出现前为NA，可能禁止早期交易；实际用反向entry翻仓而无独立退出或止损。 暂缓原因：简化若不等价会改变信号，须逐根对照。"
+    ],
+    "validation_plan": [
+      "首次MaxAscent/Descent前后、持续单边和快速反手的状态、订单及借券成本检查。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 92,
+    "sid": 3347,
+    "source_sha256": "8ecf44f45596871a50c663319b2f025ef63ca73f58c98133d1a2e5ee27b5bf2d",
+    "base_kind": "original",
+    "base_sha256": "cdda046facb9dafe64d4c341890f2e18147f1422e2b520cfd6669064b4161d2f",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：低于布林下轨直接做多、高于上轨离场，是典型逆势均值回归。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "没有等待恢复确认，也无止损/超时，单边下跌时可能长期持有；移动带并不保证价格回归。 暂缓原因：确认入场可能错过快速反弹，风控可能降低胜率。"
+    ],
+    "validation_plan": [
+      "单边下跌、波动扩张和长期不达上轨路径，逐股最差持仓、成本与后续样本比较。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 93,
+    "sid": 1371,
+    "source_sha256": "6a439b027916220522075301fb59d86877bb49ec2005682ddeb8a8c76c768509",
+    "base_kind": "original",
+    "base_sha256": "0e6c06f6e82849d303d815e85749cabd905bc576f813b560459881d976c9a163",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：关键反转形态做多，但止盈止损只清手工状态，和真实保护订单不是同一模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "发单和平仓判断在清posprice之前；触价后下一次计算才close_all，且新形态会重锚旧仓参考价。已有审查已列待设计，当前原版仍如此。 暂缓原因：改变订单类型和状态时序会显著改变旧回测结果。"
+    ],
+    "validation_plan": [
+      "逐根模拟入场根即触阈值、持仓重复形态、同根两端触及及次根跳空；核对实际成交。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 94,
+    "sid": 510,
+    "source_sha256": "25adc507d317045021223ea5cdfe8caf4fb1e7a737bd3ca5c280ce8efb0e6312",
+    "base_kind": "original",
+    "base_sha256": "708e55ae176ef9c95cb036612afd947e97b16e9ca9c0e12838d66d1f25ca446b",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：MACD低位恢复加RSI条件入场，高位转弱退出，属于回归动量模型。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "退出必须MACD死叉且RSI>50，RSI弱于50的持续下跌可错过退出；布林线实际未参与订单。 暂缓原因：放松退出可能提高换手，接入布林线则是新模型。"
+    ],
+    "validation_plan": [
+      "构造死叉时RSI40、后续持续下跌场景；确认布林参数变化不影响订单。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 95,
+    "sid": 2825,
+    "source_sha256": "fc356350942824d5f38440396ee54f062ca1742061ac964e60109405fc8e35f1",
+    "base_kind": "original",
+    "base_sha256": "084fd0ccec66d2e28eabc6dbd2ad88429c99bf996f6f2db6d0e6447997102621",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：平滑RSI跌入超卖区做多、价上穿WMA退出，是逆势低吸等待回归。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "若入场时价已在WMA上，随后下跌可能需先跌破再重新上穿才退出；启用做空而shortExit保持false也缺独立空头退出。 暂缓原因：入场过滤或强制出口会减少交易并改变长期反弹收益。"
+    ],
+    "validation_plan": [
+      "枚举四个开关组合、价在WMA上下的入场、持续下跌和空头未退出路径。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 96,
+    "sid": 1169,
+    "source_sha256": "32a032560a7a9951c3980f22cecef65057f39533a2fcb7a795827777c2b34b1e",
+    "base_kind": "original",
+    "base_sha256": "faf99bfa1b3ed8842d95b04c9b92e135f6f8a583ecadcba4a84a592242e160f8",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：看跌三内下形态却做多，可能是反向假设而非编码错误；执行模型需先说明。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "触价仅清posprice且发生在当根订单判断后，下一根才平仓；重复形态会重锚。此前已标待设计，不能称已修。 暂缓原因：改做空或改挂止损都属于策略变更，不可直接继承旧收益。"
+    ],
+    "validation_plan": [
+      "对重复形态、当根触止盈止损、缺口及形态失败路径逐根标记状态与真实仓位。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 97,
+    "sid": 4399,
+    "source_sha256": "d071e46b1f5ee2ff6e3c56f360582d8c4610484a05545fab6218aed457309679",
+    "base_kind": "original",
+    "base_sha256": "1d2d10664fb530e27d57da799440087c5562f1e9f10335200e223b4b9cf16d45",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：开盘高于前收盘时做多、盈利3%收盘退出，逻辑简单但本质是长期等盈利。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "默认收盘才发entry，标签写买在open不代表真实成交；没有亏损或持仓期限退出。 暂缓原因：加入风险退出会降低表面胜率并改变资金占用。"
+    ],
+    "validation_plan": [
+      "检查买信号根open、close和次根成交，长期不达3%以及盘中达标后回落的路径。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 98,
+    "sid": 841,
+    "source_sha256": "cd10bdb84c0c39d713ff6f375103a0e5d8ebbc5903f8aaae5bf649a231c99b4d",
+    "base_kind": "original",
+    "base_sha256": "ecffaaeeaedf6d3fc936b352bf6f7115e79947493dcec2adddb49bc46a07c078",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：RSI35回升买入、75回落退出，存在可选紧急退出但默认关闭。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "入场后未到75时缺少默认失败退出，RSI10紧急门槛即使打开也不是固定价格损失上限。 暂缓原因：紧急出口会减少持有恢复收益并增加成交次数。"
+    ],
+    "validation_plan": [
+      "RSI36后直接下跌、是否经过10、盘中跳空及持仓成本的对照测试。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 99,
+    "sid": 2240,
+    "source_sha256": "c8e32067582be5859ff534fbccac7c35478cc50bf10955d6cd376ca9e9143521",
+    "base_kind": "original",
+    "base_sha256": "7e9000d4a6b7c3d71e004f474134de7a5e54daf7da2cab875af57f840977aeae",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：以两条ATR带界定方向，但当前定义不是互斥Supertrend状态机；带内偏多是实际行为。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "close处于上下带之间时uptrend与downtrend可同时为真，if/else总选多。此前已标待设计，不能按标准双Supertrend解释。 暂缓原因：改成标准Supertrend会改变方向及绝大多数交易。"
+    ],
+    "validation_plan": [
+      "在下带下/带内/上带上制作真值表，核对趋势持久化和每次反手。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  },
+  {
+    "rank": 100,
+    "sid": 5115,
+    "source_sha256": "2fe5d05e77386d2de9455e2039e4bb47c49304a37c75318ececccc9d3718a161",
+    "base_kind": "original",
+    "base_sha256": "e6d02c65eded17a6f34bada7c7ceb9c4cd96608d43fe8662d42f2b2530918638",
+    "action": "deferred_design",
+    "change_type": "none",
+    "summary": "暂缓改变交易规则：连续滚动低点下破时低吸、滚动高点抬升时退出，逆势回归意图清楚。",
+    "patches": [],
+    "resolved": [],
+    "remaining": [
+      "numberOfLows对应更新后的滚动低点序列而非独立枢轴；没有亏损或超时保护，下降趋势可能长期占仓。 暂缓原因：确认入场可能减少快速反弹利润，止损可能降低胜率。"
+    ],
+    "validation_plan": [
+      "逐步滚出旧低点与产生新低两类路径核对prevLow链，模拟单边下跌和高点未创新。",
+      "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+    ]
+  }
+]

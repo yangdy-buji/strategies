@@ -1,0 +1,51 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,15 @@
++//@version=4
++// OPT-T300 SID 3330：沿用旧候选·未回测
++// 原文件SHA256：1b9f9c478c4596263b90f899492771a015cd0a44b3866c392f9a421dc68fb3d1
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于布林带和MACD的量化交易策略Trading-Strategy-Based-on-Bollinger-Bands-and-MACD.md
++// 原文件SHA256：1b9f9c478c4596263b90f899492771a015cd0a44b3866c392f9a421dc68fb3d1
++// SID：3330；原研究名单序号：11
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-11-19 00:00:00
+ end: 2023-12-19 00:00:00
+@@ -8,8 +20,6 @@
+ 
+ // This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+ // © DojiEmoji
+-
+-//@version=4
+ strategy("[KL] BOLL + MACD Strategy v2 (published)",overlay=true)
+ 
+ // BOLL bands {
+@@ -66,10 +76,16 @@
+     else if strategy.position_size > 0
+         touched_lower_bb := false//reset state
+     expected_rebound = MACD > MACD[1] and abs(MACD - aMACD) < abs(MACD[1] - aMACD[1])
+-    buy_condition = touched_lower_bb and MACD > aMACD or expected_rebound
++    // OPT-3330-01：原AND/OR依赖优先级；加括号明确两条原入场路径而不改变逻辑。
++    // OPT-3330-01 保持：expected_rebound可独立触发的原语义，未改为另一组AND。
++    // OPT-3330-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    buy_condition = (touched_lower_bb and MACD > aMACD) or expected_rebound
+ 
+     //ENTRY:
+-    if strategy.position_size == 0 and buy_condition
++    // OPT-3330-02：原起始时间闲置；只在开仓分支增加包含起始时刻门禁。
++    // OPT-3330-02 保持：外层true、信号状态更新、持仓计数和所有退出分支，未启用结束日期。
++    // OPT-3330-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    if strategy.position_size == 0 and buy_condition and time >= backtest_timeframe_start
+         entry_price := close
+         trailing_SL_buffer := ATR_buffer
+         stop_loss_price := close - ATR_buffer
+@@ -93,4 +109,4 @@
+         if take_profit_long
+             strategy.close("Long", comment="take profits [risk:reward]")
+             stop_loss_price := 0
+-        bar_count := 0+        bar_count := 0

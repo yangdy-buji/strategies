@@ -1,0 +1,34 @@
+{
+  "rank": 270,
+  "sid": 5221,
+  "source_sha256": "1ba290b9ad48dbc4ed28e064a92cdcd0cce31b19933d361d022a45eae9009e31",
+  "base_kind": "original",
+  "base_sha256": "2e8ee06861520f1b6984c27df786184a2ce47f3b41ad0054b754b6fa565a442e",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA50趋势、ATR阈值下在确认分形外ATR网格挂多空限价，分形加减ATR退出。 分形回归挂限价有机制，但分形只在确认柱存在，目标常na且多头入场价与默认止损同值。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "分形回归挂限价有机制，但分形只在确认柱存在，目标常na且多头入场价与默认止损同值。 后续验证：分形确认后多根无新分形、等价入场止损、隔夜越价及同根双分形核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "分形确认后多根无新分形、等价入场止损、隔夜越价及同根双分形核验。"
+  ],
+  "id": "586e47a3dbb4",
+  "title": "自适应分形网格波段交易策略与波动率阈值优化系统-Adaptive-Fractal-Grid-Scalping-Strategy-with-Volatility-Threshold-Optimization-System",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/270_SID5221_586e47a3dbb4_original.pine",
+  "original": "originals/270_SID5221_586e47a3dbb4.pine",
+  "baseline": "baselines/270_SID5221_586e47a3dbb4.pine",
+  "changes": "changes/270_SID5221_586e47a3dbb4.txt",
+  "card": "cards/586e47a3dbb4.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2e8ee06861520f1b6984c27df786184a2ce47f3b41ad0054b754b6fa565a442e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

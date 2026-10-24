@@ -1,0 +1,37 @@
+{
+  "rank": 237,
+  "sid": 2497,
+  "source_sha256": "1000e9ffd1d4cb0053ce6d9fe1513d393159cd10be064fc17b2de02831b6f070",
+  "base_kind": "prior_candidate",
+  "base_sha256": "94d02696aabae20ea986b8fb377b29919b369da8dedfa89e02a2382f2750321c",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；新13根支撑低点做多最多10笔，新阻力高点平多；另有5%收盘止损条件。 真正入场是创新低买入、创新高平仓，均线与鳄鱼指标不参与交易；原止损不可达已有候选。",
+  "patches": [],
+  "resolved": [
+    "正价格不可能小于自身95%，止损永不触发。"
+  ],
+  "remaining": [
+    "真正入场是创新低买入、创新高平仓，均线与鳄鱼指标不参与交易；原止损不可达已有候选。 后续验证：连续创新低十次、加仓均价变化及低开穿越95%阈值测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；仍为收盘触发市价退出，不是盘中95止损单；加仓后按新均价计算。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "连续创新低十次、加仓均价变化及低开穿越95%阈值测试。"
+  ],
+  "id": "7306957acd9c",
+  "title": "均线反弹吸筹策略Moving-Average-Rebound-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/237_SID2497_7306957acd9c_candidate.pine",
+  "original": "originals/237_SID2497_7306957acd9c.pine",
+  "baseline": "baselines/237_SID2497_7306957acd9c.pine",
+  "changes": "changes/237_SID2497_7306957acd9c.txt",
+  "card": "cards/7306957acd9c.html",
+  "diff": "changes/237_SID2497_7306957acd9c.patch",
+  "original_diff": "changes/237_SID2497_7306957acd9c.original.patch",
+  "script_sha256": "76940ff1095534516fb7eb001aef95789bf38feb58f35922e0cb8fb35ff9664f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

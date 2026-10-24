@@ -1,0 +1,34 @@
+{
+  "rank": 39,
+  "sid": 3445,
+  "source_sha256": "7f88e2a3fabcb242ab2efca6f67d736c84b8bc73f40972c7ac3c07ebe15354df",
+  "base_kind": "original",
+  "base_sha256": "7f1c92c10cd1391bd46783e7880ad3ddd940133227cadb955194c2634e7267be",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：滚动高低区间的回撤位交叉可解释为区间回归，不应仅因Fibonacci名称赋予统计优势。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "买入回穿较低水平后，仅等待更高水平向下交叉；若反弹失败且未到上方，缺少独立退出。 暂缓原因：新增退出会改变收益分布，选阈值需避开全样本调优。"
+  ],
+  "validation_plan": [
+    "用反弹失败和区间高低点滚动移出路径检查触发，做比例邻域与后续窗口对照。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "2877fb90f20d",
+  "title": "基于斐波那契回撤的量化交易策略Fibonacci-Retracement-Quantitative-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/039_SID3445_2877fb90f20d_original.pine",
+  "original": "originals/039_SID3445_2877fb90f20d.pine",
+  "baseline": "baselines/039_SID3445_2877fb90f20d.pine",
+  "changes": "changes/039_SID3445_2877fb90f20d.txt",
+  "card": "cards/2877fb90f20d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "7f1c92c10cd1391bd46783e7880ad3ddd940133227cadb955194c2634e7267be",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 234,
+  "sid": 381,
+  "source_sha256": "ec26c8644aa57fb6107d93f1eda32f99fdc6bc8585e6402ed90a218c278326cb",
+  "base_kind": "original",
+  "base_sha256": "a52eee92bd2ffe0dd5a1aabbe1ca5e0dadbe0e41f94a2a71cda8635664ccb2fb",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；确认前一根局部高点后向上突破做多，确认局部低点后向下突破平多；负位移只用于标记。 枢轴确认后突破是合理可解释规则，但要求open在水平内会漏过直接跳空穿越，图形回移易误读。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "枢轴确认后突破是合理可解释规则，但要求open在水平内会漏过直接跳空穿越，图形回移易误读。 后续验证：开盘越过entryHigh/exitLow、同根双向穿越和确认延迟验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "开盘越过entryHigh/exitLow、同根双向穿越和确认延迟验证。"
+  ],
+  "id": "5e1b79318509",
+  "title": "GBS高低点确认策略-GBS-TOP-BOTTOM-Confirmed-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/234_SID381_5e1b79318509_original.pine",
+  "original": "originals/234_SID381_5e1b79318509.pine",
+  "baseline": "baselines/234_SID381_5e1b79318509.pine",
+  "changes": "changes/234_SID381_5e1b79318509.txt",
+  "card": "cards/5e1b79318509.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a52eee92bd2ffe0dd5a1aabbe1ca5e0dadbe0e41f94a2a71cda8635664ccb2fb",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

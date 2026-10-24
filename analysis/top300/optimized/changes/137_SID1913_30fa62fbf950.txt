@@ -1,0 +1,34 @@
+{
+  "rank": 137,
+  "sid": 1913,
+  "source_sha256": "12ce3523b43520b2d65a1d50ad0fdaebb387f254d0fb2b78b6e5fc841d438591",
+  "base_kind": "original",
+  "base_sha256": "f0f2b8446735b92901ff100a7e4d8305d02699f4d1d97fddc4249a042f8ea519",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：30/90随机指标合计后以VWMA平滑，并在混合状态转为共振时交易，是可解释的状态转换系统。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "只允许yellow→lime买入、yellow→red退出，lime直接变red不会退出；d_two误用k但目前未参与订单，不应当作绩效修复重点。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造lime直接red与经过yellow两条路径，量化遗漏出口的持有风险及费用后差别。"
+  ],
+  "id": "30fa62fbf950",
+  "title": "双Stochastics与成交量加权移动平均线组合指标Dual-Stochastics-and-Volume-Weighted-Moving-Average-Combination-Indicator-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/137_SID1913_30fa62fbf950_original.pine",
+  "original": "originals/137_SID1913_30fa62fbf950.pine",
+  "baseline": "baselines/137_SID1913_30fa62fbf950.pine",
+  "changes": "changes/137_SID1913_30fa62fbf950.txt",
+  "card": "cards/30fa62fbf950.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "f0f2b8446735b92901ff100a7e4d8305d02699f4d1d97fddc4249a042f8ea519",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,71 @@
+/*backtest
+start: 2024-02-01 00:00:00
+end: 2024-02-29 23:59:59
+period: 1h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+
+//@version=4
+strategy(overlay=true, shorttitle="cakes'Strategy For RSI", default_qty_type = strategy.percent_of_equity, initial_capital = 100000, default_qty_value = 100, pyramiding = 0, title="cakes'Strategy", currency = 'USD')
+
+////////// ** Inputs ** //////////
+
+// Stoploss and Profits Inputs
+
+v1 = input(true, title="GoTradePlz")
+
+////////// ** Indicators ** //////////
+
+// RSI
+
+len = 14
+src = close
+up = rma(max(change(src), 0), len)
+down = rma(-min(change(src), 0), len)
+rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - 100 / (1 + up / down)
+
+
+
+//  Bollinger Bands
+
+length1 = 20
+src1 = close
+mult1 = 1.0
+basis1 = sma(src1, length1)
+dev1 = mult1 * stdev(src1, length1)
+upper1 = basis1 + dev1
+lower1 = basis1 - dev1
+
+
+
+////////// ** Triggers and Guards ** //////////
+
+
+// 输入
+RSILowerLevel1 = input(30, title="RSI 下限水平")
+RSIUpperLevel1 = input(70, title="RSI 上限水平")
+
+// 购买间隔
+buyInterval = input(5, title="购买间隔（K线数量）")
+
+// 跟踪购买间隔
+var int lastBuyBar = na
+lastBuyBar := na(lastBuyBar[1]) ? bar_index : lastBuyBar
+
+// 策略信号
+BBBuyTrigger1 = close < lower1
+BBSellTrigger1 = close > upper1
+rsiBuyGuard1 = rsi < RSILowerLevel1
+rsiSellGuard1 = rsi > RSIUpperLevel1
+
+Buy_1 = BBBuyTrigger1 and rsiBuyGuard1 and (bar_index - lastBuyBar) >= buyInterval
+Sell_1 = BBSellTrigger1 and rsiSellGuard1
+
+if (Buy_1)
+    lastBuyBar := bar_index
+
+strategy.entry("Long", strategy.long, when = Buy_1, alert_message = "Buy Signal!")
+strategy.close("Long", when = Sell_1, alert_message = "Sell Signal!")

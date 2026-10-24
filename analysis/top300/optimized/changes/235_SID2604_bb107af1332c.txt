@@ -1,0 +1,64 @@
+{
+  "rank": 235,
+  "sid": 2604,
+  "source_sha256": "63cc75b16f279c76c13ae8fdb16e8f2ada342fca822abfb02d7e643a58e31628",
+  "base_kind": "original",
+  "base_sha256": "684364b515df79dc492307666322c0f98192c5507d93fe718878a63497c9e713",
+  "action": "new_patch",
+  "change_type": "design_experiment",
+  "summary": "独立设计候选：默认单档保留原同柱通道保护；多档补齐多空分档止损与成交均价距离目标，并明确成交前保护空窗。",
+  "patches": [
+    {
+      "old": "// Exit Logic\nif (takeProfitType == \"1 Take Profit\")\n    strategy.exit(\"TP/SL\", \"Long\", limit=rangeHigh, stop=rangeLow)\n    strategy.exit(\"TP/SL\", \"Short\", limit=rangeLow, stop=rangeHigh)\nelse if (takeProfitType == \"2 Take Profits\")\n    strategy.exit(\"TP1\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh / 2)\n    strategy.exit(\"TP2\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh)\n    strategy.exit(\"TP1\", \"Short\", qty=strategy.position_size * 0.5, limit=rangeLow / 2)\n    strategy.exit(\"TP2\", \"Short\", qty=strategy.position_size * 0.5, limit=rangeLow)\nelse if (takeProfitType == \"3 Take Profits\")\n    strategy.exit(\"TP1\", \"Long\", qty=strategy.position_size * 0.5, limit=rangeHigh / 2)\n    strategy.exit(\"TP2\", \"Long\", qty=strategy.position_size * 0.25, limit=rangeHigh * 0.75)\n    strategy.exit(\"TP3\", \"Long\", qty=strategy.position_size * 0.25, limit=rangeHigh * 1.5)\n",
+      "new": "// Exit Logic: equal reserved brackets for two targets, 50/25/25 for three.\nentryAnchor = strategy.position_avg_price\nlongDistance = rangeHigh - entryAnchor\nshortDistance = rangeLow - entryAnchor\nif (takeProfitType == \"1 Take Profit\")\n    strategy.exit(\"Long TP1\", \"Long\", qty_percent=100, limit=rangeHigh, stop=rangeLow)\n    strategy.exit(\"Short TP1\", \"Short\", qty_percent=100, limit=rangeLow, stop=rangeHigh)\nelse if (takeProfitType == \"2 Take Profits\")\n    if strategy.position_size > 0\n        strategy.exit(\"Long TP1\", \"Long\", qty_percent=50, limit=entryAnchor + longDistance * 0.5, stop=rangeLow)\n        strategy.exit(\"Long TP2\", \"Long\", qty_percent=50, limit=entryAnchor + longDistance * 1, stop=rangeLow)\n    if strategy.position_size < 0\n        strategy.exit(\"Short TP1\", \"Short\", qty_percent=50, limit=entryAnchor + shortDistance * 0.5, stop=rangeHigh)\n        strategy.exit(\"Short TP2\", \"Short\", qty_percent=50, limit=entryAnchor + shortDistance * 1, stop=rangeHigh)\nelse if (takeProfitType == \"3 Take Profits\")\n    if strategy.position_size > 0\n        strategy.exit(\"Long TP1\", \"Long\", qty_percent=50, limit=entryAnchor + longDistance * 0.5, stop=rangeLow)\n        strategy.exit(\"Long TP2\", \"Long\", qty_percent=25, limit=entryAnchor + longDistance * 0.75, stop=rangeLow)\n        strategy.exit(\"Long TP3\", \"Long\", qty_percent=25, limit=entryAnchor + longDistance * 1.5, stop=rangeLow)\n    if strategy.position_size < 0\n        strategy.exit(\"Short TP1\", \"Short\", qty_percent=50, limit=entryAnchor + shortDistance * 0.5, stop=rangeHigh)\n        strategy.exit(\"Short TP2\", \"Short\", qty_percent=25, limit=entryAnchor + shortDistance * 0.75, stop=rangeHigh)\n        strategy.exit(\"Short TP3\", \"Short\", qty_percent=25, limit=entryAnchor + shortDistance * 1.5, stop=rangeHigh)\n",
+      "reason": "单档保留原entry同柱绝对通道括号；多档采用显式分档设计，每档自带通道止损，补齐空头三档，份额两档50/50、三档50/25/25，目标用成交均价至通道距离比例，方向ID独立。",
+      "preserved": "默认单档与入场同柱提交原绝对通道stop/limit，不依赖成交均价；原入口、通道及参数；多档距离系数沿原两档0.5/1、三档0.5/0.75/1.5。",
+      "validation_cases": [
+        "多空各模式份额合计100且每档含stop；多头成本100通道110目标105/107.5/115；空头成本100通道90目标95/92.5/85；1档目标为通道本身。",
+        "默认单档空仓entry同柱可提交Long/Short对应绝对通道保护；持仓和反手不受旧方向仓位门禁阻止。",
+        "多档空仓及反手新方向在成交均价可用前不提交新方向括号，明确首成交柱至下一计算存在空窗，不能认定已全时保护。"
+      ]
+    }
+  ],
+  "resolved": [
+    "单档保留原entry同柱绝对通道括号；多档采用显式分档设计，每档自带通道止损，补齐空头三档，份额两档50/50、三档50/25/25，目标用成交均价至通道距离比例，方向ID独立。"
+  ],
+  "remaining": [
+    "多档模式使用真实成交均价：空仓入场和反手新方向必须等成交后下一次脚本计算才挂括号，默认收盘计算可能留下整个首成交柱保护空窗；未启用calc_on_order_fills，不声称全时保护。",
+    "明确假设：通道目标距离按成交均价计算，两档50/50、三档50/25/25，最后目标1.5倍距离可超出通道。",
+    "通道与止损仍逐柱变化，可能放宽或穿过成交均价；分批后重新预留数量需原生撮合核验。",
+    "未原生编译或回测，非已验证的完整风险模型。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "静态核对每档qty_percent合计100及每档stop、多空独立ID。",
+    "成本100、通道110/90验证对称目标与所有模式保护；原生回放分批成交后数量预留和动态通道移动。",
+    "默认单档核对空仓信号、持仓维护与反手同柱均直接提交绝对通道括号；多档核对空仓不提交、仅维护当前实际方向，反手新方向等待均价。"
+  ],
+  "id": "bb107af1332c",
+  "title": "基于ATR波动性与HMA趋势偏差的双均线突破策略Baseline-Cross-Qualifier-ATR-Volatility-HMA-Trend-Bias-Mean-Reversion-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/235_SID2604_bb107af1332c_candidate.pine",
+  "original": "originals/235_SID2604_bb107af1332c.pine",
+  "baseline": "baselines/235_SID2604_bb107af1332c.pine",
+  "changes": "changes/235_SID2604_bb107af1332c.txt",
+  "card": "cards/bb107af1332c.html",
+  "diff": "changes/235_SID2604_bb107af1332c.patch",
+  "original_diff": "changes/235_SID2604_bb107af1332c.original.patch",
+  "script_sha256": "d974b76c392f6edf622c38ef7d9744ae123d0ddfe523d9484057a3c387522730",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "fcbbbc21e036251fbe83eff1524affe8cd85c104bf1b3f377c44f8e38e535688",
+    "review": "核对三模式完整执行路径：默认单档仍在entry后同柱无持仓条件地挂绝对通道括号，双向ID分离；两档50/50、三档50/25/25各档同时带对应方向通道止损，空头不使用负position_size作为数量。多档仅已持有方向使用均价，空仓和反手新方向等待成交后计算，未误用旧方向均价；0.5/1和0.5/0.75/1.5为至通道距离倍数。接受已披露首成交柱空窗的设计候选，不认定全时风险保护。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "多档模式使用真实成交均价：空仓入场和反手新方向必须等成交后下一次脚本计算才挂括号，默认收盘计算可能留下整个首成交柱保护空窗；未启用calc_on_order_fills，不声称全时保护。",
+      "明确假设：通道目标距离按成交均价计算，两档50/50、三档50/25/25，最后目标1.5倍距离可超出通道。",
+      "通道与止损仍逐柱变化，可能放宽或穿过成交均价；分批后重新预留数量需原生撮合核验。",
+      "未原生编译或回测，非已验证的完整风险模型。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

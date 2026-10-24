@@ -1,0 +1,53 @@
+//@version=5
+// OPT-T300 SID 2868：沿用旧候选·未回测
+// 原文件SHA256：df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于RSI的多头趋势追踪策略RSI-Trend-Tracking-Long-Only-Strategy.md
+// 原文件SHA256：df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169
+// SID：2868；原研究名单序号：74
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-12-28 00:00:00
+end: 2024-01-03 00:00:00
+period: 3m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("RSI BENI strategy (Long Only)", overlay=true, shorttitle="RSI BENI Long")
+
+length = input(14, title="RSI Length")
+overSold = input(25, title="Overbought Level")
+price = close
+vrsi = ta.rsi(price, length)
+
+// Plot Einstiege und Levels im Chart für überverkaufte Zonen
+plotshape(series=strategy.position_avg_price > 0 and vrsi[1] <= overSold and vrsi > overSold,
+         title="Long Entry",
+         color=color.green,
+         style=shape.triangleup,
+         size=size.small,
+         location=location.belowbar)
+
+long_tp_inp = input(0.07, title='Long Take Profit %')
+long_sl_inp = input(0.035, title='Long Stop Loss %')
+
+long_take_level = strategy.position_avg_price * (1 + long_tp_inp)
+long_stop_level = strategy.position_avg_price * (1 - long_sl_inp)
+
+plot(long_take_level, color=color.green, title="Long Take Profit Level", linewidth=2)
+plot(long_stop_level, color=color.red, title="Long Stop Loss Level", linewidth=2)
+
+if (not na(vrsi))
+    if vrsi < overSold
+        // Long Entry
+        strategy.entry("Long", strategy.long, comment="enter long")
+
+        // OPT-2868-01：保护单独立于入场信号，在有效持仓均价存在时每根维护。
+        // OPT-2868-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
+        // OPT-2868-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if strategy.position_size > 0
+    strategy.exit("Take Profit/Stop Loss", "Long", limit=long_take_level, stop=long_stop_level)

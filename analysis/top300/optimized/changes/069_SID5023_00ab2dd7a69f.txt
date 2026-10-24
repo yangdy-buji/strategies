@@ -1,0 +1,34 @@
+{
+  "rank": 69,
+  "sid": 5023,
+  "source_sha256": "afc91bc4c4952ab5b228d8dfa48757f668a3bc5f58bcf2551237910f64ac5112",
+  "base_kind": "original",
+  "base_sha256": "2a49c5b7bdea28abcdbe56549cb654da3627afc35293315506b8ca653817fd54",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：均线百分比带回归配stop入场和取消管理，规则可追踪，但阈值按当前价格而非均线构建。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "stop=close是入场触发单不是止损；下一根触发/跳空和当根收盘成交不同，固定带宽也非ATR风险。 暂缓原因：订单类型改变会显著改变填单率与收益。"
+  ],
+  "validation_plan": [
+    "检查次根高开/低开、信号消失后的cancel、生效前触价和仅单根信号的成交。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "00ab2dd7a69f",
+  "title": "移动平均百分比波段策略Percentage-Band-Moving-Average-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/069_SID5023_00ab2dd7a69f_original.pine",
+  "original": "originals/069_SID5023_00ab2dd7a69f.pine",
+  "baseline": "baselines/069_SID5023_00ab2dd7a69f.pine",
+  "changes": "changes/069_SID5023_00ab2dd7a69f.txt",
+  "card": "cards/00ab2dd7a69f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2a49c5b7bdea28abcdbe56549cb654da3627afc35293315506b8ca653817fd54",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

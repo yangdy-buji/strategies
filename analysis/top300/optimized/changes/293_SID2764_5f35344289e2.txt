@@ -1,0 +1,38 @@
+{
+  "rank": 293,
+  "sid": 2764,
+  "source_sha256": "98621cd6272d3d3636749fb8263d8dca136a00bdb2e2065a046f152a140fb72a",
+  "base_kind": "prior_candidate",
+  "base_sha256": "58e27dfba91bdd75bb57fb755b87738e001c4840214442e65be0cd808eecbdea",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；MACD12/26对SMA9信号线上穿买入、下穿平多，日期函数恒真。 MACD使用SMA信号线的仅多交叉模型结构简单，已有日期修复后宜作为基准而非复杂化。",
+  "patches": [],
+  "resolved": [
+    "恢复用户起止时间。",
+    "死叉平仓窗外仍生效。"
+  ],
+  "remaining": [
+    "MACD使用SMA信号线的仅多交叉模型结构简单，已有日期修复后宜作为基准而非复杂化。 后续验证：SMA与EMA差异、日期窗外退出、横盘高换手和相邻参数验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "SMA与EMA差异、日期窗外退出、横盘高换手和相邻参数验证。"
+  ],
+  "id": "5f35344289e2",
+  "title": "基于MACD的复合量化交易策略Compound-Quantitative-Trading-Strategy-Based-on-MACD",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/293_SID2764_5f35344289e2_candidate.pine",
+  "original": "originals/293_SID2764_5f35344289e2.pine",
+  "baseline": "baselines/293_SID2764_5f35344289e2.pine",
+  "changes": "changes/293_SID2764_5f35344289e2.txt",
+  "card": "cards/5f35344289e2.html",
+  "diff": "changes/293_SID2764_5f35344289e2.patch",
+  "original_diff": "changes/293_SID2764_5f35344289e2.original.patch",
+  "script_sha256": "c1220186b5dab98f9ac6a709e8777f74995f0833913857db380ec268c8960849",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

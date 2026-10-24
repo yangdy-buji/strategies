@@ -1,0 +1,37 @@
+{
+  "rank": 273,
+  "sid": 4563,
+  "source_sha256": "ab034cdbb6cd80c0ab1123726ed510b2f197c29446bca24a09c14c2f6dcfc495",
+  "base_kind": "prior_candidate",
+  "base_sha256": "6d591eb18848a5b87357aeb2b69c0841860cbb571badd6a4b2b879d6cb8e6b63",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；英国时区四段开盘15分钟内，极端开收及5根区间扩张做多空各2份；距信号超3根挂收盘限价退出。 开盘扩张柱逻辑仅适合指定日内时段，GB时区受夏令时影响；计算的bs/ss从未挂保护。",
+  "patches": [],
+  "resolved": [
+    "多空共用exit ID，分开命名避免相互修改；限价定时退出和未使用bs/ss保护仍需设计确认。"
+  ],
+  "remaining": [
+    "开盘扩张柱逻辑仅适合指定日内时段，GB时区受夏令时影响；计算的bs/ss从未挂保护。 后续验证：美英夏令时切换周、日线误用、3根后未成交限价持续及风险保护测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；bs/ss计算未实际用于止损；实际退出为三根后close限价，原意图未改。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "美英夏令时切换周、日线误用、3根后未成交限价持续及风险保护测试。"
+  ],
+  "id": "fc7336fda61a",
+  "title": "开盘驱动策略Open-Drive-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/273_SID4563_fc7336fda61a_candidate.pine",
+  "original": "originals/273_SID4563_fc7336fda61a.pine",
+  "baseline": "baselines/273_SID4563_fc7336fda61a.pine",
+  "changes": "changes/273_SID4563_fc7336fda61a.txt",
+  "card": "cards/fc7336fda61a.html",
+  "diff": "changes/273_SID4563_fc7336fda61a.patch",
+  "original_diff": "changes/273_SID4563_fc7336fda61a.original.patch",
+  "script_sha256": "e738dedf5152e684171d20889883e756576b3b3e03f4996c95e55c13c1e37b20",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,76 @@
+{
+  "rank": 200,
+  "sid": 5503,
+  "source_sha256": "9c8ad76d55119ad4beb89997efd34d179f15a1d1c5fef8a6e617f3b4973d1a38",
+  "base_kind": "prior_candidate",
+  "base_sha256": "fff8c17e9eec3d2f0b3456a706b76f641910b5c0589cfdb874fb8bfb236000af",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "持仓状态改为真实持仓，信号柱不假装已成交。；删除提交入口时提前置持仓标志。；删除提交出口时提前清持仓标志。",
+  "patches": [
+    {
+      "old": "var active = false",
+      "new": "active = strategy.position_size > 0",
+      "reason": "持仓状态改为真实持仓，信号柱不假装已成交。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "信号柱长上影不触未成交退出；下一柱实际持仓管理。"
+      ]
+    },
+    {
+      "old": "\tactive := true\n",
+      "new": "",
+      "reason": "删除提交入口时提前置持仓标志。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "入口待成交时active=false。"
+      ]
+    },
+    {
+      "old": "\tactive := false\n",
+      "new": "",
+      "reason": "删除提交出口时提前清持仓标志。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "出口待成交时active仍由position_size给出。"
+      ]
+    }
+  ],
+  "resolved": [
+    "恢复日期入场。",
+    "窗外原保护退出仍生效。",
+    "持仓状态改为真实持仓，信号柱不假装已成交。",
+    "删除提交入口时提前置持仓标志。",
+    "删除提交出口时提前清持仓标志。"
+  ],
+  "remaining": [
+    "dns[2]固定偏移与可配置反弹数关系仍待定义；不擅自改信号集合。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "将反弹柱数设1/2/3逐一检查连续下跌衔接，信号柱大上影触ATR出口与次柱实际成交时状态必须一致。"
+  ],
+  "id": "4c8d3743f082",
+  "title": "连续K线反转突破策略Consecutive-Candlestick-Reversal-Breakout-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/200_SID5503_4c8d3743f082_candidate.pine",
+  "original": "originals/200_SID5503_4c8d3743f082.pine",
+  "baseline": "baselines/200_SID5503_4c8d3743f082.pine",
+  "changes": "changes/200_SID5503_4c8d3743f082.txt",
+  "card": "cards/4c8d3743f082.html",
+  "diff": "changes/200_SID5503_4c8d3743f082.patch",
+  "original_diff": "changes/200_SID5503_4c8d3743f082.original.patch",
+  "script_sha256": "3da3ec843b644727cf494db45d1e9dedef43eb2d72dd8b88ba2abec64626bbab",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "3ef4a69e4bc18af0931b3138ad67a5494c884857dd3419c583771552e66ee375",
+    "review": "v5 active每柱读取实际多仓，首次信号发单后仍为假，退出不会在同一信号柱误认为已成交；持仓期间不会重新设置stop_loss，close提交后不提前清active，实际平仓确认后允许新入。ConsDnLong开平ID、日期与固定dns[2]保持。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "dns[2]固定偏移与可配置反弹数关系仍待定义；不擅自改信号集合。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

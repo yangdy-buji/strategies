@@ -1,0 +1,9 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 4851：沿用旧候选·未回测
++// 原文件SHA256：55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：海龟交易三日反转策略Turtle-Trading-3-Day-Reversion-Strategy.md
+ // 原文件SHA256：55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691

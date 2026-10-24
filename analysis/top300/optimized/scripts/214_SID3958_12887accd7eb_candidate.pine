@@ -1,0 +1,67 @@
+// OPT-T300 SID 3958：本轮新候选·未回测
+// 原文件SHA256：8696c43f637b04ac929ef74536873ba80b404d43449702031c6c053bfac1eb50
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-07-23 00:00:00
+end: 2024-07-28 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Ichimoku + RSI + MACD + KST Options Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+
+// Ichimoku Cloud settings
+tenkanLength = input(9, title="Tenkan Length")
+kijunLength = input(26, title="Kijun Length")
+senkouLengthA = input(52, title="Senkou Length A")
+senkouLengthB = input(26, title="Senkou Length B")
+displacement = input(26, title="Displacement")
+
+// RSI settings
+rsiLength = input(14, title="RSI Length")
+rsiOverbought = input(70, title="RSI Overbought Level")
+
+// MACD settings
+[macdLine, signalLine, _] = ta.macd(close, 12, 26, 9)
+
+// KST settings
+roc1 = ta.roc(close, 10)
+roc2 = ta.roc(close, 15)
+roc3 = ta.roc(close, 20)
+roc4 = ta.roc(close, 30)
+kst = roc1 * 1 + roc2 * 2 + roc3 * 3 + roc4 * 4
+signalKst = ta.sma(kst, 9)
+
+// Calculate Ichimoku Cloud
+donchian(len) => math.avg(ta.lowest(len), ta.highest(len))
+tenkanSen = donchian(tenkanLength)
+kijunSen = donchian(kijunLength)
+senkouSpanA = math.avg(tenkanSen, kijunSen)
+senkouSpanB = donchian(senkouLengthB)
+
+// Check if price entered the green cloud from below
+priceEnteredCloudFromBelow = close[1] < senkouSpanA[displacement] and close > senkouSpanA[displacement] and senkouSpanA > senkouSpanB
+
+// Check RSI and indicator crossovers
+rsi = ta.rsi(close, rsiLength)
+bullishCrossover = macdLine > signalLine and kst > signalKst
+
+// Entry condition
+if priceEnteredCloudFromBelow and rsi < rsiOverbought and bullishCrossover
+    strategy.entry("Long Call Option", strategy.long)
+
+// Exit condition based on profit target
+for trade_num = 0 to strategy.opentrades - 1
+    // OPT-T300-01 修改原因：按标的价格上涨30%的明确设计解释目标，消除总货币盈亏与单价比较量纲错误。
+    // OPT-T300-01 保持行为：原入场、仓位与close订单ID；不引入真实期权交易。
+    if close >= strategy.opentrades.entry_price(trade_num) * 1.30
+        strategy.close("Long Call Option")
+
+// Plotting
+plot(tenkanSen, title="Tenkan Sen", color=color.red)
+plot(kijunSen, title="Kijun Sen", color=color.blue)
+p1 = plot(senkouSpanA, title="Senkou Span A", color=color.green)
+p2 = plot(senkouSpanB, title="Senkou Span B", color=color.red)
+fill(p1, p2, color=color.new(color.green, 90), title="Cloud")

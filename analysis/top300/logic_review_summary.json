@@ -1,0 +1,74 @@
+{
+  "reviewed": 300,
+  "priority_counts": {
+    "P1": 149,
+    "P2": 59,
+    "P0": 92
+  },
+  "old_status_counts": {
+    "reviewed": 162,
+    "needs_design": 70,
+    "candidate": 68
+  },
+  "confirmed_defect_strategies": 89,
+  "p0_without_confirmed_defect": 4,
+  "previously_reviewed_now_confirmed": [
+    {
+      "rank": 136,
+      "sid": 803,
+      "title": "RSI基于百分比止盈止损的交易策略-RSI-based-Trading-Strategy-with-Percentage-based-Take-Profit-and-Stop-Loss"
+    }
+  ],
+  "priority_by_old_tier": {
+    "A": {
+      "P1": 2
+    },
+    "B": {
+      "P1": 41,
+      "P2": 30
+    },
+    "C": {
+      "P1": 106,
+      "P2": 29,
+      "P0": 92
+    }
+  },
+  "categories": {
+    "复合信号": 1,
+    "趋势跟随": 155,
+    "均值回归": 51,
+    "动量／突破": 55,
+    "波动率": 2,
+    "待分类": 35,
+    "量价": 1
+  },
+  "prior_no_stop_flags": 140,
+  "drawdown_over_40": 68,
+  "benchmark": {
+    "final_equity": 439192.52453665226,
+    "total_return": 3.3919252453665223,
+    "cagr": 0.14734417079049078,
+    "sharpe": 0.8588406110754483,
+    "sortino": 1.2082774922456665,
+    "max_dd": -0.346006693814512,
+    "calmar": 0.4258419661368729,
+    "exposure": 1.0,
+    "trades": 0,
+    "win_rate": null,
+    "profit_factor": null,
+    "avg_trade": null,
+    "avg_hold_days": null,
+    "short_trade_frac": null
+  },
+  "below_benchmark_cagr": 100,
+  "all_three_better_than_benchmark": 50,
+  "native_compile": false,
+  "new_backtest": false,
+  "strategy_files_modified": false,
+  "audit_input_sha256": {
+    "review_batch_1.json": "c6c9a0221828b2c464681f76793b7e8fcc596f0d6e22c650d5c7b17cdddfb4f2",
+    "review_batch_2.json": "8c11d0f9abb4064714969b68f183aa6d8f9ced91fe5dc4e5d51db68fcec5812e",
+    "review_batch_3.json": "1d0ff4363a529ea5956a6c6221f19e7445acfefc4c50e6e45fbcd3deec654904"
+  },
+  "ranking_sha256": "ab642a1183e17610385db6ec901c6c2be81f65e32687ffb7243b12ab9c11ddf0"
+}

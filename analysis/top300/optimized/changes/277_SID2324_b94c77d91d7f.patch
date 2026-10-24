@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 2324：沿用旧候选·未回测
++// 原文件SHA256：cf90d23c8016f22639dc270e04246034d6600ba2562ce42a1b3b7eaf8e153622
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：双重确认的优势均线策略A-Dual-Moving-Average-Confirmation-Advantage-Line-Strategy.md
+ // 原文件SHA256：cf90d23c8016f22639dc270e04246034d6600ba2562ce42a1b3b7eaf8e153622

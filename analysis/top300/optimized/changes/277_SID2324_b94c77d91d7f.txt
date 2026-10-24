@@ -1,0 +1,38 @@
+{
+  "rank": 277,
+  "sid": 2324,
+  "source_sha256": "cf90d23c8016f22639dc270e04246034d6600ba2562ce42a1b3b7eaf8e153622",
+  "base_kind": "prior_candidate",
+  "base_sha256": "283cb02df6663538129ee6cf437da34571b62635fdc04f38c2865e4bcb5e26dd",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；Aroon上线上穿下线且价高于LSMA20全权益做多，反向且价低于LSMA退出，原日期条件恒真。 实际为Aroon新高新低时间差加LSMA过滤，不是双均线；仅多趋势状态清楚。",
+  "patches": [],
+  "resolved": [
+    "日期恒真绕过输入。",
+    "退出必须在日期窗外继续。"
+  ],
+  "remaining": [
+    "实际为Aroon新高新低时间差加LSMA过滤，不是双均线；仅多趋势状态清楚。 后续验证：Aroon死叉但close仍高于LSMA、窗口外退出和趋势/横盘分组评估。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "Aroon死叉但close仍高于LSMA、窗口外退出和趋势/横盘分组评估。"
+  ],
+  "id": "b94c77d91d7f",
+  "title": "双重确认的优势均线策略A-Dual-Moving-Average-Confirmation-Advantage-Line-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/277_SID2324_b94c77d91d7f_candidate.pine",
+  "original": "originals/277_SID2324_b94c77d91d7f.pine",
+  "baseline": "baselines/277_SID2324_b94c77d91d7f.pine",
+  "changes": "changes/277_SID2324_b94c77d91d7f.txt",
+  "card": "cards/b94c77d91d7f.html",
+  "diff": "changes/277_SID2324_b94c77d91d7f.patch",
+  "original_diff": "changes/277_SID2324_b94c77d91d7f.original.patch",
+  "script_sha256": "9261db8067e1f4eb0c401841b249752858f1fbe199fa6e5931682bd4abaf8b79",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

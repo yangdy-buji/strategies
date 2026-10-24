@@ -1,0 +1,34 @@
+{
+  "rank": 149,
+  "sid": 2566,
+  "source_sha256": "75218bbd687fefbf5785cdf41c26692673c5a9d4daceabe6a2bb210770100386",
+  "base_kind": "original",
+  "base_sha256": "b2fcdbc7ddd37ac5ce1f4438510d504e59bfc12141df924e3d7d360120b9bd33",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：价格突破EMA高轨入场、跌破低轨退出，信号和出口对称，适合作为低复杂度趋势基线。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "缺少独立最大损失约束，通道在低波动震荡中可能反复触发；固定20根在不同周期代表不同时间尺度。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "报告不同费用、20附近长度、隔夜跳空及震荡区的交易密度和尾部损失。"
+  ],
+  "id": "80f9f5066c11",
+  "title": "基于20日EMA通道的交易策略All-about-EMA-Channel-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/149_SID2566_80f9f5066c11_original.pine",
+  "original": "originals/149_SID2566_80f9f5066c11.pine",
+  "baseline": "baselines/149_SID2566_80f9f5066c11.pine",
+  "changes": "changes/149_SID2566_80f9f5066c11.txt",
+  "card": "cards/80f9f5066c11.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "b2fcdbc7ddd37ac5ce1f4438510d504e59bfc12141df924e3d7d360120b9bd33",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

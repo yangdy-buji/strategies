@@ -1,0 +1,34 @@
+{
+  "rank": 61,
+  "sid": 3167,
+  "source_sha256": "39e2053f0335e87215a7058c0087585662e666798d30fb94fb4239b6fb09ff57",
+  "base_kind": "original",
+  "base_sha256": "11d070891f8cdc72a4781e0bc19433b01e5c395cd0018f6b184b24c8674f2612",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：成交量EMA减SMA的交叉叠加OBV方向可解释，但不是一般价格动量系统。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "绝对成交量阈值1几乎等同零轴且对股票成交量尺度敏感；ATR计算未参与风险管理，退出仍有同根OBV过滤。 暂缓原因：标准化与解耦将改变信号，旧回测不可直接比较为优化收益。"
+  ],
+  "validation_plan": [
+    "对volume整体乘100、零量和OBV确认滞后路径验证信号及退出。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "2237aabd751b",
+  "title": "基于双指标交叉确认的动量波动量化交易策略-Dual-Indicator-Cross-Confirmation-Momentum-Volume-Quantitative-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/061_SID3167_2237aabd751b_original.pine",
+  "original": "originals/061_SID3167_2237aabd751b.pine",
+  "baseline": "baselines/061_SID3167_2237aabd751b.pine",
+  "changes": "changes/061_SID3167_2237aabd751b.txt",
+  "card": "cards/2237aabd751b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "11d070891f8cdc72a4781e0bc19433b01e5c395cd0018f6b184b24c8674f2612",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

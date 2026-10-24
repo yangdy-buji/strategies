@@ -1,0 +1,97 @@
+// OPT-T300 SID 2604：本轮新候选·未回测
+// 原文件SHA256：63cc75b16f279c76c13ae8fdb16e8f2ada342fca822abfb02d7e643a58e31628
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2023-01-10 00:00:00
+end: 2024-01-16 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © sevencampbell
+
+//@version=5
+strategy(title="Baseline Cross Qualifier Volatility Strategy with HMA Trend Bias", overlay=true)
+
+// --- User Inputs ---
+
+// Baseline Inputs
+baselineLength = input.int(title="Baseline Length", defval=20)
+baseline = ta.sma(close, baselineLength)
+
+// PBCQ Inputs
+pbcqEnabled = input.bool(title="Post Baseline Cross Qualifier Enabled", defval=true)
+pbcqBarsAgo = input.int(title="Post Baseline Cross Qualifier Bars Ago", defval=3)
+
+// Volatility Inputs
+atrLength = input.int(title="ATR Length", defval=14)
+multiplier = input.float(title="Volatility Multiplier", defval=2.0)
+rangeMultiplier = input.float(title="Volatility Range Multiplier", defval=1.0)
+qualifierMultiplier = input.float(title="Volatility Qualifier Multiplier", defval=0.5)
+
+// Take Profit Inputs
+takeProfitType = input.string(title="Take Profit Type", options=["1 Take Profit", "2 Take Profits", "3 Take Profits"], defval="1 Take Profit")
+
+// HMA Inputs
+hmaLength = input.int(title="HMA Length", defval=50)
+
+// --- Calculations ---
+
+// ATR
+atr = ta.atr(atrLength)
+
+// Range Calculation
+rangeHigh = baseline + rangeMultiplier * atr
+rangeLow = baseline - rangeMultiplier * atr
+rangeColor = rangeLow <= close and close <= rangeHigh ? color.yellow : na
+bgcolor(rangeColor, transp=90)
+
+// Qualifier Calculation
+qualifier = qualifierMultiplier * atr
+
+// Dot Calculation
+isLong = close > baseline and (close - baseline) >= qualifier and close > ta.hma(close, hmaLength)
+isShort = close < baseline and (baseline - close) >= qualifier and close < ta.hma(close, hmaLength)
+colorDot = isLong ? color.green : isShort ? color.red : na
+plot(isLong or isShort ? baseline : na, color=colorDot, style=plot.style_circles, linewidth=3)
+
+// --- Strategy Logic ---
+
+// PBCQ
+pbcqValid = not pbcqEnabled or low[pbcqBarsAgo] > baseline
+
+// Entry Logic
+longCondition = isLong and pbcqValid
+shortCondition = isShort and pbcqValid
+if (longCondition)
+    strategy.entry("Long", strategy.long)
+if (shortCondition)
+    strategy.entry("Short", strategy.short)
+
+// OPT-T300-01 修改原因：单档保留原entry同柱绝对通道括号；多档采用显式分档设计，每档自带通道止损，补齐空头三档，份额两档50/50、三档50/25/25，目标用成交均价至通道距离比例，方向ID独立。
+// OPT-T300-01 保持行为：默认单档与入场同柱提交原绝对通道stop/limit，不依赖成交均价；原入口、通道及参数；多档距离系数沿原两档0.5/1、三档0.5/0.75/1.5。
+// Exit Logic: equal reserved brackets for two targets, 50/25/25 for three.
+entryAnchor = strategy.position_avg_price
+longDistance = rangeHigh - entryAnchor
+shortDistance = rangeLow - entryAnchor
+if (takeProfitType == "1 Take Profit")
+    strategy.exit("Long TP1", "Long", qty_percent=100, limit=rangeHigh, stop=rangeLow)
+    strategy.exit("Short TP1", "Short", qty_percent=100, limit=rangeLow, stop=rangeHigh)
+else if (takeProfitType == "2 Take Profits")
+    if strategy.position_size > 0
+        strategy.exit("Long TP1", "Long", qty_percent=50, limit=entryAnchor + longDistance * 0.5, stop=rangeLow)
+        strategy.exit("Long TP2", "Long", qty_percent=50, limit=entryAnchor + longDistance * 1, stop=rangeLow)
+    if strategy.position_size < 0
+        strategy.exit("Short TP1", "Short", qty_percent=50, limit=entryAnchor + shortDistance * 0.5, stop=rangeHigh)
+        strategy.exit("Short TP2", "Short", qty_percent=50, limit=entryAnchor + shortDistance * 1, stop=rangeHigh)
+else if (takeProfitType == "3 Take Profits")
+    if strategy.position_size > 0
+        strategy.exit("Long TP1", "Long", qty_percent=50, limit=entryAnchor + longDistance * 0.5, stop=rangeLow)
+        strategy.exit("Long TP2", "Long", qty_percent=25, limit=entryAnchor + longDistance * 0.75, stop=rangeLow)
+        strategy.exit("Long TP3", "Long", qty_percent=25, limit=entryAnchor + longDistance * 1.5, stop=rangeLow)
+    if strategy.position_size < 0
+        strategy.exit("Short TP1", "Short", qty_percent=50, limit=entryAnchor + shortDistance * 0.5, stop=rangeHigh)
+        strategy.exit("Short TP2", "Short", qty_percent=25, limit=entryAnchor + shortDistance * 0.75, stop=rangeHigh)
+        strategy.exit("Short TP3", "Short", qty_percent=25, limit=entryAnchor + shortDistance * 1.5, stop=rangeHigh)

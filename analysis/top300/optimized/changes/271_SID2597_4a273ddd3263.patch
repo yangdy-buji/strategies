@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 2597：沿用旧候选·未回测
++// 原文件SHA256：ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：基于ATR和突破的ETF交易策略An-ATR-and-Breakout-based-ETF-Trading-Strategy.md
+ // 原文件SHA256：ff55f72dfec08b7b8e7b3d2e339bedfd54a1a8ec70038132f990cf956706c044

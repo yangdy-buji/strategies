@@ -1,0 +1,37 @@
+{
+  "rank": 115,
+  "sid": 4621,
+  "source_sha256": "6f52852843a35fa7f885d23aec5ace9399b970fd95485146e3e8f8d01b228c26",
+  "base_kind": "prior_candidate",
+  "base_sha256": "045aa5b4050721b2e5d24530ceb0b26d4043736fa2310a4c9bc73fe7f3dba505",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原日期门禁恒真；恢复包含边界的起止参数。；原退出依赖日期门禁；移除该依赖使窗外仍能退出。",
+  "patches": [],
+  "resolved": [
+    "原日期门禁恒真；恢复包含边界的起止参数。",
+    "原退出依赖日期门禁；移除该依赖使窗外仍能退出。"
+  ],
+  "remaining": [
+    "na(time_close)并非时间K线日终检测；日终规则需明确交易所时区、会话与是否隔夜，留独立design_experiment。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "用普通时间K线、半日市与隔夜跳空验证会话；确认退出在窗口结束后仍有效。"
+  ],
+  "id": "3973c7947db0",
+  "title": "拉里威廉姆斯三周期动态均线交易策略-Larry-Williams-Three-Period-Dynamic-Moving-Average-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/115_SID4621_3973c7947db0_candidate.pine",
+  "original": "originals/115_SID4621_3973c7947db0.pine",
+  "baseline": "baselines/115_SID4621_3973c7947db0.pine",
+  "changes": "changes/115_SID4621_3973c7947db0.txt",
+  "card": "cards/3973c7947db0.html",
+  "diff": "changes/115_SID4621_3973c7947db0.patch",
+  "original_diff": "changes/115_SID4621_3973c7947db0.original.patch",
+  "script_sha256": "ff0964d74fc9233e75be624ac5bd3b90468f8db128b9890a1f3b3b8253d95536",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

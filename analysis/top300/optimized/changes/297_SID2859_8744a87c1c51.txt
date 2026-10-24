@@ -1,0 +1,34 @@
+{
+  "rank": 297,
+  "sid": 2859,
+  "source_sha256": "9568440e157e43c47ba6313ae654d52f9ddb51041a73f54c2d46c4f4e22912a8",
+  "base_kind": "original",
+  "base_sha256": "60928d9b2e1f82c0358f2debc8536c6003a83c51d4522166f831307bf56b0a0b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；RSI5低于25依次计划7层多单，各ID按收盘百分比换算tick止盈止损。 RSI超卖分层有均值回归意图，但默认不允许七层，当前结果不能支持七层金字塔；退出tick距离随close变化。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "RSI超卖分层有均值回归意图，但默认不允许七层，当前结果不能支持七层金字塔；退出tick距离随close变化。 后续验证：Entry1到7可达性、连续下跌、每层成交均价与真实总风险核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "Entry1到7可达性、连续下跌、每层成交均价与真实总风险核验。"
+  ],
+  "id": "8744a87c1c51",
+  "title": "基于RSI指标的股票交易双向金字塔策略RSI-Indicator-Based-Stock-Trading-Pyramiding-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/297_SID2859_8744a87c1c51_original.pine",
+  "original": "originals/297_SID2859_8744a87c1c51.pine",
+  "baseline": "baselines/297_SID2859_8744a87c1c51.pine",
+  "changes": "changes/297_SID2859_8744a87c1c51.txt",
+  "card": "cards/8744a87c1c51.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "60928d9b2e1f82c0358f2debc8536c6003a83c51d4522166f831307bf56b0a0b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

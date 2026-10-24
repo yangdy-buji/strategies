@@ -1,0 +1,34 @@
+{
+  "rank": 80,
+  "sid": 4902,
+  "source_sha256": "7b91da47280c64f8ac1f83210664b524b2d53176612ad361c341304d7eec0a2c",
+  "base_kind": "original",
+  "base_sha256": "ee80436b23f08a50039a68adcd5ea6a76d8196348adc36f12691116c62baa43b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：BullPower价差阈值驱动多空，规则有持久状态但不具备价格尺度不变性。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "40/3绝对价差阈值可能令低价股几乎持续多头，高价股更常空头，表现可能来自价格分组偏差。 暂缓原因：归一化会改变方向分布，原绩效不可继承。"
+  ],
+  "validation_plan": [
+    "价格缩放、拆股与高低价股票组的多空暴露、借券成本及状态持续性比较。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "a7f7e1a6dce6",
+  "title": "牛市力量交易策略Bull-Power-Trading-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/080_SID4902_a7f7e1a6dce6_original.pine",
+  "original": "originals/080_SID4902_a7f7e1a6dce6.pine",
+  "baseline": "baselines/080_SID4902_a7f7e1a6dce6.pine",
+  "changes": "changes/080_SID4902_a7f7e1a6dce6.txt",
+  "card": "cards/a7f7e1a6dce6.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ee80436b23f08a50039a68adcd5ea6a76d8196348adc36f12691116c62baa43b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

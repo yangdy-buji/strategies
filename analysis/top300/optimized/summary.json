@@ -1,0 +1,30 @@
+{
+  "total": 300,
+  "actions": {
+    "deferred_design": 125,
+    "new_patch": 56,
+    "unchanged": 60,
+    "carry_existing": 59
+  },
+  "change_types": {
+    "none": 244,
+    "correctness": 43,
+    "mixed": 12,
+    "design_experiment": 1
+  },
+  "native_compile": false,
+  "backtest": false,
+  "input_hashes": {
+    "analysis/top300/ranking.json": "ab642a1183e17610385db6ec901c6c2be81f65e32687ffb7243b12ab9c11ddf0",
+    "analysis/top300/logic_review.json": "55da1753395864e2993729520a0bc9d8ce188fc260a19c0bd7e0cc6bd06b2124",
+    "analysis/top300/pinescript/manifest.json": "c6abad64c9f91073fe10e3cd9bf3abda4b320c702a10521aab27609b306d438b",
+    "analysis/top500/optimization/manifest.json": "2f6b1ae462424f4235126330d689927f0869ebb4fd3d8592893502e81d4c4c2c",
+    "analysis/top300/execution/approvals.json": "3782676313af88dcba483051f4dfd9c808d60e6b3c01c2f7ca2d1158e9d83b70",
+    "analysis/top300/execution/batch_1.json": "207b2dd7d97893bba6146c2ba2ca99a85b0f1a7f2aa4edf2bfc8edb20e579ad2",
+    "analysis/top300/execution/batch_2.json": "d01a6d9b5d94347b904755939b77ef3fe845a07d09b92d7ef3e05799c0aff3de",
+    "analysis/top300/execution/batch_3.json": "23b666afd29c567afaae0488f045f2e5eb80a2353dd046c2a2446ddb0ba66047",
+    "analysis/top300/execution/quality_1.json": "3bc79240c0382edbf217810b1d094af748457630cf7f2ec877a5c9ba57f80327",
+    "analysis/top300/execution/quality_2.json": "0d93dca448938a0567118a04bb1956b4eea60493a787586b7b7415a3e1c98060",
+    "analysis/top300/execution/quality_3.json": "414fd716ed3c3b113c3f2c1eabaf37742e5df40e6dcd0b110d1d3ddef9680f40"
+  }
+}

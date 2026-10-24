@@ -1,0 +1,34 @@
+{
+  "rank": 43,
+  "sid": 2292,
+  "source_sha256": "c00878afb7e0d135e7c109764589d9682d49c322fb7f777d150c439ed5feeba8",
+  "base_kind": "original",
+  "base_sha256": "bf80a2d0a7001dda338cc3d3fe25a7d3a670f4207a9080595fb4a3138f066148",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：123反转与MASS一致时持仓、分歧时离场，组合规则完整。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "MASS衡量区间扩张而非价格方向，直接把高于26.5映射为空头、低于映射多头，方向因果解释不足。 暂缓原因：改变映射会改变策略身份，不能声称简单修复。"
+  ],
+  "validation_plan": [
+    "对相同波幅的上涨和下跌序列比较MASS方向，检验多空收益是否仅来自市场漂移。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "622054e95f41",
+  "title": "双重因子组合反转与增量指标策略Dual-Factor-Combo-Reversal-and-Mass-Index-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/043_SID2292_622054e95f41_original.pine",
+  "original": "originals/043_SID2292_622054e95f41.pine",
+  "baseline": "baselines/043_SID2292_622054e95f41.pine",
+  "changes": "changes/043_SID2292_622054e95f41.txt",
+  "card": "cards/622054e95f41.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "bf80a2d0a7001dda338cc3d3fe25a7d3a670f4207a9080595fb4a3138f066148",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

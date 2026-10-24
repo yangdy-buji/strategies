@@ -1,0 +1,34 @@
+{
+  "rank": 129,
+  "sid": 762,
+  "source_sha256": "96252d10040c6b1f2a6547492479599a94255480b1ce08cc9d528037b854d765",
+  "base_kind": "original",
+  "base_sha256": "0c44cb50c440aa4ad349241b7b7e6b6840757dce468ac04229fcceb0f954452c",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：线性回归中线周围极值加RSI进行均值回归，规则可解释；通道宽度来自价格标准差而非回归残差。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "100期价格标准差可能随趋势放大，使通道不对应恒定残差概率；双极值退出可能长期不到达，无独立风险出口。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "在等幅噪声加线性趋势的合成序列下比较两种宽度，再做股票价格尺度和窗口邻域验证。"
+  ],
+  "id": "2691b5b85a18",
+  "title": "RSI与线性回归通道交易策略-RSI-and-Linear-Regression-Channel-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/129_SID762_2691b5b85a18_original.pine",
+  "original": "originals/129_SID762_2691b5b85a18.pine",
+  "baseline": "baselines/129_SID762_2691b5b85a18.pine",
+  "changes": "changes/129_SID762_2691b5b85a18.txt",
+  "card": "cards/2691b5b85a18.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "0c44cb50c440aa4ad349241b7b7e6b6840757dce468ac04229fcceb0f954452c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

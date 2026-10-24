@@ -1,0 +1,21 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 5493：本轮新候选·未回测
++// 原文件SHA256：40fc6d17fc04dcc98c2b5bf89d7b8ba548a4df526ba7303788580ec288cd5afb
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2023-10-31 00:00:00
+ end: 2023-11-30 00:00:00
+@@ -40,8 +43,9 @@
+     strategy.entry("Initial Entry", strategy.long)
+ 
+ if strategy.position_size > 0
+-    strategy.exit("Profit Target", "Pullback Entry", limit=close + (profitTarget * syminfo.mintick))
+-    strategy.exit("Trailing Stop", "Pullback Entry", stop=close - (trailingStop * syminfo.mintick), trail_points=trailingStop)
++    // OPT-T300-01 修改原因：把现有目标和固定stop合并到同一全量括号，移除缺offset的无效追踪参数。
++    // OPT-T300-01 保持行为：原profitTarget、trailingStop数值与close锚定公式；Initial Entry退出不改。
++    strategy.exit("Profit Target", "Pullback Entry", limit=close + (profitTarget * syminfo.mintick), stop=close - (trailingStop * syminfo.mintick))
+     strategy.exit("Exit Condition", "Initial Entry", stop=close, when=exitCondition)
+     
+ // Plot EMAs

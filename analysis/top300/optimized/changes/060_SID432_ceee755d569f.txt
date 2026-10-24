@@ -1,0 +1,34 @@
+{
+  "rank": 60,
+  "sid": 432,
+  "source_sha256": "82f79e158688af745b0b21ffa04e1f71366166c82731c60269aec949d3f0d76e",
+  "base_kind": "original",
+  "base_sha256": "8bcff9180a00657922153bcbf5f7974d7ea8c7239cb2ef213b842a0d32c72e18",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：价与26根前的52期高低中点交叉，正确使用过去值而非未来数据，具有清晰因果性。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "前移绘图与历史引用需要统一理解；conversion/base输入在订单中无直接作用，模型只是SpanB阈值。 暂缓原因：增加完整云图条件会引入新策略而非修补。"
+  ],
+  "validation_plan": [
+    "对齐绘图云层与实际引用值，检查预热期和不同位移参数的逐根信号。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "ceee755d569f",
+  "title": "Ichimoku-Leading-Span-B-突破策略-Ichimoku-Leading-Span-B-Breakout-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/060_SID432_ceee755d569f_original.pine",
+  "original": "originals/060_SID432_ceee755d569f.pine",
+  "baseline": "baselines/060_SID432_ceee755d569f.pine",
+  "changes": "changes/060_SID432_ceee755d569f.txt",
+  "card": "cards/ceee755d569f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "8bcff9180a00657922153bcbf5f7974d7ea8c7239cb2ef213b842a0d32c72e18",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

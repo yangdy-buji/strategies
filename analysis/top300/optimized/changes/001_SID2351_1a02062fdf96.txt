@@ -1,0 +1,34 @@
+{
+  "rank": 1,
+  "sid": 2351,
+  "source_sha256": "5a7906cd9ac0e9b41ae2698e3bd52f470a5baf8c2bc6172b09dc60512d9720bc",
+  "base_kind": "original",
+  "base_sha256": "cd9a8120bfcd345908eb053334543b595dc514b5668241736267e81d117d0138",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：123反转与BullPower方向一致才持仓，冲突平仓，规则闭环且可解释，但状态记忆和绝对阈值削弱跨股通用性。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "BullPower以原始价差与15/3比较，价格整体放大后方向分类可能变化；两模块又沿用旧方向，不能把当前数值直接当作当前信号。 暂缓原因：归一化和失效规则都会改变交易集合，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "对同一OHLC整体乘10及不同起始历史长度，比较信号、状态持续长度和逐笔退出。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "1a02062fdf96",
+  "title": "双项式动量突破反转策略Binomial-Momentum-Breakout-Reversal-Strategy",
+  "category": "复合信号",
+  "priority": "P1",
+  "script": "scripts/001_SID2351_1a02062fdf96_original.pine",
+  "original": "originals/001_SID2351_1a02062fdf96.pine",
+  "baseline": "baselines/001_SID2351_1a02062fdf96.pine",
+  "changes": "changes/001_SID2351_1a02062fdf96.txt",
+  "card": "cards/1a02062fdf96.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "cd9a8120bfcd345908eb053334543b595dc514b5668241736267e81d117d0138",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

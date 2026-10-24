@@ -1,0 +1,64 @@
+{
+  "3900": {
+    "status": "approved",
+    "record_sha256": "b9f3037e0a8d507b08abe5ad67d5658892020f2a8f5981f3b90ac0e48067823d",
+    "review": "逐项对照原始v6源码、四条patch与生成diff：DI、ADX平滑、Supertrend和RSI输入仅新增minval=1，默认14与订单条件均保持。注释位于完整顶层语句前。测试从实际生成输入表达式提取minval，并证明原版拒绝测试失败，未伪造指标公式。",
+    "remaining": [
+      "原生Pine v6编译和输入界面边界验证尚未执行；RSI双端入场经济规则保留。"
+    ]
+  },
+  "4228": {
+    "status": "approved",
+    "record_sha256": "0d9cb94576c11bb7800567f3a35d4b75b3d37e133d4d7101e4caf20cab9440ce",
+    "review": "复审最新diff：AD平价连续、MFI单边极限与NA保持。CMF两个SMA已顶层逐根预计算，guard只用标量。新增测试运行实际SMA表达式，零量窗口恢复得到0.5并确认9根全部采样，历史调用风险消除。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "MFI仍按close而非typicalPrice方向分类；改分类会改变交易集合，需要独立对照。",
+      "缺失成交量并非零成交量，当前不填补缺失数据；需原生验证长期NA后的恢复。"
+    ]
+  },
+  "1622": {
+    "status": "approved",
+    "record_sha256": "a08b9b77fbb6d7aff763e7d18a692c90bf455146e2bac2c36227b4f235b6e22a",
+    "review": "复审最新DI/DX代码：两个DM的RMA已顶层无条件执行，TR及ADX平滑每根计算，三元仅使用标量。零TR、双零DI、暖机NA及调用覆盖验证通过，ADX20阈值保持，生成注释完整。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "ADX跨20仍使ATR系数由0.1切到0.3，修复零分母不消除阈值跳变；需对强弱区间及边界反复穿越分别回放。"
+    ]
+  },
+  "3159": {
+    "status": "approved",
+    "record_sha256": "68012ae1d5bb5fe6186b2ef22449c4d0858d7cfe82f03c37ef19ae99c7586682",
+    "review": "已复核v5函数完整上下文及生成diff：math.sum与ta.ema仍在每根被调用的Var_Func中无条件计算，仅vCMO标量分母精确0时归0。缺失vUD/vDD仍通过原比率传播NA；四空格注释与函数缩进一致。测试提取实际vCMO表达式，覆盖双零、正负趋势、暖机NA。明确注意平价段EMA会向0衰减，这是已明示保留的src乘abs(CMO)公式后果，不冒充标准VAR。",
+    "remaining": [
+      "原生v5编译及完整EMA序列回放尚未完成；VAR经济含义与加载窗口敏感性须独立研究。"
+    ]
+  },
+  "1603": {
+    "status": "approved",
+    "record_sha256": "9727c1c0dfeca58cbd53ff0ba9a4ac9d28b33b95cc7751fdf7a0e551f5d270ac",
+    "review": "复审v6最新归一化：macdLow/macdHigh顶层逐根计算，范围和映射复用缓存标量；零范围NA且不执行除零，正常及缺失值验证通过。历史函数不再在guard分支，KD与动态ATR保持，注释完整。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "动态ATR每根重算stop和target，ATR变大仍可放宽止损、推远目标；固定入场ATR或单向收紧是不同风险模型，须独立实验。",
+      "MACD归一化缺失时differenceTotal仍NA，KD独立分支按原逻辑继续；若要求整条信号无效则属于额外设计变更。"
+    ]
+  },
+  "5389": {
+    "status": "approved",
+    "record_sha256": "038a7dc74e268f1233ffb6fd1d58e0bc88acfbc6770344953aab94e7d4b3b4c8",
+    "review": "复审v5最新代码：两个DM的RMA顶层逐根计算，ATR和DX的guard只用标量；随机指标和订单逻辑保持。历史函数条件调用风险消除，局部算术及调用位置验证通过，生成注释完整。 独立重跑11项测试全部通过；不冒充原生Pine编译或收益证明。",
+    "remaining": [
+      "原生Pine编译、完整逐根信号及成交回放未执行。",
+      "退出仍要求ADX高于阈值且随机指标在超买区死叉；弱趋势失效退出是否解耦属于独立经济规则选择。"
+    ]
+  },
+  "3458": {
+    "status": "approved",
+    "record_sha256": "c9007b19ada200c32b9aa7f841642978187519f3cce89a3514a44521c58ab5ef",
+    "review": "已复核v4完整er与pine_ema递推及生成diff：仅累计total精确0时alpha归0；首根mean仍以src初始化，后续平价时mean保持、dev保持0，第一次价格跳变net/total仍为1。累计start/total无变更，NA输入不会被广泛nz填充。生成注释保留函数缩进。测试读取真实er返回表达式而非另一套公式，验证零/趋势/折返标量结果；递归上下文另作人工复核。",
+    "remaining": [
+      "原生v4编译、跨加载起点与均值/偏差完整序列回放尚未执行；历史起点依赖保留。"
+    ]
+  }
+}

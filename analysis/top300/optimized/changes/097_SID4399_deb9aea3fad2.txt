@@ -1,0 +1,34 @@
+{
+  "rank": 97,
+  "sid": 4399,
+  "source_sha256": "d071e46b1f5ee2ff6e3c56f360582d8c4610484a05545fab6218aed457309679",
+  "base_kind": "original",
+  "base_sha256": "1d2d10664fb530e27d57da799440087c5562f1e9f10335200e223b4b9cf16d45",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：开盘高于前收盘时做多、盈利3%收盘退出，逻辑简单但本质是长期等盈利。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "默认收盘才发entry，标签写买在open不代表真实成交；没有亏损或持仓期限退出。 暂缓原因：加入风险退出会降低表面胜率并改变资金占用。"
+  ],
+  "validation_plan": [
+    "检查买信号根open、close和次根成交，长期不达3%以及盘中达标后回落的路径。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "deb9aea3fad2",
+  "title": "小时周期价格开口策略追踪开盘与收盘价差的智能对比量化交易系统-Hourly-Open-Close-Price-Differential-Smart-Comparison-Quantitative-Trading-System",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/097_SID4399_deb9aea3fad2_original.pine",
+  "original": "originals/097_SID4399_deb9aea3fad2.pine",
+  "baseline": "baselines/097_SID4399_deb9aea3fad2.pine",
+  "changes": "changes/097_SID4399_deb9aea3fad2.txt",
+  "card": "cards/deb9aea3fad2.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "1d2d10664fb530e27d57da799440087c5562f1e9f10335200e223b4b9cf16d45",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

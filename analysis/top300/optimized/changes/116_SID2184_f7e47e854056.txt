@@ -1,0 +1,35 @@
+{
+  "rank": 116,
+  "sid": 2184,
+  "source_sha256": "760f72b470871ad1a627f02277b35eb84f2ff6d3a8128fe59da0c8394d6cbe6e",
+  "base_kind": "original",
+  "base_sha256": "d533963b2572a78fe3c1da68642acc6596a3e95d854a13cbd9a438ea4129549e",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：名为Short的多单可能是买回路径；仅依据命名不能改为空头，需明确双向反转还是仅多头。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "名为Short的多单可能是买回路径；仅依据命名不能改为空头，需明确双向反转还是仅多头。",
+    "inLongPos/inShortPos每柱设false且从不更新；名为Short的entry使用true即多头。不能只因名字就自动改方向，但Include short positions选项不实现通常所指空头。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "上下沿连续扩张时记录实际方向，开启/关闭空头选项并检查没有空头时应为空仓还是多头。"
+  ],
+  "id": "f7e47e854056",
+  "title": "双确认唐奇安通道趋势策略Dual-Confirmation-Donchian-Channel-Trend-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/116_SID2184_f7e47e854056_original.pine",
+  "original": "originals/116_SID2184_f7e47e854056.pine",
+  "baseline": "baselines/116_SID2184_f7e47e854056.pine",
+  "changes": "changes/116_SID2184_f7e47e854056.txt",
+  "card": "cards/f7e47e854056.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d533963b2572a78fe3c1da68642acc6596a3e95d854a13cbd9a438ea4129549e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

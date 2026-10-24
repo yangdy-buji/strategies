@@ -1,0 +1,34 @@
+{
+  "rank": 33,
+  "sid": 3136,
+  "source_sha256": "5b825d28b722f673a816cfbd2c4341972b9e0ce0ec975daa82be8edbdbc5b6bb",
+  "base_kind": "original",
+  "base_sha256": "42aca69349fb534e72d521963b0a95c70a45ba74fc83688b0c76b51aad42b5ab",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：SAR、长均线、MACD和RSI同向确认，默认仅多，结构可解释但多因子全反转退出偏迟。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "quickexit=false需四项全空才离场，部分失效时一直持仓；quickexit=true则任一多头条件失效退出，两者是不同模型。 暂缓原因：快退降低持仓连续性并可能增加噪声交易。"
+  ],
+  "validation_plan": [
+    "按四因子逐项失效/恢复路径验证两种模式，比较最差浮亏与手续费。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "50f0fa7e6b6f",
+  "title": "基于双向突破均线交易策略Dual-Breakthrough-Moving-Average-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/033_SID3136_50f0fa7e6b6f_original.pine",
+  "original": "originals/033_SID3136_50f0fa7e6b6f.pine",
+  "baseline": "baselines/033_SID3136_50f0fa7e6b6f.pine",
+  "changes": "changes/033_SID3136_50f0fa7e6b6f.txt",
+  "card": "cards/50f0fa7e6b6f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "42aca69349fb534e72d521963b0a95c70a45ba74fc83688b0c76b51aad42b5ab",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

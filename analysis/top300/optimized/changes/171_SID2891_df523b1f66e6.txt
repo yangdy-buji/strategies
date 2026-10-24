@@ -1,0 +1,35 @@
+{
+  "rank": 171,
+  "sid": 2891,
+  "source_sha256": "3dca0973d5e289dd48a094ecb903116bcdd4b1a3b21eb032e19ba20ff08c9b81",
+  "base_kind": "original",
+  "base_sha256": "9e712a392f9e4ae2667d7acd121829024e1b9233354587d97c5e9b9d9422ff45",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：显示基准可以定义最近信号收益或真实订单收益，原版两者混用；真实订单存在多个出场/费用口径，需先确定展示定义再改统计，保留原交易条件。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "显示基准可以定义最近信号收益或真实订单收益，原版两者混用；真实订单存在多个出场/费用口径，需先确定展示定义再改统计，保留原交易条件。",
+    "每根buyCondition为真都重写entryPrice，即便不加仓；退出显示相对最近信号价而非成交均价收益，可能误导优化判断。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "在持仓期间连续上轨状态后退出，比较标签收益与真实成交P/L，分别报告信号与交易统计。"
+  ],
+  "id": "df523b1f66e6",
+  "title": "基于SMA和ATR的跟踪止损策略SMA-ATR-Dynamic-Trailing-Stop-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/171_SID2891_df523b1f66e6_original.pine",
+  "original": "originals/171_SID2891_df523b1f66e6.pine",
+  "baseline": "baselines/171_SID2891_df523b1f66e6.pine",
+  "changes": "changes/171_SID2891_df523b1f66e6.txt",
+  "card": "cards/df523b1f66e6.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9e712a392f9e4ae2667d7acd121829024e1b9233354587d97c5e9b9d9422ff45",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

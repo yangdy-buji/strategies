@@ -1,0 +1,34 @@
+{
+  "rank": 239,
+  "sid": 1441,
+  "source_sha256": "aa050d9c9c335070eea478a28d4f65da6039fdcd553a50ebdf98b34908991285",
+  "base_kind": "original",
+  "base_sha256": "180a71128ffbe15e7f894d54537628369150926d1ea4279e07fa4167670b1bd7",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；价格上穿PSAR且RSI超卖时以10%权益做多，信号价5%目标与3%止损；反向PSAR且RSI超买平仓。 PSAR转多同时RSI超卖是窄窗口反转条件；TP/SL按信号close并可能被后续买信号重锚。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "PSAR转多同时RSI超卖是窄窗口反转条件；TP/SL按信号close并可能被后续买信号重锚。 后续验证：信号后跳空、持仓中再次PSAR翻多及稀疏交易分布验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "信号后跳空、持仓中再次PSAR翻多及稀疏交易分布验证。"
+  ],
+  "id": "351cd9816292",
+  "title": "动态RSI与PSAR交叉策略结合风险管理系统-Dynamic-RSI-and-PSAR-Crossover-Strategy-with-Risk-Management-System",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/239_SID1441_351cd9816292_original.pine",
+  "original": "originals/239_SID1441_351cd9816292.pine",
+  "baseline": "baselines/239_SID1441_351cd9816292.pine",
+  "changes": "changes/239_SID1441_351cd9816292.txt",
+  "card": "cards/351cd9816292.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "180a71128ffbe15e7f894d54537628369150926d1ea4279e07fa4167670b1bd7",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,24 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 5162：本轮新候选·未回测
++// 原文件SHA256：7a1239d0bb47ea37cbbe54bf1564a704d4d5c023b0b4566b75ef3fb1a5826f57
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2024-11-11 00:00:00
+@@ -39,8 +42,12 @@
+ sellCondition = close >= major_resistance and macdLine < signalLine
+ 
+ // Define sentiment-based exit conditions
+-closeEarlyCondition = strategy.position_size < 0 and rsi > rsiOverbought  // Close losing trade early if RSI is overbought
+-holdWinningCondition = strategy.position_size > 0 and rsi < rsiOversold   // Hold winning trade if RSI is oversold
++// OPT-T300-01 修改原因：早退针对真实亏损多头而非永不存在的空头。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++closeEarlyCondition = strategy.position_size > 0 and close < strategy.position_avg_price and rsi > rsiOverbought  // Close losing trade early if RSI is overbought
++// OPT-T300-02 修改原因：获利持有条件须实际盈利。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++holdWinningCondition = strategy.position_size > 0 and close > strategy.position_avg_price and rsi < rsiOversold   // Hold winning trade if RSI is oversold
+ 
+ // Execute strategy: Enter long position when buy conditions are met
+ if (buyCondition)

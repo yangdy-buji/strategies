@@ -1,0 +1,34 @@
+{
+  "rank": 23,
+  "sid": 3992,
+  "source_sha256": "d326261f8ed28e891d7dc203b4b7b9a8cb25946cea56b671cde349229e05ef9e",
+  "base_kind": "original",
+  "base_sha256": "9b41359be3f71ac87c4e55e1b5d9c84ee8e69a0f12671d77442df35e3441a01c",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：EMA交叉叠加RSI、MACD及长趋势确认，入场过滤可以理解，但退出过滤过于苛刻。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "EMA20/50死叉必须同时RSI<50、MACD弱且close<EMA200才退出；任一项不同步会错过唯一事件。 暂缓原因：放松退出可能提高换手和假退出，须看费用后表现。"
+  ],
+  "validation_plan": [
+    "构造死叉时仍在EMA200上，之后才跌破200但无再死叉的路径，检查持续持仓风险。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "ef211ed0e8ea",
+  "title": "多指标趋势确认动量交易策略-Multi-Indicator-Trend-Confirmation-Momentum-Trading-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/023_SID3992_ef211ed0e8ea_original.pine",
+  "original": "originals/023_SID3992_ef211ed0e8ea.pine",
+  "baseline": "baselines/023_SID3992_ef211ed0e8ea.pine",
+  "changes": "changes/023_SID3992_ef211ed0e8ea.txt",
+  "card": "cards/ef211ed0e8ea.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9b41359be3f71ac87c4e55e1b5d9c84ee8e69a0f12671d77442df35e3441a01c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 219,
+  "sid": 5252,
+  "source_sha256": "72fe216b79a46915eeca69ef3e20f202ab750d21fa2e353875f81f20f78d3e2f",
+  "base_kind": "original",
+  "base_sha256": "87d30fcd5be6e7f08b09f597982b7cf7afee8b37e9079036a804dd6964e83ecb",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA5/50金叉用余额除价格全仓做多，2%或标准差比例止损单调抬升，无其他退出。 均线金叉加波动自适应单向跟踪是可解释结构；全额已实现余额仓位和信号价估数量造成成本及跳空差异。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线金叉加波动自适应单向跟踪是可解释结构；全额已实现余额仓位和信号价估数量造成成本及跳空差异。 后续验证：高开入场、stddev=0、第二笔交易新低价验证订单金额及止损不继承旧值。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "高开入场、stddev=0、第二笔交易新低价验证订单金额及止损不继承旧值。"
+  ],
+  "id": "8df5bb01001b",
+  "title": "自适应移动平均交叉追踪止损策略-Adaptive-Moving-Average-Crossover-with-Trailing-Stop-Loss-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/219_SID5252_8df5bb01001b_original.pine",
+  "original": "originals/219_SID5252_8df5bb01001b.pine",
+  "baseline": "baselines/219_SID5252_8df5bb01001b.pine",
+  "changes": "changes/219_SID5252_8df5bb01001b.txt",
+  "card": "cards/8df5bb01001b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "87d30fcd5be6e7f08b09f597982b7cf7afee8b37e9079036a804dd6964e83ecb",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

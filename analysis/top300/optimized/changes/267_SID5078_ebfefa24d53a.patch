@@ -1,0 +1,66 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 5078：本轮新候选·未回测
++// 原文件SHA256：ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：移动平均线金叉交易策略Moving-Average-Crossover-Trading-Strategy.md
+ // 原文件SHA256：ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68
+@@ -57,31 +60,32 @@
+ pivot = (high + low + close) / 3
+ 
+ //MA CALCULATION FUNCTION
+-ma(smoothing, src, length) => 
+-    if smoothing == "RMA"
++// OPT-T300-01 修改原因：SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。
++// OPT-T300-01 保持行为：EMA默认、价格源pivot、13/48/30周期和已有日期及退出修复。
++ma(smoothing, src, length) =>
++    e1 = ema(src, length)
++    e2 = ema(e1, length)
++    e3 = ema(e2, length)
++    if smoothing == "RMA" or smoothing == "SMMA"
+         rma(src, length)
++    else if smoothing == "SMA"
++        sma(src, length)
++    else if smoothing == "EMA"
++        e1
++    else if smoothing == "WMA"
++        wma(src, length)
++    else if smoothing == "VWMA"
++        vwma(src, length)
++    else if smoothing == "DEMA"
++        2 * e1 - e2
++    else if smoothing == "TEMA"
++        3 * e1 - 3 * e2 + e3
++    else if smoothing == "HullMA"
++        wma(2 * wma(src, max(1, int(length / 2))) - wma(src, length), max(1, int(round(sqrt(length)))))
++    else if smoothing == "LSMA"
++        linreg(src, length, 0)
+     else
+-        if smoothing == "SMA"
+-            sma(src, length)
+-        else 
+-            if smoothing == "EMA"
+-                ema(src, length)
+-            else 
+-                if smoothing == "WMA"
+-                    wma(src, length)
+-				else
+-					if smoothing == "VWMA"
+-						vwma(src, length)
+-					else
+-						if smoothing == "SMMA"
+-							na(src[1]) ? sma(src, length) : (src[1] * (length - 1) + src) / length
+-						
+-						else
+-							if smoothing == "HullMA"
+-								wma(2 * wma(src, length / 2) - wma(src, length), round(sqrt(length)))
+-
+-
+-
++        na
+ 
+ //ASSIGN A MOVING AVERAGE RESULT TO A VARIABLE
+ shortMA=ma(smoothingShort, pivot, periodShort)

@@ -1,0 +1,34 @@
+{
+  "rank": 38,
+  "sid": 2780,
+  "source_sha256": "8b93d30ca49e6264a7c0c60a17852b617c2b25f306778339f0bf481f7dfad04c",
+  "base_kind": "original",
+  "base_sha256": "3799cb3504a966cc1ca74ffd63f3edd91cfd187ab76e38db73eb50c26ae199df",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：OBV方向、Coppock趋势及CMO强弱共同确认，模型清楚但多头退出必须进入显著空头状态。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "CMO<-50且Coppock<0并下降且OBV下降才退出，持仓恶化时可能长时间不满足全部条件。 暂缓原因：提前离场可能削弱趋势中的正常回撤容忍度。"
+  ],
+  "validation_plan": [
+    "分解退出各条件到达时间，测最慢条件导致的额外持仓与尾部损失。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "b2a2f5682820",
+  "title": "基于OBVCMO和Coppock曲线的交易策略OBV-CMO-and-Coppock-Curve-Based-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/038_SID2780_b2a2f5682820_original.pine",
+  "original": "originals/038_SID2780_b2a2f5682820.pine",
+  "baseline": "baselines/038_SID2780_b2a2f5682820.pine",
+  "changes": "changes/038_SID2780_b2a2f5682820.txt",
+  "card": "cards/b2a2f5682820.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "3799cb3504a966cc1ca74ffd63f3edd91cfd187ab76e38db73eb50c26ae199df",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

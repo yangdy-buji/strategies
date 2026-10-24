@@ -1,0 +1,99 @@
+{
+  "rank": 167,
+  "sid": 3829,
+  "source_sha256": "8269511298a0b9b5bc9e5adfe5f482d9251591f97f47563f212b86e4217ec8b4",
+  "base_kind": "original",
+  "base_sha256": "54dc9af7f3521946ce2ed49e37d41afad2ea42022be647586a9833487ba96dbe",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "总权重为零或正负抵消时返回NA，保留原允许负权重的有效配置。；归一化极差为零时显式NA，不擅自填0.5；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。；CCI历史均值与偏差先逐柱计算；零偏差或暖机为NA。；Williams窗口极差预计算；平价不构造中性振荡值。；DI平滑先逐柱计算，零TR明确NA而不由fixnan沿用旧方向。",
+  "patches": [
+    {
+      "old": "oscillatorLine = (normalizedROC * weightROC + normalizedRSI * weightRSI + normalizedCCI * weightCCI + normalizedWilliamsR * weightWilliamsR + normalizedADX * weightADX) / (weightROC + weightRSI + weightCCI + weightWilliamsR + weightADX)",
+      "new": "totalWeight = weightROC + weightRSI + weightCCI + weightWilliamsR + weightADX\noscillatorLine = not na(totalWeight) and totalWeight != 0 ? (normalizedROC * weightROC + normalizedRSI * weightRSI + normalizedCCI * weightCCI + normalizedWilliamsR * weightWilliamsR + normalizedADX * weightADX) / totalWeight : na",
+      "reason": "总权重为零或正负抵消时返回NA，保留原允许负权重的有效配置。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "全0、+1/-1抵消均NA；总权重非零沿用原加权公式。"
+      ]
+    },
+    {
+      "old": "    (value - min) / (max - min)",
+      "new": "    not na(max - min) and max > min ? (value - min) / (max - min) : na",
+      "reason": "归一化极差为零时显式NA，不擅自填0.5；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    },
+    {
+      "old": "cciValue = (src - ta.sma(src, cciLength)) / (0.015 * ta.dev(src, cciLength))",
+      "new": "cciMean = ta.sma(src, cciLength)\ncciDeviation = ta.dev(src, cciLength)\ncciValue = not na(cciDeviation) and cciDeviation > 0 ? (src - cciMean) / (0.015 * cciDeviation) : na",
+      "reason": "CCI历史均值与偏差先逐柱计算；零偏差或暖机为NA。",
+      "preserved": "有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。",
+      "validation_cases": [
+        "平价窗口NA；恢复波动后按原公式；不跳过sma/dev历史更新。"
+      ]
+    },
+    {
+      "old": "williamsRValue = -100 * (ta.highest(high, williamsRLength) - close) / (ta.highest(high, williamsRLength) - ta.lowest(low, williamsRLength))",
+      "new": "williamsHigh = ta.highest(high, williamsRLength)\nwilliamsLow = ta.lowest(low, williamsRLength)\nwilliamsRValue = not na(williamsHigh - williamsLow) and williamsHigh > williamsLow ? -100 * (williamsHigh - close) / (williamsHigh - williamsLow) : na",
+      "reason": "Williams窗口极差预计算；平价不构造中性振荡值。",
+      "preserved": "有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。",
+      "validation_cases": [
+        "最高=最低时NA，极值统计每柱继续更新。"
+      ]
+    },
+    {
+      "old": "    plus = fixnan(100 * ta.rma(plusDM, len) / truerange)\n    minus = fixnan(100 * ta.rma(minusDM, len) / truerange)",
+      "new": "    smoothedPlus = ta.rma(plusDM, len)\n    smoothedMinus = ta.rma(minusDM, len)\n    plus = not na(truerange) and truerange > 0 ? 100 * smoothedPlus / truerange : na\n    minus = not na(truerange) and truerange > 0 ? 100 * smoothedMinus / truerange : na",
+      "reason": "DI平滑先逐柱计算，零TR明确NA而不由fixnan沿用旧方向。",
+      "preserved": "有效值原公式不变；所有历史函数逐柱预计算，guard仅作用于标量，暖机/无定义值不填中性。",
+      "validation_cases": [
+        "零TR禁止用前期方向冒充当前指标；rma仍每柱更新；首次非零TR后恢复正常。"
+      ]
+    }
+  ],
+  "resolved": [
+    "总权重为零或正负抵消时返回NA，保留原允许负权重的有效配置。",
+    "归一化极差为零时显式NA，不擅自填0.5；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+    "CCI历史均值与偏差先逐柱计算；零偏差或暖机为NA。",
+    "Williams窗口极差预计算；平价不构造中性振荡值。",
+    "DI平滑先逐柱计算，零TR明确NA而不由fixnan沿用旧方向。"
+  ],
+  "remaining": [
+    "日线来源与图表周期平滑混用仍保留；ADX/50不裁剪、ROC为绝对价差，统一周期/归一化均为独立设计。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+    "后续ADX的rma对NA有自己的平滑语义，不能把局部DI guard等同于整个链严格传播NA。"
+  ],
+  "validation_plan": [
+    "零权重、平价、强趋势ADX>50和分钟/日线图对照，确认指标范围及可复现性。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "79d76f669b4d",
+  "title": "多因子均衡震荡器交易策略Ultimate-Balance-Oscillator-Trading-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/167_SID3829_79d76f669b4d_candidate.pine",
+  "original": "originals/167_SID3829_79d76f669b4d.pine",
+  "baseline": "baselines/167_SID3829_79d76f669b4d.pine",
+  "changes": "changes/167_SID3829_79d76f669b4d.txt",
+  "card": "cards/79d76f669b4d.html",
+  "diff": "changes/167_SID3829_79d76f669b4d.patch",
+  "original_diff": "changes/167_SID3829_79d76f669b4d.original.patch",
+  "script_sha256": "42b114a64b9bb1689e6023f16db6786961f60befb154ef3a87eb6e7c5dd35b01",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "ee28297529e9cd23548241ff064e2e2fbb1644ebd08dbc29f80a16ba379192f4",
+    "review": "v5 CCI均值/偏差、Williams高低窗、DI三个rma均在guard前逐柱求值；normalize只检查标量极差，权重和允许负值但拒绝零抵消。有效样本原式保持，NA不会由新fixnan延续；跨周期来源与ADX尺度遗留明确保留。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "日线来源与图表周期平滑混用仍保留；ADX/50不裁剪、ROC为绝对价差，统一周期/归一化均为独立设计。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。",
+      "后续ADX的rma对NA有自己的平滑语义，不能把局部DI guard等同于整个链严格传播NA。"
+    ]
+  }
+}

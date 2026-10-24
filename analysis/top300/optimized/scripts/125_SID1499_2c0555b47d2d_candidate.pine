@@ -1,0 +1,60 @@
+// OPT-T300 SID 1499：本轮新候选·未回测
+// 原文件SHA256：f9a18165c666bb9a68f826bc30c8e2da17043a177e34039ad9a9a21c2a4f6433
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-01-05 00:00:00
+end: 2024-02-04 00:00:00
+period: 3h
+basePeriod: 15m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=4
+strategy("Onchain Edge Trend SMA Strategy", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=10)
+
+// Configuration Parameters
+priceSource = input(close, title="Price Source")
+includeIncompleteBars = input(true, title="Consider Incomplete Bars")
+maForecastMethod = input(defval="flat", options=["flat", "linreg"], title="Moving Average Prediction Method")
+linearRegressionLength = input(3, title="Linear Regression Length")
+fastMALength = input(7, title="Fast Moving Average Length")
+mediumMALength = input(30, title="Medium Moving Average Length")
+slowMALength = input(50, title="Slow Moving Average Length")
+tradingCapital = input(100000, title="Trading Capital")
+tradeRisk = input(1, title="Trade Risk (%)")
+
+// Calculation of Moving Averages
+calculateMA(source, period) => sma(source, period)
+predictMA(source, forecastLength, regressionLength) => 
+    maForecastMethod == "flat" ? source : linreg(source, regressionLength, forecastLength)
+
+offset = includeIncompleteBars ? 0 : 1
+actualSource = priceSource[offset]
+
+fastMA = calculateMA(actualSource, fastMALength)
+mediumMA = calculateMA(actualSource, mediumMALength)
+slowMA = calculateMA(actualSource, slowMALength)
+
+// Trading Logic
+enterLong = crossover(fastMA, mediumMA)
+exitLong = crossunder(fastMA, mediumMA)
+
+// Risk and Position Sizing
+riskCapital = tradingCapital * tradeRisk / 100
+lossThreshold = atr(14) * 2
+// OPT-T300-01 修改原因：ATR未就绪/为零或风险资金非正时不生成数量。
+// OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+tradeSize = not na(lossThreshold) and lossThreshold > 0 and riskCapital > 0 ? riskCapital / lossThreshold : na
+
+// OPT-T300-02 修改原因：入口显式拒绝NA/零数量，防止NA退回默认仓位。
+// OPT-T300-02 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+if (enterLong and not na(tradeSize) and tradeSize > 0)
+    strategy.entry("Enter Long", strategy.long, qty=tradeSize)
+
+if (exitLong)
+    strategy.close("Enter Long")
+
+// Display Moving Averages
+plot(fastMA, color=color.blue, linewidth=2, title="Fast Moving Average")
+plot(mediumMA, color=color.purple, linewidth=2, title="Medium Moving Average")
+plot(slowMA, color=color.red, linewidth=2, title="Slow Moving Average")

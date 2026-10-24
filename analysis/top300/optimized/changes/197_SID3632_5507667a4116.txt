@@ -1,0 +1,35 @@
+{
+  "rank": 197,
+  "sid": 3632,
+  "source_sha256": "d97b9dac53f39fa9aae63e2709da3866b85e0f0825025fb6e3070e682361a072",
+  "base_kind": "original",
+  "base_sha256": "2388feea2ceb30342fe832d3ad447a6339feeb8558ccb8c3be37bf3fc5ee818f",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：限价止损有价格优先与成交优先取舍；改市价会改变跳空成交，需先定义未成交退出单有效期。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "限价止损有价格优先与成交优先取舍；改市价会改变跳空成交，需先定义未成交退出单有效期。",
+    "亏损触发后提交limit=close卖单，下一柱跳空下跌时可能挂着不成交；价格恢复后仍可能成交，风险不等同条件市价平仓。close[5]还与当前SMA比较。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "止损信号后跳低、价格长期低于限价、恢复后触价及新入场条件仍真时的订单序列逐笔核对。"
+  ],
+  "id": "5507667a4116",
+  "title": "基于趋势的循环交易策略Cycle-Position-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/197_SID3632_5507667a4116_original.pine",
+  "original": "originals/197_SID3632_5507667a4116.pine",
+  "baseline": "baselines/197_SID3632_5507667a4116.pine",
+  "changes": "changes/197_SID3632_5507667a4116.txt",
+  "card": "cards/5507667a4116.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2388feea2ceb30342fe832d3ad447a6339feeb8558ccb8c3be37bf3fc5ee818f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,35 @@
+{
+  "rank": 198,
+  "sid": 1554,
+  "source_sha256": "2f657d191e576a7e013f5a4bd84684f2e7e55a799801e652fdda4f14e045db17",
+  "base_kind": "original",
+  "base_sha256": "ec38d01232b781e699ab523243ba962ef0f9987ff58a0d8fdcbe8aadbe1cf65f",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：反向entry可能有意双向交易；仅按exit名称改close会删除空头，且固定历史锚选择尚未给定。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "反向entry可能有意双向交易；仅按exit名称改close会删除空头，且固定历史锚选择尚未给定。",
+    "所谓退出调用short entry可反手；还要求avg_price<close，因此亏损持仓可能不触发该出口。timenow锚点随运行日期移动，历史结果不可固定复现。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "浮亏且low破线、浮盈破线、空仓触信号，以及相隔一天运行同段数据的结果一致性。"
+  ],
+  "id": "0343eade464c",
+  "title": "动态止损追涨策略Dynamic-Stop-Loss-Trail-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/198_SID1554_0343eade464c_original.pine",
+  "original": "originals/198_SID1554_0343eade464c.pine",
+  "baseline": "baselines/198_SID1554_0343eade464c.pine",
+  "changes": "changes/198_SID1554_0343eade464c.txt",
+  "card": "cards/0343eade464c.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ec38d01232b781e699ab523243ba962ef0f9987ff58a0d8fdcbe8aadbe1cf65f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

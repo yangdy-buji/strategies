@@ -1,0 +1,117 @@
+// OPT-T300 SID 1622：本轮新候选·未回测
+// 原文件SHA256：6d08dd4fb71b49f6ff732b20948849fce3b694848855dac806bdff27e8117c13
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2024-04-03 00:00:00
+end: 2025-04-02 00:00:00
+period: 1h
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BNB_USDT"}]
+*/
+
+//============================== OneTrend Lite Historical Performance ==============================/
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+//| Ticker | Total P&L | Drawdown  | # Trades  | Profitable Trades  | Profit Factor | Best Method   |
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+//| BTC    | 557x      | 55.29%    | 11        | 72.73%             | 13.579        | OneTrend Pro  |
+//| ETH    | 207x      | 55.11%    | 13        | 46.15%             | 1.696         | OneTrend Pro  |
+//| XRP    | 29x       | 99.85%    | 23        | 30.43%             | 1.261         | OneTrend Gaus |
+//| SOL    | 152x      | 40.20%    | 8         | 62.50%             | 4.341         | OneTrend Gaus |
+//| BNB    | 519x      | 64.29%    | 12        | 50.00%             | 3.351         | OneTrend Lite |
+//| DOGE   | 21x       | 89.63%    | 22        | 27.27%             | 1.521         | OneTrend Gaus |
+//| ADA    | 9x        | 76.18%    | 9         | 55.56%             | 9.039         | OneTrend Pro  |
+//| SUI    | 6.6x      | 11.44%    | 2         | 100.00%            | ∞             | OneTrend Pro  |
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+
+//============================== OneTrend Pro Historical Performance ===============================/
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+//| Ticker | Total P&L | Drawdown  | # Trades  | Profitable Trades  | Profit Factor | Best Method   |
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+//| BTC    | 723x      | 50.99%    | 41        | 53.66%             | 2.625         | OneTrend Pro  |
+//| ETH    | 1925x     | 40.07%    | 31        | 58.06%             | 3.472         | OneTrend Pro  |
+//| XRP    | 298x      | 99.97%    | 53        | 37.74%             | 1.87          | OneTrend Gaus |
+//| SOL    | 917x      | 73.31%    | 18        | 44.44%             | 2.71          | OneTrend Gaus |
+//| BNB    | 353x      | 49.44%    | 31        | 45.16%             | 2.849         | OneTrend Lite |
+//| DOGE   | 238x      | 92.38%    | 40        | 40.00%             | 2.389         | OneTrend Gaus |
+//| ADA    | 39x       | 71.96%    | 31        | 35.48%             | 1.684         | OneTrend Pro  |
+//| SUI    | 8.7x      | 31.53%    | 4         | 50.00%             | 13.457        | OneTrend Pro  |
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+
+//=========================== OneTrend Gaussian Historical Performance =============================/
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+//| Ticker | Total P&L | Drawdown  | # Trades  | Profitable Trades  | Profit Factor | Best Method   |
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+//| BTC    | 107x      | 72.45%    | 26        | 57.69%             | 5.5           | OneTrend Pro  |
+//| ETH    | 10x       | 40.07%    | 31        | 58.06%             | 3.472         | OneTrend Pro  |
+//| XRP    | 1125x     | 99.94%    | 29        | 48.28%             | 1.509         | OneTrend Gaus |
+//| SOL    | 925x      | 52.10%    | 11        | 63.64%             | 11.338        | OneTrend Gaus |
+//| BNB    | 434x      | 58.10%    | 22        | 59.09%             | 4.845         | OneTrend Lite |
+//| DOGE   | 487x      | 90.48%    | 40        | 32.50%             | 2.263         | OneTrend Gaus |
+//| ADA    | 20x       | 71.96%    | 31        | 35.48%             | 1.684         | OneTrend Pro  |
+//| SUI    | 3.3x      | 31.53%    | 4         | 50.00%             | 13.457        | OneTrend Pro  |
+//+--------+-----------+-----------+-----------+--------------------+---------------+---------------+
+
+//@version=6
+strategy("OneTrend Lite EMA", overlay=true, default_qty_type=strategy.percent_of_equity, default_qty_value=100, initial_capital = 10000)
+
+// ——— USER INPUTS ———
+// EMA settings
+emaFastLen = 30
+emaSlowLen = 60
+atrLen     = 60
+
+// ADX settings
+adxLen       = 14
+adxThreshold = 20
+
+// ATR multipliers for trend conditions
+atrMultStrong = 0.3
+atrMultWeak   = 0.1
+
+// ——— CALCULATIONS ———
+// Calculate EMAs and their difference
+emaFast = ta.ema(close, emaFastLen)
+emaSlow = ta.ema(close, emaSlowLen)
+emaDiff = emaFast - emaSlow
+
+// --- Custom ADX Calculation ---
+up      = ta.change(high)
+down    = -ta.change(low)
+plusDM  = (up > down and up > 0) ? up : 0.0
+minusDM = (down > up and down > 0) ? down : 0.0
+trur    = ta.rma(ta.tr, adxLen)
+// OPT-T300-01 修改原因：平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。
+// OPT-T300-01 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
+smoothedPlusDM = ta.rma(plusDM, adxLen)
+smoothedMinusDM = ta.rma(minusDM, adxLen)
+plusDI  = trur == 0 ? 0.0 : 100 * smoothedPlusDM / trur
+// OPT-T300-02 修改原因：平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。
+// OPT-T300-02 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
+minusDI = trur == 0 ? 0.0 : 100 * smoothedMinusDM / trur
+// OPT-T300-03 修改原因：双DI为0表示无方向强度，DX回退0避免再次零除。
+// OPT-T300-03 保持行为：非零DI比例、ADX平滑及原买卖过滤不变。
+dx      = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)
+adxVal  = ta.rma(dx, adxLen)
+
+// Determine the dynamic ATR multiplier based solely on ADX
+dynamicAtrMult = adxVal > adxThreshold ? atrMultStrong : atrMultWeak
+
+// Define bull (blue) and bear (pink) zones using the dynamic multiplier
+emaBull = emaDiff > dynamicAtrMult * ta.atr(atrLen)
+emaBear = emaDiff < -dynamicAtrMult * ta.atr(atrLen)
+
+// ——— PLOTTING ———
+clrBull    = color.rgb(70, 163, 255)   // Blue for bull
+clrBear    = color.rgb(255, 102, 170)   // Pink for bear
+clrNeutral = color.rgb(128, 128, 128)   // Gray for neutral
+
+fastPlot = plot(emaFast, linewidth=2, color=emaBull ? clrBull : emaBear ? clrBear : clrNeutral, title="Fast EMA")
+slowPlot = plot(emaSlow, linewidth=2, color=emaBull ? clrBull : emaBear ? clrBear : clrNeutral, title="Slow EMA")
+fill(fastPlot, slowPlot, color=emaBull ? color.new(clrBull, 70) : emaBear ? color.new(clrBear, 70) : color.new(clrNeutral, 70))
+
+// ——— STRATEGY LOGIC ———
+// Enter long immediately when the zone turns blue, and exit when it turns pink.
+if emaBull
+    strategy.entry("Long", strategy.long, comment="Long Entry")
+if emaBear
+    strategy.close("Long", comment="Close Long")

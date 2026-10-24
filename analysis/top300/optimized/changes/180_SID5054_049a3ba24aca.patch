@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 5054：沿用旧候选·未回测
++// 原文件SHA256：fa3c6caaa8090973f8d96ba4c4da0ee27de1fc38d705d098c88d28036a13a8dc
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：移动平均线双轨与趋势跟踪策略Dual-Moving-Average-Channel-with-Trend-Tracking-Strategy.md
+ // 原文件SHA256：fa3c6caaa8090973f8d96ba4c4da0ee27de1fc38d705d098c88d28036a13a8dc

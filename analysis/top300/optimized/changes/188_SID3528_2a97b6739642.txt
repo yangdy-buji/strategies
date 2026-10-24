@@ -1,0 +1,57 @@
+{
+  "rank": 188,
+  "sid": 3528,
+  "source_sha256": "d32bf5b21706129f576cf5d5c796d247502396bf13d412cf541025f83a3758b3",
+  "base_kind": "original",
+  "base_sha256": "e9d4fedbdbc3df0d4593db1950924c5081258b8a74f149a62389d601de292279",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "零方差标准化返回NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+  "patches": [
+    {
+      "old": "Rate1 = (FPrice - ema2) / stdev",
+      "new": "Rate1 = not na(stdev) and stdev > 0 ? (FPrice - ema2) / stdev : na",
+      "reason": "零方差标准化返回NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    }
+  ],
+  "resolved": [
+    "零方差标准化返回NA；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。"
+  ],
+  "remaining": [
+    "strategy.order可重复累积，不受entry pyramiding限制；是否限为单仓或有限层数需先定义总风险预算。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "连续十根满足Rate<-1且改善的序列，记录每柱份数与总风险；平价数据不得生成无效数值订单。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "2a97b6739642",
+  "title": "基于离散运动平均值的趋势突破策略Trend-Breakout-Strategy-Based-on-Moving-Average-Deviation",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/188_SID3528_2a97b6739642_candidate.pine",
+  "original": "originals/188_SID3528_2a97b6739642.pine",
+  "baseline": "baselines/188_SID3528_2a97b6739642.pine",
+  "changes": "changes/188_SID3528_2a97b6739642.txt",
+  "card": "cards/2a97b6739642.html",
+  "diff": "changes/188_SID3528_2a97b6739642.patch",
+  "original_diff": "changes/188_SID3528_2a97b6739642.original.patch",
+  "script_sha256": "a6cd5eb0eb3b94d6b7515b1136fb9726aefbac05c8a26ebbb6e0e4c248687c0e",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "c75e60685982a2c3b3486a795cf6941b0c591ae2c7fac4957c09bcda08b54905",
+    "review": "v4 stdev与ema均全局每柱计算，仅正标准差允许标准化，NA不会伪造Rate变化。原strategy.order LONG1可累积的语义未悄然改成entry，卖出close匹配ID，遗留累计敞口另列。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "strategy.order可重复累积，不受entry pyramiding限制；是否限为单仓或有限层数需先定义总风险预算。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

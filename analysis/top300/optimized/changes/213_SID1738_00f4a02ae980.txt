@@ -1,0 +1,37 @@
+{
+  "rank": 213,
+  "sid": 1738,
+  "source_sha256": "5fb8af3ecaa344b2064039b06e39c91581efc55f664e7bf9b2e90c8eb02b8313",
+  "base_kind": "prior_candidate",
+  "base_sha256": "48ff4867c41c3e86a289016503e87415a0b1e545f5ccd6e10fdf8141fb35f9fe",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；RSI3减其SMA21再SMA13，上穿阈值并可选EMA200过滤做多，下穿平多，开始日期原被忽略。 RSI相对自身均值偏离的平滑零轴交叉可解释，默认关闭长趋势过滤；首先恢复已有日期门禁。",
+  "patches": [],
+  "resolved": [
+    "日期函数恒真绕过开始日期。"
+  ],
+  "remaining": [
+    "RSI相对自身均值偏离的平滑零轴交叉可解释，默认关闭长趋势过滤；首先恢复已有日期门禁。 后续验证：日期前后信号、震荡成本、RSI3/4及平滑邻域做固定样本外对照。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "日期前后信号、震荡成本、RSI3/4及平滑邻域做固定样本外对照。"
+  ],
+  "id": "00f4a02ae980",
+  "title": "动量指标均线交叉策略Momentum-Indicator-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/213_SID1738_00f4a02ae980_candidate.pine",
+  "original": "originals/213_SID1738_00f4a02ae980.pine",
+  "baseline": "baselines/213_SID1738_00f4a02ae980.pine",
+  "changes": "changes/213_SID1738_00f4a02ae980.txt",
+  "card": "cards/00f4a02ae980.html",
+  "diff": "changes/213_SID1738_00f4a02ae980.patch",
+  "original_diff": "changes/213_SID1738_00f4a02ae980.original.patch",
+  "script_sha256": "9d76083136c32af3a0fbaaa5f94fae0441db59bfa60aef07063962d892fc6eca",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

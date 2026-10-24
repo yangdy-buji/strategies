@@ -1,0 +1,54 @@
+{
+  "rank": 163,
+  "sid": 2867,
+  "source_sha256": "edbcfd9f400a09e23fb4a677c001fb7e40c730a12fe487cff7644ba7b969f808",
+  "base_kind": "original",
+  "base_sha256": "9c506300ab5df83f778bddfe2a6efce49b6fb1ddd1caaedee4b2d825b8971108",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "只在实际新成交时记录入场均价，连续超卖不刷新亏损基准。",
+  "patches": [
+    {
+      "old": "if (longCondition)\n    entryPrice := low",
+      "new": "if strategy.position_size > 0 and strategy.position_size[1] <= 0\n    entryPrice := strategy.position_avg_price",
+      "reason": "只在实际新成交时记录入场均价，连续超卖不刷新亏损基准。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "100成交后80/70连续超卖，20%亏损分支保持可达。"
+      ]
+    }
+  ],
+  "resolved": [
+    "只在实际新成交时记录入场均价，连续超卖不刷新亏损基准。"
+  ],
+  "remaining": [
+    "保持收盘确认市价退出；极端跳空可能超过lossTolerance。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "入场100后持续超卖下跌至70、每柱低点更新，比较原记录与真实浮亏；再测试第二笔新交易重置。"
+  ],
+  "id": "303144b19872",
+  "title": "基于RSI的低价动态入场与止损策略-Dynamic-Low-Price-Entry-and-Stop-Loss-Strategy-Based-on-RSI",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/163_SID2867_303144b19872_candidate.pine",
+  "original": "originals/163_SID2867_303144b19872.pine",
+  "baseline": "baselines/163_SID2867_303144b19872.pine",
+  "changes": "changes/163_SID2867_303144b19872.txt",
+  "card": "cards/303144b19872.html",
+  "diff": "changes/163_SID2867_303144b19872.patch",
+  "original_diff": "changes/163_SID2867_303144b19872.original.patch",
+  "script_sha256": "2a943c1d34ae657c4cd6517a81108340dcba24ca33971cccee47c1c770ed4a03",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "e35f256964d9c97cd06d1fa15fb8e126bd8595660b55bfb871cd6155d431cea7",
+    "review": "v5首次实际正仓且前柱非正时记录成交均价，长期超卖不会重设亏损锚。首笔发单仍无虚拟持仓；平仓后再成交可重新锚定，固定默认不加仓下无漏掉加权均价更新问题。原Long退出保持。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保持收盘确认市价退出；极端跳空可能超过lossTolerance。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "rank": 220,
+  "sid": 1990,
+  "source_sha256": "34abbec1ee8d464637d268b290af97354f789ba875dc5f76b6d56d91a0f43961",
+  "base_kind": "prior_candidate",
+  "base_sha256": "6f2f88d7214160da973ffd79d27c8174b48231bb8ad9342e443cf4f2bce6c463",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；9/21 SMA趋势与RSI反向极值空仓多空，ATR风险倍数目标；独立目标订单使180根等待分支失效。 空头目标的负号错误已有候选修复；180是K线根数且尾部TP无等待门禁，所谓最短3小时并未成立。",
+  "patches": [],
+  "resolved": [
+    "空头目标减去负价差导致目标在入场价上方。"
+  ],
+  "remaining": [
+    "空头目标的负号错误已有候选修复；180是K线根数且尾部TP无等待门禁，所谓最短3小时并未成立。 后续验证：在1分钟/1小时/日线核对180根含义；等待期内触目标和大亏分别验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；180按bar计数而非时钟小时，尾部TP调用绕过最短持仓；未擅自选择时长语义。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "在1分钟/1小时/日线核对180根含义；等待期内触目标和大亏分别验证。"
+  ],
+  "id": "a9092b7f70e2",
+  "title": "双均线交叉RSI动量策略与风险收益优化系统-Dual-Moving-Average-Cross-RSI-Momentum-Strategy-with-Risk-Reward-Optimization-System",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/220_SID1990_a9092b7f70e2_candidate.pine",
+  "original": "originals/220_SID1990_a9092b7f70e2.pine",
+  "baseline": "baselines/220_SID1990_a9092b7f70e2.pine",
+  "changes": "changes/220_SID1990_a9092b7f70e2.txt",
+  "card": "cards/a9092b7f70e2.html",
+  "diff": "changes/220_SID1990_a9092b7f70e2.patch",
+  "original_diff": "changes/220_SID1990_a9092b7f70e2.original.patch",
+  "script_sha256": "0c085f995833c0079a8542cb2a75fbccb1d142f63dceff0d2b3d625a6ff36c30",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

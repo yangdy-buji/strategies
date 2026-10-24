@@ -1,0 +1,34 @@
+{
+  "rank": 79,
+  "sid": 3388,
+  "source_sha256": "c2e0631c91ba55d9ad53b9b1a1f97cf60ea99651b887aa9a7bfa2d9d88b016ab",
+  "base_kind": "original",
+  "base_sha256": "9cecabb379cd234d72809ac58a93aa6ab4e86e4025dff0ac6a21aae5001ee7b7",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：平滑RSI从40回升买入、从80回落退出，是恢复动量获利模型。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "入场后若RSI从未到80，退出可能长期不发生；缺少失败恢复或时间风险约束。 暂缓原因：新增失败退出可能减少长期反弹收益并增加换手。"
+  ],
+  "validation_plan": [
+    "构造入场后RSI一路下滑但未曾到80，统计最长持仓和最差浮亏。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "5757ce0816a1",
+  "title": "基于平滑RSI的股票交易策略Smoothed-RSI-Based-Stock-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/079_SID3388_5757ce0816a1_original.pine",
+  "original": "originals/079_SID3388_5757ce0816a1.pine",
+  "baseline": "baselines/079_SID3388_5757ce0816a1.pine",
+  "changes": "changes/079_SID3388_5757ce0816a1.txt",
+  "card": "cards/5757ce0816a1.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "9cecabb379cd234d72809ac58a93aa6ab4e86e4025dff0ac6a21aae5001ee7b7",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

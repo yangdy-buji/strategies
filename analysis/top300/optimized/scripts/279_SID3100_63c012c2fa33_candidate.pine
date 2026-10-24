@@ -1,0 +1,53 @@
+// OPT-T300 SID 3100：本轮新候选·未回测
+// 原文件SHA256：1e4ed9752080d24e43b00f7b801d6375d18126c2e9677362e48bbe02d4fa0a1c
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2019-12-23 08:00:00
+end: 2024-11-25 08:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Chande Momentum Oscillator Strategy", overlay=false)
+
+// Input for the CMO period
+cmoPeriod = input.int(9, minval=1, title="CMO Period")
+
+// Calculate price changes
+priceChange = ta.change(close)
+
+// Separate positive and negative changes
+up = priceChange > 0 ? priceChange : 0
+down = priceChange < 0 ? -priceChange : 0
+
+// Calculate the sum of ups and downs using a rolling window
+sumUp = ta.sma(up, cmoPeriod) * cmoPeriod
+sumDown = ta.sma(down, cmoPeriod) * cmoPeriod
+
+// Calculate the Chande Momentum Oscillator (CMO)
+// OPT-T300-01 修改原因：完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。
+// OPT-T300-01 保持行为：原交易信号阈值、仓位和其余退出设计；不调整参数。
+cmo = sumUp + sumDown == 0 ? 0.0 : 100 * (sumUp - sumDown) / (sumUp + sumDown)
+
+// Define the entry and exit conditions
+buyCondition = cmo < -50
+sellCondition1 = cmo > 50
+sellCondition2 = ta.barssince(buyCondition) >= 5
+
+// Track if we are in a long position
+var bool inTrade = false
+
+if (buyCondition and not inTrade)
+    strategy.entry("Long", strategy.long)
+    inTrade := true
+
+if (sellCondition1 or sellCondition2)
+    strategy.close("Long")
+    inTrade := false
+
+// Plot the Chande Momentum Oscillator
+plot(cmo, title="Chande Momentum Oscillator", color=color.blue)
+hline(-50, "Buy Threshold", color=color.green)
+hline(50, "Sell Threshold", color=color.red)

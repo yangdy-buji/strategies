@@ -1,0 +1,35 @@
+{
+  "rank": 176,
+  "sid": 988,
+  "source_sha256": "d08c7c1bec686e28d3cf067eaea125667ebcb5a0ff0e861025f90aefe5d506eb",
+  "base_kind": "original",
+  "base_sha256": "b801b6395de07e393e3fb413daafb872b6f07df7b0811e31ef0e4e75921a9292",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：自建balance与真实权益的初始资金/费用口径不同；需先明确账户资金模型再接真实权益，亏损出口也属新规则。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "自建balance与真实权益的初始资金/费用口径不同；需先明确账户资金模型再接真实权益，亏损出口也属新规则。",
+    "持仓重复跌幅信号更新qty而默认不加仓；随后pnl用该新qty计入balance，并忽略实际撮合/费用。只有盈利条件退出，亏损可能长期积累。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "连续两次跌5%后小反弹，核对entry份数与qty变量差异、现金守恒及扣费后的是否真盈利。"
+  ],
+  "id": "e2497ac20270",
+  "title": "TGT基于价格下跌买入策略-TGT-Falling-Buy-Strategy-Based-on-Price-Decline",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/176_SID988_e2497ac20270_original.pine",
+  "original": "originals/176_SID988_e2497ac20270.pine",
+  "baseline": "baselines/176_SID988_e2497ac20270.pine",
+  "changes": "changes/176_SID988_e2497ac20270.txt",
+  "card": "cards/e2497ac20270.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "b801b6395de07e393e3fb413daafb872b6f07df7b0811e31ef0e4e75921a9292",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

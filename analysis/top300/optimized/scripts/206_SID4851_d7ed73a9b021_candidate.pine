@@ -1,0 +1,51 @@
+// OPT-T300 SID 4851：沿用旧候选·未回测
+// 原文件SHA256：55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：海龟交易三日反转策略Turtle-Trading-3-Day-Reversion-Strategy.md
+// 原文件SHA256：55597f291b57661aebb2f3d57d320a632af87f9b9ea8dffb2aebcdd921d45691
+// SID：4851；原研究名单序号：153
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-10-05 00:00:00
+end: 2023-10-12 00:00:00
+period: 10m
+basePeriod: 1m
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// @version = 5
+// Author = TradeAutomation
+
+
+strategy(title="ETF 3-Day Reversion Strategy", shorttitle="ETF 3-Day Reversion Strategy", process_orders_on_close=true, overlay=true, commission_type=strategy.commission.cash_per_order, commission_value=1, initial_capital = 10000000, default_qty_type=strategy.percent_of_equity, default_qty_value=100)
+
+
+// Backtest Date Range Inputs // 
+StartTime = input(defval=timestamp('01 Jan 2012 05:00 +0000'), title='Start Time')
+EndTime = input(defval=timestamp('01 Jan 2099 00:00 +0000'), title='End Time')
+// OPT-4851-01：恢复日期及原窗外强平。
+// OPT-4851-01 保持：收盘成交、信号及日期不变。
+// OPT-4851-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+InDateRange = time >= StartTime and time <= EndTime
+
+// Strategy Rules //
+DayEMA5 = ta.ema(close, 5)
+Rule1 = close>ta.ema(close, 200)
+Rule2 = close<DayEMA5
+Rule3 = high<high[1] and low<low[1] and high[1]<high[2] and low[1]<low[2] and high[2]<high[3] and low[2]<low[3]
+ExitEMA = ta.ema(close, input.int(5, "EMA Length For Exit Strategy", tooltip = "The strategy will sell when the price crosses over this EMA"))
+plot(DayEMA5)
+plot(ExitEMA, color=color.green)
+
+// Entry & Exit Functions //
+if (InDateRange)
+    strategy.entry("Long", strategy.long, when = Rule1 and Rule2 and Rule3)
+//    strategy.close("Long", when = ta.crossunder(close, ATRTrailingStop))
+    strategy.close("Long", when = ta.crossover(close, ExitEMA))
+if (not InDateRange)
+    strategy.close_all()

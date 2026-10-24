@@ -1,0 +1,34 @@
+{
+  "rank": 67,
+  "sid": 4026,
+  "source_sha256": "dcccdb4cbba1caff46cb1d6979e466d818d5606a0c4b09cc1ed1140c28dbf12d",
+  "base_kind": "original",
+  "base_sha256": "771aea0cccfd168bb48b656ddd017c046cdbc554b8d13fe614cc9e977b42b4eb",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：四组MACD/RSI/成交量条件组成双向系统，但固定价差和多模块订单语义使保真风险高。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "四个退出调用共用TPS但绑定不同from_entry，存在修改同ID订单的歧义；无匹配from_entry可能不生成单，不能仅凭文本断言全部失效。 暂缓原因：ID隔离可能揭示原先被覆盖的保护，历史收益需要重新计算。"
+  ],
+  "validation_plan": [
+    "分别只触发四模块及同根多模块，核对每个entry对应的stop/limit、重复调用后的挂单和反手情况。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "e607724aab6b",
+  "title": "多时间周期MACD零轴交叉反转策略scillator-Profile-Reversal-Strategy-Based-on-Multi-Timeframe-MACD-Zero-crossing",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/067_SID4026_e607724aab6b_original.pine",
+  "original": "originals/067_SID4026_e607724aab6b.pine",
+  "baseline": "baselines/067_SID4026_e607724aab6b.pine",
+  "changes": "changes/067_SID4026_e607724aab6b.txt",
+  "card": "cards/e607724aab6b.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "771aea0cccfd168bb48b656ddd017c046cdbc554b8d13fe614cc9e977b42b4eb",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

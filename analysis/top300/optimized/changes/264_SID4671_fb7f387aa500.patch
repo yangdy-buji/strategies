@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=4
++// OPT-T300 SID 4671：沿用旧候选·未回测
++// 原文件SHA256：287e6b6ddabc9a362f69d2e9b034938a97a45b79de5df9639c38ad8b575244a0
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：收缩带Bollinger与RSI组合策略Bollinger-Bands-and-RSI-Combination-Strategy.md
+ // 原文件SHA256：287e6b6ddabc9a362f69d2e9b034938a97a45b79de5df9639c38ad8b575244a0

@@ -1,0 +1,34 @@
+{
+  "rank": 287,
+  "sid": 1719,
+  "source_sha256": "f6eb15949f97481cc834834124371bcad3fb07fe94d35c84d6a73b392a6638ed",
+  "base_kind": "original",
+  "base_sha256": "d6f61087d66d22c8c152b2a68216e5624e2da31b195f7e7f563e181b126a6580",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；布林下轨上穿开多、下轨下穿开空，可选均线位置过滤；按中轨或边轨交叉平全部。 多头是下轨回归，空头实际下轨突破而非定义的上轨反转；同下轨穿越又触发全平，意图冲突。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "多头是下轨回归，空头实际下轨突破而非定义的上轨反转；同下轨穿越又触发全平，意图冲突。 后续验证：下穿上轨/下轨、同根开空与close_all及过滤开关组合测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "下穿上轨/下轨、同根开空与close_all及过滤开关组合测试。"
+  ],
+  "id": "2e4c39a90183",
+  "title": "动量布林带突破策略Momentum-Bollinger-Bands-Breakout-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/287_SID1719_2e4c39a90183_original.pine",
+  "original": "originals/287_SID1719_2e4c39a90183.pine",
+  "baseline": "baselines/287_SID1719_2e4c39a90183.pine",
+  "changes": "changes/287_SID1719_2e4c39a90183.txt",
+  "card": "cards/2e4c39a90183.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d6f61087d66d22c8c152b2a68216e5624e2da31b195f7e7f563e181b126a6580",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

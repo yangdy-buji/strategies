@@ -1,0 +1,34 @@
+{
+  "rank": 255,
+  "sid": 4883,
+  "source_sha256": "129daeb9484005bc807daa9538f948e1ab2a3e8e6b7f31238d11833c882a343e",
+  "base_kind": "original",
+  "base_sha256": "7381e460ee34cb8af635b731ea22fc00419250efda05d228da4e7a7cdd149daf",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；SMA20/30金叉且RSI>25买入，死叉且RSI<75平仓；可选信号价2%全部或一次半仓止盈。 均线交叉RSI过滤加可选半仓获利结构清楚，但用信号状态替代实际仓位、目标从信号close开始计。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "均线交叉RSI过滤加可选半仓获利结构清楚，但用信号状态替代实际仓位、目标从信号close开始计。 后续验证：部分退出后新金叉、被拒买单、卖出后状态复位及剩余仓位核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "部分退出后新金叉、被拒买单、卖出后状态复位及剩余仓位核验。"
+  ],
+  "id": "d2b29a722f89",
+  "title": "滑动平均-RSI-交叉动量确认策略-Moving-Average-RSI-Crossover-Momentum-Confirmation-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/255_SID4883_d2b29a722f89_original.pine",
+  "original": "originals/255_SID4883_d2b29a722f89.pine",
+  "baseline": "baselines/255_SID4883_d2b29a722f89.pine",
+  "changes": "changes/255_SID4883_d2b29a722f89.txt",
+  "card": "cards/d2b29a722f89.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "7381e460ee34cb8af635b731ea22fc00419250efda05d228da4e7a7cdd149daf",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 298,
+  "sid": 925,
+  "source_sha256": "98f2d75469450648c1262e597442e20430bf8db3ecb862b4c1046a9219e873e1",
+  "base_kind": "original",
+  "base_sha256": "2a09b1edfec37d04e8ee19d0ff32a0e8f6c20f8689c592232720af0f667d4603",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；九月逐柱发出多头入场，五月平多；没有显式仓位或止损，采用平台默认订单配置。 九月买五月卖是透明季节性基准，信号极少且收益可能主要来自市场长期上涨。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "九月买五月卖是透明季节性基准，信号极少且收益可能主要来自市场长期上涨。 后续验证：首个交易日、跨年、上市不足一年、不同年代与复权分红处理验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "首个交易日、跨年、上市不足一年、不同年代与复权分红处理验证。"
+  ],
+  "id": "0cb464caf364",
+  "title": "Sell-in-May-Buy-in-September-Strategy",
+  "category": "待分类",
+  "priority": "P2",
+  "script": "scripts/298_SID925_0cb464caf364_original.pine",
+  "original": "originals/298_SID925_0cb464caf364.pine",
+  "baseline": "baselines/298_SID925_0cb464caf364.pine",
+  "changes": "changes/298_SID925_0cb464caf364.txt",
+  "card": "cards/0cb464caf364.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2a09b1edfec37d04e8ee19d0ff32a0e8f6c20f8689c592232720af0f667d4603",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

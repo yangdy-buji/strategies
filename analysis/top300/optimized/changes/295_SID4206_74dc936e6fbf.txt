@@ -1,0 +1,34 @@
+{
+  "rank": 295,
+  "sid": 4206,
+  "source_sha256": "2a7836ec5cce56639624abb73e071c0a406882432296cd8a24bbbcb390ffa46b",
+  "base_kind": "original",
+  "base_sha256": "b6df79a43ee7ec6aadc8244eb7a37b8a656cb30a5e32f98baae2a4ff2f4fb3b1",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；EMA20/250趋势及EMA2位于100/300之间、MACD交叉确认全权益多空，信号时5 ATR止损和1.5R目标。 长期趋势内短线回调配MACD反转可解释，但隐藏均线导致实际逻辑难审计，100%资金配5ATR止损风险随波动放大。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "长期趋势内短线回调配MACD反转可解释，但隐藏均线导致实际逻辑难审计，100%资金配5ATR止损风险随波动放大。 后续验证：EMA100/250/300邻域、信号跳空、5ATR占价格比例和多空借券成本验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "EMA100/250/300邻域、信号跳空、5ATR占价格比例和多空借券成本验证。"
+  ],
+  "id": "74dc936e6fbf",
+  "title": "多重均线回归MACD趋势确认策略-Multiple-EMA-Reversion-MACD-Trend-Confirmation-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/295_SID4206_74dc936e6fbf_original.pine",
+  "original": "originals/295_SID4206_74dc936e6fbf.pine",
+  "baseline": "baselines/295_SID4206_74dc936e6fbf.pine",
+  "changes": "changes/295_SID4206_74dc936e6fbf.txt",
+  "card": "cards/74dc936e6fbf.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "b6df79a43ee7ec6aadc8244eb7a37b8a656cb30a5e32f98baae2a4ff2f4fb3b1",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

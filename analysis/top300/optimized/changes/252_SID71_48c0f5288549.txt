@@ -1,0 +1,37 @@
+{
+  "rank": 252,
+  "sid": 71,
+  "source_sha256": "d93a7f991540c18901ba9c8e94b554e0700d4eeaafa2f687465c05b64fda146a",
+  "base_kind": "prior_candidate",
+  "base_sha256": "8437a3ac68ed68b1b34aa2c49cf08d917bba4f5c79ee5d351b354515a88e6639",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；ATR过滤锤头与流星反转形态，2%权益多空入场，按当前高低收盘价动态设置ATR止盈止损。 锤头/流星形态加ATR过滤可解释；close与open交叉还要求前根方向变化，保护价格每根重算。",
+  "patches": [],
+  "resolved": [
+    "多空退出使用同一exit ID，短侧独立命名以避免同根更新覆盖其他方向退出订单。"
+  ],
+  "remaining": [
+    "锤头/流星形态加ATR过滤可解释；close与open交叉还要求前根方向变化，保护价格每根重算。 后续验证：连续两根同色锤头、持仓下跌时止损下移及多空反转保护核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；退出价格仍随每根low/high/close/ATR变化，未固定到成交价；属于原动态设计。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "连续两根同色锤头、持仓下跌时止损下移及多空反转保护核验。"
+  ],
+  "id": "48c0f5288549",
+  "title": "ATR增强型蜡烛反转模式识别与风险管理策略-ATR-Enhanced-Candlestick-Reversal-Pattern-Recognition-and-Risk-Management-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/252_SID71_48c0f5288549_candidate.pine",
+  "original": "originals/252_SID71_48c0f5288549.pine",
+  "baseline": "baselines/252_SID71_48c0f5288549.pine",
+  "changes": "changes/252_SID71_48c0f5288549.txt",
+  "card": "cards/48c0f5288549.html",
+  "diff": "changes/252_SID71_48c0f5288549.patch",
+  "original_diff": "changes/252_SID71_48c0f5288549.original.patch",
+  "script_sha256": "ab7f5a0fd7955bd83b31d0d8903826f4242e0f8f43478123d19024accde7788c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

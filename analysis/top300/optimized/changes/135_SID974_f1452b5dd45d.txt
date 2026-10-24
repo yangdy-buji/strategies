@@ -1,0 +1,34 @@
+{
+  "rank": 135,
+  "sid": 974,
+  "source_sha256": "e0fe624ab6acd04b832aff4d96d4fa070562f462d49231859ece526c0c25dc81",
+  "base_kind": "original",
+  "base_sha256": "e81eed841573fc37b30b7b8b5c22d325ec55f85e92b61a376b67ebd57aae7590",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：Supertrend翻多入场、RSI过热或趋势翻空退出，方向和退出定义明确，默认只做多。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "RSI退出是状态而非提示所称交叉；同柱趋势翻多且RSI已过热时同时申请入场与平仓，需确认实际订单先后。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造趋势翻多且RSI>72、双向开关开启后的翻转场景，原生核对最终仓位和订单数量。"
+  ],
+  "id": "f1452b5dd45d",
+  "title": "Supertrend结合RSI的量化交易策略Supertrend-Combined-with-RSI-Quantitative-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/135_SID974_f1452b5dd45d_original.pine",
+  "original": "originals/135_SID974_f1452b5dd45d.pine",
+  "baseline": "baselines/135_SID974_f1452b5dd45d.pine",
+  "changes": "changes/135_SID974_f1452b5dd45d.txt",
+  "card": "cards/f1452b5dd45d.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e81eed841573fc37b30b7b8b5c22d325ec55f85e92b61a376b67ebd57aae7590",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

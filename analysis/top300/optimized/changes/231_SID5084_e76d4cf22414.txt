@@ -1,0 +1,37 @@
+{
+  "rank": 231,
+  "sid": 5084,
+  "source_sha256": "0ee7eb419b44cf843a3b3d42563fef0ccc1d314a7c6bd9e5de982f6a00feb688",
+  "base_kind": "prior_candidate",
+  "base_sha256": "f4cb6899b783baff9dcefcf9c85f569d8f07278048ca270283f72b17b5351c9e",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；SMA5/20金叉做多、死叉退出；布林、RSI、均价云和ROC仅作展示。 实际交易只有SMA5/20交叉，布林/RSI/云/Momentum只是展示；已有BB元组修复只影响显示。",
+  "patches": [],
+  "resolved": [
+    "修复展示返回值。"
+  ],
+  "remaining": [
+    "实际交易只有SMA5/20交叉，布林/RSI/云/Momentum只是展示；已有BB元组修复只影响显示。 后续验证：清理前后订单完全一致，BB标签正确，均线邻域与成本压力测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "清理前后订单完全一致，BB标签正确，均线邻域与成本压力测试。"
+  ],
+  "id": "e76d4cf22414",
+  "title": "移动平均聚合动量云策略-Moving-Average-Convergence-Momentum-Cloud-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/231_SID5084_e76d4cf22414_candidate.pine",
+  "original": "originals/231_SID5084_e76d4cf22414.pine",
+  "baseline": "baselines/231_SID5084_e76d4cf22414.pine",
+  "changes": "changes/231_SID5084_e76d4cf22414.txt",
+  "card": "cards/e76d4cf22414.html",
+  "diff": "changes/231_SID5084_e76d4cf22414.patch",
+  "original_diff": "changes/231_SID5084_e76d4cf22414.original.patch",
+  "script_sha256": "73fca251022b45f0c49cfca0744434c8b18dbf0afd3c26c7efda758713b9ea4c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

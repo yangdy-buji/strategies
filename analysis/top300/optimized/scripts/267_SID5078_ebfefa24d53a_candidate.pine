@@ -1,0 +1,115 @@
+//@version=4
+// OPT-T300 SID 5078：本轮新候选·未回测
+// 原文件SHA256：ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：移动平均线金叉交易策略Moving-Average-Crossover-Trading-Strategy.md
+// 原文件SHA256：ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68
+// SID：5078；原研究名单序号：206
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-10-30 00:00:00
+end: 2023-11-05 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © TwoChiefs
+strategy("John EMA Crossover Strategy", overlay=true)
+////////////////////////////////////////////////////////////////////////////////
+// BACKTESTING RANGE
+ 
+// From Date Inputs
+fromDay = input(defval = 1, title = "From Day", minval = 1, maxval = 31)
+fromMonth = input(defval = 1, title = "From Month", minval = 1, maxval = 12)
+fromYear = input(defval = 2020, title = "From Year", minval = 1970)
+ 
+// To Date Inputs
+toDay = input(defval = 1, title = "To Day", minval = 1, maxval = 31)
+toMonth = input(defval = 1, title = "To Month", minval = 1, maxval = 12)
+toYear = input(defval = 2021, title = "To Year", minval = 1970)
+ 
+// Calculate start/end date and time condition
+startDate = timestamp(fromYear, fromMonth, fromDay, 00, 00)
+finishDate = timestamp(toYear, toMonth, toDay, 00, 00)
+// OPT-5078-01：日期条件恒真。
+// OPT-5078-01 保持：原参数、仓位及窗外退出
+// OPT-5078-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+time_cond = time >= startDate and time <= finishDate
+ 
+////////////////////////////////////////////////////////////////////////////////
+
+//CREATE USER-INPUT VARIABLES
+
+periodShort = input(13, minval=1, title="Enter Period for Short Moving Average")
+smoothingShort = input(title="Choose Smoothing Type for Short Moving Average", defval="EMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "DEMA", "TEMA", "HullMA", "LSMA"])
+
+periodLong = input(48, minval=1, title="Enter Period for Long Moving Average")
+smoothingLong = input(title="Choose Smoothing Type for Long Moving Average", defval="EMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "DEMA", "TEMA", "HullMA", "LSMA"])
+
+periodExit = input(30, minval=1, title="Enter Period for Exit Moving Average")
+smoothingExit = input(title="Choose Smoothing Type for Exit Moving Average", defval="EMA", options=["RMA", "SMA", "EMA", "WMA", "VWMA", "SMMA", "DEMA", "TEMA", "HullMA", "LSMA"])
+
+
+src1 = close
+pivot = (high + low + close) / 3
+
+//MA CALCULATION FUNCTION
+// OPT-T300-01 修改原因：SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。
+// OPT-T300-01 保持行为：EMA默认、价格源pivot、13/48/30周期和已有日期及退出修复。
+ma(smoothing, src, length) =>
+    e1 = ema(src, length)
+    e2 = ema(e1, length)
+    e3 = ema(e2, length)
+    if smoothing == "RMA" or smoothing == "SMMA"
+        rma(src, length)
+    else if smoothing == "SMA"
+        sma(src, length)
+    else if smoothing == "EMA"
+        e1
+    else if smoothing == "WMA"
+        wma(src, length)
+    else if smoothing == "VWMA"
+        vwma(src, length)
+    else if smoothing == "DEMA"
+        2 * e1 - e2
+    else if smoothing == "TEMA"
+        3 * e1 - 3 * e2 + e3
+    else if smoothing == "HullMA"
+        wma(2 * wma(src, max(1, int(length / 2))) - wma(src, length), max(1, int(round(sqrt(length)))))
+    else if smoothing == "LSMA"
+        linreg(src, length, 0)
+    else
+        na
+
+//ASSIGN A MOVING AVERAGE RESULT TO A VARIABLE
+shortMA=ma(smoothingShort, pivot, periodShort)
+longMA=ma(smoothingLong, pivot, periodLong)
+exitMA=ma(smoothingExit, pivot, periodExit)
+
+//PLOT THOSE VARIABLES
+plot(shortMA, linewidth=4, color=color.yellow,title="The Short Moving Average")
+plot(longMA, linewidth=4, color=color.blue,title="The Long Moving Average")
+plot(exitMA, linewidth=1, color=color.red,title="The Exit CrossUnder Moving Average")
+
+
+
+//BUY STRATEGY
+buy = crossover(shortMA,longMA) ? true : na
+exit = crossunder(close,exitMA) ? true : na
+
+
+strategy.entry("long",true,when=buy and time_cond)
+// OPT-5078-02：信号退出不受日期门禁。
+// OPT-5078-02 保持：原参数、仓位及窗外退出
+// OPT-5078-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+strategy.close("long",when=exit)
+
+
+if (not time_cond)
+    strategy.close_all()

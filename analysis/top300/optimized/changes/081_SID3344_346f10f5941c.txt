@@ -1,0 +1,34 @@
+{
+  "rank": 81,
+  "sid": 3344,
+  "source_sha256": "4489fc04c14f89c40670bdb26f0aa0cfb098e029991f9ce865a7c917182c9da5",
+  "base_kind": "original",
+  "base_sha256": "f70df6ccd7e60cd238188895251196dd89f14cff8c8a90801d5940ccb8415931",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：布林下轨回穿且RSI较低做多，期待均值回归，入场逻辑清楚。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "退出需上轨下穿时RSI仍>70，同步过滤可能漏过；下行失败没有独立退出。 暂缓原因：更近退出可能截断反弹，增加亏损实现频率。"
+  ],
+  "validation_plan": [
+    "构造上轨回落时RSI65、之后始终走弱的路径，检查遗漏退出与持仓尾部。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "346f10f5941c",
+  "title": "基于布林带和相对强弱指数的动态区间突破交易策略-Dynamic-Range-Breakout-Trading-Strategy-Based-on-Bollinger-Bands-and-RSI",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/081_SID3344_346f10f5941c_original.pine",
+  "original": "originals/081_SID3344_346f10f5941c.pine",
+  "baseline": "baselines/081_SID3344_346f10f5941c.pine",
+  "changes": "changes/081_SID3344_346f10f5941c.txt",
+  "card": "cards/346f10f5941c.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "f70df6ccd7e60cd238188895251196dd89f14cff8c8a90801d5940ccb8415931",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

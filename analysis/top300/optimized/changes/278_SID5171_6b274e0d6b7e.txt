@@ -1,0 +1,38 @@
+{
+  "rank": 278,
+  "sid": 5171,
+  "source_sha256": "873c2df6cab88074ed01edd197260e02c0f2a02dff99c4586168d1977973da12",
+  "base_kind": "prior_candidate",
+  "base_sha256": "68985079cb68fb07c68e113e71bc552caccb858f2d648b6f4b37e9037f24623f",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；SMA5上穿双重SMA10买多，下穿平仓，图示及警报另含多空文本但实际仅多。 SMA与双重SMA交叉为简单仅多模型，但报警文字含做空/不同数量，和实际订单不一致。",
+  "patches": [],
+  "resolved": [
+    "恢复日期入口。",
+    "退出移出日期。"
+  ],
+  "remaining": [
+    "SMA与双重SMA交叉为简单仅多模型，但报警文字含做空/不同数量，和实际订单不一致。 后续验证：逐个多头入场/平仓事件对照报警payload方向与数量；保持订单回测不变。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；未进行原生Pine编译、回测或订单撮合验证；批准仅限所列静态修复。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "逐个多头入场/平仓事件对照报警payload方向与数量；保持订单回测不变。"
+  ],
+  "id": "6b274e0d6b7e",
+  "title": "经典移动平均线交叉策略Moving-Average-Crossover-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/278_SID5171_6b274e0d6b7e_candidate.pine",
+  "original": "originals/278_SID5171_6b274e0d6b7e.pine",
+  "baseline": "baselines/278_SID5171_6b274e0d6b7e.pine",
+  "changes": "changes/278_SID5171_6b274e0d6b7e.txt",
+  "card": "cards/6b274e0d6b7e.html",
+  "diff": "changes/278_SID5171_6b274e0d6b7e.patch",
+  "original_diff": "changes/278_SID5171_6b274e0d6b7e.original.patch",
+  "script_sha256": "ae89833adf96ba4e597a9cc62cf5d2165c8dcfd00cfdf472f031e182c1acb805",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

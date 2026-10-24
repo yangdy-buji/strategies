@@ -1,0 +1,34 @@
+{
+  "rank": 96,
+  "sid": 1169,
+  "source_sha256": "32a032560a7a9951c3980f22cecef65057f39533a2fcb7a795827777c2b34b1e",
+  "base_kind": "original",
+  "base_sha256": "faf99bfa1b3ed8842d95b04c9b92e135f6f8a583ecadcba4a84a592242e160f8",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：看跌三内下形态却做多，可能是反向假设而非编码错误；执行模型需先说明。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "触价仅清posprice且发生在当根订单判断后，下一根才平仓；重复形态会重锚。此前已标待设计，不能称已修。 暂缓原因：改做空或改挂止损都属于策略变更，不可直接继承旧收益。"
+  ],
+  "validation_plan": [
+    "对重复形态、当根触止盈止损、缺口及形态失败路径逐根标记状态与真实仓位。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "0164824bb810",
+  "title": "三内下反转策略Three-Inside-Down-Reversal-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/096_SID1169_0164824bb810_original.pine",
+  "original": "originals/096_SID1169_0164824bb810.pine",
+  "baseline": "baselines/096_SID1169_0164824bb810.pine",
+  "changes": "changes/096_SID1169_0164824bb810.txt",
+  "card": "cards/0164824bb810.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "faf99bfa1b3ed8842d95b04c9b92e135f6f8a583ecadcba4a84a592242e160f8",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

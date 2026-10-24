@@ -1,0 +1,34 @@
+{
+  "rank": 109,
+  "sid": 380,
+  "source_sha256": "026d882e6a6e53b4f5b0f2652560f023a7d5ffb5d4d4e9472fb73955871ca34d",
+  "base_kind": "original",
+  "base_sha256": "ea49d1a7935490701cb0530e3060cf6e9dbf24ab5e80f3a5c499c3a1d687632b",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：G通道状态为多时在EMA下方买回调、状态转空且价格反弹到EMA上方退出，规则简短可检验。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "出口等待反弹到EMA上方，持续下跌可能长期不退出；barssince在首个双边事件出现前可为na，通道从零初始化需足够预热。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "用持续下跌、均线反复穿越及首100-300柱对照，比较成本后持有时长、尾部损失而非仅总收益。"
+  ],
+  "id": "1f17677b8658",
+  "title": "G-Channel与EMA结合的趋势跟踪策略G-Channel-and-EMA-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/109_SID380_1f17677b8658_original.pine",
+  "original": "originals/109_SID380_1f17677b8658.pine",
+  "baseline": "baselines/109_SID380_1f17677b8658.pine",
+  "changes": "changes/109_SID380_1f17677b8658.txt",
+  "card": "cards/1f17677b8658.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ea49d1a7935490701cb0530e3060cf6e9dbf24ab5e80f3a5c499c3a1d687632b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

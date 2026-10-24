@@ -1,0 +1,36 @@
+{
+  "rank": 183,
+  "sid": 2528,
+  "source_sha256": "33305c9934051da23cd272e815819defc0afc12491b17a56ad4e941f2c37ce03",
+  "base_kind": "prior_candidate",
+  "base_sha256": "b8318adf5cb5ff9707a5cff0e0d6143775a29bc512cbbb2adaa6c1cbafff6a9b",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：开始结束时间未用于入场过滤；恢复函数范围，退出已经独立有效。",
+  "patches": [],
+  "resolved": [
+    "开始结束时间未用于入场过滤；恢复函数范围，退出已经独立有效。"
+  ],
+  "remaining": [
+    "AO允许负区改善入场；保留原状态编码，需正负区归因。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "测试边界及负AO上升、正AO下降的状态编码，保持出口窗外有效。"
+  ],
+  "id": "ab74e505f295",
+  "title": "均线震荡AO指标交易策略Moving-Average-AO-Indicator-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/183_SID2528_ab74e505f295_candidate.pine",
+  "original": "originals/183_SID2528_ab74e505f295.pine",
+  "baseline": "baselines/183_SID2528_ab74e505f295.pine",
+  "changes": "changes/183_SID2528_ab74e505f295.txt",
+  "card": "cards/ab74e505f295.html",
+  "diff": "changes/183_SID2528_ab74e505f295.patch",
+  "original_diff": "changes/183_SID2528_ab74e505f295.original.patch",
+  "script_sha256": "32c6a64878db457a161f388bc1964652dad7750d80e299c084ac074309566eb7",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

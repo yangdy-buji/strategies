@@ -1,0 +1,34 @@
+{
+  "rank": 62,
+  "sid": 1855,
+  "source_sha256": "51cb0d1985056a5c03206df5f6558e7762fe993da410d1d3ad440f81e8d4646b",
+  "base_kind": "original",
+  "base_sha256": "e1dc59908014061ca40bde2d2f66497a6f08ee143ef596a95e9032da048d37df",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：当前高点创55期新高且在长均线上买入、低点创20期新低退出，属于触价型突破。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "注释写收盘突破但代码用high/low相等，外包线可同根满足入退条件，不能按收盘海龟规则解释。 暂缓原因：收盘确认会减少假突破也会推迟入场。"
+  ],
+  "validation_plan": [
+    "构造同根创55期高和20期低的宽幅K线，逐单检查入场/平仓与下一根成交。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "fbdaeca8faa8",
+  "title": "历史价格突破型混合趋势交易系统HBTSHistorical-Breakout-Trend-System-with-Moving-Average-Filter-HBTS",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/062_SID1855_fbdaeca8faa8_original.pine",
+  "original": "originals/062_SID1855_fbdaeca8faa8.pine",
+  "baseline": "baselines/062_SID1855_fbdaeca8faa8.pine",
+  "changes": "changes/062_SID1855_fbdaeca8faa8.txt",
+  "card": "cards/fbdaeca8faa8.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e1dc59908014061ca40bde2d2f66497a6f08ee143ef596a95e9032da048d37df",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

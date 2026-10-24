@@ -1,0 +1,34 @@
+{
+  "rank": 127,
+  "sid": 2314,
+  "source_sha256": "31bccfb732a2a837a32637b29f647e7090b024d4ed100f2a411529c316bc2b7f",
+  "base_kind": "original",
+  "base_sha256": "c1926cb9710474046eef6e1a4085123d4427a6471968f103a8c3b35f47816da3",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：WVF恐慌恢复加价格行动过滤入场、随机指标超买金叉退出，具有可解释的反弹逻辑。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "RSI虽计算但不参与订单；退出是超买区的金叉而非常见死叉，可能有意抢先兑现，也可能造成不同持有分布。多种WVF开关主要是展示。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "分别归因两条入口及超买金叉/死叉出口的持有时间、尾部损失与交易成本。"
+  ],
+  "id": "814994acced2",
+  "title": "双重指标买入过滤买入信号策略Dual-Indicator-Filtered-Buy-Signal-Strategy",
+  "category": "均值回归",
+  "priority": "P2",
+  "script": "scripts/127_SID2314_814994acced2_original.pine",
+  "original": "originals/127_SID2314_814994acced2.pine",
+  "baseline": "baselines/127_SID2314_814994acced2.pine",
+  "changes": "changes/127_SID2314_814994acced2.txt",
+  "card": "cards/814994acced2.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "c1926cb9710474046eef6e1a4085123d4427a6471968f103a8c3b35f47816da3",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

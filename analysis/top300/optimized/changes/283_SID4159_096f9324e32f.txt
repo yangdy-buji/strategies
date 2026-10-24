@@ -1,0 +1,34 @@
+{
+  "rank": 283,
+  "sid": 4159,
+  "source_sha256": "f7ecf68d57f802d874006734ad08ba5f6eecc014a267869571da9f6079df6320",
+  "base_kind": "original",
+  "base_sha256": "2d3a2ae949f18971dfb8b129fe05d7b6058a2011ce0200ebe6fe95bf5f5f941d",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；超级趋势多头、RSI<65且价格>SMA50做多；超级趋势转空平多，收盘减1.5ATR单调收紧保护。 Supertrend、RSI、MA确认加只升不降ATR线结构较清楚；首次保护与信号价/实际成交的风险差仍需验证。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "Supertrend、RSI、MA确认加只升不降ATR线结构较清楚；首次保护与信号价/实际成交的风险差仍需验证。 后续验证：第二笔交易较低价格、跳空入场、短暂翻空再翻多及保护单时序核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "第二笔交易较低价格、跳空入场、短暂翻空再翻多及保护单时序核验。"
+  ],
+  "id": "096f9324e32f",
+  "title": "多维度趋势跟踪与波动率自适应止损策略-Multi-Dimensional-Trend-Following-Strategy-with-Volatility-Adaptive-Stop-Loss",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/283_SID4159_096f9324e32f_original.pine",
+  "original": "originals/283_SID4159_096f9324e32f.pine",
+  "baseline": "baselines/283_SID4159_096f9324e32f.pine",
+  "changes": "changes/283_SID4159_096f9324e32f.txt",
+  "card": "cards/096f9324e32f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2d3a2ae949f18971dfb8b129fe05d7b6058a2011ce0200ebe6fe95bf5f5f941d",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

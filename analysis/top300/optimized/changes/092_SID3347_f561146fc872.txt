@@ -1,0 +1,34 @@
+{
+  "rank": 92,
+  "sid": 3347,
+  "source_sha256": "8ecf44f45596871a50c663319b2f025ef63ca73f58c98133d1a2e5ee27b5bf2d",
+  "base_kind": "original",
+  "base_sha256": "cdda046facb9dafe64d4c341890f2e18147f1422e2b520cfd6669064b4161d2f",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：低于布林下轨直接做多、高于上轨离场，是典型逆势均值回归。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "没有等待恢复确认，也无止损/超时，单边下跌时可能长期持有；移动带并不保证价格回归。 暂缓原因：确认入场可能错过快速反弹，风控可能降低胜率。"
+  ],
+  "validation_plan": [
+    "单边下跌、波动扩张和长期不达上轨路径，逐股最差持仓、成本与后续样本比较。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "f561146fc872",
+  "title": "基于布林带均值回归策略The-Bollinger-Bands-Mean-Reversion-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/092_SID3347_f561146fc872_original.pine",
+  "original": "originals/092_SID3347_f561146fc872.pine",
+  "baseline": "baselines/092_SID3347_f561146fc872.pine",
+  "changes": "changes/092_SID3347_f561146fc872.txt",
+  "card": "cards/f561146fc872.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "cdda046facb9dafe64d4c341890f2e18147f1422e2b520cfd6669064b4161d2f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

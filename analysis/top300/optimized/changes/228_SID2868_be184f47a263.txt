@@ -1,0 +1,37 @@
+{
+  "rank": 228,
+  "sid": 2868,
+  "source_sha256": "df2f0c51c8f7e1c0477113add04475b6a2240a47349102b8ad26174b87c4a169",
+  "base_kind": "prior_candidate",
+  "base_sha256": "6c661fe22d2ae35002f384422e3f9ba7fd9620fa3c88aefbd4f7dd0af7e1a11b",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；RSI14低于25做多，均价+7%/-3.5%保护只在超卖分支提交。 RSI低于25买入是超卖均值回归，但画出的上穿入场与真实低于阈值入场不同。",
+  "patches": [],
+  "resolved": [
+    "保护单独立于入场信号，在有效持仓均价存在时每根维护。"
+  ],
+  "remaining": [
+    "RSI低于25买入是超卖均值回归，但画出的上穿入场与真实低于阈值入场不同。 后续验证：首笔成交后RSI立即恢复、7%/3.5%目标及图示对应订单检查。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；首次保护依赖成交后的下一次计算，未添加成交重算。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "首笔成交后RSI立即恢复、7%/3.5%目标及图示对应订单检查。"
+  ],
+  "id": "be184f47a263",
+  "title": "基于RSI的多头趋势追踪策略RSI-Trend-Tracking-Long-Only-Strategy",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/228_SID2868_be184f47a263_candidate.pine",
+  "original": "originals/228_SID2868_be184f47a263.pine",
+  "baseline": "baselines/228_SID2868_be184f47a263.pine",
+  "changes": "changes/228_SID2868_be184f47a263.txt",
+  "card": "cards/be184f47a263.html",
+  "diff": "changes/228_SID2868_be184f47a263.patch",
+  "original_diff": "changes/228_SID2868_be184f47a263.original.patch",
+  "script_sha256": "7804b8c99752994eb18cf1f61408209810928ec85e9b6673d92494726cf5d004",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

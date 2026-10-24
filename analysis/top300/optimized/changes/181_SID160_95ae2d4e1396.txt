@@ -1,0 +1,34 @@
+{
+  "rank": 181,
+  "sid": 160,
+  "source_sha256": "b343fd95b910d6a67f2b14d8fdc8e1658d2b65d385edb9c85e4cc67c938ada97",
+  "base_kind": "original",
+  "base_sha256": "213e8167b19f83b9e3c2485414a3ea881a5244d10ea12293c68d7a298a20a050",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：RSI过50与布林下轨回升同柱入场是明确的反转确认，但出口同柱双交叉可能非常稀疏。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "买入stop=BBlower在已上穿下轨时通常已处于可触发区域，并非持仓止损；RSI与上轨同时下穿才能退出，且长度200带来长预热。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "信号后跳空及两个出口交叉错开一柱案例；核对原生实际入场价和预热后完整样本。"
+  ],
+  "id": "95ae2d4e1396",
+  "title": "BollingerRSI双重策略仅多头v12Bollinger-RSI-Double-Strategy-Long-Only-v12",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/181_SID160_95ae2d4e1396_original.pine",
+  "original": "originals/181_SID160_95ae2d4e1396.pine",
+  "baseline": "baselines/181_SID160_95ae2d4e1396.pine",
+  "changes": "changes/181_SID160_95ae2d4e1396.txt",
+  "card": "cards/95ae2d4e1396.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "213e8167b19f83b9e3c2485414a3ea881a5244d10ea12293c68d7a298a20a050",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

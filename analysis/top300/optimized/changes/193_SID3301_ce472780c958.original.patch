@@ -1,0 +1,54 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,15 @@
++//@version=4
++// OPT-T300 SID 3301：沿用旧候选·未回测
++// 原文件SHA256：3606420c72ec2e7b8b4e83f7d1698da8a66c33cc1c1d3316c990ebdd6a9da3f8
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
++// 优化候选 conservative-v1 · 2026-10-24
++// 原文件：基于多重指标筛选与动态止损的自动交易策略Auto-Trading-Strategy-Based-on-Multiple-Indicators-and-Dynamic-Stop-Loss.md
++// 原文件SHA256：3606420c72ec2e7b8b4e83f7d1698da8a66c33cc1c1d3316c990ebdd6a9da3f8
++// SID：3301；原研究名单序号：27
++// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
++// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
++// 原backtest区块为原始资料配置，不代表本版本完成过回测。
++
+ /*backtest
+ start: 2023-09-18 00:00:00
+ end: 2023-09-18 21:00:00
+@@ -5,8 +17,6 @@
+ basePeriod: 15m
+ exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+ */
+-
+-//@version=4
+ strategy("STRAT_STEMWAP", overlay=true, pyramiding = 0, default_qty_value = 10, slippage = 3)
+ 
+ EMA_Smooth_Period = input(7, minval=1)
+@@ -119,13 +129,19 @@
+ 
+ 
+ if ( strategy.position_size <= 0 and ((fsignal[1] -fsignal) <= 0) and volume > VOLUME_CHECK_LONG and ( cross(signal, macd) or cross(signal[1], macd[1]) or cross(signal[2], macd[2]) or cross(signal[3], macd[3]) or cross(signal[4], macd[4]) or cross(signal[5], macd[5]) or cross(signal[6], macd[6]) or cross(signal[7], macd[7]) or  cross(signal[8], macd[8]) or  cross(signal[9], macd[9]) or  cross(signal[10], macd[10]) or  cross(signal[11], macd[11]) or  cross(signal[12], macd[12]) or  cross(signal[13], macd[13])  or cross(fmacd, macd) or cross(fmacd[1],macd[1]) or  cross(fmacd[2],macd[2]) or cross(fmacd[3],macd[3]) or cross(fmacd[4],macd[4])or cross(fsignal, fmacd)  or cross(fmacd, smacd) )  and (  (crossover(close,open+tol_atr) or crossover(close[1],open[1]+tol_atr[1]) or crossover(close[2],open[2]+tol_atr[2]) or crossover(close[3],open[3]+tol_atr[3]) or crossover(close[4],open[4]+tol_atr[4]) or crossover(close[5],open[5]+tol_atr[5]) or crossover(close[6],open[6]+tol_atr[6]) or crossover(close[7],open[7]+tol_atr[7]) or crossover(close[8],open[8]+tol_atr[8]) or crossover(close[9],open[9]+tol_atr[9]) or crossover(close[10],open[10]+tol_atr[10]) ) or ( (cross(ssignal, smacd) or cross(ssignal[1],smacd[1]) or cross(ssignal[2],smacd[2])) and ( (ssignal - ssignal[1]) > 0 ) ) )  )
+-    strategy.exit("SELL")
++    // OPT-3301-01：市价平仓必须调用close，exit缺少价格参数。
++    // OPT-3301-01 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-3301-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.close("SELL")
+     strategy.entry("BUY", strategy.long)
+     strategy.exit("BUY_STOP","BUY", stop = close - StopLoss_Initial_Long)
+     
+ 
+ if ( (dir == -1 and dir[1] == 1 and dir[2] == 1 and dir[3] == 1 and dir[4] == 1 ) and strategy.position_size >= 0 and volume > VOLUME_CHECK_SHORT and ((fsignal[1] -fsignal) >= 0)  and (  crossunder(close, open - tol_atr) or crossunder(close[1], open[1] - tol_atr[1]) or crossunder(close[2], open[2] - tol_atr[2]) or crossunder(close[3], open[3] - tol_atr[3]) )  and ( cross(signal, macd) or cross(signal[1], macd[1]) or cross(signal[2], macd[2]) or cross(signal[3], macd[3]) or cross(signal[4], macd[4]) or cross(signal[5], macd[5]) or cross(signal[6], macd[6]) or cross(signal[7], macd[7]) or  cross(signal[8], macd[8]) or  cross(signal[9], macd[9]) or  cross(signal[10], macd[10]) or  cross(signal[11], macd[11])  or  cross(signal[12], macd[12]) or  cross(signal[13], macd[13])  )  )
+-    strategy.exit( "BUY")
++    // OPT-3301-02：对称修复多头市价平仓API。
++    // OPT-3301-02 保持：保留默认参数、入场信号、仓位方向和数量；只修订单匹配、作用域或明确边界。
++    // OPT-3301-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
++    strategy.close("BUY")
+     strategy.entry("SELL", strategy.short)
+     strategy.exit("SELL_STOP","SELL", stop = close + StopLoss_Initial_Short)
+     
+@@ -142,4 +158,4 @@
+ 
+     
+     //strategy.exit("BUY_TRAIL_STOP","BUY", stop = SetStopLossLong)
+-    //strategy.exit("SELL_TRAIL_STOP","SELL", stop = SetStopLossShort)     +    //strategy.exit("SELL_TRAIL_STOP","SELL", stop = SetStopLossShort)     

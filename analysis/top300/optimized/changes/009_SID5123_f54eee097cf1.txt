@@ -1,0 +1,34 @@
+{
+  "rank": 9,
+  "sid": 5123,
+  "source_sha256": "6625c613e87714f09c8c0517a9a25414b1a5e61ad6b8eda5a69ea210833dd1bd",
+  "base_kind": "original",
+  "base_sha256": "2f1b71e6b9b13604ae9fb2b692dfcd2da0d255147575f629c0114de4f966ed8e",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：引用前柱唐奇安通道进行突破，避免用当前最高价作为不可达收盘突破阈值；属于清晰趋势基线。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "全权益配置与外部统一仓位不同；下轨或中轨退出是两种不同风险模型，不应事后择优解释。 暂缓原因：中轨退出更快但可能牺牲大趋势；下轨退出回撤较大。"
+  ],
+  "validation_plan": [
+    "对20周期及邻域、两种退出方式固定划分训练/验证期，核对所有股票的成交与风险集中度。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "f54eee097cf1",
+  "title": "突破追踪策略Breakout-Tracking-Strategy",
+  "category": "动量／突破",
+  "priority": "P2",
+  "script": "scripts/009_SID5123_f54eee097cf1_original.pine",
+  "original": "originals/009_SID5123_f54eee097cf1.pine",
+  "baseline": "baselines/009_SID5123_f54eee097cf1.pine",
+  "changes": "changes/009_SID5123_f54eee097cf1.txt",
+  "card": "cards/f54eee097cf1.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2f1b71e6b9b13604ae9fb2b692dfcd2da0d255147575f629c0114de4f966ed8e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

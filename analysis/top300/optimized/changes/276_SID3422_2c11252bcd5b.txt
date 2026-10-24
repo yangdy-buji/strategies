@@ -1,0 +1,37 @@
+{
+  "rank": 276,
+  "sid": 3422,
+  "source_sha256": "fd7a3fda84536ac031b14b09b47a4fb186b441eff946a2b0445296fc4ad44555",
+  "base_kind": "prior_candidate",
+  "base_sha256": "54d667f9c485690e1b9c33c5c622c83a9b6b175c34952e9cb598e81d2b7227b2",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；EMA100上且贴近支撑做多，按3%风险距离计算数量；50%在5ATR退出，余仓10ATR目标与支撑下止损。 上升趋势近支撑买入有解释性，但动态目标随价格上涨逃离、止损随支撑下降放宽；3%风险数量未加名义上限。",
+  "patches": [],
+  "resolved": [
+    "第一档50%无止损却预留仓位，第二档止损只能保护剩余部分；给首档补同一止损。"
+  ],
+  "remaining": [
+    "上升趋势近支撑买入有解释性，但动态目标随价格上涨逃离、止损随支撑下降放宽；3%风险数量未加名义上限。 后续验证：支撑下降、ATR扩张、目标随价逃离、50%退出后全部剩余保护核验。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；动态目标和止损随每根指标变化，未锁定入场。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "支撑下降、ATR扩张、目标随价逃离、50%退出后全部剩余保护核验。"
+  ],
+  "id": "2c11252bcd5b",
+  "title": "基于支持位和趋势EMA的多空策略-Support-Level-and-Trend-EMA-Based-Long-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/276_SID3422_2c11252bcd5b_candidate.pine",
+  "original": "originals/276_SID3422_2c11252bcd5b.pine",
+  "baseline": "baselines/276_SID3422_2c11252bcd5b.pine",
+  "changes": "changes/276_SID3422_2c11252bcd5b.txt",
+  "card": "cards/2c11252bcd5b.html",
+  "diff": "changes/276_SID3422_2c11252bcd5b.patch",
+  "original_diff": "changes/276_SID3422_2c11252bcd5b.original.patch",
+  "script_sha256": "0e2974cf4c9383b3eae4680c650f83a55848aa11cb20da01d8d4ea9980e2863e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

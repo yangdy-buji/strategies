@@ -1,0 +1,143 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 4632：本轮新候选·未回测
++// 原文件SHA256：cd1a0411f8e704d76a8815cbc42a28c23a408f6994607e302b6805cf7f2c482c
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-02-26 00:00:00
+ end: 2025-02-23 08:00:00
+@@ -20,8 +23,12 @@
+ 
+ // --- Support, Resistance, and Volume Calculation ---
+ lookback_support_resistance = 30
+-support_level = ta.lowest(low, lookback_support_resistance)
+-resistance_level = ta.highest(high, lookback_support_resistance)
++// OPT-T300-01 修改原因：支撑取前一已完成窗口，恢复向下突破可达性。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++support_level = ta.lowest(low, lookback_support_resistance)[1]
++// OPT-T300-02 修改原因：阻力取前一已完成窗口，恢复向上突破可达性。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++resistance_level = ta.highest(high, lookback_support_resistance)[1]
+ 
+ // --- Volume Condition for Short (Removed) ---
+ avg_volume_lookback = 20
+@@ -52,15 +59,12 @@
+ 
+ // --- Breakout Detection ---
+ var bool breakout_detected = false
+-if final_trend == "up" and close > resistance_level
+-    breakout_detected := true
+-    alert("شکست صعودی تشخیص داده شد! منتظر پولبک ?", alert.freq_once_per_bar)
+-else if final_trend == "down" and close < support_level
+-    breakout_detected := true
+-    alert("شکست نزولی تشخیص داده شد! منتظر پولبک ?", alert.freq_once_per_bar)
+-
++// OPT-T300-13 修改原因：突破检测移到旧仓清理之后，避免平仓确认清除本柱新突破或新R。
++// OPT-T300-13 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+ // --- Entry and Exit Conditions ---
+-var float position = 0.0
++// OPT-T300-03 修改原因：移除发单即持仓的虚拟数量，增加固定初始R。
++// OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++var float initial_risk = na
+ var float entry_price = 0.0
+ var float stop_loss_price = na
+ var bool take_profit_long = false  // Declare take_profit_long
+@@ -70,35 +74,68 @@
+ risk_per_trade_percent = 2.5  // افزایش ریسک به 2.5٪ برای موقعیت‌های بیشتر
+ 
+ 
++// OPT-T300-14 修改原因：旧仓清理先于新入场，平仓成交同柱新R不会被覆盖为NA。
++// OPT-T300-14 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
++if strategy.position_size == 0 and strategy.position_size[1] != 0
++    entry_price := 0.0
++    initial_risk := na
++    breakout_detected := false
++
++// OPT-T300-15 修改原因：独立突破冷却设计实验：每柱重新检测突破；突破当柱禁止新仓，后续非突破形态柱可入，消除空仓首次突破后的永久锁存。
++// OPT-T300-15 保持行为：保留前柱极值突破、candle-stop形态、真实持仓方向退出与固定初始R；仅定义突破阻断有效期为当前柱，不清新R。
++breakout_detected := false
++if final_trend == "up" and close > resistance_level
++    breakout_detected := true
++    alert("شکست صعودی تشخیص داده شد! منتظر پولبک ?", alert.freq_once_per_bar)
++else if final_trend == "down" and close < support_level
++    breakout_detected := true
++    alert("شکست نزولی تشخیص داده شد! منتظر پولبک ?", alert.freq_once_per_bar)
++
+ if not breakout_detected
+-    if position == 0 and is_candle_stop(final_trend)
++    // OPT-T300-04 修改原因：仅实际空仓允许新入场。
++    // OPT-T300-04 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    if strategy.position_size == 0 and is_candle_stop(final_trend)
+         risk_amount_usd = strategy.initial_capital * (risk_per_trade_percent / 100)
+         if final_trend == "up"
+             stop_loss_price := close * 0.975 // Stop loss at 2.5% below entry for longs
+             if (close - stop_loss_price) != 0
++                // OPT-T300-05 修改原因：风险金额除每份价格风险已得数量，取消重复除价格。
++                // OPT-T300-05 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+                 position_size_usd = risk_amount_usd / (close - stop_loss_price)
+-                amount = position_size_usd / close
++                amount = position_size_usd
+                 strategy.entry("Long", strategy.long, qty=amount)
+-                position := amount
++                // OPT-T300-07 修改原因：多头发单记录固定正风险距离，不假装成交。
++                // OPT-T300-07 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+                 entry_price := close
++                initial_risk := close - stop_loss_price
+         else if final_trend == "down"
+             stop_loss_price := close * 1.025 // Stop loss at 2.5% above entry for shorts
+             if (stop_loss_price - close) != 0
++                // OPT-T300-06 修改原因：风险金额除每份价格风险已得数量，取消重复除价格。
++                // OPT-T300-06 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+                 position_size_usd = risk_amount_usd / (stop_loss_price - close)
+-                amount = position_size_usd / close
++                amount = position_size_usd
+                 if rsi >= rsi_overbought // RSI condition for short entry - No Change, still using RSI but not enforcing it for now - Consider removing RSI condition as well for max trades
+                     strategy.entry("Short", strategy.short, qty=amount)
+-                    position := amount
++                    // OPT-T300-08 修改原因：空头发单记录固定正风险距离，不假装成交。
++                    // OPT-T300-08 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+                     entry_price := close
++                    initial_risk := stop_loss_price - close
+ 
+-if position > 0
++// OPT-T300-09 修改原因：只对已成交持仓评估保护。
++// OPT-T300-09 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if strategy.position_size != 0 and initial_risk > 0
+     profit_percent_long = (close - entry_price) / entry_price * 100
+     profit_percent_short = (entry_price - close) / entry_price * 100
+     loss_percent_long = (entry_price - close) / entry_price * 100
+     loss_percent_short = (close - entry_price) / entry_price * 100
+ 
+-    risk_reward_long = loss_percent_long != 0 ? profit_percent_long / loss_percent_long : (profit_percent_long != 0 ? 99999 : 0)
+-    risk_reward_short = loss_percent_short != 0 ? profit_percent_short / loss_percent_short : (profit_percent_short != 0 ? 99999 : 0)
++    // OPT-T300-10 修改原因：多头收益比以固定初始R为分母，消除恒等于-1。
++    // OPT-T300-10 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    risk_reward_long = (close - entry_price) / initial_risk
++    // OPT-T300-11 修改原因：空头收益比以固定初始R为分母。
++    // OPT-T300-11 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    risk_reward_short = (entry_price - close) / initial_risk
+ 
+ 
+     take_profit_long := profit_percent_long >= 7 and risk_reward_long >= 3
+@@ -106,14 +143,12 @@
+     take_profit_short := profit_percent_short >= 6 and risk_reward_short >= 3 // Reduced Take Profit for Shorts to 6% - No Change
+     stop_loss_hit_short := close >= stop_loss_price
+ 
+-    if (final_trend == "up" and (take_profit_long or stop_loss_hit_long)) or (final_trend == "down" and (take_profit_short or stop_loss_hit_short))
+-        if final_trend == "up"
+-            strategy.close("Long")
+-        else
+-            strategy.close("Short")
+-        position := 0
+-        entry_price := 0.0
+-        breakout_detected := false
++    // OPT-T300-12 修改原因：退出选择实际持仓方向，清理等待实际平仓确认。
++    // OPT-T300-12 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    if strategy.position_size > 0 and (take_profit_long or stop_loss_hit_long)
++        strategy.close("Long")
++    if strategy.position_size < 0 and (take_profit_short or stop_loss_hit_short)
++        strategy.close("Short")
+ 
+ // --- Plotting EMAs and Support/Resistance Levels ---
+ plot(ema5, color=color.blue, title="EMA5")

@@ -1,0 +1,68 @@
+{
+  "rank": 151,
+  "sid": 1791,
+  "source_sha256": "c90e3feed6725cae827031f7564f22d6632b3777c2e8204f0879c334468295a8",
+  "base_kind": "prior_candidate",
+  "base_sha256": "ba43fe5b121ebfe2ce141a80a21e036663e9e5fdc0bbf80b2e1f7e48da4dc54a",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "ATR/价格或权益非正时不定仓，保留既有50%名义上限。；入口拒绝无效数量，避免NA触发默认定仓。",
+  "patches": [
+    {
+      "old": "positionSize = math.min((strategy.equity * riskPercent/100) / atr, strategy.equity * 0.5 / close)",
+      "new": "positionSize = not na(atr) and atr > 0 and close > 0 and strategy.equity > 0 ? math.min((strategy.equity * riskPercent/100) / atr, strategy.equity * 0.5 / close) : na",
+      "reason": "ATR/价格或权益非正时不定仓，保留既有50%名义上限。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "ATR0/NA不下单；正ATR公式及上限不变。"
+      ]
+    },
+    {
+      "old": "if longCondition\n",
+      "new": "if longCondition and not na(positionSize) and positionSize > 0\n",
+      "reason": "入口拒绝无效数量，避免NA触发默认定仓。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "趋势信号真但ATR0不发单；已有仓位退出仍独立。"
+      ]
+    }
+  ],
+  "resolved": [
+    "季节逻辑固定OR只支持跨年；起月早于止月时全年均为真，须同时支持非跨年范围。",
+    "ATR/价格或权益非正时不定仓，保留既有50%名义上限。",
+    "入口拒绝无效数量，避免NA触发默认定仓。"
+  ],
+  "remaining": [
+    "保留0.5%/ATR定仓与50%名义上限；仍以通道下穿退出而非1ATR保护单。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "枚举12×12起止月份与全部月份，检查ATR低值和通道距离明显大于1ATR时实际风险。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "34a4b08f72c0",
+  "title": "动量自适应高斯通道多周期策略-Momentum-Adaptive-Gaussian-Channel-Multi-Period-Strategy",
+  "category": "动量／突破",
+  "priority": "P0",
+  "script": "scripts/151_SID1791_34a4b08f72c0_candidate.pine",
+  "original": "originals/151_SID1791_34a4b08f72c0.pine",
+  "baseline": "baselines/151_SID1791_34a4b08f72c0.pine",
+  "changes": "changes/151_SID1791_34a4b08f72c0.txt",
+  "card": "cards/34a4b08f72c0.html",
+  "diff": "changes/151_SID1791_34a4b08f72c0.patch",
+  "original_diff": "changes/151_SID1791_34a4b08f72c0.original.patch",
+  "script_sha256": "8be79994f5377dccca7002d73f91b00df27c28cb62a58ce8721a8c7756965f66",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "1d36305bf247a2dff578a60c0c94941e5169c1645a9f59470bcdec72adc8e234",
+    "review": "v6 ATR在条件外每根计算；正ATR/close/equity才算risk与50%名义上限的min，入口再拒NA/非正qty。Gaussian、Stoch RSI和季节逻辑保留，退出crossunder独立逐柱计算，不因无效数量关停退出。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保留0.5%/ATR定仓与50%名义上限；仍以通道下穿退出而非1ATR保护单。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

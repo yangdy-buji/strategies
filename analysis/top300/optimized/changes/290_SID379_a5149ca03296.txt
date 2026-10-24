@@ -1,0 +1,37 @@
+{
+  "rank": 290,
+  "sid": 379,
+  "source_sha256": "018f1de11ff1981b34306924918efed8f7cda007401605e5913955469029d757",
+  "base_kind": "prior_candidate",
+  "base_sha256": "022874343306239a74c0b05e84b972bd70b3d0824eecfc7cf552ea2acb79caea",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；G通道两侧穿越先后决定趋势转向，多空入场；每根收盘重设百分比止盈止损。 G通道状态翻转有趋势解释，但showcross显示开关直接控制订单，信号图标回移一根易误读。",
+  "patches": [],
+  "resolved": [
+    "多空保护使用不同ID，避免同ID修改。"
+  ],
+  "remaining": [
+    "G通道状态翻转有趋势解释，但showcross显示开关直接控制订单，信号图标回移一根易误读。 后续验证：关showcross是否原先停止交易、图标与订单实际时间、涨跌时保护移动验证。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；止盈止损随每根close移动，是否固定锚点属于设计选择。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "关showcross是否原先停止交易、图标与订单实际时间、涨跌时保护移动验证。"
+  ],
+  "id": "a5149ca03296",
+  "title": "G-Channel-Trend-Detection-Strategy-G-Channel趋势检测策略",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/290_SID379_a5149ca03296_candidate.pine",
+  "original": "originals/290_SID379_a5149ca03296.pine",
+  "baseline": "baselines/290_SID379_a5149ca03296.pine",
+  "changes": "changes/290_SID379_a5149ca03296.txt",
+  "card": "cards/a5149ca03296.html",
+  "diff": "changes/290_SID379_a5149ca03296.patch",
+  "original_diff": "changes/290_SID379_a5149ca03296.original.patch",
+  "script_sha256": "6aed29e224d889f645a1f1aa8753e3c1a10471d1e8890074bd0f86bab7e883b6",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

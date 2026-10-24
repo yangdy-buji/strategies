@@ -1,0 +1,31 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 5741：本轮新候选·未回测
++// 原文件SHA256：f0dbe549f62a5bc9ee7869dc7b6611bc38d79c9b3a8181923aaf1c7a90a65110
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：高级斐波那契回调与成交量加权价格行为交易策略-Advanced-Fibonacci-Retracement-and-Volume-Weighted-Price-Action-Trading-Strategy.md
+ // 原文件SHA256：f0dbe549f62a5bc9ee7869dc7b6611bc38d79c9b3a8181923aaf1c7a90a65110
+@@ -39,14 +42,18 @@
+ if (low < fibLow)
+     fibLow := low
+ 
++// OPT-T300-01 修改原因：独立分块设计实验：先发布累计块内极值，避免更新柱先重置为单柱高低。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+ if (bar_index % fibLength == 0)
+-    fibHigh := high
+-    fibLow := low
+     array.set(fibonacciLevels, 0, fibHigh)
+     array.set(fibonacciLevels, 1, fibHigh - 0.236 * (fibHigh - fibLow))
+     array.set(fibonacciLevels, 2, fibHigh - 0.382 * (fibHigh - fibLow))
+     array.set(fibonacciLevels, 3, fibHigh - 0.618 * (fibHigh - fibLow))
++    // OPT-T300-02 修改原因：分块发布后重置，下一柱开始新块，保持原更新节奏。
++    // OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+     array.set(fibonacciLevels, 4, fibLow)
++    fibHigh := na
++    fibLow := na
+ 
+ // Plot Fibonacci levels
+ plot(array.get(fibonacciLevels, 0), color=color.gray, linewidth=1, title="Fib 0%")

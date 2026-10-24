@@ -1,0 +1,20 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1715：本轮新候选·未回测
++// 原文件SHA256：11834d41ca9cdb13959622e673b0bd3c1108e112d0da58b97e1848f1fa6fe100
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2022-12-21 00:00:00
+ end: 2023-12-27 00:00:00
+@@ -39,7 +42,9 @@
+ float signal   = ta.sma(gapRatio, signalPeriod)
+ 
+ 
+-if strategy.opentrades <= 0 and signal > signal[1]
++// OPT-T300-01 修改原因：允许已有空头在上升信号时反转为多头。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if strategy.position_size <= 0 and signal > signal[1]
+     // buy at next open:
+     strategy.entry('long', strategy.long)
+ else if strategy.opentrades > 0 and signal < signal[1]

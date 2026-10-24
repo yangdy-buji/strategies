@@ -1,0 +1,34 @@
+{
+  "rank": 201,
+  "sid": 5579,
+  "source_sha256": "02fd5612c6546547b0a0bc7bcaf78f4bc75a36c56ef94eeb0bafb18c8f74a4a3",
+  "base_kind": "original",
+  "base_sha256": "95e7c8ce7e5e157f71495e36422affa83049f13d67cb2d64577efc27e4836b74",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；收盘或HA收盘穿越递归ATR止线做多100%权益，反向穿越平多。 ATR线反转做多可以解释，但所谓动态止损只是反向信号市价平仓，不是盘中止损单；标题多空而实际只多。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "ATR线反转做多可以解释，但所谓动态止损只是反向信号市价平仓，不是盘中止损单；标题多空而实际只多。 后续验证：用触线后收回及隔夜跳空路径比较信号平仓与挂单。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "用触线后收回及隔夜跳空路径比较信号平仓与挂单。"
+  ],
+  "id": "c85baf6d8eab",
+  "title": "量化多空趋势追踪动态止损策略-Quantitative-Long-Short-Trend-Tracking-Dynamic-Stop-Loss-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/201_SID5579_c85baf6d8eab_original.pine",
+  "original": "originals/201_SID5579_c85baf6d8eab.pine",
+  "baseline": "baselines/201_SID5579_c85baf6d8eab.pine",
+  "changes": "changes/201_SID5579_c85baf6d8eab.txt",
+  "card": "cards/c85baf6d8eab.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "95e7c8ce7e5e157f71495e36422affa83049f13d67cb2d64577efc27e4836b74",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

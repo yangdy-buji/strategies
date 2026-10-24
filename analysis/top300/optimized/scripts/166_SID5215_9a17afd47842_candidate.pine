@@ -1,0 +1,74 @@
+// OPT-T300 SID 5215：本轮新候选·未回测
+// 原文件SHA256：d4662b2e0554c12c564bea5febb42f9d6542019fa4c477dba18be814900c0480
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+/*backtest
+start: 2019-12-23 08:00:00
+end: 2024-11-11 00:00:00
+period: 1d
+basePeriod: 1d
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © PineCodersTASC
+
+//  TASC Issue: October 2024
+//     Article: Overbought/Oversold
+//              Oscillators: Useless Or Just Misused
+//  Article By: Francesco P. Bufi
+//    Language: TradingView's Pine Script™ v5
+// Provided By: PineCoders, for tradingview.com
+
+//@version=5
+title  ='TASC 2024.10 Adaptive Oscillator Threshold'
+stitle = 'AdapThrs'
+strategy(title, stitle, false, default_qty_type = strategy.percent_of_equity,
+         default_qty_value = 10, slippage = 5)
+
+// --- Inputs ---
+string sys    = input.string("BAT", "System", options=["Traditional", "BAT"])
+int rsiLen    = input.int(2, "RSI Length", 1)
+int buyLevel  = input.int(14, "Buy Level", 0)
+int adapLen   = input.int(8, "Adaptive Length", 2) 
+float adapK   = input.float(6, "Adaptive Coefficient")
+int exitBars  = input.int(28, "Fixed-Bar Exit", 1, group = "Strategy Settings")
+float DSL     = input.float(1600, "Dollar Stop-Loss", 0, group = "Strategy Settings")
+
+// --- Functions --- 
+//  Bufi's Adaptive Threshold
+BAT(float price, int length) =>
+    float sd = ta.stdev(price, length)
+    float lr = ta.linreg(price, length, 0)
+    float slope = (lr - price[length]) / (length + 1)
+    // OPT-T300-01 修改原因：BAT零方差/暖机返回NA，不伪造自适应阈值；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。
+    // OPT-T300-01 保持行为：保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。
+    not na(sd) and sd > 0 ? math.min(0.5, math.max(-0.5, slope / sd)) : na
+
+// --- Calculations ---
+float osc = ta.rsi(close, rsiLen)
+
+// Strategy entry rules
+// - Traditional system
+if sys == "Traditional" and osc < buyLevel
+    strategy.entry("long", strategy.long)
+// - BAT system 
+float thrs = buyLevel * adapK * BAT(close, adapLen)
+if sys == "BAT" and osc < thrs
+    strategy.entry("long", strategy.long)
+
+// Strategy exit rules
+// - Fixed-bar exit
+int nBar = bar_index - strategy.opentrades.entry_bar_index(0)
+if exitBars > 0 and nBar >= exitBars
+    strategy.close("long", "exit")
+// - Dollar stop-loss
+if DSL > 0 and strategy.opentrades.profit(0) <= - DSL
+    strategy.close("long", "Stop-loss", immediately = true)
+
+// Visuals
+rsiColor  = #1b9e77
+thrsColor = #d95f02
+rsiLine   = plot(osc, "RSI", rsiColor, 1)
+thrsLine  = plot(sys == "BAT" ? thrs : buyLevel, "Threshold", thrsColor, 1)
+zeroLine  = plot(0.0, "Zero", display = display.none)
+fill(zeroLine, thrsLine, sys == "BAT" ? thrs : buyLevel, 0.0, color.new(thrsColor, 60), na)

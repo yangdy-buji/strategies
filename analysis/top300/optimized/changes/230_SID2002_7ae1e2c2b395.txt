@@ -1,0 +1,34 @@
+{
+  "rank": 230,
+  "sid": 2002,
+  "source_sha256": "031d78a7d881b268a835c06152917dad3d83e1e169b7f55d50645aa6d45fd9a5",
+  "base_kind": "original",
+  "base_sha256": "d6146a49764ddfbedfe82ab41709c279e68365d965863e2f359fdb5694c6df1b",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；EMA20/50金叉做多，死叉或收盘达到信号价-2.5%/+4%时市价平多。 EMA交叉加百分比退出逻辑可读，但所谓止损是收盘判断市价平仓，且锚定信号收盘而非实际成交。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "EMA交叉加百分比退出逻辑可读，但所谓止损是收盘判断市价平仓，且锚定信号收盘而非实际成交。 后续验证：盘中跌破2.5%后收回、跳空低开和连续金叉重设锚点测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "盘中跌破2.5%后收回、跳空低开和连续金叉重设锚点测试。"
+  ],
+  "id": "7ae1e2c2b395",
+  "title": "双均线交叉动态止盈止损量化策略-Dual-Moving-Average-Crossover-with-Dynamic-Risk-Management-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/230_SID2002_7ae1e2c2b395_original.pine",
+  "original": "originals/230_SID2002_7ae1e2c2b395.pine",
+  "baseline": "baselines/230_SID2002_7ae1e2c2b395.pine",
+  "changes": "changes/230_SID2002_7ae1e2c2b395.txt",
+  "card": "cards/7ae1e2c2b395.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "d6146a49764ddfbedfe82ab41709c279e68365d965863e2f359fdb5694c6df1b",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

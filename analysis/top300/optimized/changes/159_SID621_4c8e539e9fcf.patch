@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 621：沿用旧候选·未回测
++// 原文件SHA256：ae4106355ea696bcb1e5c7cc84aebbc283beacd2efe0c211a07706d37be56054
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：N-Bars-Breakout-Strategy-N-Bars-突破策略.md
+ // 原文件SHA256：ae4106355ea696bcb1e5c7cc84aebbc283beacd2efe0c211a07706d37be56054

@@ -1,0 +1,15 @@
+{
+  "scope": "source-bound patches, independent review, local Python cases and output consistency only",
+  "native_compile": false,
+  "backtest": false,
+  "live_orders": false,
+  "commands": [
+    "python3 -m unittest discover -s tests -q",
+    "python3 -m tools.strategy_top300.verify"
+  ],
+  "limitations": [
+    "Local tests are not a Pine compiler or full execution engine",
+    "No measured performance improvement",
+    "Design experiments require native replay and out-of-sample validation"
+  ]
+}

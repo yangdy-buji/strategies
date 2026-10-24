@@ -1,0 +1,55 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 267：本轮新候选·未回测
++// 原文件SHA256：6bb6283befab41be260ae0222b20e75980dba9e6a33defd11355264df97d781b
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-04-06 00:00:00
+ end: 2025-04-06 00:00:00
+@@ -17,7 +20,9 @@
+ var float entryPrice = na
+ var float stopLoss = na
+ var float takeProfit = na
+-var bool inTrade = false
++// OPT-T300-02 修改原因：保护管理依实际成交而非发单即置位。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++inTrade = strategy.position_size > 0
+ var float breakEvenLevel = na
+ var float risk = na
+ 
+@@ -25,13 +30,16 @@
+ longCondition = close > ema34 and close[1] <= ema34[1]
+ 
+ // Set up the trade when the crossover occurs
+-if longCondition and not inTrade
++// OPT-T300-01 修改原因：入场要求真实空仓及正风险距离。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++if longCondition and strategy.position_size == 0 and close > low[1]
+     entryPrice := close
+     stopLoss := low[1]  // Set stop loss to the low of the previous candle (not the crossover candle)
+     risk := entryPrice - stopLoss
+     takeProfit := entryPrice + (risk * 10)  // 1:10 risk-to-reward ratio
+     strategy.entry("Long", strategy.long)
+-    inTrade := true
++// OPT-T300-03 修改原因：删除提前持仓标记。
++// OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+ 
+ // Move stop loss to break-even when 1:3 RR is reached
+ if inTrade and close >= entryPrice + (risk * 3)  // 1:3 RR reached
+@@ -42,10 +50,12 @@
+ if inTrade
+     if low <= stopLoss  // Stop loss condition
+         strategy.close("Long", comment="Stop Loss Hit")
+-        inTrade := false
+-    if high >= takeProfit  // Take profit condition
++    // OPT-T300-04 修改原因：同柱双触价只提交一次退出，保留止损优先顺序。
++    // OPT-T300-04 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    else if high >= takeProfit  // Take profit condition
+         strategy.close("Long", comment="Take Profit Hit")
+-        inTrade := false
++// OPT-T300-05 修改原因：退出提交后等待真实成交再结束管理。
++// OPT-T300-05 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+ 
+ // Optionally plot stop loss and take profit levels for visualization
+ plot(stopLoss, color=color.red, title="Stop Loss", linewidth=2, style=plot.style_line)

@@ -1,0 +1,31 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 3133：本轮新候选·未回测
++// 原文件SHA256：529ff5c124374088f73e744962b554396d6ccb45d87fdd5d899164fe26bd2c25
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2022-12-29 00:00:00
+ end: 2024-01-04 00:00:00
+@@ -28,7 +31,9 @@
+ ToYear       = input(defval = 9999, title = "To Year", minval = 2014)
+ 
+ // === FUNCTION EXAMPLE ===
+-window() => true
++// OPT-T300-01 修改原因：恢复ALL/MANUAL日期语义；DAYS/WEEKS缺少唯一时间锚，候选明确拒绝自动模式入场。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++window() => useRange == "ALL" or (useRange == "MANUAL" and time >= timestamp(FromYear, FromMonth, FromDay, 0, 0) and time <= timestamp(ToYear, ToMonth, ToDay, 23, 59))
+ 
+ // === LOGIC ===
+ buy  = crossover(sma(close, fastMA), sma(close, slowMA))         // buy when fastMA crosses over slowMA
+@@ -36,7 +41,9 @@
+ 
+ // === EXECUTION ===
+ strategy.entry("L", strategy.long, when=window() and buy)        // buy long when "within window of time" AND crossover
+-strategy.close("L", when=window() and sell)                      // sell long when "within window of time" AND crossunder         
++// OPT-T300-02 修改原因：已有仓位退出不被日期窗口阻断。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++strategy.close("L", when=sell)                      // sell long when "within window of time" AND crossunder         
+ 
+ // === PLOTTING ===
+ plot(sma(close, fastMA), title = 'FastMA', color = color.aqua, linewidth = 2, style = plot.style_line)    // plot FastMA

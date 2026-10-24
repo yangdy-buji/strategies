@@ -1,0 +1,39 @@
+{
+  "rank": 226,
+  "sid": 3524,
+  "source_sha256": "781a5390eac0d386576256d87fe959e19adc449fc5b814c1666fdacd80bf57b0",
+  "base_kind": "prior_candidate",
+  "base_sha256": "f03d593616365ea3fcc31e5473170114c888f9f2c04d63eec5f32ecdfe4ec5cb",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；阳线放量且ATR大于布林标准差做多，低点触及跟踪止损或高波动阴吞没平多。 低波动放量阳线买入假设清楚；末尾空仓清零会在下单尚未成交时抹去入场锚。",
+  "patches": [],
+  "resolved": [
+    "恢复可选结束时间的入场窗口。",
+    "不得因日期越界重置已有持仓跟踪止损。",
+    "将日期门槛下移至入场，退出控制流始终可达。"
+  ],
+  "remaining": [
+    "低波动放量阳线买入假设清楚；末尾空仓清零会在下单尚未成交时抹去入场锚。 后续验证：信号柱仍空仓、次柱成交、止损与新入场同柱分别逐根跟踪变量。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；空仓尾部会清零原entry_price/stop_loss_price，原统计与追踪初始化仍有语义疑点。；修复候选未原生编译/回测；旧排名收益不适用。",
+    "信号柱仍空仓、次柱成交、止损与新入场同柱分别逐根跟踪变量。"
+  ],
+  "id": "aa91859a9fd0",
+  "title": "基于相对成交量和趋势的交易策略Relative-Volume-Trend-Following-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/226_SID3524_aa91859a9fd0_candidate.pine",
+  "original": "originals/226_SID3524_aa91859a9fd0.pine",
+  "baseline": "baselines/226_SID3524_aa91859a9fd0.pine",
+  "changes": "changes/226_SID3524_aa91859a9fd0.txt",
+  "card": "cards/aa91859a9fd0.html",
+  "diff": "changes/226_SID3524_aa91859a9fd0.patch",
+  "original_diff": "changes/226_SID3524_aa91859a9fd0.original.patch",
+  "script_sha256": "d9d60b39ddb6bb7ead4d9fdfd98e1ecbf6a45e0f86b0039bab81c53be20f32bc",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

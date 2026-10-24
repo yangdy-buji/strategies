@@ -1,0 +1,54 @@
+/*backtest
+start: 2024-02-18 00:00:00
+end: 2025-02-17 00:00:00
+period: 1h
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © ahmetkaratas4238
+
+//@version=5
+strategy("İstanbul Stratejisi", overlay=true)
+
+// Bollinger Bantları Hesaplamaları
+bbLength = 20
+bbMult = 2.0
+basis = ta.sma(close, bbLength)
+dev = bbMult * ta.stdev(close, bbLength)
+upperBand = basis + dev
+lowerBand = basis - dev
+
+// RSI Hesaplamaları
+rsiLength = 14
+rsi = ta.rsi(close, rsiLength)
+rsiThreshold = 50
+
+// OBV Hesaplaması
+obv = ta.cum(volume * math.sign(ta.change(close)))  // ta.cum yerine ta.cumulative kullanılmalı
+obvTrend = ta.ema(obv, 10) > ta.ema(obv[1], 10)  // OBV'nin yükseliş trendinde olup olmadığını kontrol eder
+
+// ALIM ŞARTLARI
+buyCondition = close > basis and rsi > rsiThreshold and obvTrend
+
+// SATIM ŞARTI
+sellCondition = close < lowerBand
+
+// Alım İşlemi Aç
+if buyCondition
+    strategy.entry("Long", strategy.long)
+
+// Satım İşlemi Yap (Pozisyon Kapat)
+if sellCondition
+    strategy.close("Long")
+
+// Bollinger Bantlarını Göster
+plot(upperBand, title="Üst Bollinger Bandı", color=color.red)
+plot(lowerBand, title="Alt Bollinger Bandı", color=color.green)
+plot(basis, title="Orta Bollinger Bandı", color=color.blue)
+
+// Alım ve Satım Sinyallerini İşaretle
+plotshape(series=buyCondition, location=location.belowbar, color=color.green, style=shape.labelup, title="Alım Sinyali")
+plotshape(series=sellCondition, location=location.abovebar, color=color.red, style=shape.labeldown, title="Satım Sinyali")
+

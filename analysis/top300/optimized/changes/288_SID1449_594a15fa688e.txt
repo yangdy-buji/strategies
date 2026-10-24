@@ -1,0 +1,34 @@
+{
+  "rank": 288,
+  "sid": 1449,
+  "source_sha256": "0830884314d77aede1e489b85043496aedb061960250d0b3dfa6ce04d5bad537",
+  "base_kind": "original",
+  "base_sha256": "13757935be8545d445815d86e96109f3886e9f409838ebc80f35b7a9fbee90c7",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；RSI8低于28买2份最多2层，每次信号按收盘重设5%止损，收盘超过前高全平。 RSI低位买入并突破前高退出可解释，但持续超卖会反复下移止损，即使加仓被平台拒绝也改保护。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "RSI低位买入并突破前高退出可解释，但持续超卖会反复下移止损，即使加仓被平台拒绝也改保护。 后续验证：超过两次超卖信号、价格持续下跌、两层成交后第三信号仍重锚测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "超过两次超卖信号、价格持续下跌、两层成交后第三信号仍重锚测试。"
+  ],
+  "id": "594a15fa688e",
+  "title": "动态RSI超卖反弹交易策略结合止损优化模型-Dynamic-RSI-Oversold-Rebound-Trading-Strategy-with-Stop-Loss-Optimization-Model",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/288_SID1449_594a15fa688e_original.pine",
+  "original": "originals/288_SID1449_594a15fa688e.pine",
+  "baseline": "baselines/288_SID1449_594a15fa688e.pine",
+  "changes": "changes/288_SID1449_594a15fa688e.txt",
+  "card": "cards/594a15fa688e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "13757935be8545d445815d86e96109f3886e9f409838ebc80f35b7a9fbee90c7",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

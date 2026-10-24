@@ -1,0 +1,34 @@
+{
+  "rank": 54,
+  "sid": 3769,
+  "source_sha256": "9cbb9e8c9bc7162809599c56b1f980317ddbb76bec5628d6b19adef131b83d8c",
+  "base_kind": "original",
+  "base_sha256": "bfc3cfa14053dcdf59fae91b41f7f8966476711a2ee4030237e4cc4266fc5fe9",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：SMA50/200交叉加RSI过滤，入场防过热的意图可理解。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "死叉时RSI<=30会禁止退出，偏偏可能在急跌中发生；之后RSI回升也不会重新生成死叉。 暂缓原因：更及时退出可能错过超卖反弹。"
+  ],
+  "validation_plan": [
+    "模拟死叉时RSI20、后续回升40但均线仍死叉，核对是否持续持仓。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "70c802ee6fdd",
+  "title": "多周期均线与RSI动量交叉策略-Multi-Period-Moving-Average-and-RSI-Momentum-Cross-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/054_SID3769_70c802ee6fdd_original.pine",
+  "original": "originals/054_SID3769_70c802ee6fdd.pine",
+  "baseline": "baselines/054_SID3769_70c802ee6fdd.pine",
+  "changes": "changes/054_SID3769_70c802ee6fdd.txt",
+  "card": "cards/70c802ee6fdd.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "bfc3cfa14053dcdf59fae91b41f7f8966476711a2ee4030237e4cc4266fc5fe9",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

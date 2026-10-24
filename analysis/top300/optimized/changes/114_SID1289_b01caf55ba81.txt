@@ -1,0 +1,84 @@
+{
+  "rank": 114,
+  "sid": 1289,
+  "source_sha256": "adc0b92bfa36a0c19de60f481bad696d3fe49b15f940d7e4a59969f09b7c1ede",
+  "base_kind": "original",
+  "base_sha256": "92b485d6eae560c1e97d8d3358ea1c00df7868ef9a466c711f36dee5cfb91715",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "独立统计设计实验：每个信号从次柱跟踪严格七柱，首个结局唯一；同柱双触记歧义，不伪造触价先后。；统计表增加歧义及到期口径。；表格明确为信号事件统计而非订单绩效。；展示双触与到期计数，避免隐去未成功失败事件。",
+  "patches": [
+    {
+      "old": "// Tracking Performance Metrics\nvar int totalSignals = 0  // Total number of 'B' signals\nvar int successCount = 0  // Times price rose >2% from 'B' candle close\nvar int failureCount = 0  // Times price fell below 'B' candle low within 7 bars\n\n// Store entry price and low when signal occurs\nvar float entryPrice = na\nvar float entryLow = na\nvar int barCounter = na  // Bar counter for tracking 7-candle window\n\nif buyCondition\n    strategy.entry(\"Buy\", strategy.long)\n    totalSignals := totalSignals + 1  // Increment 'B' count\n    entryPrice := close\n    entryLow := low\n    barCounter := 0  // Reset counter when new 'B' signal appears\n\nif sellCondition\n    strategy.close(\"Buy\")  // Close the buy position on sell signal\n\n// Monitor for 7 candles only\nif not na(barCounter)\n    barCounter := barCounter + 1\n\n    // Check for Success (Price rises >2%)\n    success = high >= entryPrice * 1.02\n    if success\n        successCount := successCount + 1\n        entryPrice := na  // Reset entry price after success\n\n    // Check for Failure (Price falls below entryLow within 7 candles)\n    failure = low < entryLow and barCounter <= 7\n    if failure\n        failureCount := failureCount + 1\n        entryLow := na  // Reset entry low after failure\n\n    // Stop tracking after 7 candles\n    if barCounter > 7\n        barCounter := na\n\n",
+      "new": "// Signal-event outcomes, not filled-trade performance. Each signal is tracked separately.\nvar int totalSignals = 0\nvar int successCount = 0\nvar int failureCount = 0\nvar int ambiguousCount = 0\nvar int expiredCount = 0\nvar signalBars = array.new_int()\nvar signalPrices = array.new_float()\nvar signalLows = array.new_float()\n\n// Process previous signals before registering the current close-confirmed signal.\nif array.size(signalBars) > 0\n    for i = array.size(signalBars) - 1 to 0\n        age = bar_index - array.get(signalBars, i)\n        if age >= 1 and age <= 7\n            success = high >= array.get(signalPrices, i) * 1.02\n            failure = low < array.get(signalLows, i)\n            finished = success or failure or age == 7\n            if success and failure\n                ambiguousCount += 1\n            else if success\n                successCount += 1\n            else if failure\n                failureCount += 1\n            else if age == 7\n                expiredCount += 1\n            if finished\n                array.remove(signalBars, i)\n                array.remove(signalPrices, i)\n                array.remove(signalLows, i)\n\nif buyCondition\n    strategy.entry(\"Buy\", strategy.long)\n    totalSignals += 1\n    array.push(signalBars, bar_index)\n    array.push(signalPrices, close)\n    array.push(signalLows, low)\n\nif sellCondition\n    strategy.close(\"Buy\")\n\n",
+      "reason": "独立统计设计实验：每个信号从次柱跟踪严格七柱，首个结局唯一；同柱双触记歧义，不伪造触价先后。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "信号柱high超过2%不算成功；第7柱触发可算、第8柱不可；相邻信号独立；同柱成功/失败只计歧义。"
+      ]
+    },
+    {
+      "old": "columns=2, rows=4",
+      "new": "columns=2, rows=6",
+      "reason": "统计表增加歧义及到期口径。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "成功+失败+歧义+到期+未结事件数等于总信号数。"
+      ]
+    },
+    {
+      "old": "\"Metric\"",
+      "new": "\"Signal outcomes (not fills)\"",
+      "reason": "表格明确为信号事件统计而非订单绩效。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "重复信号即使没有加仓也属于事件统计。"
+      ]
+    },
+    {
+      "old": "    table.cell(performanceTable, 1, 3, str.tostring(failureCount), text_color=color.red)",
+      "new": "    table.cell(performanceTable, 1, 3, str.tostring(failureCount), text_color=color.red)\n    table.cell(performanceTable, 0, 4, \"Same-bar ambiguous\", text_color=color.white)\n    table.cell(performanceTable, 1, 4, str.tostring(ambiguousCount), text_color=color.white)\n    table.cell(performanceTable, 0, 5, \"Expired after 7 bars\", text_color=color.white)\n    table.cell(performanceTable, 1, 5, str.tostring(expiredCount), text_color=color.white)",
+      "reason": "展示双触与到期计数，避免隐去未成功失败事件。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "双触仅增加ambiguousCount。"
+      ]
+    }
+  ],
+  "resolved": [
+    "独立统计设计实验：每个信号从次柱跟踪严格七柱，首个结局唯一；同柱双触记歧义，不伪造触价先后。",
+    "统计表增加歧义及到期口径。",
+    "表格明确为信号事件统计而非订单绩效。",
+    "展示双触与到期计数，避免隐去未成功失败事件。"
+  ],
+  "remaining": [
+    "首个结局、双触歧义为独立统计design_experiment；不改变真实订单规则。",
+    "未原生编译或回测；事件统计不是交易收益。"
+  ],
+  "validation_plan": [
+    "信号柱先冲高后收盘、同柱双触及及第7/8柱案例，应各自只有定义允许的结果；逐笔与Strategy Tester对齐。"
+  ],
+  "id": "b01caf55ba81",
+  "title": "交叉动能趋势跟踪策略SMA-RSI交叉动量系统-Cross-Momentum-Trend-Following-Strategy-SMA-RSI-Cross-Momentum-System",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/114_SID1289_b01caf55ba81_candidate.pine",
+  "original": "originals/114_SID1289_b01caf55ba81.pine",
+  "baseline": "baselines/114_SID1289_b01caf55ba81.pine",
+  "changes": "changes/114_SID1289_b01caf55ba81.txt",
+  "card": "cards/b01caf55ba81.html",
+  "diff": "changes/114_SID1289_b01caf55ba81.patch",
+  "original_diff": "changes/114_SID1289_b01caf55ba81.original.patch",
+  "script_sha256": "557f5d175d4900710a96de24288c5ca6efb8581cef1b6f945afcc108fccc9e7e",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "c40990f2dda400ef672a0e615e3f6d88eec5adf1ec72c847a285de68b86f6922",
+    "review": "逐读统计和订单路径：先倒序处理存量数组，再登记本柱B信号，年龄1至7共七柱；成功/失败/双触/到期分支互斥，逆序删除三个数组同步，重叠信号独立，信号柱不使用自身high获胜。Buy订单和sellCondition关闭原样，表格六行索引0至5有效；属于信号统计设计实验。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "首个结局、双触歧义为独立统计design_experiment；不改变真实订单规则。",
+      "未原生编译或回测；事件统计不是交易收益。"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 141,
+  "sid": 4570,
+  "source_sha256": "dcf22719be93dc2a578a4b1e3f07564f51c43ad796d84d5fff64d1b2e4eca55b",
+  "base_kind": "original",
+  "base_sha256": "f66684d43759341ff1f26b9954d0a7be8fcb84c149742d05de61534ff9ac15cc",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：多种K线反转形态并联做多、相反形态退出，代码可追溯，但形态堆叠并不自动构成多重独立证据。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "全权益整股定仓，多个形态可能高度重合；缺少市场状态与风险边界，单个形态贡献被合并结果掩盖。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "对每个形态做留一消融、样本外年度与股票分布检查，测试资金低于股价时零数量。"
+  ],
+  "id": "6afb34911ead",
+  "title": "形态K线交易策略Candlestick-Patterns-Trading-Strategy",
+  "category": "待分类",
+  "priority": "P2",
+  "script": "scripts/141_SID4570_6afb34911ead_original.pine",
+  "original": "originals/141_SID4570_6afb34911ead.pine",
+  "baseline": "baselines/141_SID4570_6afb34911ead.pine",
+  "changes": "changes/141_SID4570_6afb34911ead.txt",
+  "card": "cards/6afb34911ead.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "f66684d43759341ff1f26b9954d0a7be8fcb84c149742d05de61534ff9ac15cc",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

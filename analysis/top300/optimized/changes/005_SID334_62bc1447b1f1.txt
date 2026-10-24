@@ -1,0 +1,34 @@
+{
+  "rank": 5,
+  "sid": 334,
+  "source_sha256": "0c9c03dc11a489f10b2badd228d40a8b461912c371626ab48c3e6d5b1c106070",
+  "base_kind": "original",
+  "base_sha256": "5e97146857d18f62987467ffbfd96ed28700989812b533085bee23a1fbe02ba4",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：SMA2穿越EMA21加减ATR通道，具有波动尺度适应性；入场和退出简洁，是可保留的基线。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "通道退出依赖收盘交叉，100%权益及隔夜跳空风险未被硬性限制；旧Pine版本也需原生验证。 暂缓原因：增加止损会改变原有追踪风格，不能假设必然改善。"
+  ],
+  "validation_plan": [
+    "比较正常与双倍成本，21周期附近参数，跳空低开及拆股复权数据；核对信号根与成交根。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "62bc1447b1f1",
+  "title": "EMA多头突破过滤交易策略EMA-Breakout-Filter-Long-Only-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/005_SID334_62bc1447b1f1_original.pine",
+  "original": "originals/005_SID334_62bc1447b1f1.pine",
+  "baseline": "baselines/005_SID334_62bc1447b1f1.pine",
+  "changes": "changes/005_SID334_62bc1447b1f1.txt",
+  "card": "cards/62bc1447b1f1.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "5e97146857d18f62987467ffbfd96ed28700989812b533085bee23a1fbe02ba4",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

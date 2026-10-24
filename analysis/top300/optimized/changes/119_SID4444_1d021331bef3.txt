@@ -1,0 +1,34 @@
+{
+  "rank": 119,
+  "sid": 4444,
+  "source_sha256": "e7138d7b684097b70df9949da2b47b88d009a40a0989ac0be6f60bb84edb7555",
+  "base_kind": "original",
+  "base_sha256": "11e84b95db16bd75368fffc24e9548b1a8bb15b9280899e0ccc5bc85532a0f3e",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留原版：布林带与RSI双重极值买低卖高，规则完整而简单，适合做均值回归基线，不等于已证明稳定获利。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "入场为状态而非穿越；出口要求上轨和RSI超买同时成立，长期弱势可能持续持有且没有时间或金额止损。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "按牛熊/横盘分段、持仓时长分位数及极端跳空损失评估，并看RSI/BB邻域而非单点最优。"
+  ],
+  "id": "1d021331bef3",
+  "title": "布林带RSI交易策略-Bollinger-Bands-RSI-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P2",
+  "script": "scripts/119_SID4444_1d021331bef3_original.pine",
+  "original": "originals/119_SID4444_1d021331bef3.pine",
+  "baseline": "baselines/119_SID4444_1d021331bef3.pine",
+  "changes": "changes/119_SID4444_1d021331bef3.txt",
+  "card": "cards/1d021331bef3.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "11e84b95db16bd75368fffc24e9548b1a8bb15b9280899e0ccc5bc85532a0f3e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,57 @@
+{
+  "rank": 166,
+  "sid": 5215,
+  "source_sha256": "d4662b2e0554c12c564bea5febb42f9d6542019fa4c477dba18be814900c0480",
+  "base_kind": "original",
+  "base_sha256": "608bfaa8961be2f738e3ab48531716bba7597ebc33362ada458015413d2d56b5",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "BAT零方差/暖机返回NA，不伪造自适应阈值；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+  "patches": [
+    {
+      "old": "    math.min(0.5, math.max(-0.5, slope / sd))",
+      "new": "    not na(sd) and sd > 0 ? math.min(0.5, math.max(-0.5, slope / sd)) : na",
+      "reason": "BAT零方差/暖机返回NA，不伪造自适应阈值；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。",
+      "preserved": "保留有效数据下原参数、信号、数量公式及Pine版本；不引入中性值或沿用旧值伪造可交易数据。",
+      "validation_cases": [
+        "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+      ]
+    }
+  ],
+  "resolved": [
+    "BAT零方差/暖机返回NA，不伪造自适应阈值；暖机或零分母返回NA，不填中性0/50也不延续旧信号；取舍是恢复后穿越可能须等待下一对有效柱，避免凭空触发订单。"
+  ],
+  "remaining": [
+    "负BAT阈值停止买入为原公式；DSL1600是金额阈值、计算时才退出，风险比例与即时执行需原生回放。",
+    "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "平价/负趋势阈值、固定28柱边界、账户规模倍增和跳空越过DSL情形逐笔检查。",
+    "分母NA与0均为NA；有效分母4、分子2仍为0.5；从平价转非平价不制造之前不存在的中性穿越。"
+  ],
+  "id": "9a17afd47842",
+  "title": "自适应RSI震荡阈值动态交易策略-Adaptive-RSI-Oscillator-Dynamic-Trading-Strategy-with-Threshold-Optimization",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/166_SID5215_9a17afd47842_candidate.pine",
+  "original": "originals/166_SID5215_9a17afd47842.pine",
+  "baseline": "baselines/166_SID5215_9a17afd47842.pine",
+  "changes": "changes/166_SID5215_9a17afd47842.txt",
+  "card": "cards/9a17afd47842.html",
+  "diff": "changes/166_SID5215_9a17afd47842.patch",
+  "original_diff": "changes/166_SID5215_9a17afd47842.original.patch",
+  "script_sha256": "b2815c639d3be82cae2b54bfcdae2bb19689d621a987bda0e635d27ac514f2cf",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "52e127020294669db1d06c87c0e218fb6e011c2a61a55d6d3fbd95466e3ac03c",
+    "review": "v5 BAT每柱调用，stdev和linreg先计算后guard；标准差零/NA不计算slope/sd，无伪中性阈值。Traditional分支、实际opentrades持有柱数和DSL金额退出不受guard影响。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "负BAT阈值停止买入为原公式；DSL1600是金额阈值、计算时才退出，风险比例与即时执行需原生回放。",
+      "数值取舍：零分母/暖机保持NA，不填中性或延用旧信号；恢复后的穿越可能等待下一对有效柱，避免虚假首柱信号。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

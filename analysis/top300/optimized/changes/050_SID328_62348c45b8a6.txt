@@ -1,0 +1,34 @@
+{
+  "rank": 50,
+  "sid": 328,
+  "source_sha256": "849c81b42f367192dd9dbf7f331ff91b8634807667689c37b077dd9ae798ec71",
+  "base_kind": "original",
+  "base_sha256": "e73e5a853d0dc6c3f31e338cc2909b88e34920c3aa5861cf6b84943b0cf697d8",
+  "action": "unchanged",
+  "change_type": "none",
+  "summary": "保留现有交易核心：实际是价格突破30期高低EMA通道而非34/76/144交叉，核心趋势逻辑可保留。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "标题及多条显示EMA容易使用户以为有多均线确认；通道内维持持仓。 暂缓原因：简化显示不改交易；新增均线过滤将改变交易集合。"
+  ],
+  "validation_plan": [
+    "删除只绘图EMA后订单应一致，测试通道长度邻域、震荡与跳空。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "62348c45b8a6",
+  "title": "EMA均线交叉与短期信号策略-EMA-Crossover-with-Short-term-Signals-Strategy",
+  "category": "趋势跟随",
+  "priority": "P2",
+  "script": "scripts/050_SID328_62348c45b8a6_original.pine",
+  "original": "originals/050_SID328_62348c45b8a6.pine",
+  "baseline": "baselines/050_SID328_62348c45b8a6.pine",
+  "changes": "changes/050_SID328_62348c45b8a6.txt",
+  "card": "cards/62348c45b8a6.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "e73e5a853d0dc6c3f31e338cc2909b88e34920c3aa5861cf6b84943b0cf697d8",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

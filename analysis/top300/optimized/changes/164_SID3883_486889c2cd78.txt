@@ -1,0 +1,38 @@
+{
+  "rank": 164,
+  "sid": 3883,
+  "source_sha256": "02ce2e430748815e7aa1762cb67b30c4f7df0278c3b8358f41cdb19fb24a97b4",
+  "base_kind": "prior_candidate",
+  "base_sha256": "b88d00efc3463e0971937bea1901d66c2cefc31c79876fc7ca633cf0b9f68875",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原警报固定1000与真实配置不符；常量消息改为明确指向buy_amount参数。；原警报固定1000与真实配置不符；常量消息改为明确指向buy_amount参数。；原警报固定1000与真实配置不符；常量消息改为明确指向buy_amount参数。",
+  "patches": [],
+  "resolved": [
+    "原警报固定1000与真实配置不符；常量消息改为明确指向buy_amount参数。",
+    "原警报固定1000与真实配置不符；常量消息改为明确指向buy_amount参数。",
+    "原警报固定1000与真实配置不符；常量消息改为明确指向buy_amount参数。"
+  ],
+  "remaining": [
+    "层级购买标志在提交时置真，默认无叠仓且创新高才重置；是否启用DCA与各层风险预算需独立设计。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "一步跳跌20%、逐步跨三层、订单被拒及回升5%但未创新高的路径核对真实层数和预算。"
+  ],
+  "id": "486889c2cd78",
+  "title": "多层级跌幅ATH动态追踪三段买入策略-Multi-level-ATH-Dynamic-Tracking-Triple-Entry-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/164_SID3883_486889c2cd78_candidate.pine",
+  "original": "originals/164_SID3883_486889c2cd78.pine",
+  "baseline": "baselines/164_SID3883_486889c2cd78.pine",
+  "changes": "changes/164_SID3883_486889c2cd78.txt",
+  "card": "cards/486889c2cd78.html",
+  "diff": "changes/164_SID3883_486889c2cd78.patch",
+  "original_diff": "changes/164_SID3883_486889c2cd78.original.patch",
+  "script_sha256": "2218bc74daa4846623de4ca35fd1917c50304c81f93f99fd4de095383444a9f2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

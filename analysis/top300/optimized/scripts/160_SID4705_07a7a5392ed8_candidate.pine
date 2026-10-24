@@ -1,0 +1,108 @@
+//@version=5
+// OPT-T300 SID 4705：本轮新候选·未回测
+// 原文件SHA256：4d24800b441b063df4a1aedbc8357f3e3c7a9f2c63fce02cf1322f6abe32d0b0
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：日内多头突破策略-Intraday-Bullish-Breakout-Strategy.md
+// 原文件SHA256：4d24800b441b063df4a1aedbc8357f3e3c7a9f2c63fce02cf1322f6abe32d0b0
+// SID：4705；原研究名单序号：36
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © LuxTradeVenture
+strategy("Intraday Bullish Script", overlay=true, margin_long=100, margin_short=100)
+
+
+
+// Settings for Strategy 1
+entryCondition1 = input.bool(true, title="Use Entry Condition - Strategy 1")
+
+// Input for ATR multiplier for stop loss 
+atrMultiplierforstoploss = input.float(2, title="ATR Multiplier for Stop Loss")
+
+// Input for ATR multiplier for target price
+atrMultiplierforlongs = input.float(4, title="ATR Multiplier for Target Price")
+
+// Calculate ATR
+atrLength = input.int(14, title="ATR Length")
+atrValue = ta.atr(atrLength)
+
+// Swing low condition - Strategy 1
+swingLow1 = low == ta.lowest(low, 12) or low[1] == ta.lowest(low, 12)
+
+
+/// 
+maj_qual = 6  //input(6)
+maj_len = 30  //input(30)
+min_qual = 5  //input(5)
+min_len = 5  //input(5)
+
+lele(qual, len) =>
+    bindex = 0.0
+    bindex := nz(bindex[1], 0)
+    sindex = 0.0
+    sindex := nz(sindex[1], 0)
+    ret = 0
+    if close > close[4]
+        bindex := bindex + 1
+        bindex
+    if close < close[4]
+        sindex := sindex + 1
+        sindex
+    if bindex > qual and close < open and high >= ta.highest(high, len)
+        bindex := 0
+        ret := -1
+        ret
+    if sindex > qual and close > open and low <= ta.lowest(low, len)
+        sindex := 0
+        ret := 1
+        
+major = lele(maj_qual, maj_len)
+minor = lele(min_qual, min_len)
+
+ExaustionLow  = major ==  1 ? 1 : 0
+
+Bullish3LineStrike = close[3] < open[3] and close[2] < open[2] and close[1] < open[1] and close > open[1]
+
+// Entry and Exit Logic for Strategy 2
+// Create variables to track trade directions and entry prices for each strategy
+var int tradeDirection1 = na
+
+var float entryLongPrice1 = na
+
+
+// Calculate entry prices for long positions - Strategy 1
+// OPT-T300-01 修改原因：仅有效空仓入场形态更新信号价，持仓重复形态不改写保护基准。
+// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+if (entryCondition1 and strategy.position_size == 0 and (swingLow1 or Bullish3LineStrike))
+    entryLongPrice1 := close
+    tradeDirection1 := 1
+
+
+
+// Calculate target prices for long positions based on ATR - Strategy 1
+targetLongPrice1 = entryLongPrice1 + (atrMultiplierforlongs * atrValue)
+
+
+
+// Calculate stop loss prices for long positions based on entry - Strategy 1
+stopLossLongPrice1 = entryLongPrice1 - (atrMultiplierforstoploss * atrValue)
+
+
+// Entry conditions for Strategy 1
+// OPT-4705-01：策略启用开关没有接入订单条件。
+// OPT-4705-01 保持：原参数、仓位及方向
+// OPT-4705-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (entryCondition1 and tradeDirection1 == 1 and (swingLow1 or Bullish3LineStrike))
+    strategy.entry("Long - Strategy 1", strategy.long)
+
+
+// Exit conditions for long positions: When price reaches or exceeds the target - Strategy 1
+if (close >= targetLongPrice1)
+    strategy.close("Long - Strategy 1", comment="Take Profit Hit")
+
+// Exit conditions for long positions: When price hits stop loss - Strategy 1
+if (close <= stopLossLongPrice1)
+    strategy.close("Long - Strategy 1", comment="Stop Loss Hit")

@@ -1,0 +1,34 @@
+{
+  "rank": 296,
+  "sid": 1672,
+  "source_sha256": "8f6e6c26bca32746398388feac4e3a43dc1d5c686d3bebd18d374fad4f67b5af",
+  "base_kind": "original",
+  "base_sha256": "139e274833c29298782007dcd9b569427a2fd2b3cba8be18bac91b144686fa1d",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；价格相对60柱高低中点上穿0且突破两柱前高、Vortex金叉做多；反向动量退出，另以当前价格换算tick止盈止损。 区间位置与Vortex同根交叉是动量确认；0.1直接乘close代表10%而非0.1%，距离每根随close重算。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "区间位置与Vortex同根交叉是动量确认；0.1直接乘close代表10%而非0.1%，距离每根随close重算。 后续验证：输入0.1/10的百分比预期、mintick换算、持仓涨跌时目标/损失距离变化测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "输入0.1/10的百分比预期、mintick换算、持仓涨跌时目标/损失距离变化测试。"
+  ],
+  "id": "491653f40480",
+  "title": "动量价格爬坡型加密货币策略Momentum-Price-Climbing-Crypto-Currency-Strategy",
+  "category": "动量／突破",
+  "priority": "P1",
+  "script": "scripts/296_SID1672_491653f40480_original.pine",
+  "original": "originals/296_SID1672_491653f40480.pine",
+  "baseline": "baselines/296_SID1672_491653f40480.pine",
+  "changes": "changes/296_SID1672_491653f40480.txt",
+  "card": "cards/491653f40480.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "139e274833c29298782007dcd9b569427a2fd2b3cba8be18bac91b144686fa1d",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

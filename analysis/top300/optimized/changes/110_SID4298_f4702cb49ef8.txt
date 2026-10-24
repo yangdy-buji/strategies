@@ -1,0 +1,35 @@
+{
+  "rank": 110,
+  "sid": 4298,
+  "source_sha256": "1e1c4f7e3c8f626dd5895b14debb342b9f422c7840f087aa4200a56808264724",
+  "base_kind": "original",
+  "base_sha256": "4bd63fc608480340e351ad5bab581492303596b652c11f0ab53176b50e1f3fe4",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：终身极值、固定滚动窗口或确认pivot锚会产生不同回撤层级，未给摆动定义，不能直接选窗口。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "终身极值、固定滚动窗口或确认pivot锚会产生不同回撤层级，未给摆动定义，不能直接选窗口。",
+    "fib高低仅在上涨收盘更新且永不按新摆动重置；有序fib阈值的OR条件化简为买入close>fib61、卖出close<fib38，其他水平冗余。pivot只绘图不进入订单。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "以相同价格路径不同历史起点比较fib线与信号，消融pivot/冗余阈值应不改变原成交。"
+  ],
+  "id": "f4702cb49ef8",
+  "title": "多重支撑阻力位叠加动量反转交易策略-Multi-Level-Support-Resistance-Momentum-Reversal-Trading-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/110_SID4298_f4702cb49ef8_original.pine",
+  "original": "originals/110_SID4298_f4702cb49ef8.pine",
+  "baseline": "baselines/110_SID4298_f4702cb49ef8.pine",
+  "changes": "changes/110_SID4298_f4702cb49ef8.txt",
+  "card": "cards/f4702cb49ef8.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "4bd63fc608480340e351ad5bab581492303596b652c11f0ab53176b50e1f3fe4",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

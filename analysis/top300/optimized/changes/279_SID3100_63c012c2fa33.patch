@@ -1,0 +1,20 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 3100：本轮新候选·未回测
++// 原文件SHA256：1e4ed9752080d24e43b00f7b801d6375d18126c2e9677362e48bbe02d4fa0a1c
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2019-12-23 08:00:00
+ end: 2024-11-25 08:00:00
+@@ -24,7 +27,9 @@
+ sumDown = ta.sma(down, cmoPeriod) * cmoPeriod
+ 
+ // Calculate the Chande Momentum Oscillator (CMO)
+-cmo = 100 * (sumUp - sumDown) / (sumUp + sumDown)
++// OPT-T300-01 修改原因：完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。
++// OPT-T300-01 保持行为：原交易信号阈值、仓位和其余退出设计；不调整参数。
++cmo = sumUp + sumDown == 0 ? 0.0 : 100 * (sumUp - sumDown) / (sumUp + sumDown)
+ 
+ // Define the entry and exit conditions
+ buyCondition = cmo < -50

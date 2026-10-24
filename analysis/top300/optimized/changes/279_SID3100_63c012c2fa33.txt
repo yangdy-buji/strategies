@@ -1,0 +1,57 @@
+{
+  "rank": 279,
+  "sid": 3100,
+  "source_sha256": "1e4ed9752080d24e43b00f7b801d6375d18126c2e9677362e48bbe02d4fa0a1c",
+  "base_kind": "original",
+  "base_sha256": "253044d10e204f84edc828f54ce1ec056204dcd2c7e0f240b517fab85143a54f",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "最小边界修复：完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。",
+  "patches": [
+    {
+      "old": "cmo = 100 * (sumUp - sumDown) / (sumUp + sumDown)",
+      "new": "cmo = sumUp + sumDown == 0 ? 0.0 : 100 * (sumUp - sumDown) / (sumUp + sumDown)",
+      "reason": "完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。",
+      "preserved": "原交易信号阈值、仓位和其余退出设计；不调整参数。",
+      "validation_cases": [
+        "0/0窗口中性0；上涨窗口100、下跌-100；暖机na继续传播。"
+      ]
+    }
+  ],
+  "resolved": [
+    "完整无涨跌窗口CMO取中性0，避免0/0；非零窗口与原信号阈值保持。"
+  ],
+  "remaining": [
+    "五根计时仍从最近超卖条件起算，持续超卖可延期；持仓计时设计未改。",
+    "未原生编译、回放或回测。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "0/0窗口中性0；上涨窗口100、下跌-100；暖机na继续传播。",
+    "原生Pine编译和逐柱回放待执行。"
+  ],
+  "id": "63c012c2fa33",
+  "title": "基于动量震荡交易的自适应趋势跟踪策略-Adaptive-Trend-Following-Strategy-Based-on-Momentum-Oscillator",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/279_SID3100_63c012c2fa33_candidate.pine",
+  "original": "originals/279_SID3100_63c012c2fa33.pine",
+  "baseline": "baselines/279_SID3100_63c012c2fa33.pine",
+  "changes": "changes/279_SID3100_63c012c2fa33.txt",
+  "card": "cards/63c012c2fa33.html",
+  "diff": "changes/279_SID3100_63c012c2fa33.patch",
+  "original_diff": "changes/279_SID3100_63c012c2fa33.original.patch",
+  "script_sha256": "9accebcbc39c734340ff2b05a4d515c8536fa33e7de7d33d70474c9c81ad1ef3",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "c7fcfc2e6d51852accc71b59e53f2aebb8258bba975661bfa80c2f8f86c8bf57",
+    "review": "总涨跌为零时CMO取中性0，非零公式不变，单向上涨/下跌分别100/-100。完整源码仍逐柱计算SMA与barssince；买入设置inTrade后退出分支不会因同一超卖条件立刻触发计时退出。连续超卖重置计时的原设计保留。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "五根计时仍从最近超卖条件起算，持续超卖可延期；持仓计时设计未改。",
+      "未原生编译、回放或回测。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

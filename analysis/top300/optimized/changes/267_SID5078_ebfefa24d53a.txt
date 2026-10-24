@@ -1,0 +1,59 @@
+{
+  "rank": 267,
+  "sid": 5078,
+  "source_sha256": "ede224e98e2f0a7873a3774bc58b918baba20120655f25124ff478422c127d68",
+  "base_kind": "prior_candidate",
+  "base_sha256": "b2c8f38a9bb15bb7f2f72d643fa0aa203bb34c02c3dab6e9fbadd278d222a476",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "新增候选：SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。",
+  "patches": [
+    {
+      "old": "ma(smoothing, src, length) => \n    if smoothing == \"RMA\"\n        rma(src, length)\n    else\n        if smoothing == \"SMA\"\n            sma(src, length)\n        else \n            if smoothing == \"EMA\"\n                ema(src, length)\n            else \n                if smoothing == \"WMA\"\n                    wma(src, length)\n\t\t\t\telse\n\t\t\t\t\tif smoothing == \"VWMA\"\n\t\t\t\t\t\tvwma(src, length)\n\t\t\t\t\telse\n\t\t\t\t\t\tif smoothing == \"SMMA\"\n\t\t\t\t\t\t\tna(src[1]) ? sma(src, length) : (src[1] * (length - 1) + src) / length\n\t\t\t\t\t\t\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tif smoothing == \"HullMA\"\n\t\t\t\t\t\t\t\twma(2 * wma(src, length / 2) - wma(src, length), round(sqrt(length)))\n\n\n\n\n",
+      "new": "ma(smoothing, src, length) =>\n    e1 = ema(src, length)\n    e2 = ema(e1, length)\n    e3 = ema(e2, length)\n    if smoothing == \"RMA\" or smoothing == \"SMMA\"\n        rma(src, length)\n    else if smoothing == \"SMA\"\n        sma(src, length)\n    else if smoothing == \"EMA\"\n        e1\n    else if smoothing == \"WMA\"\n        wma(src, length)\n    else if smoothing == \"VWMA\"\n        vwma(src, length)\n    else if smoothing == \"DEMA\"\n        2 * e1 - e2\n    else if smoothing == \"TEMA\"\n        3 * e1 - 3 * e2 + e3\n    else if smoothing == \"HullMA\"\n        wma(2 * wma(src, max(1, int(length / 2))) - wma(src, length), max(1, int(round(sqrt(length)))))\n    else if smoothing == \"LSMA\"\n        linreg(src, length, 0)\n    else\n        na\n\n",
+      "reason": "SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。",
+      "preserved": "EMA默认、价格源pivot、13/48/30周期和已有日期及退出修复。",
+      "validation_cases": [
+        "SMMA长度3前均值10当前16为12，不取前价格；全部10个选项有实现；Hull长度1。"
+      ]
+    }
+  ],
+  "resolved": [
+    "日期条件恒真。",
+    "信号退出不受日期门禁。",
+    "SMMA采用前一平滑值递推的内置rma；补齐菜单DEMA/TEMA/LSMA，Hull长度1不传零窗口。"
+  ],
+  "remaining": [
+    "SMMA采用Wilder/RMA的SMA种子约定；菜单非默认选项会改变交易集合，需分别原生编译回测。",
+    "保留原日期窗外close_all。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "已补齐DEMA/TEMA/LSMA分支；用常量与阶跃短序列验证SMMA/RMA递推及DEMA/TEMA组合和LSMA线性拟合端点。",
+    "默认EMA、日期门禁与窗外退出保持；所有10个菜单选项待原生Pine编译和回测。"
+  ],
+  "id": "ebfefa24d53a",
+  "title": "移动平均线金叉交易策略Moving-Average-Crossover-Trading-Strategy",
+  "category": "待分类",
+  "priority": "P0",
+  "script": "scripts/267_SID5078_ebfefa24d53a_candidate.pine",
+  "original": "originals/267_SID5078_ebfefa24d53a.pine",
+  "baseline": "baselines/267_SID5078_ebfefa24d53a.pine",
+  "changes": "changes/267_SID5078_ebfefa24d53a.txt",
+  "card": "cards/ebfefa24d53a.html",
+  "diff": "changes/267_SID5078_ebfefa24d53a.patch",
+  "original_diff": "changes/267_SID5078_ebfefa24d53a.original.patch",
+  "script_sha256": "d43723860e3b8005c847410a705029abb87c55726f4cab16c222e64f88a70607",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "7ef128b08bb25056bfe671bfa9f017dfb44526975233db46a2e6e98e46cf8b35",
+    "review": "逐项核对所有菜单分支及三个全局ma调用。每次ma调用每柱先更新e1/e2/e3，DEMA/TEMA递归输入完整；smoothing为固定input，因此RMA/SMMA选中分支每柱执行，不产生条件切换造成的漏更新。SMMA使用rma的SMA种子与前值递推，LSMA为零偏移linreg；Hull半长/平方根长至少1。默认EMA、pivot源、三个周期、日期入口和窗外close_all保留。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "SMMA采用Wilder/RMA的SMA种子约定；菜单非默认选项会改变交易集合，需分别原生编译回测。",
+      "保留原日期窗外close_all。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

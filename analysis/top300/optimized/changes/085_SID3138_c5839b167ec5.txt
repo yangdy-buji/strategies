@@ -1,0 +1,34 @@
+{
+  "rank": 85,
+  "sid": 3138,
+  "source_sha256": "93d89bc2b80febb9bb1d080fc77927c410bd0cf05792eff231ed45239bf55017",
+  "base_kind": "original",
+  "base_sha256": "2234c128886989148df9c3a2260159d564fa3c3c0216e759165f7eac3542ea6c",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：DMI交叉叠加ADX/EMA并用手工状态限制重复信号，方向逻辑可解释。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "入场/退出ADX阈值不同，退出30更高可能忽略弱趋势失效；firstbuybar等在发单而非成交更新，与真实仓位可能偏离。 暂缓原因：状态修复或阈值调整会改变拒单/反手路径。"
+  ],
+  "validation_plan": [
+    "模拟ADX20-30区间反向交叉、同根反手与旧仓close、拒单后的手工标记一致性。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "c5839b167ec5",
+  "title": "基于双向运动量指数策略Overlay-Trend-Signals-Strategy",
+  "category": "待分类",
+  "priority": "P1",
+  "script": "scripts/085_SID3138_c5839b167ec5_original.pine",
+  "original": "originals/085_SID3138_c5839b167ec5.pine",
+  "baseline": "baselines/085_SID3138_c5839b167ec5.pine",
+  "changes": "changes/085_SID3138_c5839b167ec5.txt",
+  "card": "cards/c5839b167ec5.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "2234c128886989148df9c3a2260159d564fa3c3c0216e759165f7eac3542ea6c",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,54 @@
+//@version=4
+// OPT-T300 SID 3552：沿用旧候选·未回测
+// 原文件SHA256：5d52c84c20f80928990d437199a9169f7e6eace40c07752ef9f22bd9dd9da856
+// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：基于移动平均线均回复策略Based-on-the-Moving-Average-Reversion-Strategy.md
+// 原文件SHA256：5d52c84c20f80928990d437199a9169f7e6eace40c07752ef9f22bd9dd9da856
+// SID：3552；原研究名单序号：187
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2023-02-20 00:00:00
+end: 2024-02-26 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// OPT-3552-01：版本注解格式错误。
+// OPT-3552-01 保持：原参数、仓位及方向
+// OPT-3552-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+//
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+//
+// @author Sunil Halai
+//
+// This very simple strategy is an implementation of PJ Sutherlands' Jaws Mean reversion algorithm. It simply buys when a small moving average period (e.g. 2) is below
+// a longer moving average period (e.g. 5) by a certain percentage, and closes when the small period average crosses over the longer moving average. 
+// 
+// If you are going to use this, you may wish to apply this to a range of investment assets, as the amount signals is low. Alternatively you may wish to tweak the settings to provide more
+// signals.
+
+
+strategy("Jaws Mean Reversion [Strategy]", overlay = true)
+
+//Strategy inputs
+source = input(title = "Source", defval = close)
+smallMAPeriod = input(title = "Small Moving Average", defval = 2)
+bigMAPeriod = input(title = "Big Moving Average", defval = 5)
+percentBelowToBuy = input(title = "Percent below to buy %", defval = 3)
+
+
+//Strategy calculation
+smallMA = sma(source, smallMAPeriod)
+bigMA =  sma(source, bigMAPeriod) 
+buyMA = ((100 - percentBelowToBuy) / 100) * sma(source, bigMAPeriod)[0]
+
+if(crossunder(smallMA, buyMA))
+    strategy.entry("BUY", strategy.long)
+
+if(crossover(smallMA, bigMA))
+    strategy.close("BUY")

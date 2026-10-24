@@ -1,0 +1,51 @@
+/*backtest
+start: 2024-11-26 00:00:00
+end: 2024-12-25 08:00:00
+period: 3h
+basePeriod: 3h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+strategy("Bollinger Bands Strategy", overlay=true, initial_capital=86, default_qty_type=strategy.percent_of_equity)
+
+// Parameter für die Bollinger-Bänder
+length = input.int(20, title="Bollinger Bands Length")
+mult = input.float(2.0, title="Bollinger Bands Multiplier")
+
+// Berechnung der Bollinger-Bänder
+basis = ta.sma(close, length)
+upper = basis + mult * ta.stdev(close, length)
+lower = basis - mult * ta.stdev(close, length)
+
+// Startkapital
+usdt_balance = 86.0 // Anfangsbetrag in USDT
+zerebro_balance = 52.0 // Anfangsbetrag in ZEREBRO
+
+// Bedingungen für Kauf- und Verkaufssignale
+longCondition = ta.crossover(close, lower)
+shortCondition = ta.crossunder(close, upper)
+
+// Kauf- und Verkaufslogik
+if (longCondition and usdt_balance > 0)
+    strategy.entry("Buy", strategy.long, qty=usdt_balance / close)
+    usdt_balance := 0 // Alle USDT werden verwendet
+    zerebro_balance += strategy.position_size // Gekaufte ZEREBRO hinzufügen
+
+if (shortCondition and zerebro_balance > 0)
+    strategy.close("Buy")
+    usdt_balance += strategy.position_size * close // Verkaufserlös in USDT
+    zerebro_balance := 0 // Alle ZEREBRO verkauft
+
+// Plot der Bollinger-Bänder
+plot(basis, color=color.blue, title="Basis")
+plot(upper, color=color.green, title="Upper Band")
+plot(lower, color=color.red, title="Lower Band")
+
+// Alerts für Bybit-Verbindung
+alertcondition(longCondition, title="Buy Alert", message='{"action": "buy", "symbol": "ZEREBRO/USDT"}')
+alertcondition(shortCondition, title="Sell Alert", message='{"action": "sell", "symbol": "ZEREBRO/USDT"}')
+
+// Automatische Verknüpfung mit Bybit
+// Stellen Sie sicher, dass Sie den Webhook-URL in TradingView einstellen und korrekt mit Bybit verbinden.
+

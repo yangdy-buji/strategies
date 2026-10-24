@@ -1,0 +1,54 @@
+{
+  "rank": 136,
+  "sid": 803,
+  "source_sha256": "60e45c45d07888a62d994b63d63ace6743d04311af50b2981e9c98f125f3a3af",
+  "base_kind": "original",
+  "base_sha256": "999059a2d82a01c661d16d6da99f133e978e7d1cc3a95152fb0860fc9d5cc62a",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "仅空仓初始化信号收盘锚，重复RSI下穿不刷新已有固定止损。",
+  "patches": [
+    {
+      "old": "if (buyCondition)",
+      "new": "if (buyCondition and strategy.position_size == 0)",
+      "reason": "仅空仓初始化信号收盘锚，重复RSI下穿不刷新已有固定止损。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "入场100止损95；再次下穿收盘90，原版止损85.5漏退，候选保持95触发退出。"
+      ]
+    }
+  ],
+  "resolved": [
+    "仅空仓初始化信号收盘锚，重复RSI下穿不刷新已有固定止损。"
+  ],
+  "remaining": [
+    "保留信号收盘价锚及收盘确认市价退出；成交滑点与首个持仓柱保护需原生验证。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "以上100→90反例为局部推演，需原生回放验证；另测加仓关闭、跳空、平仓后第二次独立入场。"
+  ],
+  "id": "8ce5bfbf1fc0",
+  "title": "RSI基于百分比止盈止损的交易策略-RSI-based-Trading-Strategy-with-Percentage-based-Take-Profit-and-Stop-Loss",
+  "category": "均值回归",
+  "priority": "P0",
+  "script": "scripts/136_SID803_8ce5bfbf1fc0_candidate.pine",
+  "original": "originals/136_SID803_8ce5bfbf1fc0.pine",
+  "baseline": "baselines/136_SID803_8ce5bfbf1fc0.pine",
+  "changes": "changes/136_SID803_8ce5bfbf1fc0.txt",
+  "card": "cards/8ce5bfbf1fc0.html",
+  "diff": "changes/136_SID803_8ce5bfbf1fc0.patch",
+  "original_diff": "changes/136_SID803_8ce5bfbf1fc0.original.patch",
+  "script_sha256": "fd4b9b10279c9b6cb9980651c14633d0666a07649e8203f44260f8964a41a10c",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "3ab6d7901a9f3216925894af1532b3027c3f124a1596f450b9bf24dd9f28469c",
+    "review": "v5空仓buyCondition仍先初始化entryPrice及TP/SL再发Buy，首笔保护不会缺锚；持仓重复RSI下穿不改锚，平仓成交同柱的新信号重新初始化，后面无清理覆盖。保留信号close锚而非假称成交均价，RSI退出ID一致。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "保留信号收盘价锚及收盘确认市价退出；成交滑点与首个持仓柱保护需原生验证。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

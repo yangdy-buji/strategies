@@ -1,0 +1,38 @@
+{
+  "rank": 236,
+  "sid": 2687,
+  "source_sha256": "2bc4ac72d2bd702f1bd450c7d23900c0e403b4341af5d4530a5262663f59468a",
+  "base_kind": "prior_candidate",
+  "base_sha256": "c71080ed9ca9eb4d64bb102207ab3ca33692a31c1353fc948acdde973520c808",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；EMA5/20金叉做多100%权益，死叉平仓；起止时间输入未生效。 EMA5/20仅多交叉是适合基准的简单模型，优化应优先成本稳健性而非堆叠指标。",
+  "patches": [],
+  "resolved": [
+    "恢复时间输入。",
+    "解除平仓的日期限制。"
+  ],
+  "remaining": [
+    "EMA5/20仅多交叉是适合基准的简单模型，优化应优先成本稳健性而非堆叠指标。 后续验证：恢复日期前后仅窗内新增交易、窗外退出，费用翻倍与邻域参数对照。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "恢复日期前后仅窗内新增交易、窗外退出，费用翻倍与邻域参数对照。"
+  ],
+  "id": "99b8a5ba4496",
+  "title": "基于EMA指标的趋势跟踪策略EMA-Crossover-Trend-Following-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/236_SID2687_99b8a5ba4496_candidate.pine",
+  "original": "originals/236_SID2687_99b8a5ba4496.pine",
+  "baseline": "baselines/236_SID2687_99b8a5ba4496.pine",
+  "changes": "changes/236_SID2687_99b8a5ba4496.txt",
+  "card": "cards/99b8a5ba4496.html",
+  "diff": "changes/236_SID2687_99b8a5ba4496.patch",
+  "original_diff": "changes/236_SID2687_99b8a5ba4496.original.patch",
+  "script_sha256": "f36ee3433b7ee99284d33238e5ce11995e3328da191e143ad25639b718a28853",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

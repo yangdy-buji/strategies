@@ -1,0 +1,23 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1603：本轮新候选·未回测
++// 原文件SHA256：d809ee1366f2902c077a49154d183890e9164aee21c706a7b374f0b1e6211343
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-09-01 00:00:00
+ end: 2025-02-18 08:00:00
+@@ -29,7 +32,12 @@
+ [macdLine, signalLine, _] = ta.macd(close, 12, 26, 9) 
+ lowestK = ta.lowest(k, lengthRSI) 
+ highestK = ta.highest(k, lengthRSI) 
+-normalizedMacd = (macdLine - ta.lowest(macdLine, lengthRSI)) / (ta.highest(macdLine, lengthRSI) - ta.lowest(macdLine, lengthRSI)) * (highestK - lowestK) + lowestK 
++// OPT-T300-01 修改原因：MACD最高值与最低值相等时不存在唯一归一化坐标，显式返回NA并跳过除法；避免任意补0、中点或k改变交易集合。 极值先逐根无条件计算，零分母判断只处理缓存标量。
++// OPT-T300-01 保持行为：正常振幅映射、暖机NA、differenceKD独立买卖分支及动态ATR保护保持；不宣称原版NA行为已造成错误成交。
++macdLow = ta.lowest(macdLine, lengthRSI)
++macdHigh = ta.highest(macdLine, lengthRSI)
++macdRange = macdHigh - macdLow
++normalizedMacd = macdRange == 0 ? na : (macdLine - macdLow) / macdRange * (highestK - lowestK) + lowestK 
+ differenceKMacd = k - normalizedMacd 
+ 
+ // Sum both differences for a unique display

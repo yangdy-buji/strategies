@@ -1,0 +1,40 @@
+{
+  "rank": 224,
+  "sid": 3405,
+  "source_sha256": "d24e89fe877202bb18c21cd8f6fa241ea7ef8d083794beddc547dba5e874d32d",
+  "base_kind": "prior_candidate",
+  "base_sha256": "ae837364ebe972b2f973c9f9759df312837dbb14ee952ece61e9b80a4f6014f4",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；平滑OHLC4的EMA12/26状态转换，支持只多、只空或双向，单向反信号平仓。 双重平滑EMA转向有清晰因果性；日期候选恢复后需分别衡量仅多、仅空和双向的收益来源。",
+  "patches": [],
+  "resolved": [
+    "恢复模式入场时间范围。",
+    "单向多仓退出独立。",
+    "单向空仓退出独立。",
+    "双向模式窗外只平原仓，禁止反向新开。"
+  ],
+  "remaining": [
+    "双重平滑EMA转向有清晰因果性；日期候选恢复后需分别衡量仅多、仅空和双向的收益来源。 后续验证：三模式逐笔一致性、窗外仅平不反手、横盘成本敏感度测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "三模式逐笔一致性、窗外仅平不反手、横盘成本敏感度测试。"
+  ],
+  "id": "eee00608c188",
+  "title": "基于快速移动均线和慢速移动均线的量化交易策略Dual-Moving-Average-Breakout-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/224_SID3405_eee00608c188_candidate.pine",
+  "original": "originals/224_SID3405_eee00608c188.pine",
+  "baseline": "baselines/224_SID3405_eee00608c188.pine",
+  "changes": "changes/224_SID3405_eee00608c188.txt",
+  "card": "cards/eee00608c188.html",
+  "diff": "changes/224_SID3405_eee00608c188.patch",
+  "original_diff": "changes/224_SID3405_eee00608c188.original.patch",
+  "script_sha256": "8794bbe3203917a100684d715ee7545dda65e38a3705a15a8341e49fd18690c2",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

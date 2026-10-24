@@ -1,0 +1,88 @@
+{
+  "rank": 216,
+  "sid": 5429,
+  "source_sha256": "ae51429d65571b20dbfbd24b5b02cbfce544f490669d1f8e2d76ffdeed9cad9c",
+  "base_kind": "original",
+  "base_sha256": "bffa92202ec77cbf26477cb4fb6ebe21c681434d2d3577eabff525e4b0f63fbf",
+  "action": "new_patch",
+  "change_type": "mixed",
+  "summary": "新增候选：采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。；仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。；仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。；等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。",
+  "patches": [
+    {
+      "old": "warunek_wyjscia = downtrend and close > sma and ta.crossover(close, sma)",
+      "new": "warunek_wyjscia = ta.crossover(close, sma)",
+      "reason": "采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。",
+      "preserved": "原低波动逆势做多入口和百分比目标保持。",
+      "validation_cases": [
+        "前close99/SMA100，现101应可退出；原矛盾条件不可达。"
+      ]
+    },
+    {
+      "old": "if (warunek_wejscia)\n    stop_loss",
+      "new": "if (warunek_wejscia and strategy.position_size == 0)\n    stop_loss",
+      "reason": "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+      "preserved": "不增加仓位或改默认信号。",
+      "validation_cases": [
+        "持仓连续信号不改初始索引和止损。"
+      ]
+    },
+    {
+      "old": "if (warunek_wejscia)\n    strategy.entry",
+      "new": "if (warunek_wejscia and strategy.position_size == 0)\n    strategy.entry",
+      "reason": "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+      "preserved": "不增加仓位或改默认信号。",
+      "validation_cases": [
+        "持仓连续信号不改初始索引和止损。"
+      ]
+    },
+    {
+      "old": "if (strategy.opentrades != 0)\n    if (rsi > 70)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=take_profit)\n    else if (bar_index - indeks_wejscia == wait_bars)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=stop_loss, limit=take_profit)\n\n",
+      "new": "if (strategy.opentrades != 0)\n    if (bar_index - indeks_wejscia >= wait_bars)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", stop=stop_loss, limit=take_profit)\n    else if (rsi > 70)\n        strategy.exit(\"Take Profit/Stop Loss\", \"Long\", limit=take_profit)\n\n",
+      "reason": "等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。",
+      "preserved": "保留等待期仅RSI超买挂目标的原规则和默认等待3根。",
+      "validation_cases": [
+        "第3根RSI80仍含stop；第4根继续保护。"
+      ]
+    }
+  ],
+  "resolved": [
+    "采用价格上穿SMA即退出的明确设计假设，去除同柱上下均线矛盾。",
+    "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+    "仅空仓入口初始化等待时间及保护价格，避免持仓持续信号重置。",
+    "等待达到后持续维护同一保护括号，RSI超买不再覆盖掉已启用止损。"
+  ],
+  "remaining": [
+    "上穿SMA退出是独立设计选择；等待从信号柱起算，等待期间可能无止损。",
+    "tp_multiplier=1.5仍表示+150%目标而非1.5R，未擅自修改。",
+    "未原生编译、订单撮合或回测。",
+    "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+  ],
+  "validation_plan": [
+    "连续十根入场条件、RSI>70、等待根数到达和趋势上穿均应有明确退出路径。"
+  ],
+  "id": "e24c7aaa99b3",
+  "title": "趋势过滤与异常退出的平滑移动平均止损止盈策略-Smooth-Moving-Average-Stop-Loss-Take-Profit-Strategy-with-Trend-Filter-and-Exception-Exit",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/216_SID5429_e24c7aaa99b3_candidate.pine",
+  "original": "originals/216_SID5429_e24c7aaa99b3.pine",
+  "baseline": "baselines/216_SID5429_e24c7aaa99b3.pine",
+  "changes": "changes/216_SID5429_e24c7aaa99b3.txt",
+  "card": "cards/e24c7aaa99b3.html",
+  "diff": "changes/216_SID5429_e24c7aaa99b3.patch",
+  "original_diff": "changes/216_SID5429_e24c7aaa99b3.original.patch",
+  "script_sha256": "f8bcb428c977eaf44f5f653063636e93a0d22c3b6f472d00332094fe00284d3b",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "d4501d442c78e1821439cbada78f452c4d1f4d9d87f5b129c23b93f0010e56cd",
+    "review": "空仓信号同时初始化价格和等待起点，持仓持续入场条件不再刷新状态；达到wait_bars后每柱维护同一stop/limit，优先于RSI分支，故RSI不再覆盖已有止损。上穿SMA平多与下方入场互斥，保留信号柱计时及等待期仅RSI挂目标规则。静态未见新的状态顺序错误。 已独立核对resolve_base与apply_record产物；本地11项测试通过，但批准仅限静态代码和所列设计范围。",
+    "remaining": [
+      "上穿SMA退出是独立设计选择；等待从信号柱起算，等待期间可能无止损。",
+      "tp_multiplier=1.5仍表示+150%目标而非1.5R，未擅自修改。",
+      "未原生编译、订单撮合或回测。",
+      "未进行原生Pine编译、真实订单撮合回放或回测；Python标量/文本断言不能完整模拟Pine，旧收益不可继承。"
+    ]
+  }
+}

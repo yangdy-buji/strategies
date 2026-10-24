@@ -1,0 +1,36 @@
+{
+  "rank": 147,
+  "sid": 735,
+  "source_sha256": "a82e0b961539d2b7d6cb3a9df58a2eadf4c7abbaeb0d0e24229cb16d294bf610",
+  "base_kind": "prior_candidate",
+  "base_sha256": "51396140ebab90265c1d307dc80a845c4d20cb36ccdd7fa278cf0735e7fedeae",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "沿用既有候选：原平仓ID无对应入场；改为RSI以正确关联。",
+  "patches": [],
+  "resolved": [
+    "原平仓ID无对应入场；改为RSI以正确关联。"
+  ],
+  "remaining": [
+    "EXIT与bull_cross仍需同柱成立，主Buy不受RSI约束。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "分别只触发Buy、只触发RSI及两者同柱，核对退出命中ID、最终仓位与原生撮合顺序。"
+  ],
+  "id": "97d16dd4e91c",
+  "title": "RSI50_EMA长仓策略-RSI50_EMA-Long-Only-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/147_SID735_97d16dd4e91c_candidate.pine",
+  "original": "originals/147_SID735_97d16dd4e91c.pine",
+  "baseline": "baselines/147_SID735_97d16dd4e91c.pine",
+  "changes": "changes/147_SID735_97d16dd4e91c.txt",
+  "card": "cards/97d16dd4e91c.html",
+  "diff": "changes/147_SID735_97d16dd4e91c.patch",
+  "original_diff": "changes/147_SID735_97d16dd4e91c.original.patch",
+  "script_sha256": "ab8da6584311fbfd274f6fe9a54f314b3832b44b48f45676f35ed24808b54468",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,74 @@
+{
+  "rank": 102,
+  "sid": 5507,
+  "source_sha256": "d6ca360d9aa41dac57c17c1e801dced44cd59e0e63648e72a17d8a78d787594b",
+  "base_kind": "original",
+  "base_sha256": "f02f7af301339a9b491075aba2244912176cdbdc88438058b68824a62f2c8791",
+  "action": "new_patch",
+  "change_type": "correctness",
+  "summary": "先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。；输入按实际价格差命名，保留原数值单位。；输入按实际价格差命名，保留原数值单位。",
+  "patches": [
+    {
+      "old": "posprice := iff(C1== 1, close, nz(posprice[1], 0)) \npos := iff(posprice > 0, 1, 0)\nif (pos == 0) \n    strategy.close_all()\nif (pos == 1)\n    strategy.entry(\"Long\", strategy.long)\nposprice := iff(low <= posprice - input_stoploss and posprice > 0, 0 ,  nz(posprice, 0))\nposprice := iff(high >= posprice + input_takeprofit and posprice > 0, 0 ,  nz(posprice, 0))\nplot(C1, title='NBU', color=color.green)",
+      "new": "entrySignal = C1 == 1\nposprice := strategy.position_size > 0 ? strategy.position_avg_price : 0\npos := strategy.position_size > 0 ? 1 : 0\nif strategy.position_size > 0\n    if low <= posprice - input_stoploss or high >= posprice + input_takeprofit\n        strategy.close_all()\nelse if entrySignal\n    strategy.entry(\"Long\", strategy.long)\nplot(C1, title='NBU', color=color.green)\n",
+      "reason": "先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "入场100，止损10，连续信号柱low85触平仓；空仓信号柱不回看保护；退出待成交不重入。"
+      ]
+    },
+    {
+      "old": "Take Profit pip",
+      "new": "Take Profit price distance",
+      "reason": "输入按实际价格差命名，保留原数值单位。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "不同股票按价格差解释；不隐式乘tick或外汇pip。"
+      ]
+    },
+    {
+      "old": "Stop Loss pip",
+      "new": "Stop Loss price distance",
+      "reason": "输入按实际价格差命名，保留原数值单位。",
+      "preserved": "保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。",
+      "validation_cases": [
+        "不同股票按价格差解释；不隐式乘tick或外汇pip。"
+      ]
+    }
+  ],
+  "resolved": [
+    "先按真实持仓和固定成交均价判断退出；连续信号不能重置保护或掩盖触价。",
+    "输入按实际价格差命名，保留原数值单位。",
+    "输入按实际价格差命名，保留原数值单位。"
+  ],
+  "remaining": [
+    "触价仍在柱结束后市价平仓，不是stop单；成交均价与信号价差异需原生逐笔确认。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "构造持续阳线且其中一根低价触止损、次根仍C1=1的序列；验证旧代码丢失退出与新状态机只平一次。"
+  ],
+  "id": "a275e1427568",
+  "title": "连续高点突破策略N-Consecutive-Higher-Closes-Breakout-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/102_SID5507_a275e1427568_candidate.pine",
+  "original": "originals/102_SID5507_a275e1427568.pine",
+  "baseline": "baselines/102_SID5507_a275e1427568.pine",
+  "changes": "changes/102_SID5507_a275e1427568.txt",
+  "card": "cards/a275e1427568.html",
+  "diff": "changes/102_SID5507_a275e1427568.patch",
+  "original_diff": "changes/102_SID5507_a275e1427568.original.patch",
+  "script_sha256": "4511910e5e800d52d770bb6f720786e1374931ba9846eaee0d286ca74ab22a86",
+  "native_compile": false,
+  "backtest": false,
+  "review": {
+    "status": "approved",
+    "record_sha256": "3744789e12c4f09d34d8b5489b7933f5dad3216ae3cd1f1c7bc174e54e4e3888",
+    "review": "逐读v4基线和生成结果：C1连续阳柱计数保持，空仓才发Long；首笔成交后用真实均价管理，连续C1不能刷新锚，退出分支和entry互斥，平仓确认后可再入。触价仍是收盘判定后市价关闭。 已对照完整基线与core.apply_record生成结果，批准仅限静态补丁质量，不代表原生编译、撮合验证或收益改善。",
+    "remaining": [
+      "触价仍在柱结束后市价平仓，不是stop单；成交均价与信号价差异需原生逐笔确认。",
+      "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+    ]
+  }
+}

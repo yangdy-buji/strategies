@@ -1,0 +1,30 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 5389：本轮新候选·未回测
++// 原文件SHA256：bf2661adf8c9750fd1c582b7f5d0769c737a5c9d4cb37b3a0ddc68af3309ed87
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-03-05 00:00:00
+ end: 2025-03-03 08:00:00
+@@ -35,9 +38,17 @@
+ 
+ // ATR hesaplaması: Wilder'in Yumuşak Ortalaması
+ atrValue = ta.rma(trueRange, adxPeriod)
+-plusDI   = 100 * ta.rma(plusDM, adxPeriod) / atrValue
+-minusDI  = 100 * ta.rma(minusDM, adxPeriod) / atrValue
+-dx       = 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)
++// OPT-T300-01 修改原因：平滑真实波幅为0时plusDI取无方向运动的0，避免DI链出现0/0。 正负DM平滑均逐根无条件计算；防止历史调用被条件分支跳过，不声称已实证其必然产生数值偏差。
++// OPT-T300-01 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
++smoothedPlusDM = ta.rma(plusDM, adxPeriod)
++smoothedMinusDM = ta.rma(minusDM, adxPeriod)
++plusDI   = atrValue == 0 ? 0.0 : 100 * smoothedPlusDM / atrValue
++// OPT-T300-02 修改原因：平滑真实波幅为0时minusDI取无方向运动的0，避免DI链出现0/0。
++// OPT-T300-02 保持行为：波幅非零仍采用原Wilder平滑；暖机NA保持未定义。
++minusDI  = atrValue == 0 ? 0.0 : 100 * smoothedMinusDM / atrValue
++// OPT-T300-03 修改原因：双DI为0表示无方向强度，DX回退0避免再次零除。
++// OPT-T300-03 保持行为：非零DI比例、ADX平滑及原买卖过滤不变。
++dx       = (plusDI + minusDI) == 0 ? 0.0 : 100 * math.abs(plusDI - minusDI) / (plusDI + minusDI)
+ adxValue = ta.rma(dx, adxPeriod)
+ 
+ // Stokastik Hesaplaması

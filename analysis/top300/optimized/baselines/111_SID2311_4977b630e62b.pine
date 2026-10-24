@@ -1,0 +1,41 @@
+/*backtest
+start: 2022-11-13 00:00:00
+end: 2023-11-19 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+//@version=5
+// © sabirt
+strategy(title='MACD and RSI', overlay=true, shorttitle='MACD&RSI')
+//MACD Settings
+fastMA = input.int(title='Fast moving average', defval=12, minval=1)
+slowMA = input.int(title='Slow moving average', defval=26, minval=1)
+signalLength = input.int(9, minval=1)
+
+//RSI settings
+RSIOverSold = input.int(35, minval=1)
+RSIOverBought = input.int(80, minval=1)
+src = close
+len = input.int(14, minval=1, title='Length')
+up = ta.rma(math.max(ta.change(src), 0), len)
+down = ta.rma(-math.min(ta.change(src), 0), len)
+rsi = down == 0 ? 100 : up == 0 ? 0 : 100 - 100 / (1 + up / down)
+wasOversold = rsi[0] <= RSIOverSold or rsi[1] <= RSIOverSold or rsi[2] <= RSIOverSold or rsi[3] <= RSIOverSold or rsi[4] <= RSIOverSold or rsi[5] <= RSIOverSold
+wasOverbought = rsi[0] >= RSIOverBought or rsi[1] >= RSIOverBought or rsi[2] >= RSIOverBought or rsi[3] >= RSIOverBought or rsi[4] >= RSIOverBought or rsi[5] >= RSIOverBought
+
+
+
+[currMacd, _, _] = ta.macd(close[0], fastMA, slowMA, signalLength)
+[prevMacd, _, _] = ta.macd(close[1], fastMA, slowMA, signalLength)
+signal = ta.ema(currMacd, signalLength)
+
+avg_1 = math.avg(currMacd, signal)
+crossoverBear = ta.cross(currMacd, signal) and currMacd < signal ? avg_1 : na
+avg_2 = math.avg(currMacd, signal)
+crossoverBull = ta.cross(currMacd, signal) and currMacd > signal ? avg_2 : na
+
+strategy.entry('buy', strategy.long, when=crossoverBull and wasOversold)
+strategy.close('buy', when=crossoverBear and wasOverbought)
+

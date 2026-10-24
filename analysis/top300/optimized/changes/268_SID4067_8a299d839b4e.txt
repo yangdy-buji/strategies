@@ -1,0 +1,34 @@
+{
+  "rank": 268,
+  "sid": 4067,
+  "source_sha256": "2c53e9318e462ebe88038dd1def349ddbdffa4e2c4c1e90f72d801a002aa89de",
+  "base_kind": "original",
+  "base_sha256": "ce0a242c233b22ec1ebb3c6285944fc7de5911bc07225edd81e626d5ea4985b9",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "保留原规则，未擅自选择设计参数；六类底部形态与超卖指标计分达到3、可选SMA下过滤及RSI14低于35做多，RSI下穿70退出。 六个底部模块计分再用RSI过滤有反转解释，但高度相关且退出须先超买后回落；颜色命名空间需编译修复。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "六个底部模块计分再用RSI过滤有反转解释，但高度相关且退出须先超买后回落；颜色命名空间需编译修复。 后续验证：所有开关组合抽样、长期熊市无法超买退出、编译与成本敏感度测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "所有开关组合抽样、长期熊市无法超买退出、编译与成本敏感度测试。"
+  ],
+  "id": "8a299d839b4e",
+  "title": "多时间框架底部反转策略The-Multi-Timeframe-Bottom-Reversal-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/268_SID4067_8a299d839b4e_original.pine",
+  "original": "originals/268_SID4067_8a299d839b4e.pine",
+  "baseline": "baselines/268_SID4067_8a299d839b4e.pine",
+  "changes": "changes/268_SID4067_8a299d839b4e.txt",
+  "card": "cards/8a299d839b4e.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "ce0a242c233b22ec1ebb3c6285944fc7de5911bc07225edd81e626d5ea4985b9",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

@@ -1,0 +1,34 @@
+{
+  "rank": 6,
+  "sid": 303,
+  "source_sha256": "46c3b55dc0dd4199f92fea3f22d4b10af5ce22981ebe40ce5e391285a4bf7226",
+  "base_kind": "original",
+  "base_sha256": "584b0407a95412898456005a6b5d73af6975f0012857195af7b9e608cbc37888",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：EMA价格交叉与Supertrend状态联合做多，指标逻辑可解释，但事件与状态同步要求偏强。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "EMA下穿若发生时Supertrend仍多头，随后趋势变空并不会重新产生EMA下穿事件，可能漏掉这段下跌退出。 暂缓原因：更灵敏退出可能在趋势回撤中反复止出。"
+  ],
+  "validation_plan": [
+    "构造先下穿EMA、隔两根Supertrend翻空且价格始终在EMA下的路径，并检查退出。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "3977544e53a3",
+  "title": "EMA与超级趋势相结合的量化交易策略-EMA-and-Supertrend-Combination-Quantitative-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/006_SID303_3977544e53a3_original.pine",
+  "original": "originals/006_SID303_3977544e53a3.pine",
+  "baseline": "baselines/006_SID303_3977544e53a3.pine",
+  "changes": "changes/006_SID303_3977544e53a3.txt",
+  "card": "cards/3977544e53a3.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "584b0407a95412898456005a6b5d73af6975f0012857195af7b9e608cbc37888",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

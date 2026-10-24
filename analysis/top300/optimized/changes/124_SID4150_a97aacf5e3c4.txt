@@ -1,0 +1,35 @@
+{
+  "rank": 124,
+  "sid": 4150,
+  "source_sha256": "934c8b1a9beceb7ccfe37f2e6a17cb3dd747b6da01db81db921d1d307a3d32b4",
+  "base_kind": "original",
+  "base_sha256": "fef94a26f58cdd1068779b356150dc08596a2e404dba805e68967b06621d356f",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：当前中价SMA组合与标准一目是不同策略；不能依据标题重写指标和偏移。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "当前中价SMA组合与标准一目是不同策略；不能依据标题重写指标和偏移。",
+    "转折/基准线采用中价SMA，历史引用再正向绘图偏移相互抵消；交易用未移位leadLineA，bar_index>bar_index[1]也不是独立的收盘确认机制。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "手工计算一段OHLC下的SMA中价与区间高低中点，验证图上云线时间和实际订单时间。"
+  ],
+  "id": "a97aacf5e3c4",
+  "title": "多维度云图价格突破趋势确认量化交易策略-Multi-Dimensional-Ichimoku-Cloud-Price-Breakthrough-Trend-Confirmation-Trading-Strategy",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/124_SID4150_a97aacf5e3c4_original.pine",
+  "original": "originals/124_SID4150_a97aacf5e3c4.pine",
+  "baseline": "baselines/124_SID4150_a97aacf5e3c4.pine",
+  "changes": "changes/124_SID4150_a97aacf5e3c4.txt",
+  "card": "cards/a97aacf5e3c4.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "fef94a26f58cdd1068779b356150dc08596a2e404dba805e68967b06621d356f",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

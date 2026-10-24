@@ -1,0 +1,34 @@
+{
+  "rank": 66,
+  "sid": 3700,
+  "source_sha256": "ca0a18b112f379d02287fe6f04efb54f8676c0a7071dc06690ff438f395192ff",
+  "base_kind": "original",
+  "base_sha256": "a2294d613bbe97737a0a6fe728715574bc7911d1249bbc0fd0a76a1aa3fb87c7",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：长期均线上方RSI超卖买入并设5%价格止损，具有趋势内回撤逻辑。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "盈利退出条件是SMA170下穿SMA90，即较快线转强时退出，而非一般死叉；保护基于成交均价只在后续计算可得。 暂缓原因：改变方向会改变策略身份，不应凭标题改成相反交叉。"
+  ],
+  "validation_plan": [
+    "对快慢线交叉方向和RSI50门禁制作真值表，核对首根成交后的保护单生效。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "071b7a609758",
+  "title": "基于震荡突破策略The-Oscillating-Breakthrough-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/066_SID3700_071b7a609758_original.pine",
+  "original": "originals/066_SID3700_071b7a609758.pine",
+  "baseline": "baselines/066_SID3700_071b7a609758.pine",
+  "changes": "changes/066_SID3700_071b7a609758.txt",
+  "card": "cards/071b7a609758.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a2294d613bbe97737a0a6fe728715574bc7911d1249bbc0fd0a76a1aa3fb87c7",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

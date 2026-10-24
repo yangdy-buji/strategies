@@ -1,0 +1,10 @@
+--- baseline.pine
++++ candidate.pine
+@@ -1,4 +1,7 @@
+ //@version=5
++// OPT-T300 SID 2213：沿用旧候选·未回测
++// 原文件SHA256：081aa85507ac20e4aa555c71470350d78f93515543812e1af429200aae0560d0
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ // 优化候选 conservative-v1 · 2026-10-24
+ // 原文件：双移动平均线反转策略Dual-Moving-Average-Reversal-Strategy.md
+ // 原文件SHA256：081aa85507ac20e4aa555c71470350d78f93515543812e1af429200aae0560d0

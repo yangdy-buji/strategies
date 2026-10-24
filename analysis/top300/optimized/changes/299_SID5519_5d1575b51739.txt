@@ -1,0 +1,37 @@
+{
+  "rank": 299,
+  "sid": 5519,
+  "source_sha256": "f15e83093392f33f5b96dfe4c1ddce9b55e1384bd1ab07d062b4ee9360d666c7",
+  "base_kind": "prior_candidate",
+  "base_sha256": "7d00b4aa79fd45bd0ffd44bec37fda78e6493e609a1ed6e9ae4a9d6e3dcbc3b5",
+  "action": "carry_existing",
+  "change_type": "none",
+  "summary": "保留已核对旧补丁；长期RSI200>51及EMA差柱正、连续2根收盘不升做多100%权益；均价加2或减3个动态BHD单位市价平仓。 长周期趋势中两根下跌买入有回调解释；逐tick/成交重算/放大器与动态BHD退出使历史执行保真要求高。",
+  "patches": [],
+  "resolved": [
+    "日期输入失效；只恢复入场时间过滤，退出独立。"
+  ],
+  "remaining": [
+    "长周期趋势中两根下跌买入有回调解释；逐tick/成交重算/放大器与动态BHD退出使历史执行保真要求高。 后续验证：同柱开平再入、实时重载、波动扩大止损放宽及放大器数据缺失测试。",
+    "未原生Pine编译、未订单撮合回放、未回测；旧绩效不可继承。"
+  ],
+  "validation_plan": [
+    "逐项核验已有changes.patch，原生编译后对比订单序列；修复候选未原生编译/回测；旧排名收益不适用。",
+    "同柱开平再入、实时重载、波动扩大止损放宽及放大器数据缺失测试。"
+  ],
+  "id": "5d1575b51739",
+  "title": "追踪趋势获利策略Take-Profit-on-Trend-Strategy",
+  "category": "趋势跟随",
+  "priority": "P0",
+  "script": "scripts/299_SID5519_5d1575b51739_candidate.pine",
+  "original": "originals/299_SID5519_5d1575b51739.pine",
+  "baseline": "baselines/299_SID5519_5d1575b51739.pine",
+  "changes": "changes/299_SID5519_5d1575b51739.txt",
+  "card": "cards/5d1575b51739.html",
+  "diff": "changes/299_SID5519_5d1575b51739.patch",
+  "original_diff": "changes/299_SID5519_5d1575b51739.original.patch",
+  "script_sha256": "11e21de0ac0974ef83f4d256945fbafd5c49b205428b3aeec3bb388be3185023",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

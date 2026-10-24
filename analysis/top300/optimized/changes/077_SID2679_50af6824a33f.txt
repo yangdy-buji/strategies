@@ -1,0 +1,34 @@
+{
+  "rank": 77,
+  "sid": 2679,
+  "source_sha256": "0e8b627b0d585c98b09f03c8162e70a64c8b20da2298d191600a11514d070a80",
+  "base_kind": "original",
+  "base_sha256": "a26e91a75e99b266898e836b208a09b4b657bd4199c7028d0c093279049282bf",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓改变交易规则：标题仅空头但代码实际两方向反手；空头需三个交叉同根，多头只需一个金叉，明显非对称。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "空头触发极苛刻，可能大部分时间是多头；同ID反向entry本身可反手，不能当作两条独立子策略。 暂缓原因：改成仅空头或对称条件会改变策略身份。"
+  ],
+  "validation_plan": [
+    "记录三个交叉时点和多空成交数，比较原生反手净仓位、佣金及借券假设。",
+    "须在原生Pine环境编译，并使用相同数据、费用及仓位逐笔对照；当前静态判断不证明收益改善。"
+  ],
+  "id": "50af6824a33f",
+  "title": "基于EMA均线的短线交易策略Short-term-Trading-Strategy-Based-on-EMA",
+  "category": "趋势跟随",
+  "priority": "P1",
+  "script": "scripts/077_SID2679_50af6824a33f_original.pine",
+  "original": "originals/077_SID2679_50af6824a33f.pine",
+  "baseline": "baselines/077_SID2679_50af6824a33f.pine",
+  "changes": "changes/077_SID2679_50af6824a33f.txt",
+  "card": "cards/50af6824a33f.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "a26e91a75e99b266898e836b208a09b4b657bd4199c7028d0c093279049282bf",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}

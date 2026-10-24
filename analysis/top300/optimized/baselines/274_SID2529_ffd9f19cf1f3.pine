@@ -1,0 +1,60 @@
+//@version=3
+// 优化候选 conservative-v1 · 2026-10-24
+// 原文件：均线震荡突破HODL策略Moving-Average-Oscillation-HODL-Strategy.md
+// 原文件SHA256：583711766c4cd6e7a9ed7dc703be188fd53ceacb0d8f1d56d7d3e7fdaa76a592
+// SID：2529；原研究名单序号：231
+// 状态：未原生编译，未回测。原排名和旧绩效不适用于本版本。
+// 范围：只修复下方OPT备注列出的缺陷；剩余问题见changes.md。
+// 原backtest区块为原始资料配置，不代表本版本完成过回测。
+
+/*backtest
+start: 2022-09-05 00:00:00
+end: 2023-04-15 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+strategy("HODLBot", default_qty_type=strategy.percent_of_equity, default_qty_value=100, calc_on_every_tick=true, overlay=true)
+    
+//// Time limits 
+testStartYear = input(2017, "Backtest Start Year")
+testStartMonth = input(01, "Backtest Start Month")
+testStartDay = input(01, "Backtest Start Day")
+testPeriodStart = timestamp(testStartYear,testStartMonth,testStartDay,0,0)
+
+testStopYear = input(2029, "Backtest Stop Year")
+testStopMonth = input(1, "Backtest Stop Month")
+testStopDay = input(1, "Backtest Stop Day")
+testPeriodStop = timestamp(testStopYear,testStopMonth,testStopDay,0,0)
+
+// OPT-2529-01：恢复日期。
+// OPT-2529-01 保持：参数不变。
+// OPT-2529-01 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+testPeriod() => time >= testPeriodStart and time <= testPeriodStop
+
+maPeriod = input(200, "MA Period")
+smoothing = input(defval="EMA", options=["EMA", "SMA"])
+
+ma(smoothing, src, length) => 
+    if smoothing == "EMA"
+        ema(src, length)
+    else
+        if smoothing == "SMA"
+            sma(src, length)
+        
+//// Main ////
+
+movingAverage = ma(smoothing, close, maPeriod)
+
+plot(movingAverage, color=orange, style = line, linewidth = 4)
+ 
+// very simple, price over MA? Buy and HODL 
+if (testPeriod() and close > movingAverage)
+    strategy.entry("HODL", strategy.long)
+
+// Price under, close long
+// OPT-2529-02：保留窗外退出。
+// OPT-2529-02 保持：原均线退出不变。
+// OPT-2529-02 验证：未原生Pine编译/回测；静态/表达式用例不证明收益。
+if (close < movingAverage)
+    strategy.close("HODL")

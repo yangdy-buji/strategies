@@ -1,0 +1,119 @@
+--- original.pine
++++ candidate.pine
+@@ -1,3 +1,6 @@
++// OPT-T300 SID 1289：本轮新候选·未回测
++// 原文件SHA256：adc0b92bfa36a0c19de60f481bad696d3fe49b15f940d7e4a59969f09b7c1ede
++// 未原生Pine编译、未回测；旧排名与收益不适用于本候选。
+ /*backtest
+ start: 2024-07-05 00:00:00
+ end: 2025-02-23 08:00:00
+@@ -21,45 +24,48 @@
+ // Sell Condition: Close crosses below 20-SMA and RSI < 40
+ sellCondition = ta.crossunder(close, sma20) and rsiValue < 40
+ 
+-// Tracking Performance Metrics
+-var int totalSignals = 0  // Total number of 'B' signals
+-var int successCount = 0  // Times price rose >2% from 'B' candle close
+-var int failureCount = 0  // Times price fell below 'B' candle low within 7 bars
++// OPT-T300-01 修改原因：独立统计设计实验：每个信号从次柱跟踪严格七柱，首个结局唯一；同柱双触记歧义，不伪造触价先后。
++// OPT-T300-01 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++// Signal-event outcomes, not filled-trade performance. Each signal is tracked separately.
++var int totalSignals = 0
++var int successCount = 0
++var int failureCount = 0
++var int ambiguousCount = 0
++var int expiredCount = 0
++var signalBars = array.new_int()
++var signalPrices = array.new_float()
++var signalLows = array.new_float()
+ 
+-// Store entry price and low when signal occurs
+-var float entryPrice = na
+-var float entryLow = na
+-var int barCounter = na  // Bar counter for tracking 7-candle window
++// Process previous signals before registering the current close-confirmed signal.
++if array.size(signalBars) > 0
++    for i = array.size(signalBars) - 1 to 0
++        age = bar_index - array.get(signalBars, i)
++        if age >= 1 and age <= 7
++            success = high >= array.get(signalPrices, i) * 1.02
++            failure = low < array.get(signalLows, i)
++            finished = success or failure or age == 7
++            if success and failure
++                ambiguousCount += 1
++            else if success
++                successCount += 1
++            else if failure
++                failureCount += 1
++            else if age == 7
++                expiredCount += 1
++            if finished
++                array.remove(signalBars, i)
++                array.remove(signalPrices, i)
++                array.remove(signalLows, i)
+ 
+ if buyCondition
+     strategy.entry("Buy", strategy.long)
+-    totalSignals := totalSignals + 1  // Increment 'B' count
+-    entryPrice := close
+-    entryLow := low
+-    barCounter := 0  // Reset counter when new 'B' signal appears
++    totalSignals += 1
++    array.push(signalBars, bar_index)
++    array.push(signalPrices, close)
++    array.push(signalLows, low)
+ 
+ if sellCondition
+-    strategy.close("Buy")  // Close the buy position on sell signal
+-
+-// Monitor for 7 candles only
+-if not na(barCounter)
+-    barCounter := barCounter + 1
+-
+-    // Check for Success (Price rises >2%)
+-    success = high >= entryPrice * 1.02
+-    if success
+-        successCount := successCount + 1
+-        entryPrice := na  // Reset entry price after success
+-
+-    // Check for Failure (Price falls below entryLow within 7 candles)
+-    failure = low < entryLow and barCounter <= 7
+-    if failure
+-        failureCount := failureCount + 1
+-        entryLow := na  // Reset entry low after failure
+-
+-    // Stop tracking after 7 candles
+-    if barCounter > 7
+-        barCounter := na
++    strategy.close("Buy")
+ 
+ // Plot 'B' on chart when buy condition is met
+ plotshape(series=buyCondition, location=location.belowbar, color=color.green, style=shape.labelup, text="B")
+@@ -68,10 +74,14 @@
+ plotshape(series=sellCondition, location=location.abovebar, color=color.red, style=shape.labeldown, text="S")
+ 
+ // Display Performance Metrics Table
+-var table performanceTable = table.new(position=position.top_right, columns=2, rows=4, bgcolor=color.gray, border_width=1)
++// OPT-T300-02 修改原因：统计表增加歧义及到期口径。
++// OPT-T300-02 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++var table performanceTable = table.new(position=position.top_right, columns=2, rows=6, bgcolor=color.gray, border_width=1)
+ 
+ if bar_index % 10 == 0  // Update table every 10 bars for efficiency
+-    table.cell(performanceTable, 0, 0, "Metric", text_color=color.white, bgcolor=color.blue)
++    // OPT-T300-03 修改原因：表格明确为信号事件统计而非订单绩效。
++    // OPT-T300-03 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
++    table.cell(performanceTable, 0, 0, "Signal outcomes (not fills)", text_color=color.white, bgcolor=color.blue)
+     table.cell(performanceTable, 1, 0, "Value", text_color=color.white, bgcolor=color.blue)
+     
+     table.cell(performanceTable, 0, 1, "Total 'B' Signals", text_color=color.white)
+@@ -81,4 +91,10 @@
+     table.cell(performanceTable, 1, 2, str.tostring(successCount), text_color=color.green)
+ 
+     table.cell(performanceTable, 0, 3, "Price Fell Below 'B' Low (7 bars)", text_color=color.white)
++    // OPT-T300-04 修改原因：展示双触与到期计数，避免隐去未成功失败事件。
++    // OPT-T300-04 保持行为：保留原信号阈值、交易方向、数量配置与Pine版本；不按旧收益调参。
+     table.cell(performanceTable, 1, 3, str.tostring(failureCount), text_color=color.red)
++    table.cell(performanceTable, 0, 4, "Same-bar ambiguous", text_color=color.white)
++    table.cell(performanceTable, 1, 4, str.tostring(ambiguousCount), text_color=color.white)
++    table.cell(performanceTable, 0, 5, "Expired after 7 bars", text_color=color.white)
++    table.cell(performanceTable, 1, 5, str.tostring(expiredCount), text_color=color.white)

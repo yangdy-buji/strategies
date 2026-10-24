@@ -1,0 +1,49 @@
+/*backtest
+start: 2023-03-05 00:00:00
+end: 2024-03-10 00:00:00
+period: 1d
+basePeriod: 1h
+exchanges: [{"eid":"Futures_Binance","currency":"BTC_USDT"}]
+*/
+
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © jonathan_422
+
+//@version=4
+strategy("G-Channel and EMA Strategy", shorttitle="G-EMA Strategy", overlay=true)
+
+// G-Channel settings
+length = input(100)
+src = input(close)
+
+// Calculating G-Channel
+a = 0.0
+b = 0.0
+a := max(src, nz(a[1])) - nz(a[1] - b[1]) / length
+b := min(src, nz(b[1])) + nz(a[1] - b[1]) / length
+avg = avg(a, b)
+
+// EMA settings
+emaLength = input(9, title="EMA Length")
+ema = ema(close, emaLength)
+
+// G-Channel buy/sell signals
+crossup = b[1] < close[1] and b > close
+crossdn = a[1] < close[1] and a > close
+bullish = barssince(crossdn) <= barssince(crossup)
+
+// Strategy logic
+buySignal = bullish and close < ema
+sellSignal = not bullish and close > ema
+
+// Plotting
+plot(ema, "EMA", color=color.orange)
+plot(avg, "Average", color=color.blue)
+
+// Plot buy/sell signals
+plotshape(buySignal, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.labelup, text="BUY")
+plotshape(sellSignal, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.labeldown, text="SELL")
+
+// Strategy execution
+strategy.entry("Buy", strategy.long, when=buySignal)
+strategy.close("Buy", when=sellSignal)

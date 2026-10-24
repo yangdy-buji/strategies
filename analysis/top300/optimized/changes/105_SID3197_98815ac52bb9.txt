@@ -1,0 +1,35 @@
+{
+  "rank": 105,
+  "sid": 3197,
+  "source_sha256": "f5c3c637469251744724724c157680e04080d5313887ac0a148cd87631a0b0e6",
+  "base_kind": "original",
+  "base_sha256": "b79570bd9bf8f3736a17e4337fbb3ad448ddc7f7778ba496a034c369937f7e4e",
+  "action": "deferred_design",
+  "change_type": "none",
+  "summary": "暂缓设计变更：EMA/量能/RSI共用门禁与深跌独立入口两种设计都可解释现有OR；强制共用过滤会删掉buyCondition6/7路径，必须先选择保留深跌独立策略还是统一趋势策略。",
+  "patches": [],
+  "resolved": [],
+  "remaining": [
+    "EMA/量能/RSI共用门禁与深跌独立入口两种设计都可解释现有OR；强制共用过滤会删掉buyCondition6/7路径，必须先选择保留深跌独立策略还是统一趋势策略。",
+    "buyCondition6或7可绕过EMA200、成交量、RSI和MACD过滤；卖出也有独立大涨/布林出口，混合路径可能来自不同市场状态，难以仅凭合并收益判优。",
+    "未执行原生Pine编译、成交回放或新回测；旧样本绩效不适用。"
+  ],
+  "validation_plan": [
+    "分别统计三条入场路径、交集及熊市表现，检验5%/14%/19%阈值邻域与扣费后贡献。"
+  ],
+  "id": "98815ac52bb9",
+  "title": "基于四重交叉策略Quadruple-Crossing-Strategy",
+  "category": "均值回归",
+  "priority": "P1",
+  "script": "scripts/105_SID3197_98815ac52bb9_original.pine",
+  "original": "originals/105_SID3197_98815ac52bb9.pine",
+  "baseline": "baselines/105_SID3197_98815ac52bb9.pine",
+  "changes": "changes/105_SID3197_98815ac52bb9.txt",
+  "card": "cards/98815ac52bb9.html",
+  "diff": null,
+  "original_diff": null,
+  "script_sha256": "b79570bd9bf8f3736a17e4337fbb3ad448ddc7f7778ba496a034c369937f7e4e",
+  "native_compile": false,
+  "backtest": false,
+  "review": null
+}
