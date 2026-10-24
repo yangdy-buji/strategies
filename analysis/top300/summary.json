@@ -1,0 +1,36 @@
+{
+  "selected": 300,
+  "eligible": 398,
+  "excluded": 200,
+  "tiers": {
+    "A": 2,
+    "B": 71,
+    "C": 227
+  },
+  "status_counts": {
+    "reviewed": 162,
+    "needs_design": 70,
+    "candidate": 68
+  },
+  "input_sha256": {
+    "analysis/top500/ranking.json": "b7a5d3f07f30af8786ff121fa05d6a0da1c878c4af986b7d629cc8f8864839c4",
+    "analysis/top500/optimization/manifest.json": "2f6b1ae462424f4235126330d689927f0869ebb4fd3d8592893502e81d4c4c2c",
+    "analysis/top500/optimization/summary.json": "8550a441a06ee940b2c1a330dd4a684720a3a8667235ea3de33d03440fb16838"
+  },
+  "top10_sids": [
+    2351,
+    3900,
+    4267,
+    3985,
+    334,
+    303,
+    3988,
+    283,
+    5123,
+    4392
+  ],
+  "source": "user supplied historical reports",
+  "native_compile": false,
+  "independent_backtest": false,
+  "live_performance": false
+}

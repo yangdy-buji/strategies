@@ -1,0 +1,1429 @@
+[
+  {
+    "sid": 4143,
+    "title": "多级移势均线交易策略Multi-level-Shift-Moving-Average-Trading-Strategy",
+    "reasons": [
+      "保守排除高风险标记：fill_artifact_suspect"
+    ]
+  },
+  {
+    "sid": 4941,
+    "title": "白盒冰山策略Robot-White-Box-Iceberg-Strategy",
+    "reasons": [
+      "保守排除高风险标记：fill_artifact_suspect"
+    ]
+  },
+  {
+    "sid": 2059,
+    "title": "双均线反转策略Dual-Moving-Average-Crossover-Strategy",
+    "reasons": [
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 1447,
+    "title": "动态RSI矩形Grid策略RSI-Box-Grid-Strategy",
+    "reasons": [
+      "保守排除高风险标记：grid_or_avg_down_no_stop、not_a_strategy"
+    ]
+  },
+  {
+    "sid": 5510,
+    "title": "追踪历史新高的量化交易策略-Trend-Following-Strategy-Based-on-Historical-High",
+    "reasons": [
+      "保守排除高风险标记：repaint_warning"
+    ]
+  },
+  {
+    "sid": 4388,
+    "title": "定期定额累积均价策略Dollar-Cost-Averaging-Strategy",
+    "reasons": [
+      "保守排除高风险标记：grid_or_avg_down_no_stop"
+    ]
+  },
+  {
+    "sid": 857,
+    "title": "Random-Entry-Point-Strategy",
+    "reasons": [
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 1075,
+    "title": "Wavetrend-大幅指标超跌反弹网格交易策略-Wavetrend-Large-Amplitude-Oversold-Rebound-Grid-Trading-Strategy",
+    "reasons": [
+      "保守排除高风险标记：grid_or_avg_down_no_stop"
+    ]
+  },
+  {
+    "sid": 2493,
+    "title": "均线动量多头持续交易策略Momentum-Moving-Average-Persistent-Long-Trading-Strategy",
+    "reasons": [
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 3660,
+    "title": "基于量价关系的多指标波动率突破交易系统-Multi-Indicator-Volatility-Breakout-Trading-System-Based-on-Volume-Price-Relationship",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 3484,
+    "title": "基于波动率止损的均线趋势跟踪交易策略-Volatility-Stop-Based-EMA-Trend-Following-Trading-Strategy",
+    "reasons": [
+      "保守排除高风险标记：not_backtested"
+    ]
+  },
+  {
+    "sid": 2733,
+    "title": "基于K线盖尔特通道的趋势追踪策略A-Trend-Following-Strategy-Based-on-Keltner-Channels",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 3425,
+    "title": "基于支撑位和阻力位的技术分析交易策略-Trading-Strategy-Based-on-Support-and-Resistance-Levels-Using-Technical-Analysis",
+    "reasons": [
+      "历史末3年年化非正/缺失",
+      "保守排除高风险标记：htf_security_repaints_live"
+    ]
+  },
+  {
+    "sid": 4770,
+    "title": "杠杆化马丁格尔期货交易策略Leveraged-Martingale-Futures-Trading-Strategy",
+    "reasons": [
+      "保守排除高风险标记：martingale"
+    ]
+  },
+  {
+    "sid": 4215,
+    "title": "多重均线趋势跟踪与动态止损策略-Multi-EMA-Trend-Following-Strategy-with-Dynamic-Stop-Loss",
+    "reasons": [
+      "保守排除高风险标记：LEAK_lookahead",
+      "静态硬前视疑点"
+    ]
+  },
+  {
+    "sid": 832,
+    "title": "RSI超买超卖交叉结合布林带动态止盈止损策略-RSI-Overbought-Oversold-Crossover-with-Bollinger-Bands-Dynamic-Stop-Loss-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 1197,
+    "title": "三线突破动量趋势跟踪策略结合ADX过滤器-Three-Line-Strike-Momentum-Trend-Following-Strategy-with-ADX-Filter",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 3346,
+    "title": "基于布林带和赫尔指标的交叉策略Crossing-Strategy-Between-Bollinger-Bands-and-Hull-Indicator",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 1695,
+    "title": "动量回拉策略Momentum-Pullback-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 5447,
+    "title": "趋势追踪移动平均RSI策略Trend-Tracking-Moving-Average-RSI-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 1258,
+    "title": "两阶段止损策略Two-stage-Stop-Loss-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 3785,
+    "title": "多周期布林带突破回归交易策略-Multi-Timeframe-Bollinger-Band-Breakout-Reversion-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 768,
+    "title": "RSI动态平仓位动量交易策略-RSI-Dynamic-Exit-Level-Momentum-Trading-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 3195,
+    "title": "基于唐奇安通道指标开发的量化交易策略Donchian-Channel-Width-Trading-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 2835,
+    "title": "基于RSI和趋势均线的双重过滤交易策略-RSI-and-Trend-MA-Dual-Filter-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 2684,
+    "title": "基于EMA指标的双线交叉趋势交易策略Dual-EMA-Cross-Trend-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 5085,
+    "title": "移动平均趋势跟踪策略Moving-Average-Trend-Tracking-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 3328,
+    "title": "基于布林带和MACD指标的高频交易策略分析系统-High-Frequency-Trading-Strategy-Analysis-System-Based-on-Bollinger-Bands-and-MACD-Indicators",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 4290,
+    "title": "多重指标趋势跟踪动量交易策略-Multi-Indicator-Trend-Following-Momentum-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 595,
+    "title": "Matrix-Series",
+    "reasons": [
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 4400,
+    "title": "尺度移动均线与双布林线动量混合交易系统-Hybrid-Keltner-Channel-EMA-Based-Trading-System-with-ATR-Risk-Management",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 548,
+    "title": "MACD和EMA金叉死叉策略MACD-and-EMA-Crossover-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 1474,
+    "title": "动态供需区间中线反转策略-Dynamic-Supply-Demand-Zone-Midline-Reversal-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 4221,
+    "title": "多重均线趋势追踪与风控优化量化交易策略-Multi-Moving-Average-Trend-Following-and-Risk-Management-Quantitative-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 773,
+    "title": "RSI动量反转短期趋势跟踪策略与移动平均线聚合-RSI-Momentum-Reversal-Short-Term-Trend-Following-Strategy-with-Moving-Average-Confluence",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 3730,
+    "title": "增强型量价趋势判断动量策略-Enhanced-Price-Volume-Trend-Momentum-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 1617,
+    "title": "动态趋势确认的反转公平价值缺口量化交易策略-Dynamic-Trend-Confirmed-Inverted-Fair-Value-Gap-Quantitative-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 2340,
+    "title": "双重跟踪止损海龟交易策略Dual-Tracking-Turtle-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 3357,
+    "title": "基于布林带的突破策略Bollinger-Bands-Breakout-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 4439,
+    "title": "布林带ATR风险回报比交易策略-Bollinger-Bands-ATR-Risk-Reward-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 5233,
+    "title": "自适应布林带ATR跟踪止损交易策略-Adaptive-Bollinger-Bands-ATR-Trailing-Stop-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 1221,
+    "title": "三重均线动量趋势交易策略-Triple-Moving-Average-Momentum-Trend-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 1496,
+    "title": "动态均线与布林带交叉策略结合固定止损优化模型-Dynamic-Moving-Average-and-Bollinger-Bands-Cross-Strategy-with-Fixed-Stop-Loss-Optimization-Model",
+    "reasons": [
+      "全期年化或夏普非正/缺失"
+    ]
+  },
+  {
+    "sid": 5249,
+    "title": "自适应波动突破回撤交易策略-Adaptive-Volatility-Breakout-Retest-Trading-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 2582,
+    "title": "基于AO指标和均线的趋势跟踪策略AO-Indicator-Based-Trend-Following-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 4815,
+    "title": "波动率动量突破交易策略结合趋势和动量过滤-Volatility-Momentum-Breakout-Strategy-with-Trend-and-Momentum-Filters",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 4868,
+    "title": "混沌交易规则止损策略Chaotic-Trading-Rules-Stop-Loss-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 1083,
+    "title": "ZLSMA-增强型吊灯出场策略与成交量脉冲检测ZLSMA-Enhanced-Chandelier-Exit-Strategy-with-Volume-Spike-Detection",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 2455,
+    "title": "均值回归型布林带RSI策略结合ATR动态止损优化系统-Mean-Reversion-Strategy-with-Bollinger-Bands-RSI-and-ATR-Based-Dynamic-Stop-Loss-System",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 977,
+    "title": "Swing-Highs-Lows-Candle-Patterns",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失",
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 3497,
+    "title": "基于洛伦兹分类法的多时间框架交易策略Lorenzian-Classification-Multi-Timeframe-Target-Strategy",
+    "reasons": [
+      "全期年化或夏普非正/缺失",
+      "历史末3年年化非正/缺失",
+      "保守排除高风险标记：not_backtested"
+    ]
+  },
+  {
+    "sid": 5709,
+    "title": "高精度RSI和布林带突破策略与优化风险比-High-Precision-RSI-and-Bollinger-Bands-Breakout-Strategy-with-Optimized-Risk-Reward-Ratio",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 804,
+    "title": "RSI多区间交易策略-Multi-Zone-RSI-Trading-Strategy",
+    "reasons": [
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 4471,
+    "title": "布林带反转趋势策略Bollinger-Bands-Reversal-Trend-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5218,
+    "title": "自适应价格交叉均线交易策略-Adaptive-Price-Crossing-Moving-Average-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3713,
+    "title": "基于高斯通道和随机RSI的市场趋势捕捉策略-Gaussian-Channel-and-Stochastic-RSI-Based-Market-Trend-Capture-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3740,
+    "title": "多个EMA周期动态交易策略Multi-Timeframe-Dynamic-EMA-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 2781,
+    "title": "基于OBV与MA交叉信号的趋势跟踪策略-Trend-Following-Strategy-Based-on-OBV-and-MA-Crossover-Signals",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5039,
+    "title": "移动平均线交叉策略Exponential-Moving-Average-Crossover-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 2251,
+    "title": "双轨跟踪震荡分型策略Dual-track-Oscillator-Pattern-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4332,
+    "title": "多重趋势交叉策略Multi-Trend-Crossover-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 339,
+    "title": "EMA趋势动量K线形态策略-EMA-Trend-Momentum-Candlestick-Pattern-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3387,
+    "title": "基于平均真实波幅的趋势跟踪策略ATR-Based-Trend-Tracking-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1717,
+    "title": "动量市场情绪指标策略Momentum-Market-Sentiment-Indicator-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4534,
+    "title": "平滑海坚线买卖策略Heikin-Ashi-Smoothed-Buy-and-Sell-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5613,
+    "title": "长期趋势SMA均线交叉量化策略-Long-term-Trend-SMA-Crossover-Quantitative-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3121,
+    "title": "基于双EMA交叉的量化交易策略Quantitative-Trading-Strategy-Based-on-Double-EMA-Crossover",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 818,
+    "title": "RSI指标突破交易策略Alpha-RSI-Breakout-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 3583,
+    "title": "基于线性回归分析和均线指标的短线交易策略Linear-Regression-Channel-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5343,
+    "title": "超级趋势策略SuperTrend-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 1506,
+    "title": "动态均线网格交易策略Grid-Strategy-with-Moving-Average-Lines",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "保守排除高风险标记：grid_or_avg_down_no_stop"
+    ]
+  },
+  {
+    "sid": 3526,
+    "title": "基于真实波幅的加权移动平均跨期策略True-Range-Based-Weighted-Moving-Average-Cross-Period-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3882,
+    "title": "多层级超买超卖震荡买入策略-Multi-Level-Oversold-Oscillator-Buy-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1915,
+    "title": "双TEMA叉死叉交易策略Dual-TEMA-Crossover-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5062,
+    "title": "移动平均线回抽策略Snap-Back-Moving-Average-Counter-trend-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "保守排除高风险标记：not_a_strategy"
+    ]
+  },
+  {
+    "sid": 5475,
+    "title": "跨周期趋势追踪型量化策略An-Intraday-Trend-Following-Quantitative-Strategy-Based-on-Multi-indicator-Condition-Filtering",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1168,
+    "title": "三倍标准差布林带突破量化交易策略结合百日均线优化-Triple-Standard-Deviation-Bollinger-Bands-Breakout-Strategy-with-100-Day-Moving-Average-Optimization",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4373,
+    "title": "季节反转跨期交易策略Seasonal-Reversal-Intertemporal-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4441,
+    "title": "布林带RSIEMA双重交易策略Bollinger-Bands-RSI-EMA-Double-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5653,
+    "title": "震荡市场多头策略Oscillating-Market-Long-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3447,
+    "title": "基于斐波那契平均K线和移动平均线的量化交易策略Fibonacci-Average-Candle-with-Moving-Average-Strategy-for-Quantitative-Trading",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1343,
+    "title": "低价买入-高价止盈策略Low-High-Trend-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4436,
+    "title": "布林5分钟突破日内交易策略-Bollinger-5-Minute-Breakout-Intraday-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3599,
+    "title": "基于自适应移动平均线的趋势跟踪策略Trend-Following-Strategy-Based-on-Adaptive-Moving-Average",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1351,
+    "title": "低风险DCA趋势交易策略Low-Risk-DCA-Trend-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "保守排除高风险标记：grid_or_avg_down_no_stop"
+    ]
+  },
+  {
+    "sid": 2501,
+    "title": "均线回转反转策略Mean-Reversion-Reverse-Strategy-Based-on-Moving-Average",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3514,
+    "title": "基于相对强弱与RSI的动态趋势跟踪套利策略-Dynamic-Trend-Following-Strategy-Based-on-Relative-Strength-and-RSI",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 983,
+    "title": "TAM日内RSI交易策略TAM-Intraday-RSI-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3850,
+    "title": "多均线交叉辅助RSI动态参数量化交易策略-Dynamic-RSI-Quantitative-Trading-Strategy-with-Multiple-Moving-Average-Crossover",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1492,
+    "title": "动态圣诞老人回归策略Dynamic-Santa-Claus-Regression-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 1359,
+    "title": "停顿回转策略Turnaround-After-Consolidation-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 2094,
+    "title": "双均线趋势交叉量化交易策略研究与优化-Dual-Moving-Average-Trend-Crossover-Quantitative-Trading-Strategy-Analysis-and-Optimization",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4236,
+    "title": "多重技术指标协同交易策略系统-Multi-Technical-Indicator-Synergistic-Trading-System",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5583,
+    "title": "量化策略之MA强弱趋势追踪Quantitative-Strategy-of-MA-Strength-Trend-Tracking",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 3969,
+    "title": "多指标背离买卖策略与自适应止盈止损-Multi-Indicator-Divergence-Trading-Strategy-with-Adaptive-Take-Profit-and-Stop-Loss",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4622,
+    "title": "拓宽均线区间的马丁格尔止损炒股策略Martingale-Strategy-with-Expanded-Moving-Average-Range-for-Stock-Trading",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "保守排除高风险标记：martingale、not_a_strategy"
+    ]
+  },
+  {
+    "sid": 2800,
+    "title": "基于RSI-穿越交易策略The-RSI-Crossover-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 4730,
+    "title": "智能累加买入策略Intelligent-Accumulator-Buy-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5690,
+    "title": "马鲁博蜡烛线段均衡策略Marubozu-Candle-Range-Balance-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排",
+      "历史末3年年化非正/缺失"
+    ]
+  },
+  {
+    "sid": 4568,
+    "title": "强化波林格均值回归量化策略-Enhanced-Bollinger-Mean-Reversion-Quantitative-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 5605,
+    "title": "金叉死叉趋势追踪策略Golden-Dead-Cross-Trend-Tracking-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 826,
+    "title": "RSI止损追踪交易策略-RSI-Stop-Loss-Tracking-Trading-Strategy",
+    "reasons": [
+      "仅50票初筛，不与全量日线混排"
+    ]
+  },
+  {
+    "sid": 2411,
+    "title": "唐奇安基于价格通道突破的量化交易策略Donchian-Channels-Breakout-Quantitative-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2703,
+    "title": "基于Granville与MACD多重信号确认的趋势跟踪交易策略-Trend-Following-Trading-Strategy-Based-on-Granville-and-MACD-Multiple-Signal-Confirmation",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3675,
+    "title": "基于量化统计的双标准差动态VWAP震荡突破交易策略-Statistical-Dual-Standard-Deviation-VWAP-Breakout-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2317,
+    "title": "双重指标的Stochastic-RSI和EMA交易策略Dual-Indicator-Stochastic-RSI-and-EMA-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3379,
+    "title": "基于布林通道和RSI指标的渐进DCA策略Bollinger-Band-and-RSI-Mixing-with-DCA-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5410,
+    "title": "趋势跟踪型EMA双线限价买入策略-Dual-EMA-Trend-Following-Strategy-with-Limit-Buy-Entry",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5236,
+    "title": "自适应布林通道动态仓位管理策略-Adaptive-Bollinger-Bands-Dynamic-Position-Management-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2075,
+    "title": "双均线止盈止损趋势交易策略-Dual-Moving-Average-Trend-Trading-Strategy-with-Stop-Loss-and-Take-Profit",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4271,
+    "title": "多重指标动量突破趋势交易策略-Multi-Indicator-Momentum-Breakout-Trend-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1129,
+    "title": "一云多均线交易策略-Ichimoku-Cloud-and-Moving-Average-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1810,
+    "title": "动量跨市高效盈利策略Momentum-Swing-Effective-Profit-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5678,
+    "title": "顿希安通道突破策略Donchian-Channel-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1413,
+    "title": "动向指数多空平衡买卖策略DMI-Balance-Buy-Sell-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2105,
+    "title": "双均线趋势跟踪策略与RSI过滤器-Dual-Moving-Average-Trend-Following-Strategy-with-RSI-Filter",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3084,
+    "title": "基于动量增强型简单移动平均线和RSI的趋势跟踪策略-Momentum-Enhanced-Simple-Moving-Average-and-RSI-Strategy-for-Trend-Following",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3187,
+    "title": "基于反转趋势追踪策略Reversal-Tracking-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4243,
+    "title": "多重技术指标趋势跟踪策略-结合超级趋势EMA和风险管理-Multi-Indicator-Trend-Following-Strategy-Integrating-SuperTrend-EMA-and-Risk-Management",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1347,
+    "title": "低波动率买入高波动率买入策略Buy-Low-Volatility-VS-Buy-High-Volatility-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3172,
+    "title": "基于双移动平均线交叉的回调入场策略EintSimple-Pullback-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4987,
+    "title": "移动均线交叉交易策略EMA-Crossover-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 291,
+    "title": "EMA100与NUPL相对未实现利润量化交易策略-EMA100-and-NUPL-Relative-Unrealized-Profit-Quantitative-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1421,
+    "title": "动态ATR止损的RSI超卖弹性量化策略-Dynamic-ATR-Stop-Loss-RSI-Oversold-Rebound-Quantitative-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5109,
+    "title": "突破均线的趋势追踪策略Breakthrough-Moving-Average-Trend-Tracking-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3984,
+    "title": "多指标趋势动量ATR目标价交易策略-Multi-Indicator-Trend-Momentum-ATR-Target-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3553,
+    "title": "基于移动平均线的动量策略This-strategy-is-a-momentum-strategy-based-on-moving-average-lines",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4001,
+    "title": "多指标趋势跟踪期权交易EMA交叉策略-Multi-Indicator-Trend-Following-Options-Trading-EMA-Cross-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1644,
+    "title": "动态达瓦斯箱体突破与均线趋势确认交易系统-Dynamic-Darvas-Box-Breakout-with-Moving-Average-Trend-Confirmation-Trading-System",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 235,
+    "title": "Darvas-Box-Breakout-and-Risk-Management-Strategy-Darvas-盒子突破与风险管理策略",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4500,
+    "title": "布林带结合超级趋势的智能波动区间交易策略-Intelligent-Volatility-Range-Trading-Strategy-Combining-Bollinger-Bands-and-SuperTrend",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2526,
+    "title": "均线金叉死叉策略-Moving-Average-Crossover-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 313,
+    "title": "EMA交叉趋势追踪与ATR动态止损优化策略-EMA-Cross-Over-Trend-Following-Strategy-with-ATR-Dynamic-Stop-Loss-Optimization",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3267,
+    "title": "基于多尺度唐奇逐步通道的交易策略Donchain-Channel-Based-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3775,
+    "title": "多周期均线穿越结合RSI动量与ATR波动率的趋势跟踪策略-Multi-Period-EMA-Crossover-with-RSI-Momentum-and-ATR-Volatility-Based-Trend-Following-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 765,
+    "title": "RSI低点反转策略-RSI-Low-Point-Reversal-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5753,
+    "title": "高级量化趋势追踪与云图反转复合交易策略-Advanced-Quantitative-Trend-Following-and-Cloud-Reversal-Composite-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2611,
+    "title": "基于ATR的均值回复策略Mean-Reversion-Strategy-Based-on-ATR",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3915,
+    "title": "多指标动态止损动量趋势交易策略-Multi-Indicator-Dynamic-Stop-Loss-Momentum-Trend-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1434,
+    "title": "动态K线大阳线交易策略Dynamic-Candlestick-Big-Yang-Line-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3103,
+    "title": "基于动量顺势策略Momentum-Trend-Following-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4134,
+    "title": "多策略自适应趋势跟踪与突破交易系统-Multi-Strategy-Adaptive-Trend-Following-and-Breakout-Trading-System",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3704,
+    "title": "基于风险回报比和技术分析的牛旗突破策略-Risk-Reward-Ratio-and-Technical-Analysis-Based-Bull-Flag-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3079,
+    "title": "基于动量交易策略Momentum-and-Volume-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4660,
+    "title": "支撑阻力与MACD长线策略Strategy-of-Support-Resistance-with-MACD-LONG",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1565,
+    "title": "动态波动率止损的趋势动量交易策略-Dynamic-Volatility-Based-Stop-Loss-Trend-Momentum-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 279,
+    "title": "EMA-RSI-趋势追踪与动量策略-EMA-RSI-Trend-Following-and-Momentum-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3756,
+    "title": "多周期EMA交叉高胜率趋势跟踪策略进阶版-Multi-Timeframe-EMA-Cross-High-Win-Rate-Trend-Following-Strategy-Advanced",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3752,
+    "title": "多参数交叉趋势动量策略-Multi-Parameter-Crossover-Trend-Momentum-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3549,
+    "title": "基于移动平均线和相对强弱指标的动量反转策略Momentum-Reversal-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 300,
+    "title": "EMA与RSI交叉策略-EMA-RSI-Crossover-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2196,
+    "title": "双移动均线趋势跟踪交易系统结合风险收益比优化策略-Dual-Moving-Average-Trend-Following-Trading-System-with-Risk-Reward-Ratio-Optimization-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4517,
+    "title": "带滑点止损的DCA定投策略DCA-Strategy-with-Trailing-Take-Profit",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 734,
+    "title": "RSI2策略之日内反转胜率回测-RSI2-Strategy-Intraday-Reversal-Win-Rate-Backtest",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4906,
+    "title": "牛市追涨箱体买入策略Bull-Market-Breakout-Darvas-Box-Buy-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3251,
+    "title": "基于复合突破策略The-Compound-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5030,
+    "title": "移动平均线交叉与动态波动率止损量化策略-Moving-Average-Crossover-with-Dynamic-Volatility-Based-Stop-Loss-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4227,
+    "title": "多重形态识别与SR分位交易策略-Multi-Pattern-Recognition-and-SR-Level-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5796,
+    "title": "黄金分割移动平均线交易策略Golden-Ratio-Moving-Average-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5335,
+    "title": "超级趋势反转策略Super-Trend-Reverse-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 143,
+    "title": "Bollinger-Bands-Breakout-Strategy-布林线突破策略",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1861,
+    "title": "双7日突破策略Double-7-Days-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2185,
+    "title": "双移动均线与RSI反转交易策略Dual-Moving-Average-and-RSI-Reversal-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4349,
+    "title": "大红蜡烛突破买入策略-Big-Red-Candle-Breakout-Buy-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 609,
+    "title": "Multi-EMA趋势追踪型RSI-MACD动量验证策略-Multi-EMA-Trend-Following-Strategy-with-RSI-MACD-Momentum-Validation",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5391,
+    "title": "趋势突破交易系统移动平均线突破策略-Trend-Breakout-Trading-System-with-Moving-Average-TBMA-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1404,
+    "title": "利用双均线反转策略Dual-Moving-Average-Reversal-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2680,
+    "title": "基于EMA平均线交叉的趋势追踪策略Trend-Following-Strategy-Based-on-EMA-Crossover",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2070,
+    "title": "双均线布林带MACD交易策略Dual-Moving-Average-Bollinger-Band-MACD-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4707,
+    "title": "日内锤子反转形态多头策略Intraday-Hammer-Reversal-Pattern-Long-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 146,
+    "title": "Bollinger-Bands-Mean-Reversion-Trading-Strategy-with-Dynamic-Support-布林带均值回归交易策略与动态支撑",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4877,
+    "title": "渔夫指标移动止损策略Fisher-Yurik-Trailing-Stop-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5028,
+    "title": "移动平均线与随机RSI组合交易策略Moving-Average-and-Stochastic-RSI-Combination-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2188,
+    "title": "双移动均线交叉反转策略Dual-Moving-Average-Reversal-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1376,
+    "title": "内部价格强度趋势反转交易系统-Internal-Bar-Strength-Trend-Reversal-Trading-System",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4945,
+    "title": "皮特波浪交易系统策略Pete-Wave-Trading-System-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3634,
+    "title": "基于趋势确认的多重指标动态止损策略-Trend-Confirmation-Multi-Indicator-Dynamic-Stop-Loss-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1023,
+    "title": "Trend-Following-with-Breakout-and-Frequency-Filter-Long-Only-基于突破和频率过滤的趋势跟踪策略只做多",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4359,
+    "title": "威廉姆斯9日趋势突破策略Williams-9-Days-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 5607,
+    "title": "金叉死叉长线多因子策略Golden-Cross-Death-Cross-Long-term-Multi-factor-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 496,
+    "title": "MA-SMA-MA-Slope-Trailing-Stop-Loss-Re-Entry-均线简单移动平均线均线斜率追踪止损重新进场",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3848,
+    "title": "多均线交叉趋势跟踪RSI波动策略-Multi-Moving-Average-Cross-Trend-Following-RSI-Oscillation-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1688,
+    "title": "动量反转短线交易策略-Momentum-Reversal-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2178,
+    "title": "双波带突破策略Double-Bollinger-Bands-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1187,
+    "title": "三指数均线止盈止损策略Triple-Exponential-Moving-Average-Profit-Taking-and-Stop-Loss-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 4197,
+    "title": "多重均线交叉动量趋势跟踪策略-Multi-EMA-Crossover-Momentum-Trend-Following-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1223,
+    "title": "三重均线趋势追踪多指标组合量化交易策略-Triple-EMA-Trend-Following-Multi-Indicator-Quantitative-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 834,
+    "title": "RSI趋势动量交易策略结合双均线和成交量确认-RSI-Trend-Momentum-Trading-Strategy-with-Dual-MA-and-Volume-Confirmation",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1494,
+    "title": "动态均值回归与动量策略-Dynamic-Mean-Reversion-and-Momentum-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1994,
+    "title": "双均线交叉与随机指标结合的自适应追踪止损策略-Dual-Moving-Average-Crossover-with-Stochastic-Filter-and-Adaptive-Trailing-Stop-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3295,
+    "title": "基于多重技术指标的高频交易动态优化策略-Multi-Technical-Indicator-Based-High-Frequency-Dynamic-Optimization-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1907,
+    "title": "双RSI指标突破策略Dual-RSI-Indicator-Breakout-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1620,
+    "title": "动态趋势线突破反转交易策略-Dynamic-Trendline-Breakout-Reversal-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 65,
+    "title": "ATR动态趋势跟踪与重入场交易策略-ATR-Dynamic-Trend-Following-with-Re-entry-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 325,
+    "title": "EMA反向买卖策略EMA-Reverse-Buy-Sell-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2099,
+    "title": "双均线趋势跟踪与ATR风控自适应交易策略-Dual-Moving-Average-Trend-Following-Strategy-with-ATR-Based-Risk-Management-System",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 2421,
+    "title": "唐奇安通道趋势跟踪策略Donchian-Channel-Trend-Tracking-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 1959,
+    "title": "双周期ATR波动率突破股票趋势策略Volatility-Bands-and-VWAP-Multi-Timeframe-Stock-Trend-Trading-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 629,
+    "title": "Noro平移均线止损策略Noro-Shifted-Moving-Average-Stop-Loss-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  },
+  {
+    "sid": 3418,
+    "title": "基于拉里康诺斯的经典策略Oscillation-Breakthrough-Strategy",
+    "reasons": [
+      "通过基础筛选，但按本次排序位于300名之后"
+    ]
+  }
+]
